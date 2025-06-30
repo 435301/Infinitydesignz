@@ -1,7 +1,7 @@
 import React from 'react';
-import logo from './assets/images/logo.svg';
-import avatar from './assets/images/avatar-1.png';
-import './assets/css/style.css'; // Adjust paths as needed
+import logo from '../img/logo.svg';
+import avatar from '../img/avatar-1.png';
+import '../css/admin/style.css';
 
 const HeaderAdmin = () => {
   return (

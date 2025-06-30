@@ -1,17 +1,31 @@
-import React from 'react';
-// import './assets/css/style.css'; 
-import logo from '../../img/logo.svg'; 
-import '../../css/admin/style.css'
-
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../../redux/actions/authAction';
+import '../../css/admin/style.css';
+import logo from '../../img/logo.svg';
 
 const LoginPage = () => {
+  const dispatch = useDispatch();
+  const { error, loading } = useSelector(state => state.auth);
+
+  const [form, setForm] = useState({ email: '', password: '' });
+
+  const handleChange = (e) => {
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    dispatch(login(form.email, form.password));
+  };
+
   return (
     <section className="login p-fixed d-flex bg-primary common-img-bg">
       <div className="container-fluid">
         <div className="row">
           <div className="col-sm-12">
             <div className="login-card card-block">
-              <form className="md-float-material">
+              <form className="md-float-material" onSubmit={handleLogin}>
                 <div className="text-center mb-3">
                   <img src={logo} alt="Logo" style={{ width: '45%' }} />
                 </div>
@@ -20,13 +34,16 @@ const LoginPage = () => {
                 </h3>
 
                 <div className="col-lg-12 mb-3">
-                  <label htmlFor="username" className="form-label">Username</label>
+                  <label htmlFor="email" className="form-label">Username</label>
                   <input
-                    id="username"
-                    name="username"
+                    id="email"
+                    name="email"
                     type="text"
                     className="form-control"
                     placeholder="Enter Your Username"
+                    value={form.email}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
 
@@ -38,18 +55,25 @@ const LoginPage = () => {
                     type="password"
                     className="form-control"
                     placeholder="Enter Your Password"
+                    value={form.password}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
 
-                <div className="col-sm-12 col-xs-12 forgot-phone text-right mt-3">
+                <div className="col-sm-6 col-xs-12 forgot-phone text-right mt-3">
                   <a href="/forgot-password" className="text-right f-w-600">
                     <i className="icon-lock"></i> Forget Password?
                   </a>
                 </div>
 
+                {error && (
+                  <div className="col-12 text-danger text-center mt-2">{error}</div>
+                )}
+
                 <div className="col-xs-12 text-center mt-4">
-                  <button type="button" className="btn btn-primary text-center m-b-20">
-                    LOGIN
+                  <button type="submit" className="btn btn-primary text-center m-b-20" disabled={loading}>
+                    {loading ? 'Logging in...' : 'LOGIN'}
                   </button>
                 </div>
               </form>

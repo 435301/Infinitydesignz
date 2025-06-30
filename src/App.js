@@ -12,6 +12,8 @@ import AddressBook from './components/addressbook.jsx';
 import ProfilePage from './pages/users/profile.jsx';
 import MyOrdersPage from './pages/users/orders.jsx';
 import LoginPage from './pages/admin/login.jsx';
+import Dashboard from './pages/admin/dashboard.jsx';
+import ManageCategories from './pages/admin/manageCategories.jsx';
 
 function App() {
   useMainScripts(); // Runs the converted jQuery logic
@@ -30,6 +32,8 @@ function App() {
           <Route path='/profile' element={<ProfilePage/>}></Route>
           <Route path='/orders' element={<MyOrdersPage/>}></Route>
           <Route path='/login' element={<LoginPage/>}></Route>
+          <Route path='/dashboard' element={<Dashboard/>}></Route>
+          <Route path='/manage-category' element={<ManageCategories/>}></Route>
 
 
 
