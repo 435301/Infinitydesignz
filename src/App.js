@@ -11,6 +11,7 @@ import ProductDetailPage from './components/product-details.jsx';
 import AddressBook from './components/addressbook.jsx';
 import ProfilePage from './pages/users/profile.jsx';
 import MyOrdersPage from './pages/users/orders.jsx';
+import LoginPage from './pages/admin/login.jsx';
 
 function App() {
   useMainScripts(); // Runs the converted jQuery logic
@@ -28,6 +29,8 @@ function App() {
           <Route path='/address-book' element={<AddressBook/>}></Route>
           <Route path='/profile' element={<ProfilePage/>}></Route>
           <Route path='/orders' element={<MyOrdersPage/>}></Route>
+          <Route path='/login' element={<LoginPage/>}></Route>
+
 
 
         </Routes>
