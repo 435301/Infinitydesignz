@@ -1,0 +1,115 @@
+.error-section {
+  background: linear-gradient(to bottom, #f9f9f9, #e8f0f0);
+  padding: 40px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  flex-grow: 1;
+  width: 100%;
+}
+
+.error-card {
+  background: #ffffff;
+  border-radius: 25px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e0e7e7;
+  width: 100%;
+  max-width: 600px;
+  overflow: hidden;
+  padding: 40px;
+}
+
+.content-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 50px;
+  color: #e63946;
+  margin-bottom: 20px;
+  animation: pulse 1.5s infinite;
+}
+
+.content-section h3 {
+  font-family: 'Poppins', 'Arial', sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #1a2e2e;
+  margin-bottom: 20px;
+}
+
+.error-info {
+  font-family: 'Open Sans', 'Arial', sans-serif;
+  font-size: 16px;
+  color: #1a2e2e;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.error-info p {
+  margin: 8px 0;
+}
+
+.btn-retry {
+  background: #e63946;
+  border: none;
+  padding: 10px 30px;
+  font-family: 'Poppins', 'Arial', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 30px;
+  width: 100%;
+  max-width: 250px;
+  color: #fff;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.btn-retry:hover {
+  background: #c5303b;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
+}
+
+.btn-home {
+  background: transparent;
+  border: 2px solid #e63946;
+  color: #e63946;
+  padding: 10px 30px;
+  font-family: 'Poppins', 'Arial', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 30px;
+  width: 100%;
+  max-width: 250px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-home:hover {
+  background: #e63946;
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+

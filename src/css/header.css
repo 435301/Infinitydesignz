@@ -1,0 +1,129 @@
+.navbar-nav {
+    text-align: center;
+}
+
+/* Ensure dropdowns, logo, and nav items align properly */
+.nav-item,
+.navbar-brand.sticky-logo {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Adjust logo styling to fit within the menu */
+.navbar-brand.sticky-logo {
+    margin: 0 15px;
+    display: none;
+    /* Hidden by default */
+}
+
+/* Show the logo only when the navbar is sticky */
+.navbar.sticky .sticky-logo {
+    display: inline-block;
+}
+
+/* Ensure the logo is hidden in mobile view */
+@media (max-width: 991px) {
+    .navbar-brand.sticky-logo {
+        display: none !important;
+    }
+
+    .navbar-nav {
+        text-align: left;
+    }
+}
+
+/* Suggestions Dropdown Styling */
+.suggestions-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 2%;
+    /* Center the dropdown by offsetting from the left */
+    width: 94%;
+    /* Reduced width to 80% of the parent container */
+    background: linear-gradient(135deg, #ffffff, #f9f9f9);
+    /* Subtle gradient background */
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    z-index: 1111;
+    padding: 20px;
+    margin-top: 5px;
+    border: 1px solid #e0e0e0;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.suggestions-header {
+    font-weight: 700;
+    color: #4b5050;
+    margin-bottom: 15px;
+    font-size: 14px;
+    border-bottom: 2px solid #009688;
+    padding-bottom: 4px;
+    display: inline-block;
+}
+
+.suggestions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.suggestion-item {
+    padding: 12px 15px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    display: block;
+    align-items: center;
+    font-size: 12px;
+    /* Reduced font size from 15px to 12px (80% of original) */
+    font-weight: 500;
+    color: #333;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.form-control1 {
+    display: block;
+    width: 100%;
+    padding: 9px;
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 1.5;
+    color: #777;
+    background-color: #efefef;
+    background-clip: padding-box;
+    border: 1px solid #efefef;
+    appearance: none;
+    border-radius: 5px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.suggestion-item:hover {
+    background-color: #009688;
+    color: #fff;
+    border-color: #009688;
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Remove default focus styles for the search bar */
+.search-input:focus {
+    outline: none;
+    /* Remove the default focus outline */
+    box-shadow: none;
+    /* Remove any Bootstrap focus shadow */
+    border-color: #009688;
+}

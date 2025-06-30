@@ -1,0 +1,22 @@
+.qty-box {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .qty-input {
+      width: 40px;
+      text-align: center;
+      border: none;
+      background: transparent;
+      font-weight: 500;
+    }
+    .btn-qty {
+      width: 40px;
+      height: 38px;
+      border: none;
+      background: #d9d9d9;
+      font-weight: bold;
+    }
+    .btn-qty:hover {
+      background: #d6d8db;
+    }

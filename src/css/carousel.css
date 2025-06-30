@@ -1,0 +1,25 @@
+.carousel-scroll-wrapper {
+  display: flex;
+  overflow-x: auto;
+  gap: 22px;
+  scroll-behavior: smooth;
+  padding-bottom: 10px;
+}
+
+.sale-item {
+  min-width: 250px;
+  /* flex: 0 0 auto; */
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.sale-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.carousel-scroll-wrapper::-webkit-scrollbar {
+  display: none;
+}

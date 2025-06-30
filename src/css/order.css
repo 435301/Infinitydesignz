@@ -1,0 +1,52 @@
+.breadcrumb-section {
+  background: #f8f9fa;
+  padding: 1rem;
+}
+.sidebar a {
+  display: block;
+  padding: .5rem 0;
+  color: #333;
+  text-decoration: none;
+}
+.sidebar a.active {
+  font-weight: bold;
+}
+.order-item {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: .5rem;
+}
+.order-item-img {
+  width: 100px;
+}
+.order-details .order-meta {
+  display: flex;
+  gap: .75rem;
+  margin: .5rem 0;
+}
+.order-price span {
+  margin-right: .5rem;
+}
+.order-info span {
+  display: block;
+}
+.order-status {
+  margin-top: .5rem;
+}
+.status.in-progress { color: orange; }
+.status.delivered { color: green; }
+.status.cancelled { color: red; }
+.rate-review .stars i {
+  margin-right: .25rem;
+}
+.delivery-address {
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+.ad-banner img {
+  width: 100%;
+}
+.related-products {
+  margin-top: 1rem;
+}

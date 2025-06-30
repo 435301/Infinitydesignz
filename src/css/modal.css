@@ -1,0 +1,37 @@
+/* components/Modal.css */
+.custom-modal-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* light background */
+  z-index: 1050;
+  overflow-y: auto;
+}
+
+.modal-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+.modal-top h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.close-icon {
+  background: none;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.modal-content {
+  margin-top: 20px;
+}
