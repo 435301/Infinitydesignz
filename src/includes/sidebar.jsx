@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import './assets/css/style.css'; // adjust path as needed
+import '../css/admin/style.css';
 
 const Sidebar = () => {
   const location = useLocation();
