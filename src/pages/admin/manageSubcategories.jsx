@@ -10,6 +10,8 @@ import AddSubCategoryModal from '../../includes/addSubCategory';
 const ManageSubCategories = () => {
   const [showModal, setShowModal] = useState(false);
   const [level1SubCategories, setLevel1SubCategories] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
   const dispatch = useDispatch();
   const { categories = [], loading, error } = useSelector((state) => state.categories || {});
 
@@ -47,6 +49,14 @@ const ManageSubCategories = () => {
     }
   }, [categories]);
 
+  const filteredSubCategories = level1SubCategories.filter((subCat) => {
+    const matchesSearch =
+      subCat.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      subCat.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter ? subCat.status === statusFilter : true;
+    return matchesSearch && matchesStatus;
+  });
+
   return (
     <div className="wrapper sidebar-mini fixed">
       <HeaderAdmin />
@@ -67,12 +77,12 @@ const ManageSubCategories = () => {
                   <div className="row">
                     <div className="col-md-3">
                       <div className="input-group">
-                        <input type="text" className="form-control" placeholder="Search By" />
+                        <input type="text" className="form-control" placeholder="Search By Parent Category" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                         <span className="input-group-btn"></span>
                       </div>
                     </div>
                     <div className="col-md-3">
-                      <select className="form-control">
+                      <select className="form-control" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
                         <option value="">- Select Status -</option>
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
@@ -82,7 +92,10 @@ const ManageSubCategories = () => {
                       <button className="btn btn-danger me-3">
                         <BsSearch style={{ fontSize: '18px' }} />
                       </button>
-                      <button className="btn btn-success">
+                      <button className="btn btn-success" onClick={() => {
+                        setSearchTerm('')
+                        setStatusFilter('')
+                      }}>
                         <BsArrowClockwise style={{ fontSize: '18px' }} />
                       </button>
                     </div>
@@ -135,67 +148,64 @@ const ManageSubCategories = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {level1SubCategories.map((item, index) => (
-                            <tr key={item.id}>
-                              <td>
-                                <input type="checkbox" className="row-checkbox" />
-                              </td>
-                              <td>{index + 1}</td>
-                              <td>{item.category}</td>
-                              <td>{item.title}</td>
-                              <td>
-                                <img
-                                  src={item.appIcon}
-                                  alt={`${item.title} App Icon`}
-                                  className="rounded-circle"
-                                  width="50"
-                                  height="50"
-                                />
-                              </td>
-                              <td>
-                                <img
-                                  src={item.webIcon}
-                                  alt={`${item.title} Web Icon`}
-                                  className="rounded-circle"
-                                  width="50"
-                                  height="50"
-                                />
-                              </td>
-                              <td>
-                                <img
-                                  src={item.mainImage}
-                                  alt={`${item.title} Main Image`}
-                                  className="rounded-circle"
-                                  width="50"
-                                  height="50"
-                                />
-                              </td>
-                              <td>{item.seoTitle || 'N/A'}</td>
-                              <td>{item.seoDescription || 'N/A'}</td>
-                              <td>{item.seoKeywords || 'N/A'}</td>
-                              <td>
-                                <span
-                                  className={`badge text-light-${
-                                    item.status === 'active' ? 'primary' : 'danger'
-                                  }`}
-                                >
-                                  {item.status}
-                                </span>
-                              </td>
-                              <td>
-                                <button
-                                  className="btn btn-light icon-btn"
-                                  style={{ marginRight: '5px' }}
-                                >
-                                  <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
-                                </button>
-                                <button className="btn btn-light icon-btn">
-                                  <BsEye style={{ fontSize: '18px', color: '#212529' }} />
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                          {level1SubCategories.length === 0 && !loading && (
+                          {filteredSubCategories.length > 0 ? (
+                            filteredSubCategories.map((item, index) => (
+                              <tr key={item.id}>
+                                <td>
+                                  <input type="checkbox" className="row-checkbox" />
+                                </td>
+                                <td>{index + 1}</td>
+                                <td>{item.category}</td>
+                                <td>{item.title}</td>
+                                <td>
+                                  <img
+                                    src={item.appIcon}
+                                    alt={`${item.title} App Icon`}
+                                    className="rounded-circle"
+                                    width="50"
+                                    height="50"
+                                  />
+                                </td>
+                                <td>
+                                  <img
+                                    src={item.webIcon}
+                                    alt={`${item.title} Web Icon`}
+                                    className="rounded-circle"
+                                    width="50"
+                                    height="50"
+                                  />
+                                </td>
+                                <td>
+                                  <img
+                                    src={item.mainImage}
+                                    alt={`${item.title} Main Image`}
+                                    className="rounded-circle"
+                                    width="50"
+                                    height="50"
+                                  />
+                                </td>
+                                <td>{item.seoTitle || 'N/A'}</td>
+                                <td>{item.seoDescription || 'N/A'}</td>
+                                <td>{item.seoKeywords || 'N/A'}</td>
+                                <td>
+                                  <span
+                                    className={`badge text-light-${item.status === 'active' ? 'primary' : 'danger'
+                                      }`}
+                                  >
+                                    {item.status}
+                                  </span>
+                                </td>
+                                <td>
+                                  <button className="btn btn-light icon-btn me-2">
+                                    <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
+                                  </button>
+                                  <button className="btn btn-light icon-btn">
+                                    <BsEye style={{ fontSize: '18px', color: '#212529' }} />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
                             <tr>
                               <td colSpan="12" className="text-center">
                                 No subcategories found.

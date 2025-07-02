@@ -1,21 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { BsPencilSquare, BsEye, BsSearch, BsArrowClockwise } from 'react-icons/bs';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCategories } from '../../redux/actions/categoryAction';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
-import '../../css/admin/style.css';
-import { BsPencilSquare, BsEye, BsSearch, BsArrowClockwise } from 'react-icons/bs';
-import { fetchCategories } from '../../redux/actions/categoryAction';
-import { useDispatch, useSelector } from 'react-redux';
 import AddCategoryModal from '../../includes/addCategory';
+import '../../css/admin/style.css';
 
 const ManageCategories = () => {
   const dispatch = useDispatch();
   const { categories = [], loading, error } = useSelector((state) => state.categories || {});
   const [showModal, setShowModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
 
   useEffect(() => {
     dispatch(fetchCategories());
   }, [dispatch]);
+
+  const filteredCategories = categories.filter((cat) => {
+    const parent = categories.find((p) => p.id === cat.parent_id);
+    const title = cat.title.toLowerCase();
+    const parentTitle = parent?.title?.toLowerCase() || '';
+    const matchesSearch = `${title} ${parentTitle}`.includes(searchTerm.toLowerCase());
+
+    const categoryStatus = parent ? parent.status : cat.status;
+    const matchesStatus = statusFilter ? categoryStatus === statusFilter : true;
+
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="sidebar-mini fixed">
@@ -34,10 +47,20 @@ const ManageCategories = () => {
               <div className="card-block manage-btn">
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
-                    <input type="text" className="form-control" placeholder="Search By" />
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Search By Category Title"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                   </div>
                   <div className="col-md-3">
-                    <select className="form-control">
+                    <select
+                      className="form-control"
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                    >
                       <option value="">- Select Status -</option>
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
@@ -47,7 +70,13 @@ const ManageCategories = () => {
                     <button className="btn btn-danger">
                       <BsSearch />
                     </button>
-                    <button className="btn btn-success">
+                    <button
+                      className="btn btn-success"
+                      onClick={() => {
+                        setSearchTerm('');
+                        setStatusFilter('');
+                      }}
+                    >
                       <BsArrowClockwise />
                     </button>
                   </div>
@@ -86,71 +115,71 @@ const ManageCategories = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {categories.map((cat, index) => {
-                        const parentCategory = categories.find(
-                          (parent) => parent.id === cat.parent_id
-                        );
+                      {filteredCategories.length > 0 ? (
+                        filteredCategories.map((cat, index) => {
+                          const parentCategory = categories.find(
+                            (parent) => parent.id === cat.parent_id
+                          );
 
-                        return (
-                          <tr key={cat.id}>
-                            <td>
-                              <input type="checkbox" />
-                            </td>
-                            <td>{index + 1}</td>
-                            <td>{parentCategory ? parentCategory.title : cat.title}</td>
-                            <td>
-                              <img
-                                src={parentCategory ? parentCategory.appIcon : cat.appIcon}
-                                alt="App Icon"
-                                className="rounded-circle"
-                                width="50"
-                                height="50"
-                              />
-                            </td>
-                            <td>
-                              <img
-                                src={parentCategory ? parentCategory.webImage : cat.webImage}
-                                alt="Web Icon"
-                                className="rounded-circle"
-                                width="50"
-                                height="50"
-                              />
-                            </td>
-                            <td>
-                              <img
-                                src={parentCategory ? parentCategory.mainImage : cat.mainImage}
-                                alt="Main"
-                                className="rounded-circle"
-                                width="50"
-                                height="50"
-                              />
-                            </td>
-                            <td>
-                              <span
-                                className={`badge ${
-                                  (parentCategory ? parentCategory.status : cat.status) === 'active'
-                                    ? 'text-light-primary'
-                                    : 'text-light-danger'
-                                }`}
-                              >
-                                {parentCategory ? parentCategory.status : cat.status}
-                              </span>
-                            </td>
-                            <td>
-                              <button
-                                className="btn btn-light icon-btn"
-                                style={{ marginRight: '5px' }}
-                              >
-                                <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
-                              </button>
-                              <button className="btn btn-light icon-btn">
-                                <BsEye style={{ fontSize: '18px', color: '#212529' }} />
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                      {categories.length === 0 && !loading && (
+                          return (
+                            <tr key={cat.id}>
+                              <td>
+                                <input type="checkbox" />
+                              </td>
+                              <td>{index + 1}</td>
+                              <td>{parentCategory ? parentCategory.title : cat.title}</td>
+                              <td>
+                                <img
+                                  src={parentCategory ? parentCategory.appIcon : cat.appIcon}
+                                  alt="App Icon"
+                                  className="rounded-circle"
+                                  width="50"
+                                  height="50"
+                                />
+                              </td>
+                              <td>
+                                <img
+                                  src={parentCategory ? parentCategory.webImage : cat.webImage}
+                                  alt="Web Icon"
+                                  className="rounded-circle"
+                                  width="50"
+                                  height="50"
+                                />
+                              </td>
+                              <td>
+                                <img
+                                  src={parentCategory ? parentCategory.mainImage : cat.mainImage}
+                                  alt="Main"
+                                  className="rounded-circle"
+                                  width="50"
+                                  height="50"
+                                />
+                              </td>
+                              <td>
+                                <span
+                                  className={`badge ${(parentCategory ? parentCategory.status : cat.status) === 'active'
+                                      ? 'text-light-primary'
+                                      : 'text-light-danger'
+                                    }`}
+                                >
+                                  {parentCategory ? parentCategory.status : cat.status}
+                                </span>
+                              </td>
+                              <td>
+                                <button
+                                  className="btn btn-light icon-btn"
+                                  style={{ marginRight: '5px' }}
+                                >
+                                  <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
+                                </button>
+                                <button className="btn btn-light icon-btn">
+                                  <BsEye style={{ fontSize: '18px', color: '#212529' }} />
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      ) : (
                         <tr>
                           <td colSpan="8">No categories found.</td>
                         </tr>
@@ -160,6 +189,7 @@ const ManageCategories = () => {
                 </div>
               </div>
             </div>
+
             {showModal && <AddCategoryModal show={showModal} setShow={setShowModal} />}
           </div>
         </div>
