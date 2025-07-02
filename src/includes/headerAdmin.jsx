@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { BsFullscreen, BsBell, BsGear, BsPerson, BsEnvelopeOpen, BsLock, BsBoxArrowRight } from 'react-icons/bs';
+import { BsFullscreen, BsBell, BsGear, BsPerson, BsEnvelopeOpen, BsLock, BsBoxArrowRight, BsSearch } from 'react-icons/bs';
 import logo from '../img/logo.svg';
 import avatar from '../img/avatar-1.png';
 
@@ -18,10 +18,9 @@ const HeaderAdmin = ({ onToggleSidebar }) => {
   };
 
   const handleDropdownItemClick = () => {
-    setIsDropdownOpen(false); // Close dropdown when an item is clicked
+    setIsDropdownOpen(false);
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -29,9 +28,7 @@ const HeaderAdmin = ({ onToggleSidebar }) => {
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
@@ -48,8 +45,8 @@ const HeaderAdmin = ({ onToggleSidebar }) => {
         height: '70px',
       }}
     >
-      <a className='logo' href="/index" style={{ padding: '10px' }}>
-        <img src={logo} alt="Logo"  />
+      <a className="logo" href="/index" style={{ padding: '10px' }}>
+        <img src={logo} alt="Logo" />
       </a>
 
       <nav
@@ -91,34 +88,33 @@ const HeaderAdmin = ({ onToggleSidebar }) => {
           </svg>
         </a>
 
-      <ul style={{ display: 'flex', alignItems: 'center', listStyle: 'none', margin: 0, padding: 0 }}>
-  <li>
-    <div className='search-bx' style={{ position: 'relative' }}>
-      <input
-        type="search"
-        placeholder="Search"
-        style={{
-          // space for the icon inside
-          borderRadius: '4px',
-        }}
-      />
-      <i
-        className="bi bi-search"
-        style={{
-          position: 'absolute',
-          right: '10px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          fontSize: '16px',
-          color: '#6c757d'
-        }}
-      ></i>
-    </div>
-  </li>
-</ul>
+        <ul style={{ display: 'flex', alignItems: 'center', listStyle: 'none', margin: 0, padding: 0 }}>
+          <li>
+            <div className="search-bx" style={{ position: 'relative' }}>
+              <input
+                type="search"
+                placeholder="Search"
+                style={{
+                  borderRadius: '4px',
+                  padding: '8px 30px 8px 10px',
+                }}
+              />
+              <BsSearch
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  fontSize: '16px',
+                  color: '#6c757d',
+                }}
+              />
+            </div>
+          </li>
+        </ul>
 
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <ul className=''
+          <ul
             style={{
               display: 'flex',
               listStyle: 'none',
@@ -126,7 +122,8 @@ const HeaderAdmin = ({ onToggleSidebar }) => {
               padding: 0,
               alignItems: 'center',
             }}
-          >            <li style={{ padding: '0 10px' }}>
+          >
+            <li style={{ padding: '0 10px' }}>
               <a
                 href="#!"
                 style={{
@@ -140,7 +137,6 @@ const HeaderAdmin = ({ onToggleSidebar }) => {
                 <BsFullscreen style={{ color: '#f4a300', fontSize: '18px' }} />
               </a>
             </li>
-
             <li style={{ padding: '0 10px' }}>
               <a
                 href="#!"
@@ -155,7 +151,6 @@ const HeaderAdmin = ({ onToggleSidebar }) => {
                 <BsBell style={{ color: '#9b59b6', fontSize: '18px' }} />
               </a>
             </li>
-
             <li style={{ padding: '0 10px' }}>
               <a
                 href="#!"
@@ -170,7 +165,6 @@ const HeaderAdmin = ({ onToggleSidebar }) => {
                 <BsGear style={{ color: '#e74c3c', fontSize: '18px' }} />
               </a>
             </li>
-
             <li style={{ position: 'relative' }} ref={dropdownRef}>
               <a
                 href="#!"
@@ -188,10 +182,18 @@ const HeaderAdmin = ({ onToggleSidebar }) => {
                   alt="User"
                 />
               </a>
-              <ul className='dropdown-menu settings-menu'
+              <ul
+                className="dropdown-menu settings-menu"
                 style={{
-                
                   display: isDropdownOpen ? 'block' : 'none',
+                  position: 'absolute',
+                  background: '#fff',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                  borderRadius: '4px',
+                  minWidth: '150px',
+                  right: 0,
+                  top: '100%',
+                  zIndex: 1000,
                 }}
               >
                 <li>
@@ -221,7 +223,7 @@ const HeaderAdmin = ({ onToggleSidebar }) => {
                       textDecoration: 'none',
                     }}
                   >
-                    <BsPerson style={{ phosphorSize: '18px', marginRight: '5px' }} /> Profile
+                    <BsPerson style={{ fontSize: '18px', marginRight: '5px' }} /> Profile
                   </a>
                 </li>
                 <li>

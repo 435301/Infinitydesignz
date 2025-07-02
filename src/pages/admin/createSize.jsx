@@ -5,17 +5,31 @@ import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash } from 'react-icons/bs';
 
 const ManageSizes = () => {
+   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  
+      const handleToggleSidebar = (collapsed) => {
+          setIsSidebarCollapsed(collapsed);
+      };
+  
   const [showModal, setShowModal] = useState(false);
 
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
-        <HeaderAdmin />
-        <aside className="main-sidebar hidden-print">
-          <Sidebar />
-        </aside>
+       <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
+                <aside className="main-sidebar hidden-print">
+                    <Sidebar isCollapsed={isSidebarCollapsed} />
+                </aside>
 
-        <div className="content-wrapper">
+        <div
+                    className="content-wrapper mb-4"
+                    style={{
+                        marginLeft: isSidebarCollapsed ? '60px' : '250px',
+                        padding: '20px',
+                        flex: 1,
+                        transition: 'margin-left 0.3s ease',
+                    }}
+                >
           <div className="main-header" style={{ marginTop: '0px' }}>
             <h4>Create a Size</h4>
           </div>
