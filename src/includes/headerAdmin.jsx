@@ -48,8 +48,8 @@ const HeaderAdmin = ({ onToggleSidebar }) => {
         height: '70px',
       }}
     >
-      <a href="/index" style={{ padding: '10px' }}>
-        <img src={logo} alt="Logo" style={{ height: '40px' }} />
+      <a className='logo' href="/index" style={{ padding: '10px' }}>
+        <img src={logo} alt="Logo"  />
       </a>
 
       <nav
