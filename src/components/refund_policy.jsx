@@ -2,8 +2,8 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '../includes/header';
 import Footer from '../includes/footer';
-import '../../src/css/style.css';
-import '../../src/css/bootstrap-icons.css';
+import '../../src/css/user/userstyle.css';
+import '../../src/css/user/bootstrap-icons.css';
 
 export default function RefundPolicy() {
   return (

@@ -1,5 +1,5 @@
 import React from 'react';
-import "../css/style.css";
+import "../css/user/userstyle.css";
 import { Link } from 'react-router-dom';
 import RetailFreeShipping from '../../src/img/retail-free-shipping.svg';
 import Retail247 from '../../src/img/retail-247.svg';

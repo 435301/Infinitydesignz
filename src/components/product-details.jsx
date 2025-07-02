@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import Header from "../includes/header";
 import Footer from "../includes/footer";
-import '../css/style.css';
-import '../../src/css/bootstrap-icons.css';
+import '../css/user/userstyle.css';
+import '../../src/css/user/bootstrap-icons.css';
 import P1 from '../../src/img/p1.png';
 import Img1 from '../../src/img/img1.png';
 import Img2 from '../../src/img/img2.png';

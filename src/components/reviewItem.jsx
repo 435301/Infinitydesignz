@@ -1,7 +1,7 @@
 import React from 'react';
 import avatar from '../../src/img/account_circle.png';
-import '../css/style.css';
-import '../css/bootstrap.min.css';
+import '../css/user/userstyle.css';
+import '../css/user/bootstrap.min.css';
 
 const ReviewItem = ({ stars, text, date, user }) => {
   return (

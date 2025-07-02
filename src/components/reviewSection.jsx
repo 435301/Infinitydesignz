@@ -1,8 +1,8 @@
 import React from 'react';
 import RatingSummary from './ratingSummary';
 import ReviewItem from './reviewItem';
-import '../css/style.css';
-import '../css/bootstrap.min.css';
+import '../css/user/userstyle.css';
+import '../css/user/bootstrap.min.css';
 
 const ReviewSection = () => {
   const reviews = [

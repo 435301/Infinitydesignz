@@ -1,7 +1,7 @@
 import React from "react";
-import '../../css/style.css';
-import '../../css/bootstrap-icons.css';
-import '../../css/bootstrap.min.css';
+import '../../css/user/userstyle.css';
+import '../../css/user/bootstrap-icons.css';
+import '../../css/user/bootstrap.min.css';
 import P1 from '../../img/p1.png';
 import AdBanner from '../../img/ad-banner.png';
 import Header from "../../includes/header";

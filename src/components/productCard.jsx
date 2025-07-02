@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import '../css/style.css';
+import '../css/user/userstyle.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import '../../src/css/bootstrap-icons.css';
-import '../../src/css/bootstrap.min.css';
+import '../../src/css/user/bootstrap-icons.css';
+import '../../src/css/user/bootstrap.min.css';
 
 const ProductCard = ({ product }) => {
   return (

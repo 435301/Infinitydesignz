@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../../css/style.css';
-import '../../css/bootstrap-icons.css';
-import '../../css/bootstrap.min.css';
+import '../../css/user/userstyle.css';
+import '../../css/user/bootstrap-icons.css';
+import '../../css/user/bootstrap.min.css';
 import Header from '../../includes/header';
 import Footer from '../../includes/footer';
 import EditIcon from '../../img/edit_icon.png';

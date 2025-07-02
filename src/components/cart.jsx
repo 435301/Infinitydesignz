@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "../../src/css/cart.css";
-import "../../src/css/style.css";
-import '../../src/css/bootstrap-icons.css';
+import "../../src/css/user/cart.css";
+import "../../src/css/user/userstyle.css";
+import '../../src/css/user/bootstrap-icons.css';
 import P1 from '../../src/img/p1.png';
 
 const CartItem = ({ id, product }) => {

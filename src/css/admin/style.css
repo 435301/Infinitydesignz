@@ -12,9 +12,9 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
-.settings-menu li {
+/* .settings-menu li {
   padding: 7px 20px;
-}
+} */
 
 .settings-menu li a i {
   font-size: 14px;
@@ -238,9 +238,9 @@ body {
   left: 0;
 }
 
-.fixed .content-wrapper {
+/* .fixed .content-wrapper {
   margin-top: 61px;
-}
+} */
 
 header .wrapper {
   min-height: 100vh;
@@ -399,7 +399,7 @@ header .wrapper {
 
 .main-header-top .logo {
   display: block;
-  width: 275px;
+  width: 272px;
   height: 70px;
   font-size: 15px;
   font-weight: 400;
@@ -501,18 +501,16 @@ header .wrapper {
 .main-header-top .top-nav.lft-nav {
   float: left;
 }
-
-.main-header-top .top-nav .settings-menu li a {
-  font-size: 13px;
-  font-weight: 500;
-  text-transform: capitalize;
-  color: #000;
-  -webkit-transition: all ease-in 0.3s;
-  -moz-transition: all ease-in 0.3s;
-  -ms-transition: all ease-in 0.3s;
-  transition: all ease-in 0.3s;
+.settings-menu li a {
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: capitalize;
+    color: #000;
+    -webkit-transition: all ease-in 0.3s;
+    -moz-transition: all ease-in 0.3s;
+    -ms-transition: all ease-in 0.3s;
+    transition: all ease-in 0.3s;
 }
-
 .main-header-top .top-nav .settings-menu li a:hover {
   color: #39444e;
 }
@@ -625,8 +623,7 @@ header .wrapper {
   position: absolute;
   top: 0;
   left: 0;
-  background: #0da79e;
-  padding-top: 90px;
+  padding-top: 70px;
   min-height: 100vh;
   width: 270px;
   z-index: 810;
@@ -1051,17 +1048,19 @@ header .wrapper {
   display: table;
   border-collapse: separate;
 }
-
-.search-bx input[type="search"] {
-  background-color: #eceff3;
-  color: #172b4c;
-  font-size: 16px;
-  padding-left: 20px;
-  border: none;
-  border-radius: 5px 0px 0px 5px;
-  height: 45px;
+.footer .copyright a{
+  text-decoration: none;
 }
-
+.search-bx input[type="search"] {
+    background-color: #eceff3;
+    color: #172b4c;
+    font-size: 16px;
+    padding-left: 20px;
+    border: none;
+    border-radius: 5px 0px 0px 5px;
+    height: 45px;
+    width: 326px;
+}
 .sidebar-collapse .sidebar-toggle {
   height: 45px;
   width: 45px;
@@ -1546,7 +1545,7 @@ select.form-control:not([size]):not([multiple]) {
 }
 
 .main-header {
-  padding: 20px 0 20px 1px;
+  /* padding: 20px 0 20px 1px; */
   margin-top: 0px;
   display: flex;
   align-content: stretch;
@@ -1688,7 +1687,10 @@ select.form-control:not([size]):not([multiple]) {
     margin-right: 0;
     margin-top: 5px;
   }
+.content-wrapper{
+      margin-left: 0 !important;
 
+}
   .login-card {
     padding: 30px 20px;
     width: 325px;

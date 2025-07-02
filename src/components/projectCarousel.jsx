@@ -3,7 +3,7 @@ import Sale1 from '../../src/img/sale-1.png';
 import Sale2 from '../../src/img/sale-2.png';
 import Sale3 from '../../src/img/sale-3.png';
 import Sale4 from '../../src/img/sale-4.png';
-import '../css/carousel.css';
+import '../css/user/carousel.css';
 
 export default function SaleCarousel() {
   return (

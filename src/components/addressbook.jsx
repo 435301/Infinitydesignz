@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import '../../src/css/style.css';
-import '../../src/css/bootstrap-icons.css';
+import '../../src/css/user/userstyle.css';
+import '../../src/css/user/bootstrap.min.css';
 // import Banner from '../../src/img/banner.png';
 import Icon from '../../src/img/icon.svg';
 import Img3 from '../../src/img/img3.png';
