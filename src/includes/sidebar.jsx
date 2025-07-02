@@ -39,7 +39,7 @@ const Sidebar = ({ isCollapsed }) => {
       <section>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
           <li>
-            <NavLink to="/dashboard" style={{
+            <NavLink to="/admin/dashboard" style={{
               display: 'flex',
               alignItems: 'center',
               padding: isCollapsed ? '10px' : '10px 15px',
@@ -322,7 +322,7 @@ const Sidebar = ({ isCollapsed }) => {
             {isActiveMenu('categories') && !isCollapsed && (
               <ul style={{ listStyle: 'none', paddingLeft: '20px' }}>
                 <li>
-                  <NavLink to="/manage-category" style={{
+                  <NavLink to="/admin/manage-category" style={{
                     display: 'flex',
                     alignItems: 'center',
                     padding: '10px 15px',
@@ -335,7 +335,7 @@ const Sidebar = ({ isCollapsed }) => {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/manage-subcategories" style={{
+                  <NavLink to="/admin/manage-subcategory" style={{
                     display: 'flex',
                     alignItems: 'center',
                     padding: '10px 15px',
@@ -348,7 +348,7 @@ const Sidebar = ({ isCollapsed }) => {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/list-subcategories" style={{
+                  <NavLink to="/admin/list-subcategory" style={{
                     display: 'flex',
                     alignItems: 'center',
                     padding: '10px 15px',
