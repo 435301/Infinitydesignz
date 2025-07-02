@@ -24,12 +24,14 @@ const ManageCategories = () => {
         <aside className="main-sidebar hidden-print">
           <Sidebar />
         </aside>
+
         <div className="content-wrapper">
           <div className="main-header">
             <h4>Manage Categories</h4>
           </div>
 
           <div className="container-fluid manage">
+            {/* Top Filters and Buttons */}
             <div className="card mb-3">
               <div className="card-block manage-btn">
                 <div className="row g-3 align-items-center">
@@ -45,10 +47,10 @@ const ManageCategories = () => {
                   </div>
                   <div className="col-md-2 d-flex gap-2">
                     <button className="btn btn-danger">
-                      <BsSearch />
+                      <BsSearch style={{ fontSize: '18px' }} />
                     </button>
                     <button className="btn btn-success">
-                      <BsArrowClockwise />
+                      <BsArrowClockwise style={{ fontSize: '18px' }} />
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
@@ -64,9 +66,11 @@ const ManageCategories = () => {
               </div>
             </div>
 
+            {/* Loading/Error */}
             {loading && <p>Loading categories...</p>}
             {error && <p className="text-danger">Error: {error}</p>}
 
+            {/* Categories Table */}
             <div className="card">
               <div className="card-block">
                 <div className="table-responsive">
@@ -140,16 +144,21 @@ const ManageCategories = () => {
                               <button
                                 className="btn btn-light icon-btn"
                                 style={{ marginRight: '5px' }}
+                                title="Edit"
                               >
                                 <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
                               </button>
-                              <button className="btn btn-light icon-btn">
+                              <button
+                                className="btn btn-light icon-btn"
+                                title="View"
+                              >
                                 <BsEye style={{ fontSize: '18px', color: '#212529' }} />
                               </button>
                             </td>
                           </tr>
                         );
                       })}
+
                       {categories.length === 0 && !loading && (
                         <tr>
                           <td colSpan="8">No categories found.</td>
@@ -160,6 +169,8 @@ const ManageCategories = () => {
                 </div>
               </div>
             </div>
+
+            {/* Add Category Modal */}
             {showModal && <AddCategoryModal show={showModal} setShow={setShowModal} />}
           </div>
         </div>
