@@ -105,9 +105,9 @@ const Sidebar = () => {
             </a>
             {isActiveMenu('categories') && (
               <ul className="treeview-menu">
-                <li><NavLink to="/manage-category"><i className="ti-control-record" /> Categories</NavLink></li>
-                <li><NavLink to="/manage-subcategories"><i className="ti-control-record" /> Sub-categories</NavLink></li>
-                <li><NavLink to="/list-subcategories"><i className="ti-control-record" /> List Sub Categories</NavLink></li>
+                <li><NavLink to="/admin/manage-category"><i className="ti-control-record" /> Categories</NavLink></li>
+                <li><NavLink to="/admin/manage-subcategory"><i className="ti-control-record" /> Sub-categories</NavLink></li>
+                <li><NavLink to="/admin/list-subcategory"><i className="ti-control-record" /> List Sub Categories</NavLink></li>
               </ul>
             )}
           </li>

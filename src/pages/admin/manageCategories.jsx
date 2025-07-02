@@ -1,140 +1,115 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import axios from 'axios';
-
+import { fetchCategories } from '../../redux/actions/categoryAction';
+import { useDispatch, useSelector } from 'react-redux';
+import AddCategoryModal from '../../includes/addCategory';
 
 const ManageCategories = () => {
-  const [categories, setCategories] = useState([]);
-  console.log('categories', categories)
+  const dispatch = useDispatch();
+  const { categories, loading, error } = useSelector(state => state.categories || {});
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    axios.get('http://68.183.89.229:4005/categories') 
-      .then(response => {
-        setCategories(response.data); 
-      })
-      .catch(error => {
-        console.error("Error fetching categories:", error);
-      });
-  }, []);
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   return (
     <div className='sidebar-mini fixed'>
-  <div className='wrapper'>
-    <HeaderAdmin/>
-    <Sidebar/>
+      <div class="wrapper">
+        <HeaderAdmin />
+        <aside class="main-sidebar hidden-print ">
+          <Sidebar />
+        </aside>
+        <div className="content-wrapper">
+          <div className="main-header">
+            <h4>Manage Categories</h4>
+          </div>
 
-    <div className="content-wrapper">
-      <div className="main-header" style={{ marginTop: '0px' }}>
-        <h4>Manage Categories</h4>
-      </div>
-      <div className="container-fluid manage">
-        <div className="row">
-          <div className="col-md-12">
-            <div className="card">
-              <div className="card-block manage-btn">
-                <div className="row">
-                  <div className="col-md-3">
-                    <div className="input-group">
-                      <input type="text" className="form-control" placeholder="Search By" />
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <select className="form-control">
-                      <option value="">- Select Status -</option>
-                      <option value="active">Active</option>
-                      <option value="inactive">In Active</option>
-                    </select>
-                  </div>
-                  <div className="col-md-2">
-                    <button className="btn btn-danger"><i className="ti-search"></i></button>
-                    <button className="btn btn-success"><i className="icon-refresh"></i></button>
-                  </div>
-                  <div className="col-md-4 text-end">
-                    <a href="/add-category" className="btn btn-primary">+ Add New</a>
-                  </div>
+          <div className="container-fluid manage">
+            <div className="card card-block manage-btn mb-4">
+              <div className="row g-3 align-items-center">
+                <div className="col-md-3">
+                  <input type="text" className="form-control" placeholder="Search By" />
+                </div>
+                <div className="col-md-3">
+                  <select className="form-control">
+                    <option value="">- Select Status -</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
+                <div className="col-md-2 d-flex gap-2">
+                  <button className="btn btn-danger"><i className="ti-search"></i></button>
+                  <button className="btn btn-success"><i className="icon-refresh"></i></button>
+                </div>
+                <div className="col-md-4 text-end">
+                  <button className='btn btn-primary' type='button' onClick={() => setShowModal(true)}>+ Add New</button>
                 </div>
               </div>
             </div>
+
+            {loading && <p>Loading categories...</p>}
+            {error && <p className="text-danger">Error: {error}</p>}
 
             <div className="card">
               <div className="card-block">
-                <div className="row mb-3">
-                  <div className="col-md-6 text-end">
-                    <button className="btn btn-success">Active</button>
-                    <button className="btn btn-default">In Active</button>
-                    <button className="btn btn-danger">Front Active</button>
-                    <button className="btn btn-warning">Front In Active</button>
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col-sm-12 table-responsive">
-                    <table className="table-lg table-striped align-middle mb-0 table table-hover">
-                      <thead>
-                        <tr>
-                          <th><input type="checkbox" id="select-all" /></th>
-                          <th>S.No</th>
-                          <th>Category</th>
-                          <th>App Icon</th>
-                          <th>Web Icon</th>
-                          <th>Main Image</th>
-                          <th>Status</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {categories.map((cat, index) => (
-                          <tr key={cat.id || index}>
-                            <td><input type="checkbox" className="row-checkbox" /></td>
+                <div className="table-responsive">
+                  <table className="table table-striped table-hover table-lg align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th><input type="checkbox" /></th>
+                        <th>S.No</th>
+                        <th>Category</th>
+                        <th>App Icon</th>
+                        <th>Web Icon</th>
+                        <th>Main Image</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {categories.map((cat, index) => {
+                        const parentCategory = categories.find(parent => parent.id === cat.parent_id);
+
+                        return (
+                          <tr key={cat.id}>
+                            <td><input type="checkbox" /></td>
                             <td>{index + 1}</td>
-                            <td>{cat.name}</td>
-                            <td><img src={cat.app_icon} alt="App Icon" className="rounded-circle" width="50" height="50" /></td>
-                            <td><img src={cat.web_icon} alt="Web Icon" className="rounded-circle" width="50" height="50" /></td>
-                            <td><img src={cat.main_image} alt="Main Image" className="rounded-circle" width="50" height="50" /></td>
+                            <td>{parentCategory ? parentCategory.title : cat.title}</td>
+                            <td><img src={parentCategory ? parentCategory.appIcon : cat.appIcon} alt="App Icon" className="rounded-circle" width="50" height="50" /></td>
+                            <td><img src={parentCategory ? parentCategory.webImage : cat.webImage} alt="Web Icon" className="rounded-circle" width="50" height="50" /></td>
+                            <td><img src={parentCategory ? parentCategory.mainImage : cat.mainImage} alt="Main" className="rounded-circle" width="50" height="50" /></td>
                             <td>
-                              <span
-                                className="badge"
-                                style={{
-                                  backgroundColor: cat.status === 'Active' ? '#d4f7f2' : '#f8d7da',
-                                  color: cat.status === 'Active' ? '#28a745' : '#dc3545'
-                                }}
-                              >
-                                {cat.status}
+                              <span className={`badge ${cat.status === 'active' ? 'text-light-primary' : 'text-light-danger'}`}>
+                                {parentCategory ? parentCategory.status : cat.status}
                               </span>
                             </td>
                             <td>
-                              <button className="btn btn-light icon-btn b-r-4">
-                                <i className="ti-pencil-alt text-danger"></i>
-                              </button>
-                              <button className="btn btn-light icon-btn b-r-4">
-                                <i className="ti-eye text-dark"></i>
-                              </button>
+                              <button className="btn btn-light icon-btn"><i className="ti-pencil-alt text-danger"></i></button>
+                              <button className="btn btn-light icon-btn"><i className="ti-eye text-dark"></i></button>
                             </td>
                           </tr>
-                        ))}
-                        {categories.length === 0 && (
-                          <tr>
-                            <td colSpan="8" className="text-center">No categories found.</td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
+                        );
+                      })}
+
+                      {categories.length === 0 && !loading && <tr><td colSpan="8">No categories found.</td></tr>}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
-
+            {showModal && <AddCategoryModal show={showModal} setShow={setShowModal} />}
           </div>
         </div>
       </div>
     </div>
-        
-    </div>
-      </div>
   );
 };
+
 
 
 export default ManageCategories;

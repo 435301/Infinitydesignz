@@ -15,11 +15,11 @@ export const login = (email, password) => {
         password
       });
 
-      const token = response.data.token;
+      console.log('response', response)
+      const token = response.data.access_token;
       localStorage.setItem('token', token);
-
       dispatch({ type: LOGIN_SUCCESS, payload: token });
-      window.location.href = '/dashboard';
+      window.location.href = '/admin/dashboard';
 
     } catch (error) {
       dispatch({ type: LOGIN_FAILURE, payload: 'Invalid email or password' });
