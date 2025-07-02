@@ -39,7 +39,7 @@ const AddCategoryModal = ({ show, setShow }) => {
         <div className="modal-content">
           <form className="app-form" onSubmit={handleSubmit} encType="multipart/form-data">
             <div className="modal-header">
-              <h5 className="modal-title">Create a Brand</h5>
+              <h5 className="modal-title">Create a Category</h5>
               <button type="button" className="btn-close" onClick={() => setShow(false)}></button>
             </div>
 
