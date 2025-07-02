@@ -198,10 +198,10 @@ const ListSubCategory = () => {
                                 </td>
                                 <td>
                                   <span
-                                    className={`badge text-light-${item.status === 'active' ? 'primary' : 'danger'
+                                    className={`badge text-light-${item.status === true ? 'primary' : 'danger'
                                       }`}
                                   >
-                                    {item.status}
+                                    {item.status === true? 'Active': 'Inactive'}
                                   </span>
                                 </td>
                                 <td>

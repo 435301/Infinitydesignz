@@ -239,12 +239,12 @@ const ManageCategories = () => {
                               </td>
                               <td>
                                 <span
-                                  className={`badge ${(parentCategory ? parentCategory.status : cat.status) === 'active'
+                                  className={`badge ${(parentCategory ? parentCategory.status : cat.status) === true
                                     ? 'text-light-primary'
                                     : 'text-light-danger'
                                     }`}
                                 >
-                                  {parentCategory ? parentCategory.status : cat.status}
+                                   {(parentCategory ? parentCategory.status : cat.status) === true ? 'Active' : 'Inactive'}
                                 </span>
                               </td>
                               <td>
