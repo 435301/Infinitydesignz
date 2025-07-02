@@ -38,9 +38,9 @@ const AddSubCategoryModal = ({ show, setShow }) => {
         formData.append('seoDescription', seoDescription);
         formData.append('seoKeywords', seoKeywords);
 
-        if (appIcon?.file) formData.append('app_icon', appIcon.file);
-        if (webIcon?.file) formData.append('web_icon', webIcon.file);
-        if (mainImage?.file) formData.append('main_image', mainImage.file);
+        if (appIcon?.file) formData.append('appIcon', appIcon.file);
+        if (webIcon?.file) formData.append('webImage', webIcon.file);
+        if (mainImage?.file) formData.append('mainImage', mainImage.file);
         dispatch(addSubCategory(formData));
         setShow(false);
     };
@@ -77,7 +77,7 @@ const AddSubCategoryModal = ({ show, setShow }) => {
                                             ))}
                                     </select>
                                 </div>
-                                
+
                                 <div className="col-lg-4 mb-3">
                                     <label className="form-label">Category Title</label>
                                     <input

@@ -4,7 +4,7 @@ import AddCategoryModal from './addCategory';
 import { useDispatch, useSelector } from 'react-redux';
 import { listSubCategory } from '../redux/actions/categoryAction';
 
-const AddSubCategoryModal = ({ show, setShow }) => {
+const AddListSubCategoryModal = ({ show, setShow }) => {
     const dispatch = useDispatch();
     const [menu, setMenu] = useState('');
     const [subMenu, setSubMenu] = useState('');
@@ -34,21 +34,16 @@ const AddSubCategoryModal = ({ show, setShow }) => {
         const formData = new FormData();
 
         formData.append('title', title);
-        formData.append('parent_id', menu); // <-- This is important
+        formData.append('parent_id', subMenu); // <-- This is important
         formData.append('seoTitle', seoTitle);
         formData.append('seoDescription', seoDescription);
         formData.append('seoKeywords', seoKeywords);
 
-        if (appIcon?.file) formData.append('app_icon', appIcon.file);
-        if (webIcon?.file) formData.append('web_icon', webIcon.file);
-        if (mainImage?.file) formData.append('main_image', mainImage.file);
-        try {
-            await dispatch(listSubCategory(formData));
-            setShow(false);
-        } catch (error) {
-            console.error('Upload failed:', error);
-
-        }
+        if (appIcon?.file) formData.append('appIcon', appIcon.file);
+        if (webIcon?.file) formData.append('webImage', webIcon.file);
+        if (mainImage?.file) formData.append('mainImage', mainImage.file);
+        dispatch(listSubCategory(formData));
+        setShow(false);
     };
 
     if (!show) return null;
@@ -182,4 +177,4 @@ const ImageUpload = ({ label, image, onChange, onRemove }) => (
     </div>
 );
 
-export default AddSubCategoryModal;
+export default AddListSubCategoryModal;

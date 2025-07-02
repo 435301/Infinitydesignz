@@ -96,7 +96,6 @@ export const listSubCategory = (formData) => async (dispatch) => {
         // 'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${token}`,
       },
-      timeout: 10000, // 10 seconds
     });
 
     dispatch({ type: 'LIST_SUBCATEGORY_SUCCESS' });
