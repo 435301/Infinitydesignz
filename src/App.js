@@ -16,6 +16,8 @@ import Dashboard from './pages/admin/dashboard.jsx';
 import ManageCategories from './pages/admin/manageCategories.jsx';
 import ManageSubCategories from './pages/admin/manageSubcategories.jsx';
 import ListSubCategory from './pages/admin/listSubCategory.jsx';
+import ManageSizes from './pages/admin/createSize.jsx';
+import ManageSizeMapping from './pages/admin/sizeMapping.jsx';
 
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
@@ -45,6 +47,9 @@ function App() {
           <Route path='/admin/manage-category' element={<ManageCategories/>}></Route>
           <Route path='/admin/manage-subcategory' element={<ManageSubCategories/>}></Route>
           <Route path='/admin/list-subcategory' element={<ListSubCategory/>}></Route>
+          <Route path='/admin/create-size' element={<ManageSizes/>}></Route>
+          <Route path='/admin/size-mapping' element={<ManageSizeMapping/>}></Route>
+
 
         </Routes>
         <Routes>

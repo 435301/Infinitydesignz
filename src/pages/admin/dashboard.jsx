@@ -97,9 +97,9 @@ const Dashboard = () => {
       >
         <div className="container-fluid">
           {/* Dashboard Header */}
-          <div className="row" style={{ marginTop: '80px' }}>
+          <div className="row">
             <div className="main-header">
-              <h4>Dashboard</h4>
+              <h4 className="ps-3">Dashboard</h4>
             </div>
           </div>
 
@@ -117,7 +117,9 @@ const Dashboard = () => {
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '13px', color: '#878a99', fontWeight: '500' }}>{card.title}</span>
+                    <span style={{ fontSize: '13px', color: '#878a99', fontWeight: '500' }}>
+                      {card.title}
+                    </span>
                     <div style={{ backgroundColor: card.bg, padding: '5px' }}>
                       <i className={`bi ${card.icon}`} style={{ color: card.color, fontSize: '20px' }}></i>
                     </div>
@@ -126,7 +128,7 @@ const Dashboard = () => {
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     {card.items.map((item, i) => (
                       <a
-                        href="#"
+                        href="#!"
                         key={i}
                         style={{
                           fontSize: '14px',
@@ -143,7 +145,7 @@ const Dashboard = () => {
             ))}
           </div>
 
-          {/* Top 5 Products & Vendors */}
+          {/* Top 5 Products and Vendors */}
           <div className="row">
             {/* Products Table */}
             <div className="col-sm-6">
@@ -204,7 +206,11 @@ const Dashboard = () => {
                             <td>
                               <span
                                 className={`badge bg-${
-                                  vendor[3] === 'Active' ? 'success' : vendor[3] === 'Inactive' ? 'danger' : 'warning'
+                                  vendor[3] === 'Active'
+                                    ? 'success'
+                                    : vendor[3] === 'Inactive'
+                                    ? 'danger'
+                                    : 'warning'
                                 }`}
                               >
                                 {vendor[3]}

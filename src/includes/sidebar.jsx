@@ -130,7 +130,7 @@ const Sidebar = ({ isCollapsed }) => {
                   {isActiveMenu('sizes') && (
                     <ul style={{ listStyle: 'none', paddingLeft: '20px' }}>
                       <li>
-                        <NavLink to="/create-size" style={{
+                        <NavLink to="/admin/create-size" style={{
                           display: 'flex',
                           alignItems: 'center',
                           padding: '10px 15px',
@@ -143,7 +143,7 @@ const Sidebar = ({ isCollapsed }) => {
                         </NavLink>
                       </li>
                       <li>
-                        <NavLink to="/size-mapping" style={{
+                        <NavLink to="/admin/size-mapping" style={{
                           display: 'flex',
                           alignItems: 'center',
                           padding: '10px 15px',
