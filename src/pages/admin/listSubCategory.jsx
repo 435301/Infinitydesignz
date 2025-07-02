@@ -13,6 +13,7 @@ const ListSubCategory = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+   const BASE_URL = 'http://68.183.89.229:4005/uploads/categories';
   const dispatch = useDispatch();
   const { categories = [], loading, error } = useSelector((state) => state.categories || {});
 
@@ -171,7 +172,7 @@ const ListSubCategory = () => {
                                 <td>{item.title}</td>
                                 <td>
                                   <img
-                                    src={item.appIcon}
+                                    src={`${BASE_URL}/${item.appIcon}`}
                                     alt={`${item.title} App Icon`}
                                     className="rounded-circle"
                                     width="50"
@@ -180,7 +181,7 @@ const ListSubCategory = () => {
                                 </td>
                                 <td>
                                   <img
-                                    src={item.webIcon}
+                                    src={`${BASE_URL}/${item.webImage}`}
                                     alt={`${item.title} Web Icon`}
                                     className="rounded-circle"
                                     width="50"
@@ -189,7 +190,7 @@ const ListSubCategory = () => {
                                 </td>
                                 <td>
                                   <img
-                                    src={item.mainImage}
+                                    src={`${BASE_URL}/${item.mainImage}`}
                                     alt={`${item.title} Main Image`}
                                     className="rounded-circle"
                                     width="50"
