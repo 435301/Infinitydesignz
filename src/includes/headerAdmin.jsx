@@ -1,28 +1,88 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { BsFullscreen, BsBell, BsGear, BsPerson, BsEnvelopeOpen, BsLock, BsBoxArrowRight } from 'react-icons/bs';
 import logo from '../img/logo.svg';
 import avatar from '../img/avatar-1.png';
-import '../css/admin/style.css';
 
-const HeaderAdmin = () => {
+const HeaderAdmin = ({ onToggleSidebar }) => {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const handleToggle = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+    onToggleSidebar(!isSidebarCollapsed);
+  };
+
+  const handleDropdownToggle = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleDropdownItemClick = () => {
+    setIsDropdownOpen(false); // Close dropdown when an item is clicked
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <header className="main-header-top hidden-print">
-      <a href="/index" className="logo">
-        <img src={logo} alt="Logo" />
+    <header
+      style={{
+        background: '#fff',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
+        position: 'fixed',
+        width: '100%',
+        zIndex: 1000,
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 15px',
+        height: '70px',
+      }}
+    >
+      <a href="/index" style={{ padding: '10px' }}>
+        <img src={logo} alt="Logo" style={{ height: '40px' }} />
       </a>
 
-      <nav className="navbar navbar-static-top">
-        {/* Sidebar toggle button */}
-        <a href="#!" data-toggle="offcanvas" className="sidebar-toggle">
+      <nav
+        style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <a
+          href="#!"
+          onClick={handleToggle}
+          style={{
+            padding: '10px',
+            cursor: 'pointer',
+            color: '#0da79e',
+          }}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="24" height="24"
+            width="24"
+            height="24"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="feather feather-align-left"
+            style={{
+              transform: isSidebarCollapsed ? 'rotate(90deg)' : 'rotate(0deg)',
+              transition: 'transform 0.3s ease',
+            }}
           >
             <line x1="17" y1="10" x2="3" y2="10" />
             <line x1="21" y1="6" x2="3" y2="6" />
@@ -31,120 +91,185 @@ const HeaderAdmin = () => {
           </svg>
         </a>
 
-        <ul className="top-nav lft-nav">
-          <div className="search-bx mx-5 d-none d-md-block">
-            <form>
-              <div className="input-group">
-                <input
-                  type="search"
-                  className="form-control"
-                  placeholder="Search"
-                  aria-label="Search"
-                  aria-describedby="button-addon3"
-                />
-                <div className="input-group-append">
-                  <button className="btn" type="submit" id="button-addon3">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="feather feather-search"
-                    >
-                      <circle cx="11" cy="11" r="8" />
-                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </ul>
+      <ul style={{ display: 'flex', alignItems: 'center', listStyle: 'none', margin: 0, padding: 0 }}>
+  <li>
+    <div className='search-bx' style={{ position: 'relative' }}>
+      <input
+        type="search"
+        placeholder="Search"
+        style={{
+          // space for the icon inside
+          borderRadius: '4px',
+        }}
+      />
+      <i
+        className="bi bi-search"
+        style={{
+          position: 'absolute',
+          right: '10px',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          fontSize: '16px',
+          color: '#6c757d'
+        }}
+      ></i>
+    </div>
+  </li>
+</ul>
 
-        <div className="navbar-custom-menu f-right">
-          <ul className="top-nav">
-            {/* Fullscreen Button */}
-            <li className="dropdown notification-menu">
-              <a href="/" className="btn-warning-light">
-                <i className="icon-size-fullscreen"></i>
-              </a>
-            </li>
-
-            {/* Notifications */}
-            <li className="pc-rheader-submenu">
-              <a
-                href="#"
-                className="waves-effect waves-light dropdown-toggle btn-info-light"
-                data-bs-toggle="dropdown"
-                title="Notifications"
-              >
-                <i className="icon-bell"></i>
-              </a>
-            </li>
-
-            {/* Settings */}
-            <li className="pc-rheader-submenu">
-              <a
-                href="#"
-                data-toggle="control-sidebar"
-                title="Setting"
-                className="waves-effect full-screen waves-light btn-danger-light"
-              >
-                <i className="icon-settings"></i>
-              </a>
-            </li>
-
-            {/* User Dropdown */}
-            <li className="dropdown">
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <ul className=''
+            style={{
+              display: 'flex',
+              listStyle: 'none',
+              margin: 0,
+              padding: 0,
+              alignItems: 'center',
+            }}
+          >            <li style={{ padding: '0 10px' }}>
               <a
                 href="#!"
-                data-toggle="dropdown"
-                role="button"
-                aria-haspopup="true"
-                aria-expanded="false"
-                className="dropdown-toggle drop icon-circle drop-image"
+                style={{
+                  padding: '8px',
+                  background: '#fff3cd',
+                  borderRadius: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
               >
-                <span>
-                  <img
-                    className="img-circle"
-                    src={avatar}
-                    style={{ width: '40px' }}
-                    alt="User"
-                  />
-                </span>
+                <BsFullscreen style={{ color: '#f4a300', fontSize: '18px' }} />
               </a>
-              <ul className="dropdown-menu settings-menu">
+            </li>
+
+            <li style={{ padding: '0 10px' }}>
+              <a
+                href="#!"
+                style={{
+                  padding: '8px',
+                  background: '#e8e8e8',
+                  borderRadius: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <BsBell style={{ color: '#9b59b6', fontSize: '18px' }} />
+              </a>
+            </li>
+
+            <li style={{ padding: '0 10px' }}>
+              <a
+                href="#!"
+                style={{
+                  padding: '8px',
+                  background: '#f8d7da',
+                  borderRadius: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <BsGear style={{ color: '#e74c3c', fontSize: '18px' }} />
+              </a>
+            </li>
+
+            <li style={{ position: 'relative' }} ref={dropdownRef}>
+              <a
+                href="#!"
+                onClick={handleDropdownToggle}
+                style={{
+                  padding: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                }}
+              >
+                <img
+                  src={avatar}
+                  style={{ width: '40px', borderRadius: '50%' }}
+                  alt="User"
+                />
+              </a>
+              <ul className='dropdown-menu settings-menu'
+                style={{
+                
+                  display: isDropdownOpen ? 'block' : 'none',
+                }}
+              >
                 <li>
-                  <a href="#!">
-                    <i className="icon-settings"></i> Settings
+                  <a
+                    href="#!"
+                    onClick={handleDropdownItemClick}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: '8px 15px',
+                      color: '#333',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <BsGear style={{ fontSize: '18px', marginRight: '5px' }} /> Settings
                   </a>
                 </li>
                 <li>
-                  <a href="#">
-                    <i className="icon-user"></i> Profile
+                  <a
+                    href="#!"
+                    onClick={handleDropdownItemClick}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: '8px 15px',
+                      color: '#333',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <BsPerson style={{ phosphorSize: '18px', marginRight: '5px' }} /> Profile
                   </a>
                 </li>
                 <li>
-                  <a href="#">
-                    <i className="icon-envelope-open"></i> My Messages
+                  <a
+                    href="#!"
+                    onClick={handleDropdownItemClick}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: '8px 15px',
+                      color: '#333',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <BsEnvelopeOpen style={{ fontSize: '18px', marginRight: '5px' }} /> My Messages
                   </a>
                 </li>
-                <li className="p-0">
-                  <div className="dropdown-divider m-0"></div>
+                <li style={{ padding: '0 15px' }}>
+                  <div style={{ borderTop: '1px solid #e5e5e5', margin: '5px 0' }}></div>
                 </li>
                 <li>
-                  <a href="#">
-                    <i className="icon-lock"></i> Lock Screen
+                  <a
+                    href="#!"
+                    onClick={handleDropdownItemClick}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: '8px 15px',
+                      color: '#333',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <BsLock style={{ fontSize: '18px', marginRight: '5px' }} /> Lock Screen
                   </a>
                 </li>
                 <li>
-                  <a href="/login1">
-                    <i className="icon-logout"></i> Logout
+                  <a
+                    href="/login1"
+                    onClick={handleDropdownItemClick}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: '8px 15px',
+                      color: '#333',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <BsBoxArrowRight style={{ fontSize: '18px', marginRight: '5px' }} /> Logout
                   </a>
                 </li>
               </ul>

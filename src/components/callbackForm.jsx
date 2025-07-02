@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import '../../src/css/style.css';
-import '../../src/css/bootstrap-icons.css';
-import '../css/bootstrap.min.css';
+import '../../src/css/user/userstyle.css';
+import '../../src/css/user/bootstrap-icons.css';
+import '../css/user/bootstrap.min.css';
 
 const CallbackForm = ({
   nameLabel = "Name",

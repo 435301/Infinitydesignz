@@ -2,9 +2,9 @@
 import React from 'react';
 import Header from '../../includes/header';
 import Footer from '../../includes/footer';
-import '../../css/style.css';
-import '../../css/bootstrap-icons.css';
-import '../../css/bootstrap.min.css';
+import '../../css/user/userstyle.css';
+import '../../css/user/bootstrap-icons.css';
+import '../../css/user/bootstrap.min.css';
 import Modern from '../../img/modern.svg';
 import Furniture from '../../img/furniture.svg';
 import Aa from '../../img/aa.svg';

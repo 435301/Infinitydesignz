@@ -2,12 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Arima:wght@100..700&family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 @import url("https://fonts.cdnfonts.com/css/optima");
-
+/* 
 @font-face {
   font-family: "bootstrap-icons";
   src: url("../css/bootstrap-icons.woff2") format("woff2"),
     url("../css/bootstrap-icons.woff") format("woff");
-}
+} */
 
 
 body {
@@ -100,15 +100,15 @@ a{
   background-color: #f4f4f4 !important;
 }
 
-.navbar-dark .navbar-toggler-icon {
+/* .navbar-dark .navbar-toggler-icon {
   background-image: url(../img/reorder.png) !important;
-}
+} */
 
-.page-header {
+/* .page-header {
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
     url(../img/carousel-1.jpg) center center no-repeat;
   background-size: cover;
-}
+} */
 
 .breadcrumb-item+.breadcrumb-item::before {
   color: var(--secondary);
@@ -671,14 +671,14 @@ Trending
 
 
 /* Call Of Action */
-.callback-container {
+/* .callback-container {
   background: url('../img/Rectangle 35.png') center center no-repeat;
   border-radius: 30px;
   color: white;
   font-family: 'FontAwesome';
 
   padding: 40px 30px;
-}
+} */
 
 .callback-heading {
   font-size: 2.5rem;
@@ -1293,7 +1293,7 @@ FILTER SECTION
 Testimonials
 ------------------------------------------*/
 .testimonial-section {
-  background: linear-gradient(60deg, rgba(0, 150, 150, 0.9) 0%, rgba(0, 150, 150, 0.9) 40%, #163a38e3 40%, #163a38e3 100%), url(../img/prbg4.png) no-repeat center center;
+  /* background: linear-gradient(60deg, rgba(0, 150, 150, 0.9) 0%, rgba(0, 150, 150, 0.9) 40%, #163a38e3 40%, #163a38e3 100%), url(../img/prbg4.png) no-repeat center center; */
   background-size: cover;
   color: white;
   padding: 80px 0;
@@ -2996,7 +2996,7 @@ Wish List
 
 /* <!-- Custom CSS for Wishlist Page --> */
 
-.sidebar {
+.sidebars {
   background-color: #fff;
   padding: 0;
   border: 1px solid #EFEFEF;
@@ -3004,7 +3004,7 @@ Wish List
   margin-bottom: 20px;
 }
 
-.sidebar a {
+.sidebars a {
   display: block;
   padding: 11px 16px;
   color: #000000;
@@ -3013,11 +3013,11 @@ Wish List
   font-size: 16px;
 }
 
-.sidebar a:last-child {
+.sidebars a:last-child {
   border-bottom: none;
 }
 
-.sidebar a.active {
+.sidebars a.active {
   color: #00c4b4;
 }
 
@@ -3333,7 +3333,7 @@ WishList
 }
 
 @media (max-width: 768px) {
-  .sidebar {
+  .sidebars {
     border: 1px solid #EFEFEF;
     border-radius: 10px;
   }

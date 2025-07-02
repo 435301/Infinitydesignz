@@ -2,13 +2,13 @@ import React from 'react';
 
 const FooterAdmin = () => {
   return (
-    <footer className="footer bg-dark">
+    <footer className="footer bg-dark py-2">
       <div className="container-fluid">
         <div className="copyright text-center">
-          <p className="text-light">
-            @ 2024{' '}
+          <p className="text-light mb-0">
+            @ 2025{' '}
             <a href="/" className="text-warning">
-              Telangana Highcourt
+             Infinity Designz
             </a>{' '}
             All rights reserved
           </p>

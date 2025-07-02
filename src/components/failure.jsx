@@ -1,7 +1,7 @@
 import React from "react";
-import "../../src/css/failure.css";
-import '../../src/css/style.css';
-import '../../src/css/bootstrap-icons.css';
+import "../../src/user/css/failure.css";
+import '../../src/user/css/style.css';
+import '../../src/user/css/bootstrap-icons.css';
 import { FaExclamationCircle } from "react-icons/fa";
 
 const OrderFailurePage = () => {

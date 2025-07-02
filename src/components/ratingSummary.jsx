@@ -1,6 +1,6 @@
 import React from 'react';
-import '../../src/css/style.css';
-import '../css/bootstrap.min.css';
+import '../../src/css/user/userstyle.css';
+import '../css/user/bootstrap.min.css';
 
 const RatingSummary = ({ totalRatings, averageRating, breakdown, onWriteReview }) => {
     return (

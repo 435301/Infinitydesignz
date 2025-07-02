@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../src/css/header.css";
-import "../../src/css/style.css";
+import "../../src/css/user/header.css";
+import "../../src/css/user/userstyle.css";
 import Logo from '../../src/img/logo.svg';
 import Search from '../../src/img/search.svg';
 import Favourite from '../../src/img/favorite.svg';
 import AccountBox from '../../src/img/account_box.svg';
 import ShoppingCart from '../../src/img/shopping_cart.svg';
 import MiniLogo from '../../src/img/mini-logo.png';
-import '../../src/css/bootstrap.min.css';
+import '../../src/css/user/bootstrap.min.css';
 import { Link } from "react-router-dom";
 import MenuImg from '../../src/img/menu-img.webp'
 import { NavDropdown } from "react-bootstrap";

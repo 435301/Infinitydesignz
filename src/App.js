@@ -5,7 +5,7 @@ import ProjectCarousel from './components/projectCarousel.jsx';
 import CounterUp from './components/counterUp.jsx';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomeBannerSection from './pages/users/index.jsx';
-import 'bootstrap-icons/font/bootstrap-icons.css';
+// import 'bootstrap-icons/font/bootstrap-icons.css';
 import ProductTopBar from './pages/users/shop.jsx';
 import ProductDetailPage from './components/product-details.jsx';
 import AddressBook from './components/addressbook.jsx';
@@ -17,6 +17,12 @@ import ManageCategories from './pages/admin/manageCategories.jsx';
 import ManageSubCategories from './pages/admin/manageSubcategories.jsx';
 import ListSubCategory from './pages/admin/listSubCategory.jsx';
 
+const AdminLayout = ({ children }) => (
+  <div className="admin-layout d-flex">
+    <div className="content">{children}</div>
+  </div>
+);
+
 function App() {
   useMainScripts(); // Runs the converted jQuery logic
 
@@ -25,6 +31,7 @@ function App() {
       <div className="App">
         {/* <div id="spinner" className="show">Loading...</div>
         <nav className="sticky-top">Navbar</nav> */}
+        
 
         <Routes>
           <Route path='/' element={<HomeBannerSection/>}/>
@@ -40,6 +47,12 @@ function App() {
           <Route path='/admin/list-subcategory' element={<ListSubCategory/>}></Route>
 
         </Routes>
+        <Routes>
+ <Route element={<AdminLayout />}>
+            <Route path="/admin/dashboard" element={<Dashboard />} />
+          </Route>
+        </Routes>
+       
       </div>
     </Router>
   );

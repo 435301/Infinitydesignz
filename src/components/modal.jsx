@@ -1,6 +1,6 @@
 
 import React from 'react';
-import '../css/modal.css';
+import '../css/user/modal.css';
 
 const Modal = ({ title, children, onClose }) => {
   return (

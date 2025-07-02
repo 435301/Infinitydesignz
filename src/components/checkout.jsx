@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import '../../src/css/style.css';
-import '../../src/css/bootstrap-icons.css';
+import '../../src/user/css/style.css';
+import '../../src/user/css/bootstrap-icons.css';
 import Img1 from  '../../src/img/img1.png'
 import Img2 from  '../../src/img/img2.png'
 import { Link } from "react-router-dom";
