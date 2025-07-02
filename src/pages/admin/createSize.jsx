@@ -5,31 +5,31 @@ import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash } from 'react-icons/bs';
 
 const ManageSizes = () => {
-   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  
-      const handleToggleSidebar = (collapsed) => {
-          setIsSidebarCollapsed(collapsed);
-      };
-  
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  const handleToggleSidebar = (collapsed) => {
+    setIsSidebarCollapsed(collapsed);
+  };
+
   const [showModal, setShowModal] = useState(false);
 
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
-       <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
-                <aside className="main-sidebar hidden-print">
-                    <Sidebar isCollapsed={isSidebarCollapsed} />
-                </aside>
+        <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
+        <aside className="main-sidebar hidden-print">
+          <Sidebar isCollapsed={isSidebarCollapsed} />
+        </aside>
 
         <div
-                    className="content-wrapper mb-4"
-                    style={{
-                        marginLeft: isSidebarCollapsed ? '60px' : '250px',
-                        padding: '20px',
-                        flex: 1,
-                        transition: 'margin-left 0.3s ease',
-                    }}
-                >
+          className="content-wrapper mb-4"
+          style={{
+            marginLeft: isSidebarCollapsed ? '60px' : '250px',
+            padding: '20px',
+            flex: 1,
+            transition: 'margin-left 0.3s ease',
+          }}
+        >
           <div className="main-header" style={{ marginTop: '0px' }}>
             <h4>Create a Size</h4>
           </div>
@@ -107,11 +107,10 @@ const ManageSizes = () => {
                           <td>{size.size}</td>
                           <td>
                             <span
-                              className={`badge ${
-                                size.status === 'Active'
+                              className={`badge ${size.status === 'Active'
                                   ? 'text-light-primary'
                                   : 'text-light-danger'
-                              }`}
+                                }`}
                             >
                               {size.status}
                             </span>

@@ -194,12 +194,14 @@ p {
 .sidebar-menu>li>a {
   color: #fff;
 }
-
-.sidebar-menu>li.active>a {
+.sidebar-menu > li > a.active {
   font-weight: 500;
   background-color: #ffffff;
   color: #000 !important;
   border-radius: 100px 0 0 100px;
+}
+.subdropdown li a.active{
+  color: #ffc107 !important;
 }
 
 .dashboard-product a {
@@ -276,7 +278,7 @@ header .wrapper {
 .content-wrapper {
   height: 100%;
   background-color: transparent;
-  margin-left: 276px;
+  margin-left: 286px !important;
   z-index: 820;
   -webkit-transition: all 0.3s ease-in-out;
   -moz-transition: all 0.3s ease-in-out;
