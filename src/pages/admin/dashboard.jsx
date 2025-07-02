@@ -97,9 +97,9 @@ const Dashboard = () => {
       >
         <div className="container-fluid">
           {/* Dashboard Header */}
-          <div className="row" style={{ marginTop: '80px' }}>
+          <div className="row" >
             <div className="main-header">
-              <h4>Dashboard</h4>
+              <h4 className='ps-3'>Dashboard</h4>
             </div>
           </div>
 
