@@ -4,30 +4,29 @@ import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash } from 'react-icons/bs';
 
-const ManageSizeMapping = () => {
+const ManageFilterType = () => {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+    const [selectedRows, setSelectedRows] = useState([]);
 
     const handleToggleSidebar = (collapsed) => {
         setIsSidebarCollapsed(collapsed);
     };
 
-    const [selectedRows, setSelectedRows] = useState([]);
-    const [sizeMappings, setSizeMappings] = useState([
-        { id: 1, size: 'Small', categories: 'Sofas, Beds, Wardrobes', status: 'Active' },
-        { id: 2, size: 'Medium', categories: 'Dining Tables, Sofas, Recliners', status: 'Inactive' },
-        { id: 3, size: 'Large', categories: 'Beds, Coffee Tables, Bookshelves', status: 'Active' },
-        { id: 4, size: 'Extra Large', categories: 'Chairs, Storage Units, Mattresses', status: 'Active' },
-        { id: 5, size: 'Extra Small', categories: 'Sofas, TV Units, Dining Sets', status: 'Active' },
+    const [filterTypes, setFilterTypes] = useState([
+        { id: 1, type: 'Small', status: 'Active' },
+        { id: 2, type: 'Medium', status: 'Inactive' },
+        { id: 3, type: 'Medium', status: 'Active' },
+        { id: 4, type: 'Small', status: 'Active' },
+        { id: 5, type: 'Small', status: 'Active' },
     ]);
 
     useEffect(() => {
-        // Simulating data fetch; replace with actual Redux or API call if needed
-        // Example: dispatch(fetchSizeMappings());
+        // Simulate API data load
     }, []);
 
     const handleSelectAll = (e) => {
         if (e.target.checked) {
-            setSelectedRows(sizeMappings.map((item) => item.id));
+            setSelectedRows(filterTypes.map((item) => item.id));
         } else {
             setSelectedRows([]);
         }
@@ -57,18 +56,18 @@ const ManageSizeMapping = () => {
                     }}
                 >
                     <div className="main-header" style={{ marginTop: '0px' }}>
-                        <h4>Size Mapping</h4>
+                        <h5>Filter Type</h5>
                     </div>
 
                     <div className="container-fluid manage">
-                        {/* Top Filters and Buttons */}
+
+                        {/* Search and Filter */}
                         <div className="card mb-3">
                             <div className="card-block manage-btn">
                                 <div className="row g-3 align-items-center">
                                     <div className="col-md-3">
                                         <div className="input-group">
                                             <input type="text" className="form-control" placeholder="Search By" />
-                                            <span className="input-group-btn"></span>
                                         </div>
                                     </div>
                                     <div className="col-md-3">
@@ -88,21 +87,18 @@ const ManageSizeMapping = () => {
                                     </div>
                                     <div className="col-md-4 text-end">
                                         <button className="btn btn-primary" type="button">
-                                            + Size Mapping
+                                            + Create Filter Type
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Size Mapping Table */}
+                        {/* Table */}
                         <div className="card">
                             <div className="card-block">
                                 <div className="row mb-3">
-                                    <div className="col-lg-6">
-                                        <h5>Sizes</h5>
-                                    </div>
-                                    <div className="col-md-6 text-right pt">
+                                    <div className="col-md-12 text-end pt">
                                         <button className="btn btn-success me-1">Active</button>
                                         <button className="btn btn-default me-1">Inactive</button>
                                         <button className="btn btn-danger me-1">Front Active</button>
@@ -118,19 +114,18 @@ const ManageSizeMapping = () => {
                                                     <input
                                                         type="checkbox"
                                                         id="select-all"
-                                                        checked={selectedRows.length === sizeMappings.length && sizeMappings.length > 0}
+                                                        checked={selectedRows.length === filterTypes.length && filterTypes.length > 0}
                                                         onChange={handleSelectAll}
                                                     />
                                                 </th>
                                                 <th>S.No</th>
-                                                <th>Sizes</th>
-                                                <th>Categories</th>
+                                                <th>Type</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {sizeMappings.map((item, index) => (
+                                            {filterTypes.map((item, index) => (
                                                 <tr key={item.id}>
                                                     <td>
                                                         <input
@@ -141,8 +136,7 @@ const ManageSizeMapping = () => {
                                                         />
                                                     </td>
                                                     <td>{index + 1}</td>
-                                                    <td>{item.size}</td>
-                                                    <td>{item.categories}</td>
+                                                    <td>{item.type}</td>
                                                     <td>
                                                         <span
                                                             className={`badge ${item.status === 'Active' ? 'text-light-primary' : 'text-light-danger'
@@ -170,10 +164,10 @@ const ManageSizeMapping = () => {
                                                     </td>
                                                 </tr>
                                             ))}
-                                            {sizeMappings.length === 0 && (
+                                            {filterTypes.length === 0 && (
                                                 <tr>
-                                                    <td colSpan="6" className="text-center">
-                                                        No size mappings found.
+                                                    <td colSpan="5" className="text-center">
+                                                        No filter types found.
                                                     </td>
                                                 </tr>
                                             )}
@@ -182,6 +176,7 @@ const ManageSizeMapping = () => {
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -189,4 +184,4 @@ const ManageSizeMapping = () => {
     );
 };
 
-export default ManageSizeMapping;
+export default ManageFilterType;
