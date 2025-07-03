@@ -11,7 +11,10 @@ import {
   ADD_SUBCATEGORY_FAILURE,
   LIST_SUBCATEGORY_REQUEST,
   LIST_SUBCATEGORY_SUCCESS,
-  LIST_SUBCATEGORY_FAILURE
+  LIST_SUBCATEGORY_FAILURE,
+  EDIT_CATEGORY_SUCCESS,
+  EDIT_CATEGORY_FAILURE,
+  EDIT_CATEGORY_REQUEST,
 } from '../actions/categoryAction';
 
 const initialState = {
@@ -46,6 +49,12 @@ const categoryReducer = (state = initialState, action) => {
       return { ...state, loading: false };
     case LIST_SUBCATEGORY_FAILURE:
       return { ...state, loading: false, error: action.payload };
+      case EDIT_CATEGORY_REQUEST:
+      return { ...state, loading: true };
+      case EDIT_CATEGORY_SUCCESS:
+      return { ...state, loading: true };
+      case EDIT_CATEGORY_FAILURE:
+      return { ...state, loading: true };
     default:
       return state;
   }

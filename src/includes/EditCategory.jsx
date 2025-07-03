@@ -1,0 +1,98 @@
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { editCategory } from '../redux/actions/categoryAction';
+import { toast } from 'react-toastify'
+
+const EditCategoryModal = ({ show, setShow, category }) => {
+  const dispatch = useDispatch();
+
+  const [categoryTitle, setCategoryTitle] = useState('');
+  const [appIcon, setAppIcon] = useState(null);
+  const [webIcon, setWebIcon] = useState(null);
+  const [mainImage, setMainImage] = useState(null);
+
+  useEffect(() => {
+    if (category) {
+      setCategoryTitle(category.title || '');
+      setAppIcon(category.appIcon ? { file: null, preview: `http://68.183.89.229:4005/uploads/categories/${category.appIcon}` } : null);
+      setWebIcon(category.webImage ? { file: null, preview: `http://68.183.89.229:4005/uploads/categories/${category.webImage}` } : null);
+      setMainImage(category.mainImage ? { file: null, preview: `http://68.183.89.229:4005/uploads/categories/${category.mainImage}` } : null);
+    }
+  }, [category]);
+
+  const handleFileChange = (setter) => (e) => {
+    const file = e.target.files[0];
+    if (file) setter({ file, preview: URL.createObjectURL(file) });
+  };
+
+  const removeImage = (setter) => () => setter(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('title', categoryTitle);
+    if (appIcon?.file) formData.append('appIcon', appIcon.file);
+    if (webIcon?.file) formData.append('webImage', webIcon.file);
+    if (mainImage?.file) formData.append('mainImage', mainImage.file);
+
+    dispatch(editCategory(category.id, formData));
+    toast.success('Category updated successfully!');
+    setShow(false);
+  };
+
+  if (!show) return null;
+
+  return (
+    <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+      <div className="modal-dialog modal-lg">
+        <div className="modal-content">
+          <form className="app-form" onSubmit={handleSubmit}>
+            <div className="modal-header">
+              <h5 className="modal-title">Edit Category</h5>
+              <button type="button" className="btn-close" onClick={() => setShow(false)}></button>
+            </div>
+            <div className="modal-body">
+              <div className="row">
+                <div className="col-lg-4 mb-3">
+                  <label className="form-label">
+                    Category Title <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={categoryTitle}
+                    onChange={(e) => setCategoryTitle(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <ImageUpload label="App Icon" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />
+                <ImageUpload label="Web Icon" image={webIcon} onChange={handleFileChange(setWebIcon)} onRemove={removeImage(setWebIcon)} />
+                <ImageUpload label="Main Image" image={mainImage} onChange={handleFileChange(setMainImage)} onRemove={removeImage(setMainImage)} />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button type="submit" className="btn btn-success px-4">Update</button>
+              <button type="button" className="btn btn-danger px-4" onClick={() => setShow(false)}>Close</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ImageUpload = ({ label, image, onChange, onRemove }) => (
+  <div className="col-lg-4 col-md-6 mb-3">
+    <label className="form-label">{label}</label>
+    <input type="file" className="form-control" accept="image/*" onChange={onChange} />
+    {image?.preview && (
+      <div className="image-preview mt-2">
+        <img src={image.preview} alt="Preview" width={100} height={100} className="rounded" />
+        <button type="button" className="btn btn-sm btn-danger mt-1" onClick={onRemove}>×</button>
+      </div>
+    )}
+  </div>
+);
+
+export default EditCategoryModal;

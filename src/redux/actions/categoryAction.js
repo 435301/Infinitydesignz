@@ -12,6 +12,9 @@ export const ADD_SUBCATEGORY_FAILURE='ADD_SUBCATEGORY_FAILURE';
 export const LIST_SUBCATEGORY_REQUEST ='LIST_SUBCATEGORY_REQUEST';
 export const LIST_SUBCATEGORY_SUCCESS ='LIST_SUBCATEGORY_REQUEST';
 export const LIST_SUBCATEGORY_FAILURE ='LIST_SUBCATEGORY_REQUEST';
+export const EDIT_CATEGORY_SUCCESS = 'EDIT_CATEGORY_SUCCESS';
+export const EDIT_CATEGORY_FAILURE = 'EDIT_CATEGORY_FAILURE';
+export const EDIT_CATEGORY_REQUEST = 'EDIT_CATEGORY_REQUEST';
 
 const BASE_URL ='http://68.183.89.229:4005/categories';
 
@@ -104,6 +107,27 @@ export const listSubCategory = (formData) => async (dispatch) => {
     dispatch({
       type: 'LIST_SUBCATEGORY_FAILURE',
       payload: error.response?.data?.message || error.message || 'Error adding listsubcategory',
+    });
+  }
+};
+
+export const editCategory = (id, formData) => async (dispatch) => {
+  dispatch({ type: 'EDIT_CATEGORY_REQUEST' });
+  try {
+    const token = localStorage.getItem('token');
+    await axios.put(`http://68.183.89.229:4005/categories/${id}`, formData, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    dispatch({ type: 'EDIT_CATEGORY_SUCCESS' });
+    dispatch(fetchCategories()); 
+  } catch (error) {
+    dispatch({
+      type: 'EDIT_CATEGORY_FAILURE',
+      payload: error?.response?.data?.message || 'Update failed',
     });
   }
 };
