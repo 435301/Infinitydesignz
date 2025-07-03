@@ -273,12 +273,15 @@ header .wrapper {
 
 .header-fixed .content-wrapper {
   margin-top: 50px;
+}.card-block .btn{
+  font-size: 14px;
+  padding: 6px 15px;
 }
 
 .content-wrapper {
   height: 100%;
   background-color: transparent;
-  margin-left: 286px !important;
+  margin-left: 286px ;
   z-index: 820;
   -webkit-transition: all 0.3s ease-in-out;
   -moz-transition: all 0.3s ease-in-out;

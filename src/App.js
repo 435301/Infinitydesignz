@@ -18,6 +18,18 @@ import ManageSubCategories from './pages/admin/manageSubcategories.jsx';
 import ListSubCategory from './pages/admin/listSubCategory.jsx';
 import ManageSizes from './pages/admin/createSize.jsx';
 import ManageSizeMapping from './pages/admin/sizeMapping.jsx';
+import ManageColors from './pages/admin/colors.jsx';
+import ManageFeatureType from './pages/admin/featureType.jsx';
+import ManageFeatureSet from './pages/admin/featureSet.jsx';
+import ManageFeatureList from './pages/admin/featureList.jsx';
+import BulkUpload from './pages/admin/bulkUpload.jsx';
+import BulkManage from './pages/admin/bulkManage.jsx';
+import ManageFilterType from './pages/admin/filterType.jsx';
+import ManageFilterSet from './pages/admin/filterSet.jsx';
+import ManageFilterList from './pages/admin/filterList.jsx';
+import AddProduct from './pages/admin/addProduct.jsx';
+
+
 
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
@@ -33,31 +45,42 @@ function App() {
       <div className="App">
         {/* <div id="spinner" className="show">Loading...</div>
         <nav className="sticky-top">Navbar</nav> */}
-        
+
 
         <Routes>
-          <Route path='/' element={<HomeBannerSection/>}/>
-          <Route path='/shop' element={<ProductTopBar/>}/>
-          <Route path='/product-details' element={<ProductDetailPage/>}></Route>
-          <Route path='/address-book' element={<AddressBook/>}></Route>
-          <Route path='/profile' element={<ProfilePage/>}></Route>
-          <Route path='/orders' element={<MyOrdersPage/>}></Route>
-          <Route path='/login' element={<LoginPage/>}></Route>
-          <Route path='/admin/dashboard' element={<Dashboard/>}></Route>
-          <Route path='/admin/manage-category' element={<ManageCategories/>}></Route>
-          <Route path='/admin/manage-subcategory' element={<ManageSubCategories/>}></Route>
-          <Route path='/admin/list-subcategory' element={<ListSubCategory/>}></Route>
-          <Route path='/admin/create-size' element={<ManageSizes/>}></Route>
-          <Route path='/admin/size-mapping' element={<ManageSizeMapping/>}></Route>
+          <Route path='/' element={<HomeBannerSection />} />
+          <Route path='/shop' element={<ProductTopBar />} />
+          <Route path='/product-details' element={<ProductDetailPage />}></Route>
+          <Route path='/address-book' element={<AddressBook />}></Route>
+          <Route path='/profile' element={<ProfilePage />}></Route>
+          <Route path='/orders' element={<MyOrdersPage />}></Route>
+          <Route path='/login' element={<LoginPage />}></Route>
+          <Route path='/admin/dashboard' element={<Dashboard />}></Route>
+          <Route path='/admin/manage-category' element={<ManageCategories />}></Route>
+          <Route path='/admin/manage-subcategory' element={<ManageSubCategories />}></Route>
+          <Route path='/admin/list-subcategory' element={<ListSubCategory />}></Route>
+          <Route path='/admin/create-size' element={<ManageSizes />}></Route>
+          <Route path='/admin/size-mapping' element={<ManageSizeMapping />}></Route>
+          <Route path='/admin/colors' element={<ManageColors />}></Route>
+          <Route path='/admin/feature-set' element={<ManageFeatureSet />}></Route>
+          <Route path='/admin/feature-type' element={<ManageFeatureType />}></Route>
+          <Route path='/admin/feature-list' element={<ManageFeatureList />}></Route>
+          <Route path='/admin/bulk-upload' element={<BulkUpload />}></Route>
+          <Route path='/admin/bulk-manage' element={<BulkManage />}></Route>
+          <Route path='/admin/filter-type' element={<ManageFilterType />}></Route>
+          <Route path='/admin/filter-set' element={<ManageFilterSet />}></Route>
+          <Route path='/admin/filter-list' element={<ManageFilterList/>}></Route>
+          <Route path='/admin/add-product' element={<AddProduct/>}></Route>
+
 
 
         </Routes>
         <Routes>
- <Route element={<AdminLayout />}>
+          <Route element={<AdminLayout />}>
             <Route path="/admin/dashboard" element={<Dashboard />} />
           </Route>
         </Routes>
-       
+
       </div>
     </Router>
   );

@@ -17,16 +17,28 @@ const Sidebar = ({ isCollapsed }) => {
   const currentPath = location.pathname;
   const [openMenus, setOpenMenus] = useState({});
 
-  // Menu paths map
   const menuPaths = {
     masterData: [
-      '/create-brand', '/brand-mapping', '/admin/create-size', '/admin/size-mapping', '/colors',
-      '/feature-type', '/feature-set', '/feature-list', '/bulk-upload',
-      '/filter-type', '/filter-set', '/filter-list'
+      '/create-brand',
+      '/brand-mapping',
+      '/admin/create-size',
+      '/admin/size-mapping',
+      '/admin/colors',
+      '/admin/feature-type',
+      '/admin/feature-set',
+      '/admin/feature-list',
+      '/admin/filter-type',
+      '/admin/filter-set',
+      '/admin/filter-list',
+      '/admin/bulk-upload',
+      '/admin/add-product',
+
     ],
     sizes: ['/admin/create-size', '/admin/size-mapping'],
+    productFeatures: ['/admin/feature-type', '/admin/feature-set', '/admin/feature-list', '/admin/bulk-upload'],
+    productFilters: ['/admin/filter-type', '/admin/filter-set', '/admin/filter-list'],
     categories: ['/admin/manage-category', '/admin/manage-subcategory', '/admin/list-subcategory'],
-    products: ['/add-product', '/manage-product'],
+    products: ['/admin/add-product', '/admin/manage-product'],
     users: ['/manage-users'],
     orders: ['/orders'],
     coupons: ['/add-coupon', '/manage-coupons'],
@@ -35,13 +47,11 @@ const Sidebar = ({ isCollapsed }) => {
 
   useEffect(() => {
     const newOpenMenus = {};
-
-    Object.keys(menuPaths).forEach(menu => {
-      if (menuPaths[menu].some(path => currentPath.startsWith(path))) {
+    Object.keys(menuPaths).forEach((menu) => {
+      if (menuPaths[menu].some((path) => currentPath.startsWith(path))) {
         newOpenMenus[menu] = true;
       }
     });
-
     setOpenMenus((prev) => ({ ...prev, ...newOpenMenus }));
   }, [currentPath]);
 
@@ -57,7 +67,7 @@ const Sidebar = ({ isCollapsed }) => {
   const renderNavLink = (to, label) => (
     <NavLink
       to={to}
-      className={({ isActive }) => isActive ? 'active' : ''}
+      className={({ isActive }) => (isActive ? 'active' : '')}
       style={navLinkStyle(isCollapsed)}
     >
       <BsDot style={iconDotStyle} />
@@ -72,7 +82,11 @@ const Sidebar = ({ isCollapsed }) => {
 
           {/* Dashboard */}
           <li>
-            <NavLink to="/admin/dashboard" className={({ isActive }) => isActive ? 'active' : ''} style={navLinkStyle(isCollapsed)}>
+            <NavLink
+              to="/admin/dashboard"
+              className={({ isActive }) => (isActive ? 'active' : '')}
+              style={navLinkStyle(isCollapsed)}
+            >
               <BsBriefcase style={mainIconStyle(isCollapsed)} />
               <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Dashboard</span>
             </NavLink>
@@ -86,14 +100,14 @@ const Sidebar = ({ isCollapsed }) => {
               {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
             </div>
             {isActiveMenu('masterData') && !isCollapsed && (
-              <ul className='subdropdown' style={{ paddingLeft: '20px', listStyle: 'none' }}>
+              <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
                 {renderNavLink('/create-brand', 'Create Brand')}
                 {renderNavLink('/brand-mapping', 'Brand Mapping')}
-
-                {/* Sizes */}
                 <li>
                   <div onClick={() => toggleMenu('sizes')} style={subLinkStyle(true)}>
-                    <BsDot style={iconDotStyle} /> <span>Sizes</span> <BsChevronDown style={{ marginLeft: 'auto' }} />
+                    <BsDot style={iconDotStyle} />
+                    <span>Sizes</span>
+                    <BsChevronDown style={{ marginLeft: 'auto' }} />
                   </div>
                   {isActiveMenu('sizes') && (
                     <ul style={{ paddingLeft: '20px', listStyle: 'none' }}>
@@ -102,15 +116,40 @@ const Sidebar = ({ isCollapsed }) => {
                     </ul>
                   )}
                 </li>
+                {renderNavLink('/admin/colors', 'Colors')}
 
-                {renderNavLink('/colors', 'Colors')}
-                {renderNavLink('/feature-type', 'Feature Type')}
-                {renderNavLink('/feature-set', 'Feature Set')}
-                {renderNavLink('/feature-list', 'Feature List')}
-                {renderNavLink('/bulk-upload', 'Bulk Upload')}
-                {renderNavLink('/filter-type', 'Filter Type')}
-                {renderNavLink('/filter-set', 'Filter Set')}
-                {renderNavLink('/filter-list', 'Filter List')}
+                {/* Product Features */}
+                <li>
+                  <div onClick={() => toggleMenu('productFeatures')} style={subLinkStyle(true)}>
+                    <BsDot style={iconDotStyle} />
+                    <span>Product Features</span>
+                    <BsChevronDown style={{ marginLeft: 'auto' }} />
+                  </div>
+                  {isActiveMenu('productFeatures') && (
+                    <ul style={{ paddingLeft: '20px', listStyle: 'none' }}>
+                      {renderNavLink('/admin/feature-type', 'Feature Type')}
+                      {renderNavLink('/admin/feature-set', 'Feature Set')}
+                      {renderNavLink('/admin/feature-list', 'Feature List')}
+                      {renderNavLink('/admin/bulk-upload', 'Bulk Upload')}
+                    </ul>
+                  )}
+                </li>
+
+                {/* ✅ Product Filters */}
+                <li>
+                  <div onClick={() => toggleMenu('productFilters')} style={subLinkStyle(true)}>
+                    <BsDot style={iconDotStyle} />
+                    <span>Product Filters</span>
+                    <BsChevronDown style={{ marginLeft: 'auto' }} />
+                  </div>
+                  {isActiveMenu('productFilters') && (
+                    <ul style={{ paddingLeft: '20px', listStyle: 'none' }}>
+                      {renderNavLink('/admin/filter-type', 'Filter Type')}
+                      {renderNavLink('/admin/filter-set', 'Filter Set')}
+                      {renderNavLink('/admin/filter-list', 'Filter List')}
+                    </ul>
+                  )}
+                </li>
               </ul>
             )}
           </li>
@@ -140,8 +179,8 @@ const Sidebar = ({ isCollapsed }) => {
             </div>
             {isActiveMenu('products') && !isCollapsed && (
               <ul style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                {renderNavLink('/add-product', 'Add Product')}
-                {renderNavLink('/manage-product', 'Manage Product')}
+                {renderNavLink('/admin/add-product', 'Add Product')}
+                {renderNavLink('/admin/manage-product', 'Manage Product')}
               </ul>
             )}
           </li>
@@ -191,7 +230,11 @@ const Sidebar = ({ isCollapsed }) => {
 
           {/* Sliders */}
           <li>
-            <NavLink to="/sliders" className={({ isActive }) => isActive ? 'active' : ''} style={navLinkStyle(isCollapsed)}>
+            <NavLink
+              to="/sliders"
+              className={({ isActive }) => (isActive ? 'active' : '')}
+              style={navLinkStyle(isCollapsed)}
+            >
               <BsListUl style={mainIconStyle(isCollapsed)} />
               <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Sliders</span>
             </NavLink>
@@ -214,19 +257,22 @@ const Sidebar = ({ isCollapsed }) => {
 
           {/* Change Password */}
           <li>
-            <NavLink to="/change-password" className={({ isActive }) => isActive ? 'active' : ''} style={navLinkStyle(isCollapsed)}>
+            <NavLink
+              to="/change-password"
+              className={({ isActive }) => (isActive ? 'active' : '')}
+              style={navLinkStyle(isCollapsed)}
+            >
               <BsListUl style={mainIconStyle(isCollapsed)} />
               <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Change Password</span>
             </NavLink>
           </li>
-
         </ul>
       </section>
     </aside>
   );
 };
 
-// ✅ Styles
+// Styles
 const asideStyle = (isCollapsed) => ({
   width: isCollapsed ? '60px' : '295px',
   color: '#fff',
@@ -246,6 +292,7 @@ const navLinkStyle = (isCollapsed, clickable = false) => ({
   color: '#fff',
   fontSize: '14px',
   textDecoration: 'none',
+  cursor: clickable ? 'pointer' : 'default',
   justifyContent: isCollapsed ? 'center' : 'flex-start',
 });
 
@@ -256,6 +303,7 @@ const subLinkStyle = (clickable = false) => ({
   color: '#fff',
   fontSize: '14px',
   textDecoration: 'none',
+  cursor: clickable ? 'pointer' : 'default',
 });
 
 const mainIconStyle = (isCollapsed) => ({
