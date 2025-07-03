@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import '../../css/admin/style.css';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
@@ -7,6 +8,9 @@ import { fetchCategories } from '../../redux/actions/categoryAction';
 import { BsPencilSquare, BsEye, BsSearch, BsArrowClockwise } from 'react-icons/bs';
 import AddListSubCategoryModal from '../../includes/addListSubCategory';
 import EditListSubCategoryModal from '../../includes/editListSubCategoryModal';
+import DeleteModal from '../../modals/deleteModal';
+import { toast } from 'react-toastify';
+import { TiTrash } from "react-icons/ti";
 
 const ListSubCategory = () => {
   const [showModal, setShowModal] = useState(false);
@@ -16,8 +20,11 @@ const ListSubCategory = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [subCategoryIdToEdit, setSubCategoryIdToEdit] = useState(null);
+  const [ListSubCategoryToDelete, setListSubCategoryToDelete] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const BASE_URL = 'http://68.183.89.229:4005/uploads/categories';
+  const BASE_URL_DELETE = 'http://68.183.89.229:4005';
   const dispatch = useDispatch();
   const { categories = [], loading, error } = useSelector((state) => state.categories || {});
 
@@ -72,6 +79,32 @@ const ListSubCategory = () => {
     setEditModalOpen(true);
   };
 
+  const handleDeleteClick = (id) => {
+    console.log("handleDeleteClick triggered with ID:", id);
+    setListSubCategoryToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.delete(`${BASE_URL_DELETE}/categories/${ListSubCategoryToDelete}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success("Category deleted successfully!");
+      dispatch(fetchCategories());
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error(error?.response?.data?.message || "Failed to delete category.");
+    } finally {
+      setShowDeleteModal(false);
+      setListSubCategoryToDelete(null);
+    }
+  };
   return (
     <div className="wrapper sidebar-mini fixed">
       <HeaderAdmin />
@@ -221,6 +254,12 @@ const ListSubCategory = () => {
                                   <button className="btn btn-light icon-btn">
                                     <BsEye style={{ fontSize: '18px', color: '#212529' }} />
                                   </button>
+                                  <button className="btn btn-light icon-btn m-2" >
+                                    <TiTrash style={{ fontSize: '18px', color: '#212529' }} onClick={() => {
+                                      console.log("Delete icon clicked", item.id);
+                                      handleDeleteClick(item.id);
+                                    }} />
+                                  </button>
                                 </td>
                               </tr>
                             )
@@ -252,6 +291,15 @@ const ListSubCategory = () => {
               refetchCategories={() => dispatch(fetchCategories())}
             />
           )}
+          {showDeleteModal && (
+            <DeleteModal
+              show={showDeleteModal}
+              onClose={() => setShowDeleteModal(false)}
+              onConfirm={handleDelete}
+              message="Are you sure you want to delete this category?"
+            />
+          )
+          }
         </div>
       </div>
     </div>

@@ -1,13 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import axios from 'axios';
 import '../../css/admin/style.css';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories } from '../../redux/actions/categoryAction';
 import { BsPencilSquare, BsEye, BsSearch, BsArrowClockwise } from 'react-icons/bs';
+import { TiTrash } from "react-icons/ti";
 import AddSubCategoryModal from '../../includes/addSubCategory';
 import EditSubCategoryModal from '../../includes/editSubCategoryModal';
 import { fetchSubCategoryById } from '../../redux/actions/categoryAction';
+import DeleteModal from '../../modals/deleteModal';
+import { toast } from 'react-toastify';
 
 const ManageSubCategories = () => {
   const [showModal, setShowModal] = useState(false);
@@ -16,8 +20,11 @@ const ManageSubCategories = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [subCategoryIdToEdit, setSubCategoryIdToEdit] = useState(null);
+  const [subCategoryToDelete, setSubCategoryToDelete] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const BASE_URL = 'http://68.183.89.229:4005/uploads/categories';
+  const BASE_URL_DELETE = 'http://68.183.89.229:4005';
   const dispatch = useDispatch();
   const { categories = [], loading, error } = useSelector((state) => state.categories || {});
 
@@ -69,6 +76,32 @@ const ManageSubCategories = () => {
     setEditModalOpen(true);
   };
 
+  const handleDeleteClick = (id) => {
+    console.log("handleDeleteClick triggered with ID:", id);
+    setSubCategoryToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.delete(`${BASE_URL_DELETE}/categories/${subCategoryToDelete}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success("Category deleted successfully!");
+      dispatch(fetchCategories());
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error(error?.response?.data?.message || "Failed to delete category.");
+    } finally {
+      setShowDeleteModal(false);
+      setSubCategoryToDelete(null);
+    }
+  };
 
   return (
     <div className="wrapper sidebar-mini fixed">
@@ -216,6 +249,12 @@ const ManageSubCategories = () => {
                                   <button className="btn btn-light icon-btn">
                                     <BsEye style={{ fontSize: '18px', color: '#212529' }} />
                                   </button>
+                                  <button className="btn btn-light icon-btn m-2" >
+                                    <TiTrash style={{ fontSize: '18px', color: '#212529' }} onClick={() => {
+                                      console.log("Delete icon clicked", item.id);
+                                      handleDeleteClick(item.id);
+                                    }} />
+                                  </button>
                                 </td>
                               </tr>
                             ))
@@ -246,6 +285,15 @@ const ManageSubCategories = () => {
         />
       )}
 
+      {showDeleteModal && (
+        <DeleteModal
+          show={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={handleDelete}
+          message="Are you sure you want to delete this category?"
+        />
+      )
+      }
 
     </div>
   );
