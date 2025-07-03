@@ -208,31 +208,44 @@ const ManageSubCategories = () => {
                                 <td>{item.category}</td>
                                 <td>{item.title}</td>
                                 <td>
-                                  <img
-                                    src={`${BASE_URL}${item.appIcon}`}
-                                    alt={`${item.title} App Icon`}
-                                    className="rounded-circle"
-                                    width="50"
-                                    height="50"
-                                  />
+                                  {(item?.appIcon) ? (
+                                    <img
+                                      src={`${BASE_URL}${item?.appIcon}`}
+                                      alt={`${item.title} App Icon`}
+                                      className="rounded-circle"
+                                      width="50"
+                                      height="50"
+                                    />
+                                  ) : (
+                                    <span>N/A</span>
+                                  )}
+
                                 </td>
                                 <td>
-                                  <img
-                                    src={`${BASE_URL}${item.webImage}`}
-                                    alt={`${item.title} Web Icon`}
-                                    className="rounded-circle"
-                                    width="50"
-                                    height="50"
-                                  />
+                                  {(item?.webImage) ? (
+                                    <img
+                                      src={`${BASE_URL}${item?.webImage}`}
+                                      alt={`${item.title} Web Icon`}
+                                      className="rounded-circle"
+                                      width="50"
+                                      height="50"
+                                    />
+                                  ) : (
+                                    <span>N/A</span>
+                                  )}
                                 </td>
                                 <td>
-                                  <img
-                                    src={`${BASE_URL}${item.mainImage}`}
-                                    alt={`${item.title} Main Image`}
-                                    className="rounded-circle"
-                                    width="50"
-                                    height="50"
-                                  />
+                                  {(item?.mainImage) ? (
+                                    <img
+                                      src={`${BASE_URL}${item?.mainImage}`}
+                                      alt={`${item.title} Main Image`}
+                                      className="rounded-circle"
+                                      width="50"
+                                      height="50"
+                                    />
+                                  ) : (
+                                    <span>N/A</span>
+                                  )}
                                 </td>
                                 <td>{item.seoTitle || 'N/A'}</td>
                                 <td>{item.seoDescription || 'N/A'}</td>

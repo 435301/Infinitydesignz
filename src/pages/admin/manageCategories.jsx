@@ -32,22 +32,22 @@ const ManageCategories = () => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
- const filteredCategories = categories.filter((cat) => {
-  const isTopLevel = cat.parent_id === null;
+  const filteredCategories = categories.filter((cat) => {
+    const isTopLevel = cat.parent_id === null;
 
-  if (!isTopLevel) return false;
+    if (!isTopLevel) return false;
 
-  const title = cat.title.toLowerCase();
-  const matchesSearch = title.includes(searchTerm.toLowerCase());
+    const title = cat.title.toLowerCase();
+    const matchesSearch = title.includes(searchTerm.toLowerCase());
 
-  const matchesStatus = statusFilter
-    ? (statusFilter === 'active' ? cat.status === true : cat.status === false)
-    : true;
+    const matchesStatus = statusFilter
+      ? (statusFilter === 'active' ? cat.status === true : cat.status === false)
+      : true;
 
-  return matchesSearch && matchesStatus;
-});
+    return matchesSearch && matchesStatus;
+  });
 
-    const handleViewClick = (id) => {
+  const handleViewClick = (id) => {
     const cat = filteredCategories.find((item) => item.id === id);
     if (cat) {
       setSelectedCategory(cat);
@@ -84,18 +84,18 @@ const ManageCategories = () => {
 
 
   const handleEditClick = async (id) => {
-  const token = localStorage.getItem('token');
-  try {
-    const response = await axios.get(`http://68.183.89.229:4005/categories/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setCategoryToEdit(response.data);
-    setShowModalEdit(true);
-  } catch (err) {
-    console.error('Error fetching category by ID:', err);
-    toast.error('Failed to fetch category data');
-  }
-};
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get(`http://68.183.89.229:4005/categories/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCategoryToEdit(response.data);
+      setShowModalEdit(true);
+    } catch (err) {
+      console.error('Error fetching category by ID:', err);
+      toast.error('Failed to fetch category data');
+    }
+  };
 
   return (
     <div className="sidebar-mini fixed">
@@ -161,13 +161,13 @@ const ManageCategories = () => {
             {/* Categories Table */}
             <div className="card">
               <div className="card-block">
-                 <div className="row mb-3">
-                    <div className="col-lg-6"></div>
-                    <div className="col-md-6 text-right pt">
-                      <button className="btn btn-success me-1">Active</button>
-                      <button className="btn btn-default me-1">Inactive</button>
-                    </div>
+                <div className="row mb-3">
+                  <div className="col-lg-6"></div>
+                  <div className="col-md-6 text-right pt">
+                    <button className="btn btn-success me-1">Active</button>
+                    <button className="btn btn-default me-1">Inactive</button>
                   </div>
+                </div>
                 <div className="table-responsive">
                   <table className="table table-striped table-hover table-lg align-middle mb-0">
                     <thead>
@@ -199,31 +199,49 @@ const ManageCategories = () => {
                               <td>{index + 1}</td>
                               <td>{parentCategory ? parentCategory.title : cat.title}</td>
                               <td>
-                                <img
-                                  src={`${BASE_URL}${(parentCategory ? parentCategory.appIcon : cat.appIcon)}`}
-                                  alt="App Icon"
-                                  className="rounded-circle"
-                                  width="50"
-                                  height="50"
-                                />
+                                {(parentCategory?.appIcon || cat?.appIcon) ? (
+                                  <img
+                                    src={`${BASE_URL}${parentCategory?.appIcon || cat?.appIcon}`}
+                                    alt="App Icon"
+                                    className="rounded-circle"
+                                    width="50"
+                                    height="50"
+                                  />
+                                ) : (
+                                  <span>N/A</span>
+                                )}
+
                               </td>
                               <td>
-                                <img
-                                 src={`${BASE_URL}${(parentCategory ? parentCategory.webImage : cat.webImage)}`}
-                                  alt="Web Icon"
-                                  className="rounded-circle"
-                                  width="50"
-                                  height="50"
-                                />
+                                {(parentCategory?.webImage || cat?.webImage) ? (
+                                  <img
+                                    src={`${BASE_URL}${(parentCategory ? parentCategory.webImage : cat.webImage)}`}
+                                    alt="Web Icon"
+                                    className="rounded-circle"
+                                    width="50"
+                                    height="50"
+                                  />
+                                ) : (
+                                  <span>N/A</span>
+                                )
+                                }
+
                               </td>
                               <td>
-                                <img
+                                {
+                                  (parentCategory?.mainImage || cat?.mainImage) ? (
+                                    <img
                                       src={`${BASE_URL}${(parentCategory ? parentCategory.mainImage : cat.mainImage)}`}
-                                  alt="Main"
-                                  className="rounded-circle"
-                                  width="50"
-                                  height="50"
-                                />
+                                      alt="Main"
+                                      className="rounded-circle"
+                                      width="50"
+                                      height="50"
+                                    />
+                                  ) : (
+                                    <span>N/A</span>
+                                  )
+                                }
+
                               </td>
                               <td>
                                 <span
@@ -232,14 +250,14 @@ const ManageCategories = () => {
                                     : 'text-light-danger'
                                     }`}
                                 >
-                                   {(parentCategory ? parentCategory.status : cat.status) === true ? 'Active' : 'Inactive'}
+                                  {(parentCategory ? parentCategory.status : cat.status) === true ? 'Active' : 'Inactive'}
                                 </span>
                               </td>
                               <td>
                                 <button
                                   className="btn btn-light icon-btn m-2"
                                 >
-                                  <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} onClick={() => handleEditClick(cat.id) }  />
+                                  <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} onClick={() => handleEditClick(cat.id)} />
                                 </button>
                                 <button className="btn btn-light icon-btn" onClick={() => handleViewClick(cat.id)}>
                                   <BsEye style={{ fontSize: '18px', color: '#212529' }} />
@@ -266,7 +284,7 @@ const ManageCategories = () => {
             </div>
 
             {showModal && <AddCategoryModal show={showModal} setShow={setShowModal} />}
-            {showModalEdit && <EditCategoryModal show={showModalEdit} setShow={setShowModalEdit}  category={categoryToEdit} refetchCategories={() => dispatch(fetchCategories())} />}
+            {showModalEdit && <EditCategoryModal show={showModalEdit} setShow={setShowModalEdit} category={categoryToEdit} refetchCategories={() => dispatch(fetchCategories())} />}
 
             {viewModalOpen && (
               <ViewCategoryModal

@@ -24,7 +24,7 @@ const ListSubCategory = () => {
   const [ListSubCategoryToDelete, setListSubCategoryToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);
-const [selectedSubCategory, setSelectedSubCategory] = useState(null);
+  const [selectedSubCategory, setSelectedSubCategory] = useState(null);
 
   const BASE_URL = 'http://68.183.89.229:4005';
   const BASE_URL_DELETE = 'http://68.183.89.229:4005';
@@ -109,12 +109,12 @@ const [selectedSubCategory, setSelectedSubCategory] = useState(null);
     }
   };
   const handleViewClick = (id) => {
-  const listsubCat = subSubCategories.find((item) => item.id === id);
-  if (listsubCat) {
-    setSelectedSubCategory(listsubCat);
-    setViewModalOpen(true);
-  }
-};
+    const listsubCat = subSubCategories.find((item) => item.id === id);
+    if (listsubCat) {
+      setSelectedSubCategory(listsubCat);
+      setViewModalOpen(true);
+    }
+  };
   return (
     <div className="wrapper sidebar-mini fixed">
       <HeaderAdmin />
@@ -216,31 +216,43 @@ const [selectedSubCategory, setSelectedSubCategory] = useState(null);
                                 <td>{item.subCategory}</td>
                                 <td>{item.title}</td>
                                 <td>
-                                  <img
-                                    src={`${BASE_URL}${item.appIcon}`}
-                                    alt={`${item.title} App Icon`}
-                                    className="rounded-circle"
-                                    width="50"
-                                    height="50"
-                                  />
+                                  {(item?.appIcon) ? (
+                                    <img
+                                      src={`${BASE_URL}${item?.appIcon}`}
+                                      alt={`${item.title} App Icon`}
+                                      className="rounded-circle"
+                                      width="50"
+                                      height="50"
+                                    />
+                                  ) : (
+                                    <span>N/A</span>
+                                  )}
                                 </td>
                                 <td>
-                                  <img
-                                    src={`${BASE_URL}${item.webImage}`}
-                                    alt={`${item.title} Web Icon`}
-                                    className="rounded-circle"
-                                    width="50"
-                                    height="50"
-                                  />
+                                  {(item?.webImage) ? (
+                                    <img
+                                      src={`${BASE_URL}${item?.webImage}`}
+                                      alt={`${item.title} Web Icon`}
+                                      className="rounded-circle"
+                                      width="50"
+                                      height="50"
+                                    />
+                                  ) : (
+                                    <span>N/A</span>
+                                  )}
                                 </td>
                                 <td>
-                                  <img
-                                    src={`${BASE_URL}${item.mainImage}`}
-                                    alt={`${item.title} Main Image`}
-                                    className="rounded-circle"
-                                    width="50"
-                                    height="50"
-                                  />
+                                  {(item?.mainImage) ? (
+                                    <img
+                                      src={`${BASE_URL}${item?.mainImage}`}
+                                      alt={`${item.title} Main Image`}
+                                      className="rounded-circle"
+                                      width="50"
+                                      height="50"
+                                    />
+                                  ) : (
+                                    <span>N/A</span>
+                                  )}
                                 </td>
                                 <td>
                                   <span
@@ -255,7 +267,7 @@ const [selectedSubCategory, setSelectedSubCategory] = useState(null);
                                     <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
                                   </button>
                                   <button className="btn btn-light icon-btn">
-                                    <BsEye style={{ fontSize: '18px', color: '#212529' }} onClick={()=>handleViewClick(item.id)}/>
+                                    <BsEye style={{ fontSize: '18px', color: '#212529' }} onClick={() => handleViewClick(item.id)} />
                                   </button>
                                   <button className="btn btn-light icon-btn m-2" >
                                     <TiTrash style={{ fontSize: '18px', color: '#212529' }} onClick={() => {
@@ -303,11 +315,11 @@ const [selectedSubCategory, setSelectedSubCategory] = useState(null);
             />
           )
           }
-          {viewModalOpen &&(
+          {viewModalOpen && (
             <ViewListSubCategoryModal
-            show={viewModalOpen}
-            onClose={()=>setViewModalOpen(false)}
-            subCategory={selectedSubCategory}
+              show={viewModalOpen}
+              onClose={() => setViewModalOpen(false)}
+              subCategory={selectedSubCategory}
             />
           )}
         </div>
