@@ -164,8 +164,6 @@ const ManageSubCategories = () => {
                     <div className="col-md-6 text-right pt">
                       <button className="btn btn-success me-1">Active</button>
                       <button className="btn btn-default me-1">Inactive</button>
-                      <button className="btn btn-danger me-1">Front Active</button>
-                      <button className="btn btn-warning me-1">Front Inactive</button>
                     </div>
                   </div>
 
