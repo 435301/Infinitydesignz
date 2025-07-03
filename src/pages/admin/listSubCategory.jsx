@@ -158,8 +158,6 @@ const [selectedSubCategory, setSelectedSubCategory] = useState(null);
                       </button>
                     </div>
                   </div>
-                  {loading && <p>Loading categories...</p>}
-                  {error && <p className="text-danger">Error: {error}</p>}
                 </div>
               </div>
             </div>

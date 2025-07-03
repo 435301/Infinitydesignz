@@ -28,7 +28,6 @@ const ManageCategories = () => {
   const BASE_URL = 'http://68.183.89.229:4005';
   const BASE_URL_DELETE = 'http://68.183.89.229:4005';
 
-
   useEffect(() => {
     dispatch(fetchCategories());
   }, [dispatch]);
@@ -47,7 +46,6 @@ const ManageCategories = () => {
 
   return matchesSearch && matchesStatus;
 });
-
 
     const handleViewClick = (id) => {
     const cat = filteredCategories.find((item) => item.id === id);
@@ -98,7 +96,6 @@ const ManageCategories = () => {
     toast.error('Failed to fetch category data');
   }
 };
-
 
   return (
     <div className="sidebar-mini fixed">
@@ -161,11 +158,6 @@ const ManageCategories = () => {
                 </div>
               </div>
             </div>
-
-            {/* Loading/Error */}
-            {loading && <p>Loading categories...</p>}
-            {error && <p className="text-danger">Error: {error}</p>}
-
             {/* Categories Table */}
             <div className="card">
               <div className="card-block">

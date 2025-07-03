@@ -1,39 +1,41 @@
 import axios from "axios";
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
 
 export const FETCH_CATEGORIES_REQUEST = 'FETCH_CATEGORIES_REQUEST';
 export const FETCH_CATEGORIES_SUCCESS = 'FETCH_CATEGORIES_SUCCESS';
 export const FETCH_CATEGORIES_FAILURE = 'FETCH_CATEGORIES_FAILURE';
 export const ADD_CATEGORY_SUCCESS = 'ADD_CATEGORY_SUCCESS';
-export const ADD_CATEGORY_FAILURE ='ADD_CATEGORY_FAILURE';
-export const ADD_CATEGORY_REQUEST ='ADD_CATEGORY_FAILURE';
-export const ADD_SUBCATEGORY_REQUEST ='ADD_CATEGORY_FAILURE';
-export const ADD_SUBCATEGORY_SUCCESS ='ADD_CATEGORY_SUCCESS';
-export const ADD_SUBCATEGORY_FAILURE='ADD_SUBCATEGORY_FAILURE';
-export const LIST_SUBCATEGORY_REQUEST ='LIST_SUBCATEGORY_REQUEST';
-export const LIST_SUBCATEGORY_SUCCESS ='LIST_SUBCATEGORY_REQUEST';
-export const LIST_SUBCATEGORY_FAILURE ='LIST_SUBCATEGORY_REQUEST';
+export const ADD_CATEGORY_FAILURE = 'ADD_CATEGORY_FAILURE';
+export const ADD_CATEGORY_REQUEST = 'ADD_CATEGORY_FAILURE';
+export const ADD_SUBCATEGORY_REQUEST = 'ADD_CATEGORY_FAILURE';
+export const ADD_SUBCATEGORY_SUCCESS = 'ADD_CATEGORY_SUCCESS';
+export const ADD_SUBCATEGORY_FAILURE = 'ADD_SUBCATEGORY_FAILURE';
+export const LIST_SUBCATEGORY_REQUEST = 'LIST_SUBCATEGORY_REQUEST';
+export const LIST_SUBCATEGORY_SUCCESS = 'LIST_SUBCATEGORY_REQUEST';
+export const LIST_SUBCATEGORY_FAILURE = 'LIST_SUBCATEGORY_REQUEST';
 export const EDIT_CATEGORY_SUCCESS = 'EDIT_CATEGORY_SUCCESS';
 export const EDIT_CATEGORY_FAILURE = 'EDIT_CATEGORY_FAILURE';
 export const EDIT_CATEGORY_REQUEST = 'EDIT_CATEGORY_REQUEST';
-export const EDIT_SUBCATEGORY_REQUEST='EDIT_SUBCATEGORY_REQUEST';
-export const EDIT_SUBCATEGORY_SUCCESS='EDIT_SUBCATEGORY_SUCCESS';
-export const EDIT_SUBCATEGORY_FAILURE='EDIT_SUBCATEGORY_FAILURE';
-export const EDIT_LISTSUBCATEGORY_SUCCESS='EDIT_LISTSUBCATEGORY_SUCCESS';
-export const EDIT_LISTSUBCATEGORY_FAILURE='EDIT_SUBCATEGORY_FAILURE';
+export const EDIT_SUBCATEGORY_REQUEST = 'EDIT_SUBCATEGORY_REQUEST';
+export const EDIT_SUBCATEGORY_SUCCESS = 'EDIT_SUBCATEGORY_SUCCESS';
+export const EDIT_SUBCATEGORY_FAILURE = 'EDIT_SUBCATEGORY_FAILURE';
+export const EDIT_LISTSUBCATEGORY_SUCCESS = 'EDIT_LISTSUBCATEGORY_SUCCESS';
+export const EDIT_LISTSUBCATEGORY_FAILURE = 'EDIT_SUBCATEGORY_FAILURE';
 export const FETCH_SUBCATEGORY_BY_ID_SUCCESS = 'FETCH_SUBCATEGORY_BY_ID_SUCCESS';
 export const FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS = 'FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS';
 
 
 
-const BASE_URL ='http://68.183.89.229:4005/categories';
+const BASE_URL = 'http://68.183.89.229:4005/categories';
 
 export const fetchCategories = () => {
-  
+
   return async (dispatch) => {
+
     dispatch({ type: FETCH_CATEGORIES_REQUEST });
 
     try {
+      const loadingToastId = toast.loading('Loading categories...');
       const token = localStorage.getItem('token');
       console.log('token', token)
 
@@ -45,7 +47,15 @@ export const fetchCategories = () => {
 
       console.log('response', response)
       dispatch({ type: FETCH_CATEGORIES_SUCCESS, payload: response.data });
+      toast.update(loadingToastId, {
+        render: 'Categories loaded successfully!',
+        type: 'success',
+        isLoading: false,
+        autoClose: 2000,
+      });
     } catch (error) {
+      toast.dismiss();
+      toast.error(error?.response?.data?.message || 'Failed to fetch categories');
       dispatch({
         type: FETCH_CATEGORIES_FAILURE,
         payload: error.response?.data?.message || error.message,
@@ -57,17 +67,17 @@ export const fetchCategories = () => {
 export const addCategory = (formData) => async (dispatch) => {
   dispatch({ type: 'ADD_CATEGORY_REQUEST' });
   try {
-     const token = localStorage.getItem('token');
-      console.log('tokenadd', token)
+    const token = localStorage.getItem('token');
+    console.log('tokenadd', token)
 
     await axios.post('http://68.183.89.229:4005/categories', formData, {
-       headers: {
+      headers: {
         'Content-Type': 'multipart/form-data',
-        'Authorization': `Bearer ${token}`, 
+        'Authorization': `Bearer ${token}`,
       },
     });
     dispatch({ type: 'ADD_CATEGORY_SUCCESS' });
-    dispatch(fetchCategories()); 
+    dispatch(fetchCategories());
   } catch (error) {
     dispatch({
       type: 'ADD_CATEGORY_FAILURE',
@@ -133,7 +143,7 @@ export const editCategory = (id, formData) => async (dispatch) => {
     });
 
     dispatch({ type: 'EDIT_CATEGORY_SUCCESS' });
-    dispatch(fetchCategories()); 
+    dispatch(fetchCategories());
   } catch (error) {
     dispatch({
       type: 'EDIT_CATEGORY_FAILURE',
