@@ -1,4 +1,5 @@
 import axios from "axios";
+import {toast} from 'react-toastify';
 
 export const FETCH_CATEGORIES_REQUEST = 'FETCH_CATEGORIES_REQUEST';
 export const FETCH_CATEGORIES_SUCCESS = 'FETCH_CATEGORIES_SUCCESS';
@@ -15,6 +16,15 @@ export const LIST_SUBCATEGORY_FAILURE ='LIST_SUBCATEGORY_REQUEST';
 export const EDIT_CATEGORY_SUCCESS = 'EDIT_CATEGORY_SUCCESS';
 export const EDIT_CATEGORY_FAILURE = 'EDIT_CATEGORY_FAILURE';
 export const EDIT_CATEGORY_REQUEST = 'EDIT_CATEGORY_REQUEST';
+export const EDIT_SUBCATEGORY_REQUEST='EDIT_SUBCATEGORY_REQUEST';
+export const EDIT_SUBCATEGORY_SUCCESS='EDIT_SUBCATEGORY_SUCCESS';
+export const EDIT_SUBCATEGORY_FAILURE='EDIT_SUBCATEGORY_FAILURE';
+export const EDIT_LISTSUBCATEGORY_SUCCESS='EDIT_LISTSUBCATEGORY_SUCCESS';
+export const EDIT_LISTSUBCATEGORY_FAILURE='EDIT_SUBCATEGORY_FAILURE';
+export const FETCH_SUBCATEGORY_BY_ID_SUCCESS = 'FETCH_SUBCATEGORY_BY_ID_SUCCESS';
+export const FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS = 'FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS';
+
+
 
 const BASE_URL ='http://68.183.89.229:4005/categories';
 
@@ -129,5 +139,55 @@ export const editCategory = (id, formData) => async (dispatch) => {
       type: 'EDIT_CATEGORY_FAILURE',
       payload: error?.response?.data?.message || 'Update failed',
     });
+  }
+};
+
+export const fetchSubCategoryById = (id) => async (dispatch) => {
+  const token = localStorage.getItem('token');
+  try {
+    const res = await axios.get(`http://68.183.89.229:4005/categories/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    dispatch({ type: FETCH_SUBCATEGORY_BY_ID_SUCCESS, payload: res.data });
+  } catch (err) {
+    toast.error("Failed to fetch subcategory.");
+  }
+};
+
+export const updateSubCategory = (id, updatedData) => async (dispatch) => {
+  const token = localStorage.getItem('token');
+  try {
+    const res = await axios.put(`http://68.183.89.229:4005/categories/${id}`, updatedData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    dispatch({ type: EDIT_SUBCATEGORY_SUCCESS, payload: res.data });
+    toast.success("Subcategory updated successfully.");
+  } catch (err) {
+    toast.error("Failed to update subcategory.");
+  }
+}
+
+export const updateListSubCategory = (id, updatedData) => async (dispatch) => {
+  const token = localStorage.getItem('token');
+  try {
+    const res = await axios.put(`http://68.183.89.229:4005/categories/${id}`, updatedData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    dispatch({ type: EDIT_LISTSUBCATEGORY_SUCCESS, payload: res.data });
+    toast.success("ListSubcategory updated successfully.");
+  } catch (err) {
+    toast.error("Failed to update subcategory.");
+  }
+}
+
+export const fetchListSubCategoryById = (id) => async (dispatch) => {
+  const token = localStorage.getItem('token');
+  try {
+    const res = await axios.get(`http://68.183.89.229:4005/categories/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    dispatch({ type: FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS, payload: res.data });
+  } catch (err) {
+    toast.error("Failed to fetch Listsubcategory.");
   }
 };

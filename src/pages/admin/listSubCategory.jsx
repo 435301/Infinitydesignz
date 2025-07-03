@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories } from '../../redux/actions/categoryAction';
 import { BsPencilSquare, BsEye, BsSearch, BsArrowClockwise } from 'react-icons/bs';
 import AddListSubCategoryModal from '../../includes/addListSubCategory';
+import EditListSubCategoryModal from '../../includes/editListSubCategoryModal';
 
 const ListSubCategory = () => {
   const [showModal, setShowModal] = useState(false);
@@ -13,7 +14,10 @@ const ListSubCategory = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-   const BASE_URL = 'http://68.183.89.229:4005/uploads/categories';
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [subCategoryIdToEdit, setSubCategoryIdToEdit] = useState(null);
+
+  const BASE_URL = 'http://68.183.89.229:4005/uploads/categories';
   const dispatch = useDispatch();
   const { categories = [], loading, error } = useSelector((state) => state.categories || {});
 
@@ -62,6 +66,11 @@ const ListSubCategory = () => {
     const matchesStatus = statusFilter ? subCat.status === statusFilter : true;
     return matchesSearch && matchesStatus;
   });
+
+  const handleEditClick = (id) => {
+    setSubCategoryIdToEdit(id);
+    setEditModalOpen(true);
+  };
 
   return (
     <div className="wrapper sidebar-mini fixed">
@@ -202,20 +211,12 @@ const ListSubCategory = () => {
                                     className={`badge text-light-${item.status === true ? 'primary' : 'danger'
                                       }`}
                                   >
-                                    {item.status === true? 'Active': 'Inactive'}
+                                    {item.status === true ? 'Active' : 'Inactive'}
                                   </span>
                                 </td>
                                 <td>
-                                  <button
-                                    className="btn btn-light icon-btn"
-                                    style={{ marginRight: '5px' }}
-                                  >
-                                    <BsPencilSquare
-                                      style={{
-                                        fontSize: '18px',
-                                        color: item.status === 'active' ? '#28a745' : '#dc3545',
-                                      }}
-                                    />
+                                  <button className="btn btn-light icon-btn me-2" onClick={() => handleEditClick(item.id)}>
+                                    <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
                                   </button>
                                   <button className="btn btn-light icon-btn">
                                     <BsEye style={{ fontSize: '18px', color: '#212529' }} />
@@ -243,6 +244,14 @@ const ListSubCategory = () => {
             </div>
           </div>
           {showModal && <AddListSubCategoryModal show={showModal} setShow={setShowModal} />}
+          {editModalOpen && (
+            <EditListSubCategoryModal
+              show={editModalOpen}
+              setShow={setEditModalOpen}
+              subCategoryId={subCategoryIdToEdit}
+              refetchCategories={() => dispatch(fetchCategories())}
+            />
+          )}
         </div>
       </div>
     </div>

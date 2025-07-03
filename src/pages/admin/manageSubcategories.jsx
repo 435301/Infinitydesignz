@@ -6,13 +6,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories } from '../../redux/actions/categoryAction';
 import { BsPencilSquare, BsEye, BsSearch, BsArrowClockwise } from 'react-icons/bs';
 import AddSubCategoryModal from '../../includes/addSubCategory';
+import EditSubCategoryModal from '../../includes/editSubCategoryModal';
+import { fetchSubCategoryById } from '../../redux/actions/categoryAction';
 
 const ManageSubCategories = () => {
   const [showModal, setShowModal] = useState(false);
   const [level1SubCategories, setLevel1SubCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-    const BASE_URL = 'http://68.183.89.229:4005/uploads/categories';
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [subCategoryIdToEdit, setSubCategoryIdToEdit] = useState(null);
+
+  const BASE_URL = 'http://68.183.89.229:4005/uploads/categories';
   const dispatch = useDispatch();
   const { categories = [], loading, error } = useSelector((state) => state.categories || {});
 
@@ -57,6 +62,13 @@ const ManageSubCategories = () => {
     const matchesStatus = statusFilter ? subCat.status === statusFilter : true;
     return matchesSearch && matchesStatus;
   });
+
+  const handleEditClick = (id) => {
+    setSubCategoryIdToEdit(id);
+    dispatch(fetchSubCategoryById(id));
+    setEditModalOpen(true);
+  };
+
 
   return (
     <div className="wrapper sidebar-mini fixed">
@@ -160,7 +172,7 @@ const ManageSubCategories = () => {
                                 <td>{item.title}</td>
                                 <td>
                                   <img
-                                     src={`${BASE_URL}/${item.appIcon}`}
+                                    src={`${BASE_URL}/${item.appIcon}`}
                                     alt={`${item.title} App Icon`}
                                     className="rounded-circle"
                                     width="50"
@@ -169,7 +181,7 @@ const ManageSubCategories = () => {
                                 </td>
                                 <td>
                                   <img
-                                     src={`${BASE_URL}/${item.webImage}`}
+                                    src={`${BASE_URL}/${item.webImage}`}
                                     alt={`${item.title} Web Icon`}
                                     className="rounded-circle"
                                     width="50"
@@ -193,13 +205,14 @@ const ManageSubCategories = () => {
                                     className={`badge text-light-${item.status === true ? 'primary' : 'danger'
                                       }`}
                                   >
-                                    {(item.status===true?'Active':'Inactive')}
+                                    {(item.status === true ? 'Active' : 'Inactive')}
                                   </span>
                                 </td>
                                 <td>
-                                  <button className="btn btn-light icon-btn me-2">
+                                  <button className="btn btn-light icon-btn me-2" onClick={() => handleEditClick(item.id)}>
                                     <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
                                   </button>
+
                                   <button className="btn btn-light icon-btn">
                                     <BsEye style={{ fontSize: '18px', color: '#212529' }} />
                                   </button>
@@ -224,6 +237,16 @@ const ManageSubCategories = () => {
         </div>
       </div>
       {showModal && <AddSubCategoryModal show={showModal} setShow={setShowModal} />}
+      {editModalOpen && (
+        <EditSubCategoryModal
+          show={editModalOpen}
+          setShow={setEditModalOpen}
+          subCategoryId={subCategoryIdToEdit}
+          refetchCategories={() => dispatch(fetchCategories())}
+        />
+      )}
+
+
     </div>
   );
 };
