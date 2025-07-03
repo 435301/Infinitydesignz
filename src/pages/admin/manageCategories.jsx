@@ -33,17 +33,21 @@ const ManageCategories = () => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
-  const filteredCategories = categories.filter((cat) => {
-    const parent = categories.find((p) => p.id === cat.parent_id);
-    const title = cat.title.toLowerCase();
-    const parentTitle = parent?.title?.toLowerCase() || '';
-    const matchesSearch = `${title} ${parentTitle}`.includes(searchTerm.toLowerCase());
+ const filteredCategories = categories.filter((cat) => {
+  const isTopLevel = cat.parent_id === null;
 
-    const categoryStatus = parent ? parent.status : cat.status;
-    const matchesStatus = statusFilter ? categoryStatus === statusFilter : true;
+  if (!isTopLevel) return false;
 
-    return matchesSearch && matchesStatus;
-  });
+  const title = cat.title.toLowerCase();
+  const matchesSearch = title.includes(searchTerm.toLowerCase());
+
+  const matchesStatus = statusFilter
+    ? (statusFilter === 'active' ? cat.status === true : cat.status === false)
+    : true;
+
+  return matchesSearch && matchesStatus;
+});
+
 
 
   const handleViewCategory = async (id) => {
