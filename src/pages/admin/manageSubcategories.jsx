@@ -135,9 +135,6 @@ const ManageSubCategories = () => {
                       </select>
                     </div>
                     <div className="col-md-2">
-                      <button className="btn btn-danger me-3">
-                        <BsSearch style={{ fontSize: '18px' }} />
-                      </button>
                       <button className="btn btn-success" onClick={() => {
                         setSearchTerm('')
                         setStatusFilter('')

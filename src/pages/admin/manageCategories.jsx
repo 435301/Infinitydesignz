@@ -147,9 +147,6 @@ const ManageCategories = () => {
                     </select>
                   </div>
                   <div className="col-md-2 d-flex gap-2">
-                    <button className="btn btn-danger">
-                      <BsSearch style={{ fontSize: '18px' }} />
-                    </button>
                     <button
                       className="btn btn-success"
                       onClick={() => {
