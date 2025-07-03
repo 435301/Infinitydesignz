@@ -37,10 +37,10 @@ useEffect(() => {
     });
 
     // Pre-fill image previews
-    const BASE_URL = 'http://68.183.89.229:4005/uploads/categories';
-    setAppIcon(subCategory.appIcon ? { preview: `${BASE_URL}/${subCategory.appIcon}` } : null);
-    setWebIcon(subCategory.webImage ? { preview: `${BASE_URL}/${subCategory.webImage}` } : null);
-    setMainImage(subCategory.mainImage ? { preview: `${BASE_URL}/${subCategory.mainImage}` } : null);
+    const BASE_URL = 'http://68.183.89.229:4005';
+    setAppIcon(subCategory.appIcon ? { preview: `${BASE_URL}${subCategory.appIcon}` } : null);
+    setWebIcon(subCategory.webImage ? { preview: `${BASE_URL}${subCategory.webImage}` } : null);
+    setMainImage(subCategory.mainImage ? { preview: `${BASE_URL}${subCategory.mainImage}` } : null);
   }
 }, [subCategory]);
 

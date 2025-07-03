@@ -23,7 +23,7 @@ const ListSubCategory = () => {
   const [ListSubCategoryToDelete, setListSubCategoryToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const BASE_URL = 'http://68.183.89.229:4005/uploads/categories';
+  const BASE_URL = 'http://68.183.89.229:4005';
   const BASE_URL_DELETE = 'http://68.183.89.229:4005';
   const dispatch = useDispatch();
   const { categories = [], loading, error } = useSelector((state) => state.categories || {});
@@ -209,7 +209,7 @@ const ListSubCategory = () => {
                                 <td>{item.title}</td>
                                 <td>
                                   <img
-                                    src={`${BASE_URL}/${item.appIcon}`}
+                                    src={`${BASE_URL}${item.appIcon}`}
                                     alt={`${item.title} App Icon`}
                                     className="rounded-circle"
                                     width="50"
@@ -218,7 +218,7 @@ const ListSubCategory = () => {
                                 </td>
                                 <td>
                                   <img
-                                    src={`${BASE_URL}/${item.webImage}`}
+                                    src={`${BASE_URL}${item.webImage}`}
                                     alt={`${item.title} Web Icon`}
                                     className="rounded-circle"
                                     width="50"
@@ -227,7 +227,7 @@ const ListSubCategory = () => {
                                 </td>
                                 <td>
                                   <img
-                                    src={`${BASE_URL}/${item.mainImage}`}
+                                    src={`${BASE_URL}${item.mainImage}`}
                                     alt={`${item.title} Main Image`}
                                     className="rounded-circle"
                                     width="50"

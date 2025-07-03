@@ -19,6 +19,7 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
     const [appIcon, setAppIcon] = useState(null);
     const [webIcon, setWebIcon] = useState(null);
     const [mainImage, setMainImage] = useState(null);
+    const BASE_URL = '`http://68.183.89.229:4005'
 
     console.log('Submitting status value:', form.status);
     console.log('Appended status to FormData:', form.status ? 1 : 0);
@@ -43,13 +44,13 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
 
             // Prefill image previews if needed (optional enhancement)
             if (singleCategory.appIcon) {
-                setAppIcon({ file: null, preview: `http://68.183.89.229:4005/uploads/categories/${singleCategory.appIcon}` });
+                setAppIcon({ file: null, preview: `${BASE_URL}${singleCategory.appIcon}` });
             }
             if (singleCategory.webImage) {
-                setWebIcon({ file: null, preview: `http://68.183.89.229:4005/uploads/categories/${singleCategory.webImage}` });
+                setWebIcon({ file: null, preview: `${BASE_URL}${singleCategory.webImage}` });
             }
             if (singleCategory.mainImage) {
-                setMainImage({ file: null, preview: `http://68.183.89.229:4005/uploads/categories/${singleCategory.mainImage}` });
+                setMainImage({ file: null, preview: `${BASE_URL}${singleCategory.mainImage}` });
             }
         }
     }, [singleCategory, subCategoryId]);

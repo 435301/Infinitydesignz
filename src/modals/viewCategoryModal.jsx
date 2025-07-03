@@ -3,7 +3,7 @@ import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
-const BASE_URL = 'http://68.183.89.229:4005/uploads/categories';
+const BASE_URL = 'http://68.183.89.229:4005';
 
 const ViewCategoryModal = ({ show, onClose, category }) => {
   if (!category) return null;
@@ -20,15 +20,15 @@ const ViewCategoryModal = ({ show, onClose, category }) => {
         <div className="d-flex gap-3 flex-wrap">
           <div>
             <p><strong>App Icon:</strong></p>
-            <img src={`${BASE_URL}/${category.appIcon}`} alt="App Icon" width="200" />
+            <img src={`${BASE_URL}${category.appIcon}`} alt="App Icon" width="200" />
           </div>
           <div>
             <p><strong>Web Image:</strong></p>
-            <img src={`${BASE_URL}/${category.webImage}`} alt="Web Icon" width="200" />
+            <img src={`${BASE_URL}${category.webImage}`} alt="Web Icon" width="200" />
           </div>
           <div>
             <p><strong>Main Image:</strong></p>
-            <img src={`${BASE_URL}/${category.mainImage}`} alt="Main" width="200" />
+            <img src={`${BASE_URL}${category.mainImage}`} alt="Main" width="200" />
           </div>
         </div>
       </Modal.Body>

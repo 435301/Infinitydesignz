@@ -25,7 +25,7 @@ const ManageCategories = () => {
   const [categoryToDelete, setCategoryToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [categoryToEdit, setCategoryToEdit] = useState(null);
-  const BASE_URL = 'http://68.183.89.229:4005/uploads/categories';
+  const BASE_URL = 'http://68.183.89.229:4005';
   const BASE_URL_DELETE = 'http://68.183.89.229:4005';
 
 
@@ -181,6 +181,13 @@ const ManageCategories = () => {
             {/* Categories Table */}
             <div className="card">
               <div className="card-block">
+                 <div className="row mb-3">
+                    <div className="col-lg-6"></div>
+                    <div className="col-md-6 text-right pt">
+                      <button className="btn btn-success me-1">Active</button>
+                      <button className="btn btn-default me-1">Inactive</button>
+                    </div>
+                  </div>
                 <div className="table-responsive">
                   <table className="table table-striped table-hover table-lg align-middle mb-0">
                     <thead>
@@ -213,7 +220,7 @@ const ManageCategories = () => {
                               <td>{parentCategory ? parentCategory.title : cat.title}</td>
                               <td>
                                 <img
-                                  src={`${BASE_URL}/${(parentCategory ? parentCategory.appIcon : cat.appIcon)}`}
+                                  src={`${BASE_URL}${(parentCategory ? parentCategory.appIcon : cat.appIcon)}`}
                                   alt="App Icon"
                                   className="rounded-circle"
                                   width="50"
@@ -222,7 +229,7 @@ const ManageCategories = () => {
                               </td>
                               <td>
                                 <img
-                                  src={`${BASE_URL}/${(parentCategory ? parentCategory.webImage : cat.webImage)}`}
+                                 src={`${BASE_URL}${(parentCategory ? parentCategory.webImage : cat.webImage)}`}
                                   alt="Web Icon"
                                   className="rounded-circle"
                                   width="50"
@@ -231,7 +238,7 @@ const ManageCategories = () => {
                               </td>
                               <td>
                                 <img
-                                  src={`${BASE_URL}/${(parentCategory ? parentCategory.mainImage : cat.mainImage)}`}
+                                      src={`${BASE_URL}${(parentCategory ? parentCategory.mainImage : cat.mainImage)}`}
                                   alt="Main"
                                   className="rounded-circle"
                                   width="50"

@@ -11,13 +11,14 @@ const EditCategoryModal = ({ show, setShow, category }) => {
   const [webIcon, setWebIcon] = useState(null);
   const [mainImage, setMainImage] = useState(null);
   const [status, setStatus] = useState(false);
+  const BASE_URL = 'http://68.183.89.229:4005'
 
   useEffect(() => {
     if (category) {
       setCategoryTitle(category.title || '');
-      setAppIcon(category.appIcon ? { file: null, preview: `http://68.183.89.229:4005/uploads/categories/${category.appIcon}` } : null);
-      setWebIcon(category.webImage ? { file: null, preview: `http://68.183.89.229:4005/uploads/categories/${category.webImage}` } : null);
-      setMainImage(category.mainImage ? { file: null, preview: `http://68.183.89.229:4005/uploads/categories/${category.mainImage}` } : null);
+      setAppIcon(category.appIcon ? { file: null, preview: `${BASE_URL}${category.appIcon}` } : null);
+      setWebIcon(category.webImage ? { file: null, preview: `${BASE_URL}${category.webImage}` } : null);
+      setMainImage(category.mainImage ? { file: null, preview: `${BASE_URL}${category.mainImage}` } : null);
     }
     setStatus(!!category.status);
   }, [category]);
