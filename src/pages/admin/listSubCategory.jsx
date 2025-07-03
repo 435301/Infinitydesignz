@@ -11,6 +11,7 @@ import EditListSubCategoryModal from '../../includes/editListSubCategoryModal';
 import DeleteModal from '../../modals/deleteModal';
 import { toast } from 'react-toastify';
 import { TiTrash } from "react-icons/ti";
+import ViewListSubCategoryModal from '../../modals/viewListCategoryModal';
 
 const ListSubCategory = () => {
   const [showModal, setShowModal] = useState(false);
@@ -22,6 +23,8 @@ const ListSubCategory = () => {
   const [subCategoryIdToEdit, setSubCategoryIdToEdit] = useState(null);
   const [ListSubCategoryToDelete, setListSubCategoryToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+const [selectedSubCategory, setSelectedSubCategory] = useState(null);
 
   const BASE_URL = 'http://68.183.89.229:4005';
   const BASE_URL_DELETE = 'http://68.183.89.229:4005';
@@ -105,6 +108,13 @@ const ListSubCategory = () => {
       setListSubCategoryToDelete(null);
     }
   };
+  const handleViewClick = (id) => {
+  const listsubCat = subSubCategories.find((item) => item.id === id);
+  if (listsubCat) {
+    setSelectedSubCategory(listsubCat);
+    setViewModalOpen(true);
+  }
+};
   return (
     <div className="wrapper sidebar-mini fixed">
       <HeaderAdmin />
@@ -247,7 +257,7 @@ const ListSubCategory = () => {
                                     <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
                                   </button>
                                   <button className="btn btn-light icon-btn">
-                                    <BsEye style={{ fontSize: '18px', color: '#212529' }} />
+                                    <BsEye style={{ fontSize: '18px', color: '#212529' }} onClick={()=>handleViewClick(item.id)}/>
                                   </button>
                                   <button className="btn btn-light icon-btn m-2" >
                                     <TiTrash style={{ fontSize: '18px', color: '#212529' }} onClick={() => {
@@ -295,6 +305,13 @@ const ListSubCategory = () => {
             />
           )
           }
+          {viewModalOpen &&(
+            <ViewListSubCategoryModal
+            show={viewModalOpen}
+            onClose={()=>setViewModalOpen(false)}
+            subCategory={selectedSubCategory}
+            />
+          )}
         </div>
       </div>
     </div>

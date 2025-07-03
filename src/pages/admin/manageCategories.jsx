@@ -49,23 +49,11 @@ const ManageCategories = () => {
 });
 
 
-
-  const handleViewCategory = async (id) => {
-    const BASE_URL = 'http://68.183.89.229:4005';
-    const token = localStorage.getItem('token')
-    try {
-      const response = await axios.get(`${BASE_URL}/categories/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-      console.log('responseview', response)
-      setSelectedCategory(response.data);
+    const handleViewClick = (id) => {
+    const cat = filteredCategories.find((item) => item.id === id);
+    if (cat) {
+      setSelectedCategory(cat);
       setViewModalOpen(true);
-    } catch (err) {
-      console.error("Failed to fetch category by ID", err);
     }
   };
 
@@ -261,7 +249,7 @@ const ManageCategories = () => {
                                 >
                                   <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} onClick={() => handleEditClick(cat.id) }  />
                                 </button>
-                                <button className="btn btn-light icon-btn" onClick={() => handleViewCategory(cat.id)}>
+                                <button className="btn btn-light icon-btn" onClick={() => handleViewClick(cat.id)}>
                                   <BsEye style={{ fontSize: '18px', color: '#212529' }} />
                                 </button>
                                 <button className="btn btn-light icon-btn m-2" onClick={() => {

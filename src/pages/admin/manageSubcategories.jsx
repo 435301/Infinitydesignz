@@ -12,6 +12,7 @@ import EditSubCategoryModal from '../../includes/editSubCategoryModal';
 import { fetchSubCategoryById } from '../../redux/actions/categoryAction';
 import DeleteModal from '../../modals/deleteModal';
 import { toast } from 'react-toastify';
+import ViewSubCategoryModal from '../../modals/viewSubCategoryModal';
 
 const ManageSubCategories = () => {
   const [showModal, setShowModal] = useState(false);
@@ -22,6 +23,8 @@ const ManageSubCategories = () => {
   const [subCategoryIdToEdit, setSubCategoryIdToEdit] = useState(null);
   const [subCategoryToDelete, setSubCategoryToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [selectedSubCategory, setSelectedSubCategory] = useState(null);
 
   const BASE_URL = 'http://68.183.89.229:4005';
   const BASE_URL_DELETE = 'http://68.183.89.229:4005';
@@ -100,6 +103,14 @@ const ManageSubCategories = () => {
     } finally {
       setShowDeleteModal(false);
       setSubCategoryToDelete(null);
+    }
+  };
+
+  const handleViewClick = (id) => {
+    const subCat = level1SubCategories.find((item) => item.id === id);
+    if (subCat) {
+      setSelectedSubCategory(subCat);
+      setViewModalOpen(true);
     }
   };
 
@@ -242,7 +253,7 @@ const ManageSubCategories = () => {
                                   </button>
 
                                   <button className="btn btn-light icon-btn">
-                                    <BsEye style={{ fontSize: '18px', color: '#212529' }} />
+                                    <BsEye style={{ fontSize: '18px', color: '#212529' }} onClick={() => handleViewClick(item.id)} />
                                   </button>
                                   <button className="btn btn-light icon-btn m-2" >
                                     <TiTrash style={{ fontSize: '18px', color: '#212529' }} onClick={() => {
@@ -286,6 +297,14 @@ const ManageSubCategories = () => {
           onClose={() => setShowDeleteModal(false)}
           onConfirm={handleDelete}
           message="Are you sure you want to delete this category?"
+        />
+      )
+      }
+      {viewModalOpen && (
+        <ViewSubCategoryModal
+          show={viewModalOpen}
+          onClose={() => setViewModalOpen(false)}
+          subCategory={selectedSubCategory}
         />
       )
       }

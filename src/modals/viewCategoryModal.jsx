@@ -7,7 +7,7 @@ const BASE_URL = 'http://68.183.89.229:4005';
 
 const ViewCategoryModal = ({ show, onClose, category }) => {
   if (!category) return null;
-
+ console.log('cat', category)
   return (
     <Modal show={show} onHide={onClose} size="lg" centered>
       <Modal.Header closeButton>
@@ -15,8 +15,10 @@ const ViewCategoryModal = ({ show, onClose, category }) => {
       </Modal.Header>
       <Modal.Body>
         <p><strong>Title:</strong> {category.title}</p>
-        <p><strong>Status:</strong> {category.status}</p>
-        <p><strong>Parent ID:</strong> {category.parent_id || 'None'}</p>
+        <p><strong>Status:</strong>{' '}
+          <span className={`badge text-light-${category.status ? 'primary' : 'danger'}`}>
+            {category.status ? 'Active' : 'Inactive'}
+          </span></p>
         <div className="d-flex gap-3 flex-wrap">
           <div>
             <p><strong>App Icon:</strong></p>
