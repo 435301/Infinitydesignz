@@ -138,6 +138,31 @@ const ListSubCategory = () => {
       setCurrentPage(pageNumber);
     }
   };
+  const handleBulkStatusUpdate = async (newStatus) => {
+    if (selectedRows.length === 0) {
+      toast.warning("Please select at least one sub-subcategory.");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.patch(`${BASE_URL}/categories/bulk-update-status`, {
+        ids: selectedRows,
+        status: newStatus,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success(`Status updated to ${newStatus ? 'Active' : 'Inactive'}`);
+      dispatch(fetchCategories());
+      setSelectedRows([]);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || 'Bulk status update failed');
+    }
+  };
+
 
   return (
     <div className="wrapper sidebar-mini fixed">
@@ -147,7 +172,7 @@ const ListSubCategory = () => {
       </aside>
 
       <div className="content-wrapper p-3">
-        <div className="main-header" style={{ marginTop: 0 }}>
+        <div className="main-header px-3" style={{ marginTop: 0 }}>
           <h4>List Sub Categories</h4>
         </div>
 
@@ -194,8 +219,21 @@ const ListSubCategory = () => {
                   <div className="row mb-3">
                     <div className="col-lg-6"></div>
                     <div className="col-md-6 text-end pt">
-                      <button className="btn btn-success me-1">Active</button>
-                      <button className="btn btn-default me-1">Inactive</button>
+                      <button
+                        className="btn btn-success me-2"
+                        disabled={selectedRows.length === 0}
+                        onClick={() => handleBulkStatusUpdate(true)}
+                      >
+                        Active
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        disabled={selectedRows.length === 0}
+                        onClick={() => handleBulkStatusUpdate(false)}
+                      >
+                        Inactive
+                      </button>
+
                     </div>
                   </div>
 
@@ -207,8 +245,10 @@ const ListSubCategory = () => {
                             <th>
                               <input
                                 type="checkbox"
-                                id="select-all"
-                                checked={selectedRows.length === subSubCategories.length && subSubCategories.length > 0}
+                                checked={
+                                  selectedRows.length === subSubCategories.length &&
+                                  subSubCategories.length > 0
+                                }
                                 onChange={handleSelectAll}
                               />
                             </th>
@@ -230,7 +270,6 @@ const ListSubCategory = () => {
                                 <td>
                                   <input
                                     type="checkbox"
-                                    className="row-checkbox"
                                     checked={selectedRows.includes(item.id)}
                                     onChange={() => handleRowCheckboxChange(item.id)}
                                   />

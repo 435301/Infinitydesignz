@@ -1,10 +1,9 @@
-// src/includes/ViewListSubCategoryModal.js
+
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import BASE_URL from '../config/config';
 
-// const BASE_URL = 'http://68.183.89.229:4005';
 
 const ViewListSubCategoryModal = ({ show, onClose, subCategory }) => {
   if (!subCategory) return null;
@@ -38,15 +37,33 @@ const ViewListSubCategoryModal = ({ show, onClose, subCategory }) => {
         <div className="row mb-3 text-center">
           <div className="col-md-4">
             <strong>App Icon:</strong><br />
-            <img src={`${BASE_URL}${subCategory.appIcon}`} alt="App Icon" width="200" height="200" />
+            {subCategory?.appIcon ? (
+              <img src={`${BASE_URL}${subCategory.appIcon}`} alt="App Icon" width="200" height="200" />
+
+            ) : (
+              <span>N/A</span>
+            )}
           </div>
           <div className="col-md-4">
             <strong>Web Icon:</strong><br />
-            <img src={`${BASE_URL}${subCategory.webImage}`} alt="Web Icon" width="200" height="200" />
+            {subCategory?.webImage ? (
+              <img src={`${BASE_URL}${subCategory.webImage}`} alt="Web Icon" width="200" height="200" />
+
+            ) : (
+              <span>N/A</span>
+            )
+            }
+
+
           </div>
           <div className="col-md-4">
             <strong>Main Image:</strong><br />
-            <img src={`${BASE_URL}${subCategory.mainImage}`} alt="Main" width="200" height="200" />
+            {subCategory?.mainImage ? (
+              <img src={`${BASE_URL}${subCategory.mainImage}`} alt="Main" width="200" height="200" />
+
+            ) : (
+              <span>N/A</span>
+            )}
           </div>
         </div>
       </Modal.Body>

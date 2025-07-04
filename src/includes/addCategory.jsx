@@ -23,7 +23,7 @@ const AddCategoryModal = ({ show, setShow }) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append('title', categoryTitle);
-    formData.append('status', status ? 1 : 0);
+    formData.append('status', status ? true : false);
     if (appIcon?.file) formData.append('appIcon', appIcon.file);
     if (webIcon?.file) formData.append('webImage', webIcon.file);
     if (mainImage?.file) formData.append('mainImage', mainImage.file);
@@ -31,8 +31,6 @@ const AddCategoryModal = ({ show, setShow }) => {
     dispatch(addCategory(formData));
     setShow(false);
   };
-
-  // console.log('Sending Status:', status ? 1 : 0);
 
   if (!show) return null;
 

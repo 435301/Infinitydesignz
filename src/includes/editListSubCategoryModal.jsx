@@ -22,10 +22,6 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
     const [mainImage, setMainImage] = useState(null);
     // const BASE_URL = '`http://68.183.89.229:4005'
 
-    console.log('Submitting status value:', form.status);
-    console.log('Appended status to FormData:', form.status ? 1 : 0);
-
-
     useEffect(() => {
         if (subCategoryId) {
             dispatch(fetchListSubCategoryById(subCategoryId));
@@ -89,7 +85,7 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
         data.append('seoTitle', form.seoTitle);
         data.append('seoDescription', form.seoDescription);
         data.append('seoKeywords', form.seoKeywords);
-        data.append('status', form.status ? 1 : 0);
+        data.append('status', form.status ? true : false);
         if (appIcon?.file) data.append('appIcon', appIcon.file);
         if (webIcon?.file) data.append('webImage', webIcon.file);
         if (mainImage?.file) data.append('mainImage', mainImage.file);

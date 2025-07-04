@@ -42,6 +42,7 @@ import ManageCoupons from './pages/admin/manageCoupons.jsx';
 import AddSlider from './pages/admin/sliders.jsx';
 import ManageSliders from './pages/admin/manageSliders.jsx';
 import ChangePassword from './pages/admin/changePassword.jsx';
+import { ToastContainer, toast } from 'react-toastify';
 
 
 import Slider from 'react-slick';
@@ -60,7 +61,7 @@ function App() {
       <div className="App">
         {/* <div id="spinner" className="show">Loading...</div>
         <nav className="sticky-top">Navbar</nav> */}
-
+       <ToastContainer/>
 
         <Routes>
           <Route path='/' element={<HomeBannerSection />} />

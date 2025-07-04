@@ -36,7 +36,7 @@ export const fetchCategories = () => {
     dispatch({ type: FETCH_CATEGORIES_REQUEST });
 
     try {
-      const loadingToastId = toast.loading('Loading categories...');
+      // const loadingToastId = toast.loading('Loading categories...');
       const token = localStorage.getItem('token');
       console.log('token', token)
 
@@ -48,12 +48,7 @@ export const fetchCategories = () => {
 
       console.log('response', response)
       dispatch({ type: FETCH_CATEGORIES_SUCCESS, payload: response.data });
-      toast.update(loadingToastId, {
-        render: 'Categories loaded successfully!',
-        type: 'success',
-        isLoading: false,
-        autoClose: 2000,
-      });
+      //  toast.dismiss(loadingToastId);
     } catch (error) {
       toast.dismiss();
       toast.error(error?.response?.data?.message || 'Failed to fetch categories');
@@ -136,7 +131,7 @@ export const editCategory = (id, formData) => async (dispatch) => {
   dispatch({ type: 'EDIT_CATEGORY_REQUEST' });
   try {
     const token = localStorage.getItem('token');
-    await axios.put(`${BASE_URL}/categories/${id}`, formData, {
+    await axios.patch(`${BASE_URL}/categories/update/${id}`, formData, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'multipart/form-data',
@@ -168,7 +163,7 @@ export const fetchSubCategoryById = (id) => async (dispatch) => {
 export const updateSubCategory = (id, updatedData) => async (dispatch) => {
   const token = localStorage.getItem('token');
   try {
-    const res = await axios.put(`${BASE_URL}/categories/${id}`, updatedData, {
+    const res = await axios.patch(`${BASE_URL}/categories/update/${id}`, updatedData, {
       headers: { Authorization: `Bearer ${token}` },
     });
     dispatch({ type: EDIT_SUBCATEGORY_SUCCESS, payload: res.data });
@@ -181,7 +176,7 @@ export const updateSubCategory = (id, updatedData) => async (dispatch) => {
 export const updateListSubCategory = (id, updatedData) => async (dispatch) => {
   const token = localStorage.getItem('token');
   try {
-    const res = await axios.put(`${BASE_URL}/categories/${id}`, updatedData, {
+    const res = await axios.patch(`${BASE_URL}/categories/update/${id}`, updatedData, {
       headers: { Authorization: `Bearer ${token}` },
     });
     dispatch({ type: EDIT_LISTSUBCATEGORY_SUCCESS, payload: res.data });

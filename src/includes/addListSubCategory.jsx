@@ -35,7 +35,7 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
         const formData = new FormData();
 
         formData.append('title', title);
-        formData.append('status', status ? 1 : 0)
+        formData.append('status', status ? true : false)
         formData.append('parent_id', subMenu); // <-- This is important
         formData.append('seoTitle', seoTitle);
         formData.append('seoDescription', seoDescription);

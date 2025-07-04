@@ -16,9 +16,11 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
     status: true,
   });
 
+  console.log(form.parent_id, 'form')
   const [appIcon, setAppIcon] = useState(null);
   const [webIcon, setWebIcon] = useState(null);
   const [mainImage, setMainImage] = useState(null);
+  const [status, setStatus] = useState(false);
 
   useEffect(() => {
     if (subCategoryId) {
@@ -26,24 +28,25 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
     }
   }, [subCategoryId]);
 
-useEffect(() => {
-  if (subCategory) {
-    setForm({
-      parent_id: subCategory.parent_id || '',
-      title: subCategory.title || '',
-      seoTitle: subCategory.seoTitle || '',
-      seoDescription: subCategory.seoDescription || '',
-      seoKeywords: subCategory.seoKeywords || '',
-      status: subCategory.status ?? true,
-    });
+  useEffect(() => {
+    if (subCategory) {
+      setForm({
+        parent_id: subCategory.parent_id ? subCategory.parent_id.toString() : '',
+        title: subCategory.title || '',
+        seoTitle: subCategory.seoTitle || '',
+        seoDescription: subCategory.seoDescription || '',
+        seoKeywords: subCategory.seoKeywords || '',
+        status: subCategory.status ?? true,
+        //  status: subCategory.status === 1 || subCategory.status === true,
+      });
 
-    // Pre-fill image previews
-    // const BASE_URL = 'http://68.183.89.229:4005';
-    setAppIcon(subCategory.appIcon ? { preview: `${BASE_URL}${subCategory.appIcon}` } : null);
-    setWebIcon(subCategory.webImage ? { preview: `${BASE_URL}${subCategory.webImage}` } : null);
-    setMainImage(subCategory.mainImage ? { preview: `${BASE_URL}${subCategory.mainImage}` } : null);
-  }
-}, [subCategory]);
+      // Pre-fill image previews
+      // const BASE_URL = 'http://68.183.89.229:4005';
+      setAppIcon(subCategory.appIcon ? { preview: `${BASE_URL}${subCategory.appIcon}` } : null);
+      setWebIcon(subCategory.webImage ? { preview: `${BASE_URL}${subCategory.webImage}` } : null);
+      setMainImage(subCategory.mainImage ? { preview: `${BASE_URL}${subCategory.mainImage}` } : null);
+    }
+  }, [subCategory]);
 
 
   const handleFileChange = (setter) => (e) => {
@@ -70,7 +73,7 @@ useEffect(() => {
     data.append('seoTitle', form.seoTitle);
     data.append('seoDescription', form.seoDescription);
     data.append('seoKeywords', form.seoKeywords);
-   data.append('status', form.status ? 1 : 0);
+    data.append('status', form.status ? true : false);
 
     if (appIcon?.file) data.append('appIcon', appIcon.file);
     if (webIcon?.file) data.append('webImage', webIcon.file);
@@ -82,6 +85,11 @@ useEffect(() => {
   };
 
   const { categories } = useSelector((state) => state.categories || {});
+
+  const check = categories.filter(c => c.parent_id === null).map(cat => (
+    <option key={cat.id} value={cat.id}>{cat.title}</option>
+  ))
+  console.log('check', check[0].props.children)
 
   if (!show) return null;
 
@@ -98,12 +106,22 @@ useEffect(() => {
               <div className="row align-items-center">
                 <div className="col-lg-4 mb-3">
                   <label className="form-label">Parent Category<span className="text-danger">*</span></label>
-                  <select className="form-control" name="parent_id" value={form.parent_id} onChange={handleChange} required>
+                  <select
+                    className="form-control"
+                    name="parent_id"
+                    value={form.parent_id?.toString() || ''}  // ensure string comparison
+                    onChange={handleChange}
+                    required
+                  >
                     <option value="">-- Select Parent --</option>
-                    {categories.filter(c => c.parent_id === null).map(cat => (
-                      <option key={cat.id} value={cat.id}>{cat.title}</option>
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.id.toString()}>
+                        {cat.title}
+                      </option>
                     ))}
+
                   </select>
+
                 </div>
 
                 <div className="col-lg-4 mb-3">

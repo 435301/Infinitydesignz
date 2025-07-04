@@ -45,7 +45,7 @@ const EditCategoryModal = ({ show, setShow, category }) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append('title', categoryTitle);
-    formData.append('status', status ? 1 : 0);
+    formData.append('status', status ? true : false);
     if (appIcon?.file) formData.append('appIcon', appIcon.file);
     if (webIcon?.file) formData.append('webImage', webIcon.file);
     if (mainImage?.file) formData.append('mainImage', mainImage.file);
