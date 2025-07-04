@@ -15,12 +15,21 @@ import {
   EDIT_CATEGORY_SUCCESS,
   EDIT_CATEGORY_FAILURE,
   EDIT_CATEGORY_REQUEST,
+  EDIT_SUBCATEGORY_REQUEST,
+  EDIT_SUBCATEGORY_SUCCESS,
+  EDIT_SUBCATEGORY_FAILURE,
+  FETCH_SUBCATEGORY_BY_ID_SUCCESS,
+  EDIT_LISTSUBCATEGORY_FAILURE,
+  EDIT_LISTSUBCATEGORY_SUCCESS,
+  FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS
 } from '../actions/categoryAction';
 
 const initialState = {
   loading: false,
   categories: [],
   error: null,
+   subCategory: null,
+   
 };
 
 const categoryReducer = (state = initialState, action) => {
@@ -54,7 +63,21 @@ const categoryReducer = (state = initialState, action) => {
       case EDIT_CATEGORY_SUCCESS:
       return { ...state, loading: true };
       case EDIT_CATEGORY_FAILURE:
+      return { ...state, loading: true , error: action.payload };
+       case EDIT_SUBCATEGORY_REQUEST:
       return { ...state, loading: true };
+      case EDIT_SUBCATEGORY_SUCCESS:
+      return { ...state, loading: true , subCategory: action.payload };
+      case   EDIT_SUBCATEGORY_FAILURE:
+      return { ...state, loading: true , error: action.payload };
+       case FETCH_SUBCATEGORY_BY_ID_SUCCESS:
+      return { ...state, subCategory: action.payload };
+       case EDIT_LISTSUBCATEGORY_SUCCESS:
+      return { ...state, loading: true , singleCategory: action.payload };
+      case   EDIT_LISTSUBCATEGORY_FAILURE:
+      return { ...state, loading: true , error: action.payload };
+       case FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS:
+      return { ...state, loading: false, singleCategory: action.payload };
     default:
       return state;
   }

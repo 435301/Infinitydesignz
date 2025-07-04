@@ -9,7 +9,7 @@ const AddCategoryModal = ({ show, setShow }) => {
   const [appIcon, setAppIcon] = useState(null);
   const [webIcon, setWebIcon] = useState(null);
   const [mainImage, setMainImage] = useState(null);
-
+  const [status, setStatus] = useState(false);
   const handleFileChange = (setter) => (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -23,6 +23,7 @@ const AddCategoryModal = ({ show, setShow }) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append('title', categoryTitle);
+    formData.append('status', status ? 1 : 0);
     if (appIcon?.file) formData.append('appIcon', appIcon.file);
     if (webIcon?.file) formData.append('webImage', webIcon.file);
     if (mainImage?.file) formData.append('mainImage', mainImage.file);
@@ -30,6 +31,8 @@ const AddCategoryModal = ({ show, setShow }) => {
     dispatch(addCategory(formData));
     setShow(false);
   };
+
+  // console.log('Sending Status:', status ? 1 : 0);
 
   if (!show) return null;
 
@@ -61,9 +64,20 @@ const AddCategoryModal = ({ show, setShow }) => {
                   />
                 </div>
 
+
                 <ImageUpload label="App Icon (100x100)" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />
                 <ImageUpload label="Web Icon (100x100)" image={webIcon} onChange={handleFileChange(setWebIcon)} onRemove={removeImage(setWebIcon)} />
                 <ImageUpload label="Main Image (100x100)" image={mainImage} onChange={handleFileChange(setMainImage)} onRemove={removeImage(setMainImage)} />
+                <div className="form-check ps-4 m-4">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    name="status"
+                    checked={status}
+                    onChange={(e) => setStatus(e.target.checked)}
+                  />
+                  <label className="form-check-label">Active</label>
+                </div>
               </div>
             </div>
 

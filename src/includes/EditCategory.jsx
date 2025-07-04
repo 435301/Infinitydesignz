@@ -10,14 +10,17 @@ const EditCategoryModal = ({ show, setShow, category }) => {
   const [appIcon, setAppIcon] = useState(null);
   const [webIcon, setWebIcon] = useState(null);
   const [mainImage, setMainImage] = useState(null);
+  const [status, setStatus] = useState(false);
+  const BASE_URL = 'http://68.183.89.229:4005'
 
   useEffect(() => {
     if (category) {
       setCategoryTitle(category.title || '');
-      setAppIcon(category.appIcon ? { file: null, preview: `http://68.183.89.229:4005/uploads/categories/${category.appIcon}` } : null);
-      setWebIcon(category.webImage ? { file: null, preview: `http://68.183.89.229:4005/uploads/categories/${category.webImage}` } : null);
-      setMainImage(category.mainImage ? { file: null, preview: `http://68.183.89.229:4005/uploads/categories/${category.mainImage}` } : null);
+      setAppIcon(category.appIcon ? { file: null, preview: `${BASE_URL}${category.appIcon}` } : null);
+      setWebIcon(category.webImage ? { file: null, preview: `${BASE_URL}${category.webImage}` } : null);
+      setMainImage(category.mainImage ? { file: null, preview: `${BASE_URL}${category.mainImage}` } : null);
     }
+    setStatus(!!category.status);
   }, [category]);
 
   const handleFileChange = (setter) => (e) => {
@@ -25,12 +28,23 @@ const EditCategoryModal = ({ show, setShow, category }) => {
     if (file) setter({ file, preview: URL.createObjectURL(file) });
   };
 
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    if (name === 'status' && type === 'checkbox' ) {
+    setStatus(checked);
+  }
+  };
+
+  console.log('Checkbox status:', status);
+
+
   const removeImage = (setter) => () => setter(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append('title', categoryTitle);
+    formData.append('status', status ? 1 : 0);
     if (appIcon?.file) formData.append('appIcon', appIcon.file);
     if (webIcon?.file) formData.append('webImage', webIcon.file);
     if (mainImage?.file) formData.append('mainImage', mainImage.file);
@@ -39,6 +53,8 @@ const EditCategoryModal = ({ show, setShow, category }) => {
     toast.success('Category updated successfully!');
     setShow(false);
   };
+
+
 
   if (!show) return null;
 
@@ -69,6 +85,11 @@ const EditCategoryModal = ({ show, setShow, category }) => {
                 <ImageUpload label="App Icon" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />
                 <ImageUpload label="Web Icon" image={webIcon} onChange={handleFileChange(setWebIcon)} onRemove={removeImage(setWebIcon)} />
                 <ImageUpload label="Main Image" image={mainImage} onChange={handleFileChange(setMainImage)} onRemove={removeImage(setMainImage)} />
+
+                <div className="form-check ps-4 m-4">
+                  <input className="form-check-input" type="checkbox" name="status" checked={status} onChange={handleChange} />
+                  <label className="form-check-label">Active</label>
+                </div>
               </div>
             </div>
             <div className="modal-footer">

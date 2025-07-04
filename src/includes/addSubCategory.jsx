@@ -14,6 +14,7 @@ const AddSubCategoryModal = ({ show, setShow }) => {
     const [appIcon, setAppIcon] = useState(null);
     const [webIcon, setWebIcon] = useState(null);
     const [mainImage, setMainImage] = useState(null);
+    const [status, setStatus] = useState(false);
 
     const { categories } = useSelector(state => state.categories || {});
 
@@ -33,6 +34,7 @@ const AddSubCategoryModal = ({ show, setShow }) => {
         const formData = new FormData();
 
         formData.append('title', title);
+        formData.append('status', status ? 1 : 0)
         formData.append('parent_id', menu); // <-- This is important
         formData.append('seoTitle', seoTitle);
         formData.append('seoDescription', seoDescription);
@@ -62,7 +64,7 @@ const AddSubCategoryModal = ({ show, setShow }) => {
                         <div className="modal-body">
                             <div className="row align-items-center">
                                 <div className="col-lg-4 mb-3">
-                                    <label className="form-label">Menu</label>
+                                    <label className="form-label">Menu<span className="text-danger">*</span></label>
                                     <select
                                         className="form-control"
                                         value={menu}
@@ -79,7 +81,7 @@ const AddSubCategoryModal = ({ show, setShow }) => {
                                 </div>
 
                                 <div className="col-lg-4 mb-3">
-                                    <label className="form-label">Category Title</label>
+                                    <label className="form-label">Category Title<span className="text-danger">*</span></label>
                                     <input
                                         className="form-control"
                                         type="text"
@@ -129,6 +131,16 @@ const AddSubCategoryModal = ({ show, setShow }) => {
                                         onChange={(e) => setSeoKeywords(e.target.value)}
                                         placeholder="Enter SEO Keywords"
                                     />
+                                </div>
+                                <div className="form-check ps-4 m-4">
+                                    <input
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        name="status"
+                                        checked={status}
+                                        onChange={(e) => setStatus(e.target.checked)}
+                                    />
+                                    <label className="form-check-label">Active</label>
                                 </div>
                             </div>
                         </div>

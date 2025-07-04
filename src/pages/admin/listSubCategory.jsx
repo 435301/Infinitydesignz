@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import '../../css/admin/style.css';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
@@ -6,6 +7,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories } from '../../redux/actions/categoryAction';
 import { BsPencilSquare, BsEye, BsSearch, BsArrowClockwise } from 'react-icons/bs';
 import AddListSubCategoryModal from '../../includes/addListSubCategory';
+import EditListSubCategoryModal from '../../includes/editListSubCategoryModal';
+import DeleteModal from '../../modals/deleteModal';
+import { toast } from 'react-toastify';
+import { TiTrash } from "react-icons/ti";
+import ViewListSubCategoryModal from '../../modals/viewListCategoryModal';
 
 const ListSubCategory = () => {
   const [showModal, setShowModal] = useState(false);
@@ -13,7 +19,15 @@ const ListSubCategory = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-   const BASE_URL = 'http://68.183.89.229:4005/uploads/categories';
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [subCategoryIdToEdit, setSubCategoryIdToEdit] = useState(null);
+  const [ListSubCategoryToDelete, setListSubCategoryToDelete] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [selectedSubCategory, setSelectedSubCategory] = useState(null);
+
+  const BASE_URL = 'http://68.183.89.229:4005';
+  const BASE_URL_DELETE = 'http://68.183.89.229:4005';
   const dispatch = useDispatch();
   const { categories = [], loading, error } = useSelector((state) => state.categories || {});
 
@@ -59,10 +73,53 @@ const ListSubCategory = () => {
       subCat.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       subCat.category.toLowerCase().includes(searchTerm.toLowerCase());
     subCat.subCategory.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter ? subCat.status === statusFilter : true;
+    // const matchesStatus = statusFilter ? subCat.status === statusFilter : true;
+    // return matchesSearch && matchesStatus;
+    const matchesStatus = statusFilter
+      ? (statusFilter === 'active' ? subCat.status === true : subCat.status === false)
+      : true;
+
     return matchesSearch && matchesStatus;
   });
 
+  const handleEditClick = (id) => {
+    setSubCategoryIdToEdit(id);
+    setEditModalOpen(true);
+  };
+
+  const handleDeleteClick = (id) => {
+    console.log("handleDeleteClick triggered with ID:", id);
+    setListSubCategoryToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.delete(`${BASE_URL_DELETE}/categories/${ListSubCategoryToDelete}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success("Category deleted successfully!");
+      dispatch(fetchCategories());
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error(error?.response?.data?.message || "Failed to delete category.");
+    } finally {
+      setShowDeleteModal(false);
+      setListSubCategoryToDelete(null);
+    }
+  };
+  const handleViewClick = (id) => {
+    const listsubCat = subSubCategories.find((item) => item.id === id);
+    if (listsubCat) {
+      setSelectedSubCategory(listsubCat);
+      setViewModalOpen(true);
+    }
+  };
   return (
     <div className="wrapper sidebar-mini fixed">
       <HeaderAdmin />
@@ -93,9 +150,6 @@ const ListSubCategory = () => {
                       </select>
                     </div>
                     <div className="col-md-2 d-flex gap-2">
-                      <button className="btn btn-danger">
-                        <BsSearch style={{ fontSize: '18px' }} />
-                      </button>
                       <button className="btn btn-success" onClick={() => {
                         setSearchTerm('');
                         setStatusFilter('');
@@ -109,8 +163,6 @@ const ListSubCategory = () => {
                       </button>
                     </div>
                   </div>
-                  {loading && <p>Loading categories...</p>}
-                  {error && <p className="text-danger">Error: {error}</p>}
                 </div>
               </div>
             </div>
@@ -125,8 +177,6 @@ const ListSubCategory = () => {
                     <div className="col-md-6 text-end pt">
                       <button className="btn btn-success me-1">Active</button>
                       <button className="btn btn-default me-1">Inactive</button>
-                      <button className="btn btn-danger me-1">Front Active</button>
-                      <button className="btn btn-warning me-1">Front Inactive</button>
                     </div>
                   </div>
 
@@ -171,54 +221,64 @@ const ListSubCategory = () => {
                                 <td>{item.subCategory}</td>
                                 <td>{item.title}</td>
                                 <td>
-                                  <img
-                                    src={`${BASE_URL}/${item.appIcon}`}
-                                    alt={`${item.title} App Icon`}
-                                    className="rounded-circle"
-                                    width="50"
-                                    height="50"
-                                  />
+                                  {(item?.appIcon) ? (
+                                    <img
+                                      src={`${BASE_URL}${item?.appIcon}`}
+                                      alt={`${item.title} App Icon`}
+                                      className="rounded-circle"
+                                      width="50"
+                                      height="50"
+                                    />
+                                  ) : (
+                                    <span>N/A</span>
+                                  )}
                                 </td>
                                 <td>
-                                  <img
-                                    src={`${BASE_URL}/${item.webImage}`}
-                                    alt={`${item.title} Web Icon`}
-                                    className="rounded-circle"
-                                    width="50"
-                                    height="50"
-                                  />
+                                  {(item?.webImage) ? (
+                                    <img
+                                      src={`${BASE_URL}${item?.webImage}`}
+                                      alt={`${item.title} Web Icon`}
+                                      className="rounded-circle"
+                                      width="50"
+                                      height="50"
+                                    />
+                                  ) : (
+                                    <span>N/A</span>
+                                  )}
                                 </td>
                                 <td>
-                                  <img
-                                    src={`${BASE_URL}/${item.mainImage}`}
-                                    alt={`${item.title} Main Image`}
-                                    className="rounded-circle"
-                                    width="50"
-                                    height="50"
-                                  />
+                                  {(item?.mainImage) ? (
+                                    <img
+                                      src={`${BASE_URL}${item?.mainImage}`}
+                                      alt={`${item.title} Main Image`}
+                                      className="rounded-circle"
+                                      width="50"
+                                      height="50"
+                                    />
+                                  ) : (
+                                    <span>N/A</span>
+                                  )}
                                 </td>
                                 <td>
                                   <span
                                     className={`badge text-light-${item.status === true ? 'primary' : 'danger'
                                       }`}
                                   >
-                                    {item.status === true? 'Active': 'Inactive'}
+                                    {item.status === true ? 'Active' : 'Inactive'}
                                   </span>
                                 </td>
                                 <td>
-                                  <button
-                                    className="btn btn-light icon-btn"
-                                    style={{ marginRight: '5px' }}
-                                  >
-                                    <BsPencilSquare
-                                      style={{
-                                        fontSize: '18px',
-                                        color: item.status === 'active' ? '#28a745' : '#dc3545',
-                                      }}
-                                    />
+                                  <button className="btn btn-light icon-btn me-2" onClick={() => handleEditClick(item.id)}>
+                                    <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
                                   </button>
                                   <button className="btn btn-light icon-btn">
-                                    <BsEye style={{ fontSize: '18px', color: '#212529' }} />
+                                    <BsEye style={{ fontSize: '18px', color: '#212529' }} onClick={() => handleViewClick(item.id)} />
+                                  </button>
+                                  <button className="btn btn-light icon-btn m-2" >
+                                    <TiTrash style={{ fontSize: '18px', color: '#212529' }} onClick={() => {
+                                      console.log("Delete icon clicked", item.id);
+                                      handleDeleteClick(item.id);
+                                    }} />
                                   </button>
                                 </td>
                               </tr>
@@ -243,6 +303,30 @@ const ListSubCategory = () => {
             </div>
           </div>
           {showModal && <AddListSubCategoryModal show={showModal} setShow={setShowModal} />}
+          {editModalOpen && (
+            <EditListSubCategoryModal
+              show={editModalOpen}
+              setShow={setEditModalOpen}
+              subCategoryId={subCategoryIdToEdit}
+              refetchCategories={() => dispatch(fetchCategories())}
+            />
+          )}
+          {showDeleteModal && (
+            <DeleteModal
+              show={showDeleteModal}
+              onClose={() => setShowDeleteModal(false)}
+              onConfirm={handleDelete}
+              message="Are you sure you want to delete this category?"
+            />
+          )
+          }
+          {viewModalOpen && (
+            <ViewListSubCategoryModal
+              show={viewModalOpen}
+              onClose={() => setViewModalOpen(false)}
+              subCategory={selectedSubCategory}
+            />
+          )}
         </div>
       </div>
     </div>
