@@ -66,7 +66,7 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
                         <div className="modal-body">
                             <div className="row align-items-center">
                                 <div className="col-lg-4 mb-3">
-                                    <label className="form-label">Menu</label>
+                                    <label className="form-label">Menu<span className="text-danger">*</span></label>
                                     <select
                                         className="form-control"
                                         value={menu || ''}
@@ -84,7 +84,7 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
                                 </div>
 
                                 <div className="col-lg-4 mb-3">
-                                    <label className="form-label">Sub Category</label>
+                                    <label className="form-label">Sub Category<span className="text-danger">*</span></label>
                                     <select
                                         className="form-control"
                                         value={subMenu || ''}
@@ -99,7 +99,7 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
 
 
                                 <div className="col-lg-4 mb-3">
-                                    <label className="form-label">Category Title</label>
+                                    <label className="form-label">Category Title<span className="text-danger">*</span></label>
                                     <input
                                         className="form-control"
                                         type="text"

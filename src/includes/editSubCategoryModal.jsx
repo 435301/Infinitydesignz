@@ -96,7 +96,7 @@ useEffect(() => {
             <div className="modal-body">
               <div className="row align-items-center">
                 <div className="col-lg-4 mb-3">
-                  <label className="form-label">Parent Category</label>
+                  <label className="form-label">Parent Category<span className="text-danger">*</span></label>
                   <select className="form-control" name="parent_id" value={form.parent_id} onChange={handleChange} required>
                     <option value="">-- Select Parent --</option>
                     {categories.filter(c => c.parent_id === null).map(cat => (
@@ -106,7 +106,7 @@ useEffect(() => {
                 </div>
 
                 <div className="col-lg-4 mb-3">
-                  <label className="form-label">Category Title</label>
+                  <label className="form-label">Category Title<span className="text-danger">*</span></label>
                   <input className="form-control" name="title" value={form.title} onChange={handleChange} required />
                 </div>
 
