@@ -12,6 +12,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import DeleteModal from '../../modals/deleteModal';
 import EditCategoryModal from '../../includes/EditCategory';
+import { Pagination } from 'react-bootstrap';
+import PaginationComponent from '../../includes/pagination';
 
 const ManageCategories = () => {
   const dispatch = useDispatch();
@@ -46,6 +48,15 @@ const ManageCategories = () => {
 
     return matchesSearch && matchesStatus;
   });
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredCategories.slice(indexOfFirstRow, indexOfLastRow);
+
+  const totalPages = Math.ceil(filteredCategories.length / rowsPerPage);
 
   const handleViewClick = (id) => {
     const cat = filteredCategories.find((item) => item.id === id);
@@ -97,6 +108,11 @@ const ManageCategories = () => {
     }
   };
 
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
@@ -185,8 +201,8 @@ const ManageCategories = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredCategories.length > 0 ? (
-                        filteredCategories.map((cat, index) => {
+                      {currentRows.length > 0 ? (
+                        currentRows.map((cat, index) => {
                           const parentCategory = categories.find(
                             (parent) => parent.id === cat.parent_id
                           );
@@ -302,6 +318,11 @@ const ManageCategories = () => {
               />
             )
             }
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
 
 
           </div>

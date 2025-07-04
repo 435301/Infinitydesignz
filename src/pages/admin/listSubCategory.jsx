@@ -12,6 +12,7 @@ import DeleteModal from '../../modals/deleteModal';
 import { toast } from 'react-toastify';
 import { TiTrash } from "react-icons/ti";
 import ViewListSubCategoryModal from '../../modals/viewListCategoryModal';
+import PaginationComponent from '../../includes/pagination';
 
 const ListSubCategory = () => {
   const [showModal, setShowModal] = useState(false);
@@ -82,6 +83,16 @@ const ListSubCategory = () => {
     return matchesSearch && matchesStatus;
   });
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredSubCategories.slice(indexOfFirstRow, indexOfLastRow);
+
+  const totalPages = Math.ceil(filteredSubCategories.length / rowsPerPage);
+
+
   const handleEditClick = (id) => {
     setSubCategoryIdToEdit(id);
     setEditModalOpen(true);
@@ -120,6 +131,13 @@ const ListSubCategory = () => {
       setViewModalOpen(true);
     }
   };
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
   return (
     <div className="wrapper sidebar-mini fixed">
       <HeaderAdmin />
@@ -205,8 +223,8 @@ const ListSubCategory = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {filteredSubCategories.length > 0 ? (
-                            filteredSubCategories.map((item, index) => (
+                          {currentRows.length > 0 ? (
+                            currentRows.map((item, index) => (
                               <tr key={item.id}>
                                 <td>
                                   <input
@@ -327,6 +345,11 @@ const ListSubCategory = () => {
               subCategory={selectedSubCategory}
             />
           )}
+          <PaginationComponent
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
     </div>

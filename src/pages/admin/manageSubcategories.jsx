@@ -13,6 +13,8 @@ import { fetchSubCategoryById } from '../../redux/actions/categoryAction';
 import DeleteModal from '../../modals/deleteModal';
 import { toast } from 'react-toastify';
 import ViewSubCategoryModal from '../../modals/viewSubCategoryModal';
+import { Pagination } from 'react-bootstrap';
+import PaginationComponent from '../../includes/pagination';
 
 const ManageSubCategories = () => {
   const [showModal, setShowModal] = useState(false);
@@ -119,6 +121,20 @@ const ManageSubCategories = () => {
     }
   };
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredSubCategories.slice(indexOfFirstRow, indexOfLastRow);
+
+  const totalPages = Math.ceil(filteredSubCategories.length / rowsPerPage);
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
   return (
     <div className="wrapper sidebar-mini fixed">
       <HeaderAdmin />
@@ -203,8 +219,8 @@ const ManageSubCategories = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {filteredSubCategories.length > 0 ? (
-                            filteredSubCategories.map((item, index) => (
+                          {currentRows.length > 0 ? (
+                            currentRows.map((item, index) => (
                               <tr key={item.id}>
                                 <td>
                                   <input type="checkbox" className="row-checkbox" />
@@ -324,7 +340,11 @@ const ManageSubCategories = () => {
         />
       )
       }
-
+      <PaginationComponent
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

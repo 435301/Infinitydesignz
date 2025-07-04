@@ -7,7 +7,7 @@ import AdBanner from '../../img/ad-banner.png';
 import Header from "../../includes/header";
 import Footer from "../../includes/footer";
 import { Link } from "react-router-dom";
-import RelatedProductsCarousel from "../../components/RelatedProductsCarousel";
+import RelatedProductsCarousel from "../users/RelatedProductsCarousel";
     // Replace with your footer component
 
 const orders = [
