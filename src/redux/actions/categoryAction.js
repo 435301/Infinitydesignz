@@ -1,5 +1,6 @@
 import axios from "axios";
 import { toast } from 'react-toastify';
+import BASE_URL from "../../config/config";
 
 export const FETCH_CATEGORIES_REQUEST = 'FETCH_CATEGORIES_REQUEST';
 export const FETCH_CATEGORIES_SUCCESS = 'FETCH_CATEGORIES_SUCCESS';
@@ -26,7 +27,7 @@ export const FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS = 'FETCH_LISTSUBCATEGORY_BY_ID_
 
 
 
-const BASE_URL = 'http://68.183.89.229:4005/categories';
+// const BASE_URL = 'http://68.183.89.229:4005/categories';
 
 export const fetchCategories = () => {
 
@@ -39,7 +40,7 @@ export const fetchCategories = () => {
       const token = localStorage.getItem('token');
       console.log('token', token)
 
-      const response = await axios.get('http://68.183.89.229:4005/categories', {
+      const response = await axios.get(`${BASE_URL}/categories`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -70,7 +71,7 @@ export const addCategory = (formData) => async (dispatch) => {
     const token = localStorage.getItem('token');
     console.log('tokenadd', token)
 
-    await axios.post('http://68.183.89.229:4005/categories', formData, {
+    await axios.post(`${BASE_URL}/categories`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${token}`,
@@ -91,7 +92,7 @@ export const addSubCategory = (formData) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
 
-    await axios.post('http://68.183.89.229:4005/categories', formData, {
+    await axios.post(`${BASE_URL}/categories`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${token}`,
@@ -114,7 +115,7 @@ export const listSubCategory = (formData) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
 
-    await axios.post('http://68.183.89.229:4005/categories', formData, {
+    await axios.post(`${BASE_URL}/categories`, formData, {
       headers: {
         // 'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${token}`,
@@ -135,7 +136,7 @@ export const editCategory = (id, formData) => async (dispatch) => {
   dispatch({ type: 'EDIT_CATEGORY_REQUEST' });
   try {
     const token = localStorage.getItem('token');
-    await axios.put(`http://68.183.89.229:4005/categories/${id}`, formData, {
+    await axios.put(`${BASE_URL}/categories/${id}`, formData, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'multipart/form-data',
@@ -155,7 +156,7 @@ export const editCategory = (id, formData) => async (dispatch) => {
 export const fetchSubCategoryById = (id) => async (dispatch) => {
   const token = localStorage.getItem('token');
   try {
-    const res = await axios.get(`http://68.183.89.229:4005/categories/${id}`, {
+    const res = await axios.get(`${BASE_URL}/categories/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     dispatch({ type: FETCH_SUBCATEGORY_BY_ID_SUCCESS, payload: res.data });
@@ -167,7 +168,7 @@ export const fetchSubCategoryById = (id) => async (dispatch) => {
 export const updateSubCategory = (id, updatedData) => async (dispatch) => {
   const token = localStorage.getItem('token');
   try {
-    const res = await axios.put(`http://68.183.89.229:4005/categories/${id}`, updatedData, {
+    const res = await axios.put(`${BASE_URL}/categories/${id}`, updatedData, {
       headers: { Authorization: `Bearer ${token}` },
     });
     dispatch({ type: EDIT_SUBCATEGORY_SUCCESS, payload: res.data });
@@ -180,7 +181,7 @@ export const updateSubCategory = (id, updatedData) => async (dispatch) => {
 export const updateListSubCategory = (id, updatedData) => async (dispatch) => {
   const token = localStorage.getItem('token');
   try {
-    const res = await axios.put(`http://68.183.89.229:4005/categories/${id}`, updatedData, {
+    const res = await axios.put(`${BASE_URL}/categories/${id}`, updatedData, {
       headers: { Authorization: `Bearer ${token}` },
     });
     dispatch({ type: EDIT_LISTSUBCATEGORY_SUCCESS, payload: res.data });
@@ -193,7 +194,7 @@ export const updateListSubCategory = (id, updatedData) => async (dispatch) => {
 export const fetchListSubCategoryById = (id) => async (dispatch) => {
   const token = localStorage.getItem('token');
   try {
-    const res = await axios.get(`http://68.183.89.229:4005/categories/${id}`, {
+    const res = await axios.get(`${BASE_URL}/categories/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     dispatch({ type: FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS, payload: res.data });

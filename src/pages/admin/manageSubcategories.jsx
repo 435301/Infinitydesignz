@@ -15,6 +15,8 @@ import { toast } from 'react-toastify';
 import ViewSubCategoryModal from '../../modals/viewSubCategoryModal';
 import { Pagination } from 'react-bootstrap';
 import PaginationComponent from '../../includes/pagination';
+  import BASE_URL from '../../config/config';
+
 
 const ManageSubCategories = () => {
   const [showModal, setShowModal] = useState(false);
@@ -28,8 +30,8 @@ const ManageSubCategories = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
 
-  const BASE_URL = 'http://68.183.89.229:4005';
-  const BASE_URL_DELETE = 'http://68.183.89.229:4005';
+  // const BASE_URL = 'http://68.183.89.229:4005';
+  // const BASE_URL_DELETE = 'http://68.183.89.229:4005';
   const dispatch = useDispatch();
   const { categories = [], loading, error } = useSelector((state) => state.categories || {});
 
@@ -96,7 +98,7 @@ const ManageSubCategories = () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`${BASE_URL_DELETE}/categories/${subCategoryToDelete}`, {
+      await axios.delete(`${BASE_URL}/categories/${subCategoryToDelete}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

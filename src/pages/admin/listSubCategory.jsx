@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 import { TiTrash } from "react-icons/ti";
 import ViewListSubCategoryModal from '../../modals/viewListCategoryModal';
 import PaginationComponent from '../../includes/pagination';
+import BASE_URL from '../../config/config';
 
 const ListSubCategory = () => {
   const [showModal, setShowModal] = useState(false);
@@ -27,8 +28,8 @@ const ListSubCategory = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
 
-  const BASE_URL = 'http://68.183.89.229:4005';
-  const BASE_URL_DELETE = 'http://68.183.89.229:4005';
+  // const BASE_URL = 'http://68.183.89.229:4005';
+  // const BASE_URL_DELETE = 'http://68.183.89.229:4005';
   const dispatch = useDispatch();
   const { categories = [], loading, error } = useSelector((state) => state.categories || {});
 
@@ -108,7 +109,7 @@ const ListSubCategory = () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`${BASE_URL_DELETE}/categories/${ListSubCategoryToDelete}`, {
+      await axios.delete(`${BASE_URL}/categories/${ListSubCategoryToDelete}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

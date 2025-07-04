@@ -2,8 +2,9 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import BASE_URL from '../config/config';
 
-const BASE_URL = 'http://68.183.89.229:4005';
+// const BASE_URL = 'http://68.183.89.229:4005';
 
 const ViewListSubCategoryModal = ({ show, onClose, subCategory }) => {
   if (!subCategory) return null;

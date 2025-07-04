@@ -14,6 +14,7 @@ import DeleteModal from '../../modals/deleteModal';
 import EditCategoryModal from '../../includes/EditCategory';
 import { Pagination } from 'react-bootstrap';
 import PaginationComponent from '../../includes/pagination';
+import BASE_URL from '../../config/config';
 
 const ManageCategories = () => {
   const dispatch = useDispatch();
@@ -27,8 +28,8 @@ const ManageCategories = () => {
   const [categoryToDelete, setCategoryToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [categoryToEdit, setCategoryToEdit] = useState(null);
-  const BASE_URL = 'http://68.183.89.229:4005';
-  const BASE_URL_DELETE = 'http://68.183.89.229:4005';
+  // const BASE_URL = 'http://68.183.89.229:4005';
+  // const BASE_URL_DELETE = 'http://68.183.89.229:4005';
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -76,7 +77,7 @@ const ManageCategories = () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`${BASE_URL_DELETE}/categories/${categoryToDelete}`, {
+      await axios.delete(`${BASE_URL}/categories/${categoryToDelete}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -97,7 +98,7 @@ const ManageCategories = () => {
   const handleEditClick = async (id) => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get(`http://68.183.89.229:4005/categories/${id}`, {
+      const response = await axios.get(`${BASE_URL}/categories/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCategoryToEdit(response.data);

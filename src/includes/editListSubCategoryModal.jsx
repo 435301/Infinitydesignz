@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchListSubCategoryById, updateListSubCategory } from '../redux/actions/categoryAction';
+import BASE_URL from '../config/config';
 
 const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories }) => {
     const dispatch = useDispatch();
@@ -19,7 +20,7 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
     const [appIcon, setAppIcon] = useState(null);
     const [webIcon, setWebIcon] = useState(null);
     const [mainImage, setMainImage] = useState(null);
-    const BASE_URL = '`http://68.183.89.229:4005'
+    // const BASE_URL = '`http://68.183.89.229:4005'
 
     console.log('Submitting status value:', form.status);
     console.log('Appended status to FormData:', form.status ? 1 : 0);

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateSubCategory, fetchSubCategoryById } from '../redux/actions/categoryAction';
+import BASE_URL from '../config/config';
 
 const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories }) => {
   const dispatch = useDispatch();
@@ -37,7 +38,7 @@ useEffect(() => {
     });
 
     // Pre-fill image previews
-    const BASE_URL = 'http://68.183.89.229:4005';
+    // const BASE_URL = 'http://68.183.89.229:4005';
     setAppIcon(subCategory.appIcon ? { preview: `${BASE_URL}${subCategory.appIcon}` } : null);
     setWebIcon(subCategory.webImage ? { preview: `${BASE_URL}${subCategory.webImage}` } : null);
     setMainImage(subCategory.mainImage ? { preview: `${BASE_URL}${subCategory.mainImage}` } : null);

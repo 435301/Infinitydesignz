@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { editCategory } from '../redux/actions/categoryAction';
 import { toast } from 'react-toastify'
+import BASE_URL from '../config/config';
 
 const EditCategoryModal = ({ show, setShow, category }) => {
   const dispatch = useDispatch();
@@ -11,7 +12,7 @@ const EditCategoryModal = ({ show, setShow, category }) => {
   const [webIcon, setWebIcon] = useState(null);
   const [mainImage, setMainImage] = useState(null);
   const [status, setStatus] = useState(false);
-  const BASE_URL = 'http://68.183.89.229:4005'
+  // const BASE_URL = 'http://68.183.89.229:4005'
 
   useEffect(() => {
     if (category) {
