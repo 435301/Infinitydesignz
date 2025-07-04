@@ -69,7 +69,12 @@ const ManageSubCategories = () => {
     const matchesSearch =
       subCat.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       subCat.category.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter ? subCat.status === statusFilter : true;
+    // const matchesStatus = statusFilter ? subCat.status === statusFilter : true;
+    // return matchesSearch && matchesStatus;
+    const matchesStatus = statusFilter
+      ? (statusFilter === 'active' ? subCat.status === true : subCat.status === false)
+      : true;
+
     return matchesSearch && matchesStatus;
   });
 
