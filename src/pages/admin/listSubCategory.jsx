@@ -70,7 +70,7 @@ const ListSubCategory = () => {
         <Sidebar />
       </aside>
 
-      <div className="content-wrapper">
+      <div className="content-wrapper p-3">
         <div className="main-header" style={{ marginTop: 0 }}>
           <h4>List Sub Categories</h4>
         </div>

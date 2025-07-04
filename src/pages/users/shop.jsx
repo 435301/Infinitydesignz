@@ -27,14 +27,14 @@ import WardRobes from '../../img/wardrobes.png';
 import Dining from '../../img/dining.png';
 import AccImg from '../../img/acc-img.png';
 import Img1 from '../../img/img1.png';
-import ProductGrid from "../../components/profuctGrid";
+import ProductGrid from "../../components/productGrid";
 import ProductCard from "../../components/productCard";
 import ProductList from "../../components/productGrid";
 import FurnitureGrid from "../../components/furnitureGrid";
 import HelpSection from "../../components/helpSection";
 import CustomAccordion from "../../components/customAccordian";
 import CallbackForm from "../../components/callbackForm";
-import NewArrivals from "../../components/newArrivalsShop";
+import NewArrivals from "../../components/newArrivalSection";
 
 const ProductTopBar = () => {
     const [sortOption, setSortOption] = useState('recommended');

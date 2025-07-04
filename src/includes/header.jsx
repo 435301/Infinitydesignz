@@ -184,7 +184,7 @@ const dropdownData = [
             </div>
 
             <div className="col-lg-4 Wishlist col-md-8 text-end d-flex justify-content-end align-items-center gap-4">
-              <a href="/wishlist.php" className="text-decoration-none text-dark">
+              <a href="/wishlist" className="text-decoration-none text-dark">
                 <span style={{ position: "relative", display: "inline-block" }}>
                   <img src={Favourite} alt="wishlist" />
                   <span className="badge rounded-pill text-white" style={{ backgroundColor: "rgb(212, 14, 0)", position: "absolute", top: -8, right: -8, fontSize: "0.65rem", padding: "2px 6px" }}>
@@ -193,10 +193,10 @@ const dropdownData = [
                 </span>
                 Wishlist
               </a>
-              <a href="/profile.php" className="text-decoration-none text-dark">
+              <a href="/profile" className="text-decoration-none text-dark">
                 <img src={AccountBox} style={{ height: 18 }} alt="account" /> My Account
               </a>
-              <a href="/cart.php" className="text-decoration-none text-dark">
+              <a href="/cart" className="text-decoration-none text-dark">
                 <span style={{ position: "relative", display: "inline-block" }}>
                   <img src={ShoppingCart} alt="cart" />
                   <span className="badge rounded-pill text-white" style={{ backgroundColor: "rgb(212, 14, 0)", position: "absolute", top: -8, right: -8, fontSize: "0.65rem", padding: "2px 6px" }}>

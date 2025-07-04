@@ -32,6 +32,12 @@ const Sidebar = ({ isCollapsed }) => {
       '/admin/filter-list',
       '/admin/bulk-upload',
       '/admin/add-product',
+      '/admin/add-coupon',
+      '/admin/manage-users',
+      '/admin/manage-coupons',
+      '/admin/sliders',
+
+      '/admin/manage-orders',
 
     ],
     sizes: ['/admin/create-size', '/admin/size-mapping'],
@@ -39,9 +45,11 @@ const Sidebar = ({ isCollapsed }) => {
     productFilters: ['/admin/filter-type', '/admin/filter-set', '/admin/filter-list'],
     categories: ['/admin/manage-category', '/admin/manage-subcategory', '/admin/list-subcategory'],
     products: ['/admin/add-product', '/admin/manage-product'],
-    users: ['/manage-users'],
-    orders: ['/orders'],
-    coupons: ['/add-coupon', '/manage-coupons'],
+    users: ['/admin/manage-users'],
+    orders: ['/admin/orders'],
+    sliders: ['/admin/sliders' , '/admin/manage-sliders'],
+
+    coupons: ['/admin/add-coupon', '/admin/manage-coupons'],
     others: ['/contact', '/keywords'],
   };
 
@@ -194,7 +202,7 @@ const Sidebar = ({ isCollapsed }) => {
             </div>
             {isActiveMenu('users') && !isCollapsed && (
               <ul style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                {renderNavLink('/manage-users', 'Manage Users')}
+                {renderNavLink('/admin/manage-users', 'Manage Users')}
               </ul>
             )}
           </li>
@@ -208,7 +216,7 @@ const Sidebar = ({ isCollapsed }) => {
             </div>
             {isActiveMenu('orders') && !isCollapsed && (
               <ul style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                {renderNavLink('/orders', 'View Orders')}
+                {renderNavLink('/admin/orders', 'View Orders')}
               </ul>
             )}
           </li>
@@ -222,8 +230,8 @@ const Sidebar = ({ isCollapsed }) => {
             </div>
             {isActiveMenu('coupons') && !isCollapsed && (
               <ul style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                {renderNavLink('/add-coupon', 'Add Coupon')}
-                {renderNavLink('/manage-coupons', 'Manage Coupons')}
+                {renderNavLink('/admin/add-coupon', 'Add Coupon')}
+                {renderNavLink('/admin/manage-coupons', 'Manage Coupons')}
               </ul>
             )}
           </li>
@@ -231,7 +239,7 @@ const Sidebar = ({ isCollapsed }) => {
           {/* Sliders */}
           <li>
             <NavLink
-              to="/sliders"
+              to="/admin/sliders"
               className={({ isActive }) => (isActive ? 'active' : '')}
               style={navLinkStyle(isCollapsed)}
             >
@@ -249,23 +257,24 @@ const Sidebar = ({ isCollapsed }) => {
             </div>
             {isActiveMenu('others') && !isCollapsed && (
               <ul style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                {renderNavLink('/contact', 'Contact')}
+                {renderNavLink('/admin/contact', 'Contact')}
                 {renderNavLink('/keywords', 'Keywords')}
               </ul>
             )}
           </li>
 
           {/* Change Password */}
-          <li>
-            <NavLink
-              to="/change-password"
-              className={({ isActive }) => (isActive ? 'active' : '')}
-              style={navLinkStyle(isCollapsed)}
-            >
-              <BsListUl style={mainIconStyle(isCollapsed)} />
-              <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Change Password</span>
-            </NavLink>
-          </li>
+         <li>
+  <NavLink
+    to="/admin/change-password" // ← Set the path you want to navigate to
+    className={({ isActive }) => (isActive ? 'active' : '')}
+    style={navLinkStyle(isCollapsed)}
+  >
+    <BsListUl style={mainIconStyle(isCollapsed)} />
+    <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Change Password</span>
+  </NavLink>
+</li>
+
         </ul>
       </section>
     </aside>

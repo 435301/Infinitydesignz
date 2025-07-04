@@ -53,7 +53,7 @@ const ManageFilterSet = () => {
         <div
           className="content-wrapper mb-4"
           style={{
-            marginLeft: isSidebarCollapsed ? '60px' : '301px',
+            marginLeft: isSidebarCollapsed ? '60px' : '295px',
             padding: '20px',
             flex: 1,
             transition: 'margin-left 0.3s ease',

@@ -107,10 +107,10 @@ const MyOrdersPage = () => {
         </div>
       </section>
 
-      <section className="orders-section">
+      <section className="orders-section mt-4">
         <div className="container">
           <div className="row">
-            <aside className="col-md-2 sidebar">
+            <aside className="col-md-2 sidebars">
               <Link to="/profile">Profile</Link>
               <Link to="/orders" className="active">Orders</Link>
               <Link to="/wishlist">Wishlist</Link>

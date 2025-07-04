@@ -7,7 +7,8 @@ import Img3 from '../../src/img/img3.png';
 import Star from '../../src/img/star.svg';
 import Star1 from '../../src/img/star1.svg';
 import { Link } from 'react-router-dom';
-
+import Header from "../includes/header";
+import Footer from "../includes/footer";
 
 export default function AddressBook() {
   const [showModal, setShowModal] = useState(false);
@@ -19,6 +20,8 @@ export default function AddressBook() {
 
   return (
     <>
+          <Header />
+    
       {/* Breadcrumb Section */}
       <section className="bg-light py-3">
         <div className="container shop">
@@ -34,12 +37,12 @@ export default function AddressBook() {
       <section className="py-5">
         <div className="container shop">
           <div className="row">
-            {/* Sidebar */}
-            <div className="col-md-2 sidebar">
-              <Link to="/profile.php">Profile</Link>
-              <Link to="orders.php">Orders</Link>
-              <Link to="wishlist.php">Wishlist</Link>
-              <Link to="addressbook.php" className="active">Address book</Link>
+            {/* sidebars */}
+            <div className="col-md-2 sidebars">
+              <Link to="/profile">Profile</Link>
+              <Link to="/orders">Orders</Link>
+              <Link to="/wishlist">Wishlist</Link>
+              <Link to="/addressbook" className="active">Address book</Link>
             </div>
 
             {/* Main Content */}
@@ -81,6 +84,7 @@ export default function AddressBook() {
           </div>
         </div>
       </section>
+      <Footer />
 
       {/* Modal Popup */}
       {showModal && <AddressModal selectedType={selectedType} onClose={toggleModal} onTypeChange={handleTypeSelect} />}

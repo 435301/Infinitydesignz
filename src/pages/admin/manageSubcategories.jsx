@@ -65,7 +65,7 @@ const ManageSubCategories = () => {
         <Sidebar />
       </aside>
 
-      <div className="content-wrapper">
+      <div className="content-wrapper p-3">
         <div className="main-header" style={{ marginTop: '0px' }}>
           <h4>Sub Categories</h4>
         </div>

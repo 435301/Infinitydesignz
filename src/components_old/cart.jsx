@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import "../../src/css/user/cart.css";
 import "../../src/css/user/userstyle.css";
 import '../../src/css/user/bootstrap-icons.css';
+
 import P1 from '../../src/img/p1.png';
+import Header from "../includes/header";
 
 const CartItem = ({ id, product }) => {
   const [qty, setQty] = useState(1);
@@ -11,7 +13,8 @@ const CartItem = ({ id, product }) => {
   const decrement = () => setQty((prev) => (prev > 1 ? prev - 1 : 1));
 
   return (
-    <div className="d-flex flex-column border-bottom flex-md-row gap-4 px-4 pt-3 pb-3">
+   <div className="cart-page">
+     <div className="d-flex flex-column border-bottom flex-md-row gap-4 px-4 pt-3 pb-3">
       <img src={product.image} alt="Product" className="product-img" />
       <div className="flex-grow-1">
         <h4 className="text-bold product-info">{product.title}</h4>
@@ -29,7 +32,12 @@ const CartItem = ({ id, product }) => {
             <label className="me-2 fw-semibold">Qty</label>
             <div className="qty-box">
               <button className="btn-qty" onClick={decrement}>-</button>
-              <input type="text" className="qty-input" value={qty.toString().padStart(2, '0')} readOnly />
+              <input
+                type="text"
+                className="qty-input"
+                value={qty.toString().padStart(2, '0')}
+                readOnly
+              />
               <button className="btn-qty" onClick={increment}>+</button>
             </div>
           </div>
@@ -52,11 +60,12 @@ const CartItem = ({ id, product }) => {
         </div>
       </div>
     </div>
+   </div>
   );
 };
 
 const PriceSummary = () => (
-  <div className="p-3">
+  <div className="p-3 border cart-page">
     <div className="mb-3">
       <h5 className="text-bold mt-1">Coupon</h5>
       <div className="coupon-section">
@@ -94,8 +103,9 @@ const PriceSummary = () => (
       <span>Total Amount</span>
       <span>Rs.2700</span>
     </div>
-    <button className="btn btn-place-order w-100">Place Order</button>
+    <a href="/checkout" className="btn btn-place-order w-100">Place Order</a>
   </div>
+  
 );
 
 const CartPage = () => {
@@ -107,38 +117,40 @@ const CartPage = () => {
       price: "Rs.2405",
       mrp: "MRP: Rs.3367",
       sizes: ["L", "M", "S"],
-      image: {P1},
+      image: P1,
       delivery: "13 Aug",
     },
-    // Copy or map more items as needed
   ];
 
   return (
-    <div className="container py-4">
-      <div className="row">
-        <div className="col-lg-8 p-0 border-end">
-          {cartProducts.map((product) => (
-            <CartItem key={product.id} id={product.id} product={product} />
-          ))}
-        </div>
-        <div className="col-lg-4 p-0">
-          <PriceSummary />
-        </div>
-      </div>
-
-      {/* Delivery Info */}
-      <div className="mt-4">
-        <div className="deliver-to d-flex justify-content-between align-items-center p-4">
-          <div>
-            <h5 className="text-bold">Deliver to:</h5>
-            <p><strong>Chaitanya nelluri</strong></p>
-            <p>Flat no G3 Balaji homes, Nizampet, Hyderabad - 500090</p>
-            <p>Mobile: 8790969134</p>
+    <>
+      <Header />
+      <div className="container py-4">
+        <div className="row">
+          <div className="col-lg-8 p-0 border-end">
+            {cartProducts.map((product) => (
+              <CartItem key={product.id} id={product.id} product={product} />
+            ))}
           </div>
-          <button className="btn btn-change-address">Change Address</button>
+          <div className="col-lg-4 p-0">
+            <PriceSummary />
+          </div>
+        </div>
+
+        {/* Delivery Info */}
+        <div className="mt-4">
+          <div className="deliver-to d-flex justify-content-between align-items-center p-4">
+            <div>
+              <h5 className="text-bold">Deliver to:</h5>
+              <p><strong>Chaitanya nelluri</strong></p>
+              <p>Flat no G3 Balaji homes, Nizampet, Hyderabad - 500090</p>
+              <p>Mobile: 8790969134</p>
+            </div>
+            <button className="btn btn-change-address">Change Address</button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

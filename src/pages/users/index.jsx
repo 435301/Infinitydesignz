@@ -55,7 +55,7 @@ import Img2 from '../../img/img2.png';
 import Img3 from '../../img/img3.png';
 import SaleCarousel from '../../components/projectCarousel';
 import FurnitureTabs from '../../components/furnitureTabs';
-import ProductGrid from '../../components/profuctGrid';
+import ProductGrid from '../../components/productGrid';
 import HelpSection from '../../components/helpSection';
 import PromoSection from '../../components/PromoSection';
 import IconFeatureGrid from '../../components/iconFeaturedGrid';
@@ -66,6 +66,7 @@ import { Link } from 'react-router-dom';
 
 
 export default function HomeBannerSection() {
+ 
   const images = [
     { src: living, label: "Sofa / Sofa Chairs" },
     { src: c2, label: "Centre Table" },

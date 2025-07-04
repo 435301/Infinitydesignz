@@ -116,7 +116,7 @@ const ManageCategories = () => {
           <Sidebar />
         </aside>
 
-        <div className="content-wrapper">
+        <div className="content-wrapper p-3">
           <div className="main-header">
             <h4>Manage Categories</h4>
           </div>

@@ -8,10 +8,12 @@
 body {
   font-size: 15px;
   overflow-x: hidden;
-  background-color: #eceff3;
   font-family: "Poppins", sans-serif;
 }
+.content-wrapper{
+    background-color: #eceff3;
 
+}
 /* .settings-menu li {
   padding: 7px 20px;
 } */
@@ -280,7 +282,7 @@ header .wrapper {
 
 .content-wrapper {
   height: 100%;
-  background-color: transparent;
+  background-color: #eceff3;
   margin-left: 286px ;
   z-index: 820;
   -webkit-transition: all 0.3s ease-in-out;

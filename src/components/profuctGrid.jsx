@@ -2,11 +2,12 @@ import React from 'react';
 import '../../src/css/user/userstyle.css';
 import '../../src/css/user/bootstrap-icons.css';
 import '../css/user/bootstrap.min.css';
+import ProductCard from '../components/productCard'
 
 const ProductGrid = ({ products, productsName }) => {
   return (
     <div className="container Fabric pb-4">
-      <div className="row row-cols-1 row-cols-md-4 g-4 text-start">
+      <div className="row row-cols-1 row-cols-md-3 g-4 text-start">
         {products.map((product, i) => (
           <div className="col-lg-3 p-2" key={`card-${i}`}>
             <a href={product.link || '#'} className="text-decoration-none">

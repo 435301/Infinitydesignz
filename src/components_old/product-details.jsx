@@ -346,7 +346,7 @@ export default function ProductDetailPage() {
                 <hr />
                 <div className="features">
                   {[...Array(5)].map((_, i) => (
-                    <div className="feature-item" key={i}>
+                    <div className="feature-items" key={i}>
                       <div className="icon-box">
                         <img src={G1} alt="Feature Icon" />
                       </div>
