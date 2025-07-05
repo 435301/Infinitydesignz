@@ -10,6 +10,7 @@ const AddCategoryModal = ({ show, setShow }) => {
   const [webIcon, setWebIcon] = useState(null);
   const [mainImage, setMainImage] = useState(null);
   const [status, setStatus] = useState(false);
+  const [errors, setErrors] = useState({});
   const handleFileChange = (setter) => (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -19,8 +20,28 @@ const AddCategoryModal = ({ show, setShow }) => {
 
   const removeImage = (setter) => () => setter(null);
 
+   const validate = () => {
+    const newErrors = {};
+    if (!categoryTitle.trim()) {
+      newErrors.categoryTitle = 'Category Title is required';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+    const handleTitleChange = (e) => {
+    const value = e.target.value;
+    setCategoryTitle(value);
+
+    if (errors.categoryTitle && value.trim()) {
+      setErrors((prev) => ({ ...prev, categoryTitle: null }));
+    }
+  };
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validate()) return;
     const formData = new FormData();
     formData.append('title', categoryTitle);
     formData.append('status', status ? true : false);
@@ -54,12 +75,15 @@ const AddCategoryModal = ({ show, setShow }) => {
                     id="category_title"
                     name="category_title"
                     placeholder="Enter Menu Title"
-                    className="form-control"
+                   className={`form-control ${errors.categoryTitle ? 'is-invalid' : ''}`}
                     type="text"
                     value={categoryTitle}
-                    onChange={(e) => setCategoryTitle(e.target.value)}
-                    required
+                    onChange={handleTitleChange}
+                    // required
                   />
+                   {errors.categoryTitle && (
+                    <div className="invalid-feedback">{errors.categoryTitle}</div>
+                  )}
                 </div>
 
 

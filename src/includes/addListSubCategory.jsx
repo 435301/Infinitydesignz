@@ -17,6 +17,7 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
     const [webIcon, setWebIcon] = useState(null);
     const [mainImage, setMainImage] = useState(null);
     const [status, setStatus] = useState(false);
+    const [errors, setErrors] = useState({});
 
     const { categories } = useSelector(state => state.categories || {});
 
@@ -30,8 +31,55 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
         setter(null);
     };
 
+    const validate = () => {
+        const newErrors = {}
+        if (!title.trim()) {
+            newErrors.title = 'Category Title is required';
+        }
+        if (!menu) {
+            newErrors.menu = 'Menu has to be selected';
+        }
+        if (!subMenu) {
+            newErrors.subMenu = 'SubMenu has to be selected';
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    }
+
+    const handleTitleChange = (e) => {
+        const value = e.target.value;
+        setTitle(value);
+
+        if (errors.title && value.trim()) {
+            setErrors((prev) => ({ ...prev, title: null }));
+        }
+    };
+
+    const handleMenuChange = (e) => {
+        const selectedId = e.target.value;
+        const numericId = selectedId ? Number(selectedId) : '';
+        setMenu(numericId);
+        setSubMenu('');
+
+        if (errors.menu && selectedId.trim()) {
+            setErrors((prev) => ({ ...prev, menu: null }));
+        }
+    };
+
+
+    const handleSubMenuChange = (e) => {
+        const value = e.target.value;
+        setSubMenu(value);
+
+        if (errors.subMenu && value.trim()) {
+            setErrors((prev) => ({ ...prev, subMenu: null }));
+        }
+    };
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!validate()) return;
         const formData = new FormData();
 
         formData.append('title', title);
@@ -68,46 +116,51 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
                                 <div className="col-lg-4 mb-3">
                                     <label className="form-label">Menu<span className="text-danger">*</span></label>
                                     <select
-                                        className="form-control"
+                                        className={`form-control ${errors.menu ? 'is-invalid' : ''}`}
                                         value={menu || ''}
-                                        onChange={e => {
-                                            const selectedId = e.target.value;
-                                            setMenu(selectedId ? Number(selectedId) : '');
-                                            setSubMenu('');
-                                        }}
+                                        onChange={handleMenuChange}
                                     >
                                         <option value="">-- Select Category --</option>
                                         {parentCategories.map(cat => (
                                             <option key={cat.id} value={cat.id}>{cat.title}</option>
                                         ))}
                                     </select>
+                                    {errors.menu && (
+                                        <div className="invalid-feedback">{errors.menu}</div>
+                                    )}
                                 </div>
 
                                 <div className="col-lg-4 mb-3">
                                     <label className="form-label">Sub Category<span className="text-danger">*</span></label>
                                     <select
-                                        className="form-control"
+                                        className={`form-control ${errors.subMenu ? 'is-invalid' : ''}`}
                                         value={subMenu || ''}
-                                        onChange={e => setSubMenu(Number(e.target.value))}
+                                        onChange={handleSubMenuChange}
                                     >
                                         <option value="">-- Select Sub Category --</option>
                                         {subCategories.map(sub => (
                                             <option key={sub.id} value={sub.id}>{sub.title}</option>
                                         ))}
                                     </select>
+                                    {errors.subMenu && (
+                                        <div className="invalid-feedback">{errors.subMenu}</div>
+                                    )}
                                 </div>
 
 
                                 <div className="col-lg-4 mb-3">
                                     <label className="form-label">Category Title<span className="text-danger">*</span></label>
                                     <input
-                                        className="form-control"
+                                        className={`form-control ${errors.title ? 'is-invalid' : ''}`}
                                         type="text"
                                         value={title}
-                                        onChange={(e) => setTitle(e.target.value)}
+                                        onChange={handleTitleChange}
                                         placeholder="Enter Menu Title"
-                                        required
+                                    // required
                                     />
+                                    {errors.title && (
+                                        <div className="invalid-feedback">{errors.title}</div>
+                                    )}
                                 </div>
 
                                 <ImageUpload label="App Icon (100x100)" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />

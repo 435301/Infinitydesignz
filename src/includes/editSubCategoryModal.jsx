@@ -21,6 +21,7 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
   const [webIcon, setWebIcon] = useState(null);
   const [mainImage, setMainImage] = useState(null);
   const [status, setStatus] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (subCategoryId) {
@@ -63,10 +64,23 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
+    if (errors[name] && value.trim() !== '') {
+      setErrors((prev) => ({ ...prev, [name]: null }));
+    }
   };
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const newErrors = {};
+    if (!form.parent_id) newErrors.parent_id = 'Parent category is required';
+    if (!form.title.trim()) newErrors.title = 'Title is required';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
     const data = new FormData();
     data.append('title', form.title);
     data.append('parent_id', form.parent_id);
@@ -107,11 +121,11 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
                 <div className="col-lg-4 mb-3">
                   <label className="form-label">Parent Category<span className="text-danger">*</span></label>
                   <select
-                    className="form-control"
+                    className={`form-control ${errors.parent_id ? 'is-invalid' : ''}`}
                     name="parent_id"
-                    value={form.parent_id?.toString() || ''}  // ensure string comparison
+                    value={form.parent_id?.toString() || ''} 
                     onChange={handleChange}
-                    required
+                    // required
                   >
                     <option value="">-- Select Parent --</option>
                     {categories.map(cat => (
@@ -121,12 +135,13 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
                     ))}
 
                   </select>
-
+                  {errors.parent_id && <div className="invalid-feedback">{errors.parent_id}</div>}
                 </div>
 
                 <div className="col-lg-4 mb-3">
                   <label className="form-label">Category Title<span className="text-danger">*</span></label>
-                  <input className="form-control" name="title" value={form.title} onChange={handleChange} required />
+                  <input className={`form-control ${errors.title ? 'is-invalid' : ''}`} name="title" value={form.title} onChange={handleChange}  />
+                  {errors.title && <div className="invalid-feedback">{errors.title}</div>}
                 </div>
 
                 <ImageUpload label="App Icon" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />
