@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
-import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash } from 'react-icons/bs';
+import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSizes } from '../../redux/actions/sizeAction';
+// import AddSizeModal from '../../components/addSizeModal';
+import PaginationComponent from '../../includes/pagination';
+import { toast } from 'react-toastify';
+import BASE_URL from '../../config/config';
+import { TiTrash } from 'react-icons/ti';
+import DeleteModal from '../../modals/deleteModal';
+
 
 const ManageSizes = () => {
   const dispatch = useDispatch();
@@ -12,13 +20,14 @@ const ManageSizes = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-
+  const [showModal, setShowModal] = useState(false);
+  const [SizeToDelete, setSizeToDelete] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
 
-  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     dispatch(fetchSizes());
@@ -35,6 +44,43 @@ const ManageSizes = () => {
 
     return matchesSearch && matchesStatus;
   });
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredSizes.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(filteredSizes.length / rowsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+  const handleDeleteClick = (id) => {
+    setSizeToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.delete(`${BASE_URL}/size-uom/${SizeToDelete}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      toast.success("Size deleted successfully!");
+      dispatch(fetchSizes());
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("Failed to delete size.");
+    } finally {
+      setShowDeleteModal(false);
+      setSizeToDelete(null);
+    }
+  };
 
   return (
     <div className="sidebar-mini fixed">
@@ -94,7 +140,7 @@ const ManageSizes = () => {
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
-                    <button className="btn btn-primary" type="button">
+                    <button className="btn btn-primary" type="button" onClick={() => setShowModal(true)}>
                       + Create New
                     </button>
                   </div>
@@ -127,7 +173,7 @@ const ManageSizes = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredSizes.map((size, index) => (
+                      {currentRows.map((size, index) => (
                         <tr key={size.id}>
                           <td>
                             <input type="checkbox" className="row-checkbox" />
@@ -146,20 +192,14 @@ const ManageSizes = () => {
                             </span>
                           </td>
                           <td>
-                            <button
-                              type="button"
-                              className="btn btn-light-success icon-btn b-r-4"
-                              style={{ marginRight: '5px' }}
-                              title="Edit"
-                            >
-                              <BsPencilSquare style={{ color: 'green', fontSize: '18px' }} />
+                            <button className="btn btn-light icon-btn m-2" >
+                              <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
                             </button>
-                            <button
-                              type="button"
-                              className="btn btn-light-danger icon-btn b-r-4 delete-btn"
-                              title="Delete"
-                            >
-                              <BsTrash style={{ color: 'red', fontSize: '18px' }} />
+                            <button className="btn btn-light icon-btn" >
+                              <BsEye style={{ fontSize: '18px', color: '#212529' }} />
+                            </button>
+                            <button className="btn btn-light icon-btn m-2" onClick={() => handleDeleteClick(size.id)}>
+                              <TiTrash style={{ fontSize: '18px', color: '#212529' }} />
                             </button>
                           </td>
                         </tr>
@@ -169,7 +209,9 @@ const ManageSizes = () => {
                 </div>
               </div>
             </div>
-
+            <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            {/* <AddSizeModal show={showModal} onClose={() => setShowModal(false)} /> */}
+             {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
           </div>
         </div>
       </div>

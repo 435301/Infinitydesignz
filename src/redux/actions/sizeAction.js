@@ -5,6 +5,10 @@ import BASE_URL from "../../config/config";
 export const FETCH_SIZE_REQUEST = 'FETCH_SIZE_REQUEST';
 export const FETCH_SIZE_SUCCESS = 'FETCH_SIZE_SUCCESS';
 export const FETCH_SIZE_FAILURE = 'FETCH_SIZE_FAILURE';
+export const ADD_SIZES_REQUEST ='ADD_SIZES_REQUEST';
+export const ADD_SIZES_SUCCESS ='ADD_SIZES_SUCCESS';
+export const ADD_SIZES_FAILURE ='ADD_SIZES_FAILURE';
+
 
 export const fetchSizes = () => {
 
@@ -34,4 +38,26 @@ export const fetchSizes = () => {
       });
     }
   };
+};
+
+export const addSizes = (formData) => async (dispatch) => {
+  dispatch({ type: 'ADD_SIZES_REQUEST' });
+  try {
+    const token = localStorage.getItem('token');
+    console.log('tokenadd', token)
+
+    await axios.post(`${BASE_URL}/size-uom`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    dispatch({ type: 'ADD_SIZES_SUCCESS' });
+    dispatch(fetchSizes());
+  } catch (error) {
+    dispatch({
+      type: 'ADD_SIZES_FAILURE',
+      payload: error.message || 'Error adding sizes',
+    });
+  }
 };

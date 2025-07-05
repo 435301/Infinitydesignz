@@ -297,6 +297,13 @@ header .wrapper {
   border-bottom: 1px solid #ccc;
 }
 
+/* addsizemodal css */
+
+.show{
+  background-color: rgba(0, 0, 0,0.5);
+}
+
+
 @media (max-width: 1024px) {
   .content-wrapper {
     margin-left: 300px;
