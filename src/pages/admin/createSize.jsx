@@ -6,23 +6,30 @@ import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSizes } from '../../redux/actions/sizeAction';
-// import AddSizeModal from '../../components/addSizeModal';
 import PaginationComponent from '../../includes/pagination';
 import { toast } from 'react-toastify';
 import BASE_URL from '../../config/config';
 import { TiTrash } from 'react-icons/ti';
 import DeleteModal from '../../modals/deleteModal';
+import AddSizeModal from '../../components/addSizeModal';
+import ViewSizeModal from '../../modals/viewSizeModal';
+import EditSizeModal from '../../components/editSizeModal';
 
 
 const ManageSizes = () => {
   const dispatch = useDispatch();
   const { sizes = [] } = useSelector((state) => state.sizes || {});
+  console.log('sizes', sizes)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [SizeToDelete, setSizeToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [viewSize, setViewSize] = useState(null);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(null);
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -192,10 +199,22 @@ const ManageSizes = () => {
                             </span>
                           </td>
                           <td>
-                            <button className="btn btn-light icon-btn m-2" >
+                            <button
+                              className="btn btn-light icon-btn m-2"
+                              onClick={() => {
+                                setSelectedSize(size);
+                                setEditModalVisible(true);
+                              }}
+                            >
                               <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
                             </button>
-                            <button className="btn btn-light icon-btn" >
+                            <button
+                              className="btn btn-light icon-btn"
+                              onClick={() => {
+                                setViewSize(size);
+                                setShowViewModal(true);
+                              }}
+                            >
                               <BsEye style={{ fontSize: '18px', color: '#212529' }} />
                             </button>
                             <button className="btn btn-light icon-btn m-2" onClick={() => handleDeleteClick(size.id)}>
@@ -210,8 +229,25 @@ const ManageSizes = () => {
               </div>
             </div>
             <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-            {/* <AddSizeModal show={showModal} onClose={() => setShowModal(false)} /> */}
-             {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+            {showModal && <AddSizeModal show={showModal} onClose={() => setShowModal(false)} />}
+            {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+            {showViewModal && (
+              <ViewSizeModal
+                show={showViewModal}
+                onClose={() => setShowViewModal(false)}
+                size={viewSize}
+              />
+            )}
+            {editModalVisible && (
+              <EditSizeModal
+                show={editModalVisible}
+                onClose={() => {
+                  setEditModalVisible(false);
+                  setSelectedSize(null);
+                }}
+                size={selectedSize}
+              />
+            )}
           </div>
         </div>
       </div>

@@ -3,9 +3,11 @@ import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash } from 'react-icons/bs';
+import SizeMappingModal from '../../components/addSizeMappingModal';
 
 const ManageSizeMapping = () => {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+     const [showMappingModal, setShowMappingModal] = useState(false);
 
     const handleToggleSidebar = (collapsed) => {
         setIsSidebarCollapsed(collapsed);
@@ -79,15 +81,13 @@ const ManageSizeMapping = () => {
                                         </select>
                                     </div>
                                     <div className="col-md-2 d-flex gap-2">
-                                        <button className="btn btn-danger">
-                                            <BsSearch style={{ fontSize: '18px' }} />
-                                        </button>
+                                      
                                         <button className="btn btn-success">
                                             <BsArrowClockwise style={{ fontSize: '18px' }} />
                                         </button>
                                     </div>
                                     <div className="col-md-4 text-end">
-                                        <button className="btn btn-primary" type="button">
+                                        <button className="btn btn-primary" type="button" onClick={() => setShowMappingModal(true)}>
                                             + Size Mapping
                                         </button>
                                     </div>
@@ -105,8 +105,7 @@ const ManageSizeMapping = () => {
                                     <div className="col-md-6 text-right pt">
                                         <button className="btn btn-success me-1">Active</button>
                                         <button className="btn btn-default me-1">Inactive</button>
-                                        <button className="btn btn-danger me-1">Front Active</button>
-                                        <button className="btn btn-warning me-1">Front Inactive</button>
+                                        
                                     </div>
                                 </div>
 
@@ -182,6 +181,7 @@ const ManageSizeMapping = () => {
                                 </div>
                             </div>
                         </div>
+                          <SizeMappingModal show={showMappingModal} onClose={() => setShowMappingModal(false)} />
                     </div>
                 </div>
             </div>

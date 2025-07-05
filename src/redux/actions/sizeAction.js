@@ -8,6 +8,10 @@ export const FETCH_SIZE_FAILURE = 'FETCH_SIZE_FAILURE';
 export const ADD_SIZES_REQUEST ='ADD_SIZES_REQUEST';
 export const ADD_SIZES_SUCCESS ='ADD_SIZES_SUCCESS';
 export const ADD_SIZES_FAILURE ='ADD_SIZES_FAILURE';
+export const EDIT_SIZES_REQUEST='EDIT_SIZES_REQUEST';
+export const EDIT_SIZES_SUCCESS='EDIT_SIZES_SUCCESS';
+export const EDIT_SIZES_FAILURE='EDIT_SIZES_FAILURE';
+
 
 
 export const fetchSizes = () => {
@@ -44,12 +48,10 @@ export const addSizes = (formData) => async (dispatch) => {
   dispatch({ type: 'ADD_SIZES_REQUEST' });
   try {
     const token = localStorage.getItem('token');
-    console.log('tokenadd', token)
-
     await axios.post(`${BASE_URL}/size-uom`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     dispatch({ type: 'ADD_SIZES_SUCCESS' });
@@ -57,7 +59,52 @@ export const addSizes = (formData) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: 'ADD_SIZES_FAILURE',
-      payload: error.message || 'Error adding sizes',
+      payload: error.response?.data?.message || 'Error adding size',
+    });
+    throw error; 
+  }
+};
+
+// export const editSizes = (payload) => async (dispatch,id) => {
+//   dispatch({ type: 'EDIT_SIZES_REQUEST' });
+//   try {
+//     const token = localStorage.getItem('token');
+//     await axios.put(`${BASE_URL}/size-uom/${id}`, payload, {
+//       headers: {
+//         'Content-Type': 'application/json',
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+//     dispatch({ type: 'EDIT_SIZES_SUCCESS' });
+//     dispatch(fetchSizes());
+//   } catch (error) {
+//     dispatch({
+//       type: 'EDIT_SIZES_FAILURE',
+//       payload: error.response?.data?.message || 'Error editing size',
+//     });
+//   }
+// };
+
+
+export const editSizes = (payload) => async (dispatch) => {
+  dispatch({ type: 'EDIT_SIZES_REQUEST' });
+  try {
+    const token = localStorage.getItem('token');
+    const { id, ...updateData } = payload; // extract id
+
+    await axios.put(`${BASE_URL}/size-uom/${id}`, updateData, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    dispatch({ type: 'EDIT_SIZES_SUCCESS' });
+    dispatch(fetchSizes());
+  } catch (error) {
+    dispatch({
+      type: 'EDIT_SIZES_FAILURE',
+      payload: error.response?.data?.message || 'Error editing size',
     });
   }
 };
