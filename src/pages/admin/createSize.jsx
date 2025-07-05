@@ -1,17 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash } from 'react-icons/bs';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchSizes } from '../../redux/actions/sizeAction';
 
 const ManageSizes = () => {
+  const dispatch = useDispatch();
+  const { sizes = [] } = useSelector((state) => state.sizes || {});
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
 
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchSizes());
+  }, [dispatch]);
+
+  const filteredSizes = sizes.filter((size) => {
+
+    const title = size.title.toLowerCase();
+    const matchesSearch = title.includes(searchTerm.toLowerCase());
+
+    const matchesStatus = statusFilter
+      ? (statusFilter === 'active' ? size.status === true : size.status === false)
+      : true;
+
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="sidebar-mini fixed">
@@ -40,21 +63,34 @@ const ManageSizes = () => {
               <div className="card-block manage-btn">
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
-                    <input type="text" className="form-control" placeholder="Search By" />
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Search By Size"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                   </div>
                   <div className="col-md-3">
-                    <select className="form-control">
+                    <select
+                      className="form-control"
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                    >
                       <option value="">- Select Status -</option>
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
                     </select>
                   </div>
                   <div className="col-md-2 d-flex gap-2">
-                    <button className="btn btn-danger">
-                      <BsSearch style={{ fontSize: '18px' }} />
-                    </button>
-                    <button className="btn btn-success">
-                      <BsArrowClockwise style={{ fontSize: '18px' }} />
+                    <button
+                      className="btn btn-success"
+                      onClick={() => {
+                        setSearchTerm('');
+                        setStatusFilter('');
+                      }}
+                    >
+                      <BsArrowClockwise />
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
@@ -73,8 +109,7 @@ const ManageSizes = () => {
                   <div className="col-md-12 text-end">
                     <button className="btn btn-success me-1">Active</button>
                     <button className="btn btn-default me-1">In Active</button>
-                    <button className="btn btn-danger me-1">Front Active</button>
-                    <button className="btn btn-warning me-1">Front In Active</button>
+
                   </div>
                 </div>
 
@@ -92,27 +127,22 @@ const ManageSizes = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {[
-                        { id: 1, size: 'Small', status: 'Active' },
-                        { id: 2, size: 'Medium', status: 'Inactive' },
-                        { id: 3, size: 'Large', status: 'Active' },
-                        { id: 4, size: 'Extra Large', status: 'Active' },
-                        { id: 5, size: 'Extra Small', status: 'Active' },
-                      ].map((size, index) => (
+                      {filteredSizes.map((size, index) => (
                         <tr key={size.id}>
                           <td>
                             <input type="checkbox" className="row-checkbox" />
                           </td>
                           <td>{index + 1}</td>
-                          <td>{size.size}</td>
+                          <td>{size.title}</td>
                           <td>
+
                             <span
-                              className={`badge ${size.status === 'Active'
-                                  ? 'text-light-primary'
-                                  : 'text-light-danger'
+                              className={`badge ${size.status ?
+                                'text-light-primary'
+                                : 'text-light-danger'
                                 }`}
                             >
-                              {size.status}
+                              {size.status ? 'Active' : 'Inactive'}
                             </span>
                           </td>
                           <td>
