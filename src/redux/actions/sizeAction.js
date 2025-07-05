@@ -65,26 +65,6 @@ export const addSizes = (formData) => async (dispatch) => {
   }
 };
 
-// export const editSizes = (payload) => async (dispatch,id) => {
-//   dispatch({ type: 'EDIT_SIZES_REQUEST' });
-//   try {
-//     const token = localStorage.getItem('token');
-//     await axios.put(`${BASE_URL}/size-uom/${id}`, payload, {
-//       headers: {
-//         'Content-Type': 'application/json',
-//         Authorization: `Bearer ${token}`,
-//       },
-//     });
-//     dispatch({ type: 'EDIT_SIZES_SUCCESS' });
-//     dispatch(fetchSizes());
-//   } catch (error) {
-//     dispatch({
-//       type: 'EDIT_SIZES_FAILURE',
-//       payload: error.response?.data?.message || 'Error editing size',
-//     });
-//   }
-// };
-
 
 export const editSizes = (payload) => async (dispatch) => {
   dispatch({ type: 'EDIT_SIZES_REQUEST' });

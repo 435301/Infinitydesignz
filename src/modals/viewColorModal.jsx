@@ -1,23 +1,23 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
-const ViewSizeModal = ({ show, onClose, size }) => {
-  if (!size) return null;
+const ViewColorModal = ({ show, onClose, color }) => {
+  if (!color) return null;
 
   return (
     <Modal show={show} onHide={onClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>View Size</Modal.Title>
+        <Modal.Title>View Color</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <div className="mb-3">
-           <p><strong>Title:</strong> {size.label}</p>
+           <p><strong>Title:</strong> {color.label}</p>
           <p className="form-control-plaintext"></p>
         </div>
         <div className="mb-3">
           <label className="form-label fw-bold">Status:</label>
-          <p className={`badge ${size.status ? 'bg-success' : 'bg-danger'}`}>
-            {size.status ? 'Active' : 'Inactive'}
+          <p className={`badge ${color.status ? 'bg-success' : 'bg-danger'}`}>
+            {color.status ? 'Active' : 'Inactive'}
           </p>
         </div>
       </Modal.Body>
@@ -30,4 +30,4 @@ const ViewSizeModal = ({ show, onClose, size }) => {
   );
 };
 
-export default ViewSizeModal;
+export default ViewColorModal;

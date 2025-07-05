@@ -1,28 +1,66 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
-import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash } from 'react-icons/bs';
+import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchColors } from '../../redux/actions/colorAction';
+import PaginationComponent from '../../includes/pagination';
+import AddColorModal from '../../components/addColorModal';
+import { toast } from 'react-toastify';
+import BASE_URL from '../../config/config';
+import { TiTrash } from 'react-icons/ti';
+import DeleteModal from '../../modals/deleteModal';
+import ViewColorModal from '../../modals/viewColorModal';
 
 const ManageColors = () => {
+  const dispatch = useDispatch();
+  const { colors = [] } = useSelector((state) => state.colors || {});
+  console.log('colors', colors)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [ColorToDelete, setColorToDelete] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showColorModal, setShowColorModal] = useState('')
+  const [viewColor, setViewColor] = useState('')
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
 
-  const [colors, setColors] = useState([
-    { id: 1, color: 'Black', status: 'Active' },
-    { id: 2, color: 'Red', status: 'Inactive' },
-    { id: 3, color: 'Green', status: 'Active' },
-    { id: 4, color: 'White', status: 'Active' },
-    { id: 5, color: 'Black', status: 'Active' },
-  ]);
-
   useEffect(() => {
-    // Simulating fetch from API
-  }, []);
+    dispatch(fetchColors());
+  }, [dispatch]);
+
+  const filteredColors = colors.filter((color) => {
+
+    const label = color.label.toLowerCase();
+    const matchesSearch = label.includes(searchTerm.toLowerCase());
+
+    const matchesStatus = statusFilter
+      ? (statusFilter === 'active' ? color.status === true : color.status === false)
+      : true;
+
+    return matchesSearch && matchesStatus;
+  });
+
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredColors.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(filteredColors.length / rowsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
@@ -36,6 +74,30 @@ const ManageColors = () => {
     setSelectedRows((prev) =>
       prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
     );
+  };
+
+  const handleDeleteClick = (id) => {
+    setColorToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.delete(`${BASE_URL}/colors/${ColorToDelete}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      toast.success("color deleted successfully!");
+      dispatch(fetchColors());
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("Failed to delete color.");
+    } finally {
+      setShowDeleteModal(false);
+      setColorToDelete(null);
+    }
   };
 
   return (
@@ -66,26 +128,40 @@ const ManageColors = () => {
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
                     <div className="input-group">
-                      <input type="text" className="form-control" placeholder="Search By" />
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search By Color"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
                     </div>
                   </div>
                   <div className="col-md-3">
-                    <select className="form-control">
+                    <select
+                      className="form-control"
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                    >
                       <option value="">- Select Status -</option>
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
                     </select>
                   </div>
                   <div className="col-md-2 d-flex gap-2">
-                    <button className="btn btn-danger">
-                      <BsSearch style={{ fontSize: '18px' }} />
-                    </button>
-                    <button className="btn btn-success">
-                      <BsArrowClockwise style={{ fontSize: '18px' }} />
+
+                    <button
+                      className="btn btn-success"
+                      onClick={() => {
+                        setSearchTerm('');
+                        setStatusFilter('');
+                      }}
+                    >
+                      <BsArrowClockwise />
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
-                    <button className="btn btn-primary" type="button">
+                    <button className="btn btn-primary" type="button" onClick={() => setShowModal(true)}>
                       + Create New
                     </button>
                   </div>
@@ -100,8 +176,7 @@ const ManageColors = () => {
                   <div className="col-md-12 text-end pt">
                     <button className="btn btn-success me-1">Active</button>
                     <button className="btn btn-default me-1">Inactive</button>
-                    <button className="btn btn-danger me-1">Front Active</button>
-                    <button className="btn btn-warning me-1">Front Inactive</button>
+
                   </div>
                 </div>
                 <div className="table-responsive">
@@ -118,28 +193,42 @@ const ManageColors = () => {
                         </th>
                         <th>S.No</th>
                         <th>Color</th>
+                        <th>Hex</th>
                         <th>Status</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {colors.map((item, index) => (
-                        <tr key={item.id}>
+                      {currentRows.map((color, index) => (
+                        <tr key={color.id}>
                           <td>
                             <input
                               type="checkbox"
                               className="row-checkbox"
-                              checked={selectedRows.includes(item.id)}
-                              onChange={() => handleRowCheckboxChange(item.id)}
+                              checked={selectedRows.includes(color.id)}
+                              onChange={() => handleRowCheckboxChange(color.id)}
                             />
                           </td>
                           <td>{index + 1}</td>
-                          <td>{item.color}</td>
+                          <td>{color.label}</td>
+                          <td>
+                            <div style={{
+                              backgroundColor: color.hex_code,
+                              width: '25px',
+                              height: '25px',
+                              borderRadius: '4px',
+                              border: '1px solid #ccc'
+                            }} ></div>
+                          </td>
+
                           <td>
                             <span
-                              className={`badge ${item.status === 'Active' ? 'text-light-primary' : 'text-light-danger'}`}
+                              className={`badge ${color.status ?
+                                'text-light-primary'
+                                : 'text-light-danger'
+                                }`}
                             >
-                              {item.status}
+                              {color.status ? 'Active' : 'Inactive'}
                             </span>
                           </td>
                           <td>
@@ -152,11 +241,16 @@ const ManageColors = () => {
                               <BsPencilSquare style={{ fontSize: '18px', color: '#28a745' }} />
                             </button>
                             <button
-                              type="button"
-                              className="btn btn-light icon-btn delete-btn"
-                              title="Delete"
+                              className="btn btn-light icon-btn"
+                              onClick={() => {
+                                setViewColor(color);
+                                setShowColorModal(true);
+                              }}
                             >
-                              <BsTrash style={{ fontSize: '18px', color: '#dc3545' }} />
+                              <BsEye style={{ fontSize: '18px', color: '#212529' }} />
+                            </button>
+                            <button className="btn btn-light icon-btn m-2" onClick={() => handleDeleteClick(color.id)}>
+                              <TiTrash style={{ fontSize: '18px', color: '#212529' }} />
                             </button>
                           </td>
                         </tr>
@@ -174,6 +268,16 @@ const ManageColors = () => {
 
               </div>
             </div>
+            <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            {showModal && <AddColorModal show={showModal} onClose={() => setShowModal(false)} />}
+            {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+            {showColorModal && (
+              <ViewColorModal
+                show={showColorModal}
+                onClose={() => setShowColorModal(false)}
+                color={viewColor}
+              />
+            )}
           </div>
         </div>
       </div>

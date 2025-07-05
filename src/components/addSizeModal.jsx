@@ -78,6 +78,7 @@ const AddSizeModal = ({ show, onClose }) => {
                                     checked={status}
                                     onChange={(e) => setStatus(e.target.checked)}
                                 />
+                                 {errors.status && <div className="invalid-feedback">{errors.status}</div>}
                                 <label className="form-check-label ms-2" htmlFor="status">
                                     Active
                                 </label>
