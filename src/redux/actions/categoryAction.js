@@ -73,6 +73,7 @@ export const addCategory = (formData) => async (dispatch) => {
       },
     });
     dispatch({ type: 'ADD_CATEGORY_SUCCESS' });
+         toast.success('Category created successfully')
     dispatch(fetchCategories());
   } catch (error) {
     dispatch({
@@ -95,6 +96,7 @@ export const addSubCategory = (formData) => async (dispatch) => {
     });
 
     dispatch({ type: 'ADD_SUBCATEGORY_SUCCESS' });
+         toast.success('Subcategory created successfully')
     dispatch(fetchCategories());
   } catch (error) {
     dispatch({
@@ -139,6 +141,7 @@ export const editCategory = (id, formData) => async (dispatch) => {
     });
 
     dispatch({ type: 'EDIT_CATEGORY_SUCCESS' });
+         toast.success('Category updated successfully')
     dispatch(fetchCategories());
   } catch (error) {
     dispatch({

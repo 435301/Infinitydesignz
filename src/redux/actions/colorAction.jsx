@@ -52,6 +52,7 @@ export const addColors = (formData) => async (dispatch) => {
     });
     
     dispatch({ type: 'ADD_COLOR_SUCCESS' });
+    toast.success('Color created successfully')
     dispatch(fetchColors());
   } catch (error) {
     dispatch({
@@ -75,6 +76,7 @@ export const editColors = (payload) => async (dispatch) => {
     });
     
     dispatch({ type: 'EDIT_COLORS_SUCCESS' });
+    toast.success('Color updated successfully')
     dispatch(fetchColors());
   } catch (error) {
     dispatch({

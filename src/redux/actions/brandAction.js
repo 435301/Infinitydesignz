@@ -54,6 +54,7 @@ export const addBrands = (formData) => async (dispatch) => {
       },
     });
     dispatch({ type: 'ADD_BRAND_SUCCESS' });
+     toast.success(`Brand created succefully`);
     dispatch(fetchBrands());
   } catch (error) {
     dispatch({
@@ -79,6 +80,7 @@ export const editBrands = (payload) => async (dispatch) => {
     });
 
     dispatch({ type: 'EDIT_BRAND_SUCCESS' });
+    toast.success('Brand updated Successfully')
     dispatch(fetchBrands());
   } catch (error) {
     dispatch({
