@@ -1,5 +1,6 @@
 
 import axios from 'axios';
+import BASE_URL from '../../config/config';
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
@@ -10,7 +11,7 @@ export const login = (email, password) => {
     dispatch({ type: LOGIN_REQUEST });
 
     try {
-      const response = await axios.post('http://68.183.89.229:4005/auth/login', {
+      const response = await axios.post(`${BASE_URL}/auth/login`, {
         email,
         password
       });

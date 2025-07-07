@@ -2,12 +2,13 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import BASE_URL from '../config/config';
 
-const BASE_URL = 'http://68.183.89.229:4005';
+// const BASE_URL = 'http://68.183.89.229:4005';
 
 const ViewCategoryModal = ({ show, onClose, category }) => {
   if (!category) return null;
- console.log('cat', category)
+  console.log('cat', category)
   return (
     <Modal show={show} onHide={onClose} size="lg" centered>
       <Modal.Header closeButton>
@@ -22,15 +23,31 @@ const ViewCategoryModal = ({ show, onClose, category }) => {
         <div className="d-flex gap-3 flex-wrap">
           <div>
             <p><strong>App Icon:</strong></p>
-            <img src={`${BASE_URL}${category.appIcon}`} alt="App Icon" width="200" />
+            {category?.appIcon ? (
+              <img src={`${BASE_URL}${category.appIcon}`} alt="App Icon" width="200" />
+            ) : (
+              <span>N/A</span>
+            )}
           </div>
           <div>
             <p><strong>Web Image:</strong></p>
+            {category?.webImage?(
             <img src={`${BASE_URL}${category.webImage}`} alt="Web Icon" width="200" />
+
+            ):(
+              <span>N/A</span>
+            )
+            }
           </div>
           <div>
-            <p><strong>Main Image:</strong></p>
+             <p><strong>Main Image:</strong></p>
+            {category?.mainImage?(
             <img src={`${BASE_URL}${category.mainImage}`} alt="Main" width="200" />
+
+            ):(
+              <span>N/A</span>
+            )}
+           
           </div>
         </div>
       </Modal.Body>

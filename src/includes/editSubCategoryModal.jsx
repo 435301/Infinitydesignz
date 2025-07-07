@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateSubCategory, fetchSubCategoryById } from '../redux/actions/categoryAction';
+import BASE_URL from '../config/config';
 
 const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories }) => {
   const dispatch = useDispatch();
@@ -15,9 +16,12 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
     status: true,
   });
 
+  console.log(form.parent_id, 'form')
   const [appIcon, setAppIcon] = useState(null);
   const [webIcon, setWebIcon] = useState(null);
   const [mainImage, setMainImage] = useState(null);
+  const [status, setStatus] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (subCategoryId) {
@@ -25,24 +29,25 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
     }
   }, [subCategoryId]);
 
-useEffect(() => {
-  if (subCategory) {
-    setForm({
-      parent_id: subCategory.parent_id || '',
-      title: subCategory.title || '',
-      seoTitle: subCategory.seoTitle || '',
-      seoDescription: subCategory.seoDescription || '',
-      seoKeywords: subCategory.seoKeywords || '',
-      status: subCategory.status ?? true,
-    });
+  useEffect(() => {
+    if (subCategory) {
+      setForm({
+        parent_id: subCategory.parent_id ? subCategory.parent_id.toString() : '',
+        title: subCategory.title || '',
+        seoTitle: subCategory.seoTitle || '',
+        seoDescription: subCategory.seoDescription || '',
+        seoKeywords: subCategory.seoKeywords || '',
+        status: subCategory.status ?? true,
+        //  status: subCategory.status === 1 || subCategory.status === true,
+      });
 
-    // Pre-fill image previews
-    const BASE_URL = 'http://68.183.89.229:4005';
-    setAppIcon(subCategory.appIcon ? { preview: `${BASE_URL}${subCategory.appIcon}` } : null);
-    setWebIcon(subCategory.webImage ? { preview: `${BASE_URL}${subCategory.webImage}` } : null);
-    setMainImage(subCategory.mainImage ? { preview: `${BASE_URL}${subCategory.mainImage}` } : null);
-  }
-}, [subCategory]);
+      // Pre-fill image previews
+      // const BASE_URL = 'http://68.183.89.229:4005';
+      setAppIcon(subCategory.appIcon ? { preview: `${BASE_URL}${subCategory.appIcon}` } : null);
+      setWebIcon(subCategory.webImage ? { preview: `${BASE_URL}${subCategory.webImage}` } : null);
+      setMainImage(subCategory.mainImage ? { preview: `${BASE_URL}${subCategory.mainImage}` } : null);
+    }
+  }, [subCategory]);
 
 
   const handleFileChange = (setter) => (e) => {
@@ -59,17 +64,30 @@ useEffect(() => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
+    if (errors[name] && value.trim() !== '') {
+      setErrors((prev) => ({ ...prev, [name]: null }));
+    }
   };
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const newErrors = {};
+    if (!form.parent_id) newErrors.parent_id = 'Parent category is required';
+    if (!form.title.trim()) newErrors.title = 'Title is required';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
     const data = new FormData();
     data.append('title', form.title);
     data.append('parent_id', form.parent_id);
     data.append('seoTitle', form.seoTitle);
     data.append('seoDescription', form.seoDescription);
     data.append('seoKeywords', form.seoKeywords);
-   data.append('status', form.status ? 1 : 0);
+    data.append('status', form.status ? true : false);
 
     if (appIcon?.file) data.append('appIcon', appIcon.file);
     if (webIcon?.file) data.append('webImage', webIcon.file);
@@ -81,6 +99,11 @@ useEffect(() => {
   };
 
   const { categories } = useSelector((state) => state.categories || {});
+
+  const check = categories.filter(c => c.parent_id === null).map(cat => (
+    <option key={cat.id} value={cat.id}>{cat.title}</option>
+  ))
+  console.log('check', check[0].props.children)
 
   if (!show) return null;
 
@@ -97,17 +120,28 @@ useEffect(() => {
               <div className="row align-items-center">
                 <div className="col-lg-4 mb-3">
                   <label className="form-label">Parent Category<span className="text-danger">*</span></label>
-                  <select className="form-control" name="parent_id" value={form.parent_id} onChange={handleChange} required>
+                  <select
+                    className={`form-control ${errors.parent_id ? 'is-invalid' : ''}`}
+                    name="parent_id"
+                    value={form.parent_id?.toString() || ''} 
+                    onChange={handleChange}
+                    // required
+                  >
                     <option value="">-- Select Parent --</option>
-                    {categories.filter(c => c.parent_id === null).map(cat => (
-                      <option key={cat.id} value={cat.id}>{cat.title}</option>
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.id.toString()}>
+                        {cat.title}
+                      </option>
                     ))}
+
                   </select>
+                  {errors.parent_id && <div className="invalid-feedback">{errors.parent_id}</div>}
                 </div>
 
                 <div className="col-lg-4 mb-3">
                   <label className="form-label">Category Title<span className="text-danger">*</span></label>
-                  <input className="form-control" name="title" value={form.title} onChange={handleChange} required />
+                  <input className={`form-control ${errors.title ? 'is-invalid' : ''}`} name="title" value={form.title} onChange={handleChange}  />
+                  {errors.title && <div className="invalid-feedback">{errors.title}</div>}
                 </div>
 
                 <ImageUpload label="App Icon" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />

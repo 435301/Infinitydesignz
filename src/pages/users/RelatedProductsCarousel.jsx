@@ -1,8 +1,8 @@
 import React from 'react';
-import Star from '../img/star.svg';
-import Star1 from '../img/star1.svg';
-import WishlistIcon from '../img/icon.svg';
-import SampleImage from '../img/img3.png';
+import Star from '../../img/star.svg';
+import Star1 from '../../img/star1.svg';
+import WishlistIcon from '../../img/icon.svg';
+import SampleImage from '../../img/img3.png';
 
 const RelatedProductsCarousel = ({ products }) => {
   return (

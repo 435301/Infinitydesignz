@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchListSubCategoryById, updateListSubCategory } from '../redux/actions/categoryAction';
+import BASE_URL from '../config/config';
 
 const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories }) => {
     const dispatch = useDispatch();
@@ -19,11 +20,8 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
     const [appIcon, setAppIcon] = useState(null);
     const [webIcon, setWebIcon] = useState(null);
     const [mainImage, setMainImage] = useState(null);
-    const BASE_URL = '`http://68.183.89.229:4005'
-
-    console.log('Submitting status value:', form.status);
-    console.log('Appended status to FormData:', form.status ? 1 : 0);
-
+    const [errors, setErrors] = useState({});
+    // const BASE_URL = '`http://68.183.89.229:4005'
 
     useEffect(() => {
         if (subCategoryId) {
@@ -77,18 +75,29 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
         const newValue = name === 'parent_id' ? parseInt(value) : type === 'checkbox' ? checked : value;
         console.log(`Field ${name} changed to:`, newValue);
         setForm({ ...form, [name]: newValue });
+        if (errors[name] && value.trim() !== '') {
+            setErrors((prev) => ({ ...prev, [name]: null }));
+        }
     };
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const newErrors = {};
+        if (!form.parent_id) newErrors.parent_id = 'Sub category is required';
+        if (!form.title.trim()) newErrors.title = 'Title is required';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
         const data = new FormData();
         data.append('title', form.title);
         data.append('parent_id', form.parent_id);
         data.append('seoTitle', form.seoTitle);
         data.append('seoDescription', form.seoDescription);
         data.append('seoKeywords', form.seoKeywords);
-        data.append('status', form.status ? 1 : 0);
+        data.append('status', form.status ? true : false);
         if (appIcon?.file) data.append('appIcon', appIcon.file);
         if (webIcon?.file) data.append('webImage', webIcon.file);
         if (mainImage?.file) data.append('mainImage', mainImage.file);
@@ -125,17 +134,19 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
                             <div className="row align-items-center">
                                 <div className="col-lg-4 mb-3">
                                     <label className="form-label">Sub Category<span className="text-danger">*</span></label>
-                                    <select className="form-control" name="parent_id" value={form.parent_id?.toString()} onChange={handleChange} required>
+                                    <select className={`form-control ${errors.parent_id ? 'is-invalid' : ''}`} name="parent_id" value={form.parent_id?.toString()} onChange={handleChange} >
                                         <option value="">-- Select Sub Category --</option>
                                         {subCategories?.map((cat) => (
                                             <option key={cat.id} value={cat.id?.toString()}>{cat.title}</option>
                                         ))}
                                     </select>
+                                    {errors.parent_id && <div className="invalid-feedback">{errors.parent_id}</div>}
                                 </div>
 
                                 <div className="col-lg-4 mb-3">
                                     <label className="form-label">Category Title<span className="text-danger">*</span></label>
-                                    <input className="form-control" name="title" value={form.title} onChange={handleChange} required />
+                                    <input className={`form-control ${errors.title ? 'is-invalid' : ''}`} name="title" value={form.title} onChange={handleChange} />
+                                    {errors.title && <div className="invalid-feedback">{errors.title}</div>}
                                 </div>
 
                                 <ImageUpload label="App Icon" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />

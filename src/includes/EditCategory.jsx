@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { editCategory } from '../redux/actions/categoryAction';
 import { toast } from 'react-toastify'
+import BASE_URL from '../config/config';
 
 const EditCategoryModal = ({ show, setShow, category }) => {
   const dispatch = useDispatch();
@@ -11,7 +12,8 @@ const EditCategoryModal = ({ show, setShow, category }) => {
   const [webIcon, setWebIcon] = useState(null);
   const [mainImage, setMainImage] = useState(null);
   const [status, setStatus] = useState(false);
-  const BASE_URL = 'http://68.183.89.229:4005'
+   const [errors, setErrors] = useState({});
+  // const BASE_URL = 'http://68.183.89.229:4005'
 
   useEffect(() => {
     if (category) {
@@ -40,11 +42,30 @@ const EditCategoryModal = ({ show, setShow, category }) => {
 
   const removeImage = (setter) => () => setter(null);
 
+   const validate = () => {
+    const newErrors = {};
+    if (!categoryTitle.trim()) {
+      newErrors.categoryTitle = 'Category Title is required';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+    const handleTitleChange = (e) => {
+    const value = e.target.value;
+    setCategoryTitle(value);
+
+    if (errors.categoryTitle && value.trim()) {
+      setErrors((prev) => ({ ...prev, categoryTitle: null }));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if(!validate()) return
     const formData = new FormData();
     formData.append('title', categoryTitle);
-    formData.append('status', status ? 1 : 0);
+    formData.append('status', status ? true : false);
     if (appIcon?.file) formData.append('appIcon', appIcon.file);
     if (webIcon?.file) formData.append('webImage', webIcon.file);
     if (mainImage?.file) formData.append('mainImage', mainImage.file);
@@ -75,11 +96,14 @@ const EditCategoryModal = ({ show, setShow, category }) => {
                   </label>
                   <input
                     type="text"
-                    className="form-control"
+                   className={`form-control ${errors.categoryTitle ? 'is-invalid' : ''}`}
                     value={categoryTitle}
-                    onChange={(e) => setCategoryTitle(e.target.value)}
-                    required
+                    onChange={handleTitleChange}
+                    // required
                   />
+                   {errors.categoryTitle && (
+                    <div className="invalid-feedback">{errors.categoryTitle}</div>
+                  )}
                 </div>
 
                 <ImageUpload label="App Icon" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />

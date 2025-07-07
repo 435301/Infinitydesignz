@@ -15,6 +15,7 @@ const AddSubCategoryModal = ({ show, setShow }) => {
     const [webIcon, setWebIcon] = useState(null);
     const [mainImage, setMainImage] = useState(null);
     const [status, setStatus] = useState(false);
+    const [errors, setErrors] = useState({});
 
     const { categories } = useSelector(state => state.categories || {});
 
@@ -29,12 +30,43 @@ const AddSubCategoryModal = ({ show, setShow }) => {
         setter(null);
     };
 
+    const validate = () => {
+        const newErrors = {};
+        if (!title.trim()) {
+            newErrors.title = 'Category Title is required';
+        }
+        if (!menu) {
+            newErrors.menu = 'Menu has to be selected';
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    }
+
+    const handleTitleChange = (e) => {
+        const value = e.target.value;
+        setTitle(value);
+
+        if (errors.title && value.trim()) {
+            setErrors((prev) => ({ ...prev, title: null }));
+        }
+    };
+
+    const handleMenuChange = (e) => {
+        const value = e.target.value;
+        setMenu(value);
+
+        if (errors.menu && value.trim()) {
+            setErrors((prev) => ({ ...prev, menu: null }));
+        }
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!validate()) return;
         const formData = new FormData();
 
         formData.append('title', title);
-        formData.append('status', status ? 1 : 0)
+        formData.append('status', status ? true : false)
         formData.append('parent_id', menu); // <-- This is important
         formData.append('seoTitle', seoTitle);
         formData.append('seoDescription', seoDescription);
@@ -66,10 +98,10 @@ const AddSubCategoryModal = ({ show, setShow }) => {
                                 <div className="col-lg-4 mb-3">
                                     <label className="form-label">Menu<span className="text-danger">*</span></label>
                                     <select
-                                        className="form-control"
+                                        className={`form-control ${errors.menu ? 'is-invalid' : ''}`}
                                         value={menu}
-                                        onChange={(e) => setMenu(e.target.value)}
-                                        required
+                                        onChange={handleMenuChange}
+                                    // required
                                     >
                                         <option value="">-- Select Parent Category --</option>
                                         {categories
@@ -78,18 +110,24 @@ const AddSubCategoryModal = ({ show, setShow }) => {
                                                 <option key={cat.id} value={cat.id}>{cat.title}</option>
                                             ))}
                                     </select>
+                                    {errors.menu && (
+                                        <div className="invalid-feedback">{errors.menu}</div>
+                                    )}
                                 </div>
 
                                 <div className="col-lg-4 mb-3">
                                     <label className="form-label">Category Title<span className="text-danger">*</span></label>
                                     <input
-                                        className="form-control"
+                                        className={`form-control ${errors.title ? 'is-invalid' : ''}`}
                                         type="text"
                                         value={title}
-                                        onChange={(e) => setTitle(e.target.value)}
+                                        onChange={handleTitleChange}
                                         placeholder="Enter Menu Title"
-                                        required
+                                    // required
                                     />
+                                    {errors.title && (
+                                        <div className="invalid-feedback">{errors.title}</div>
+                                    )}
                                 </div>
 
                                 <ImageUpload label="App Icon (100x100)" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />

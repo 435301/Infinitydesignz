@@ -280,6 +280,7 @@ const HeaderAdmin = ({ onToggleSidebar }) => {
         </div>
       </nav>
     </header>
+    
   );
 };
 

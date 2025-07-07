@@ -1,17 +1,139 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
-import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash } from 'react-icons/bs';
+import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchSizes } from '../../redux/actions/sizeAction';
+import PaginationComponent from '../../includes/pagination';
+import { toast } from 'react-toastify';
+import BASE_URL from '../../config/config';
+import { TiTrash } from 'react-icons/ti';
+import DeleteModal from '../../modals/deleteModal';
+import AddSizeModal from '../../components/addSizeModal';
+import ViewSizeModal from '../../modals/viewSizeModal';
+import EditSizeModal from '../../components/editSizeModal';
+
 
 const ManageSizes = () => {
+  const dispatch = useDispatch();
+  const { sizes = [] } = useSelector((state) => state.sizes || {});
+  console.log('sizes', sizes)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [SizeToDelete, setSizeToDelete] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [viewSize, setViewSize] = useState(null);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedRows, setSelectedRows] = useState([]);
+    const [selectedIds, setSelectedIds] = useState([]);
+    const[selectAll, setSelectAll] = useState(false)
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
 
-  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchSizes());
+  }, [dispatch]);
+
+  const filteredSizes = sizes.filter((size) => {
+
+    const title = size.title.toLowerCase();
+    const matchesSearch = title.includes(searchTerm.toLowerCase());
+
+    const matchesStatus = statusFilter
+      ? (statusFilter === 'active' ? size.status === true : size.status === false)
+      : true;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredSizes.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(filteredSizes.length / rowsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+  const handleDeleteClick = (id) => {
+    setSizeToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.delete(`${BASE_URL}/size-uom/${SizeToDelete}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      toast.success("Size deleted successfully!");
+      dispatch(fetchSizes());
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("Failed to delete size.");
+    } finally {
+      setShowDeleteModal(false);
+      setSizeToDelete(null);
+    }
+  };
+
+  const handleBulkStatusUpdate = async (newStatus) => {
+    if (selectedRows.length === 0) {
+      toast.warning("Please select at least one sub-subcategory.");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.patch(`${BASE_URL}/common/bulk-update-status`, {
+        entity:"size-uom",
+        ids: selectedRows,
+        status: newStatus,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success(`Status updated to ${newStatus ? 'Active' : 'Inactive'}`);
+      dispatch(fetchSizes());
+      setSelectedRows([]);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || 'Bulk status update failed');
+    }
+  };
+
+  const handleRowCheckboxChange = (id) => {
+    setSelectedRows((prev) =>
+      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+    );
+  };
+
+    const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedIds([]);
+    } else {
+      const ids = currentRows.map((cat) => cat.id);
+      setSelectedIds(ids);
+    }
+    setSelectAll(!selectAll);
+  };
+
 
   return (
     <div className="sidebar-mini fixed">
@@ -40,25 +162,38 @@ const ManageSizes = () => {
               <div className="card-block manage-btn">
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
-                    <input type="text" className="form-control" placeholder="Search By" />
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Search By Size"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                   </div>
                   <div className="col-md-3">
-                    <select className="form-control">
+                    <select
+                      className="form-control"
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                    >
                       <option value="">- Select Status -</option>
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
                     </select>
                   </div>
                   <div className="col-md-2 d-flex gap-2">
-                    <button className="btn btn-danger">
-                      <BsSearch style={{ fontSize: '18px' }} />
-                    </button>
-                    <button className="btn btn-success">
-                      <BsArrowClockwise style={{ fontSize: '18px' }} />
+                    <button
+                      className="btn btn-success"
+                      onClick={() => {
+                        setSearchTerm('');
+                        setStatusFilter('');
+                      }}
+                    >
+                      <BsArrowClockwise />
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
-                    <button className="btn btn-primary" type="button">
+                    <button className="btn btn-primary" type="button" onClick={() => setShowModal(true)}>
                       + Create New
                     </button>
                   </div>
@@ -71,10 +206,21 @@ const ManageSizes = () => {
               <div className="card-block">
                 <div className="row mb-3">
                   <div className="col-md-12 text-end">
-                    <button className="btn btn-success me-1">Active</button>
-                    <button className="btn btn-default me-1">In Active</button>
-                    <button className="btn btn-danger me-1">Front Active</button>
-                    <button className="btn btn-warning me-1">Front In Active</button>
+                    <button
+                      className="btn btn-success me-2"
+                      disabled={selectedRows.length === 0}
+                      onClick={() => handleBulkStatusUpdate(true)}
+                    >
+                      Active
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      disabled={selectedRows.length === 0}
+                      onClick={() => handleBulkStatusUpdate(false)}
+                    >
+                      Inactive
+                    </button>
+
                   </div>
                 </div>
 
@@ -83,7 +229,14 @@ const ManageSizes = () => {
                     <thead>
                       <tr>
                         <th>
-                          <input type="checkbox" id="select-all" />
+                         <input
+                      type="checkbox"
+                      checked={
+                        selectedRows.length === sizes.length &&
+                        sizes.length > 0
+                      }
+                      onChange={handleSelectAll}
+                    />
                         </th>
                         <th>S.No</th>
                         <th>Size</th>
@@ -92,44 +245,49 @@ const ManageSizes = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {[
-                        { id: 1, size: 'Small', status: 'Active' },
-                        { id: 2, size: 'Medium', status: 'Inactive' },
-                        { id: 3, size: 'Large', status: 'Active' },
-                        { id: 4, size: 'Extra Large', status: 'Active' },
-                        { id: 5, size: 'Extra Small', status: 'Active' },
-                      ].map((size, index) => (
+                      {currentRows.map((size, index) => (
                         <tr key={size.id}>
                           <td>
-                            <input type="checkbox" className="row-checkbox" />
+                            <input
+                          type="checkbox"
+                          checked={selectedRows.includes(size.id)}
+                          onChange={() => handleRowCheckboxChange(size.id)}
+                        />
                           </td>
                           <td>{index + 1}</td>
-                          <td>{size.size}</td>
+                          <td>{size.title}</td>
                           <td>
+
                             <span
-                              className={`badge ${size.status === 'Active'
-                                  ? 'text-light-primary'
-                                  : 'text-light-danger'
+                              className={`badge ${size.status ?
+                                'text-light-primary'
+                                : 'text-light-danger'
                                 }`}
                             >
-                              {size.status}
+                              {size.status ? 'Active' : 'Inactive'}
                             </span>
                           </td>
                           <td>
                             <button
-                              type="button"
-                              className="btn btn-light-success icon-btn b-r-4"
-                              style={{ marginRight: '5px' }}
-                              title="Edit"
+                              className="btn btn-light icon-btn m-2"
+                              onClick={() => {
+                                setSelectedSize(size);
+                                setEditModalVisible(true);
+                              }}
                             >
-                              <BsPencilSquare style={{ color: 'green', fontSize: '18px' }} />
+                              <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
                             </button>
                             <button
-                              type="button"
-                              className="btn btn-light-danger icon-btn b-r-4 delete-btn"
-                              title="Delete"
+                              className="btn btn-light icon-btn"
+                              onClick={() => {
+                                setViewSize(size);
+                                setShowViewModal(true);
+                              }}
                             >
-                              <BsTrash style={{ color: 'red', fontSize: '18px' }} />
+                              <BsEye style={{ fontSize: '18px', color: '#212529' }} />
+                            </button>
+                            <button className="btn btn-light icon-btn m-2" onClick={() => handleDeleteClick(size.id)}>
+                              <TiTrash style={{ fontSize: '18px', color: '#212529' }} />
                             </button>
                           </td>
                         </tr>
@@ -139,7 +297,26 @@ const ManageSizes = () => {
                 </div>
               </div>
             </div>
-
+            <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            {showModal && <AddSizeModal show={showModal} onClose={() => setShowModal(false)} />}
+            {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+            {showViewModal && (
+              <ViewSizeModal
+                show={showViewModal}
+                onClose={() => setShowViewModal(false)}
+                size={viewSize}
+              />
+            )}
+            {editModalVisible && (
+              <EditSizeModal
+                show={editModalVisible}
+                onClose={() => {
+                  setEditModalVisible(false);
+                  setSelectedSize(null);
+                }}
+                size={selectedSize}
+              />
+            )}
           </div>
         </div>
       </div>

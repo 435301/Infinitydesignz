@@ -12,6 +12,8 @@ import DeleteModal from '../../modals/deleteModal';
 import { toast } from 'react-toastify';
 import { TiTrash } from "react-icons/ti";
 import ViewListSubCategoryModal from '../../modals/viewListCategoryModal';
+import PaginationComponent from '../../includes/pagination';
+import BASE_URL from '../../config/config';
 
 const ListSubCategory = () => {
   const [showModal, setShowModal] = useState(false);
@@ -26,8 +28,8 @@ const ListSubCategory = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
 
-  const BASE_URL = 'http://68.183.89.229:4005';
-  const BASE_URL_DELETE = 'http://68.183.89.229:4005';
+  // const BASE_URL = 'http://68.183.89.229:4005';
+  // const BASE_URL_DELETE = 'http://68.183.89.229:4005';
   const dispatch = useDispatch();
   const { categories = [], loading, error } = useSelector((state) => state.categories || {});
 
@@ -82,6 +84,16 @@ const ListSubCategory = () => {
     return matchesSearch && matchesStatus;
   });
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredSubCategories.slice(indexOfFirstRow, indexOfLastRow);
+
+  const totalPages = Math.ceil(filteredSubCategories.length / rowsPerPage);
+
+
   const handleEditClick = (id) => {
     setSubCategoryIdToEdit(id);
     setEditModalOpen(true);
@@ -97,7 +109,7 @@ const ListSubCategory = () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`${BASE_URL_DELETE}/categories/${ListSubCategoryToDelete}`, {
+      await axios.delete(`${BASE_URL}/categories/${ListSubCategoryToDelete}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -120,6 +132,38 @@ const ListSubCategory = () => {
       setViewModalOpen(true);
     }
   };
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+  const handleBulkStatusUpdate = async (newStatus) => {
+    if (selectedRows.length === 0) {
+      toast.warning("Please select at least one sub-subcategory.");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.patch(`${BASE_URL}/categories/bulk-update-status`, {
+        ids: selectedRows,
+        status: newStatus,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success(`Status updated to ${newStatus ? 'Active' : 'Inactive'}`);
+      dispatch(fetchCategories());
+      setSelectedRows([]);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || 'Bulk status update failed');
+    }
+  };
+
+
   return (
     <div className="wrapper sidebar-mini fixed">
       <HeaderAdmin />
@@ -128,7 +172,7 @@ const ListSubCategory = () => {
       </aside>
 
       <div className="content-wrapper p-3">
-        <div className="main-header" style={{ marginTop: 0 }}>
+        <div className="main-header px-3" style={{ marginTop: 0 }}>
           <h4>List Sub Categories</h4>
         </div>
 
@@ -175,8 +219,21 @@ const ListSubCategory = () => {
                   <div className="row mb-3">
                     <div className="col-lg-6"></div>
                     <div className="col-md-6 text-end pt">
-                      <button className="btn btn-success me-1">Active</button>
-                      <button className="btn btn-default me-1">Inactive</button>
+                      <button
+                        className="btn btn-success me-2"
+                        disabled={selectedRows.length === 0}
+                        onClick={() => handleBulkStatusUpdate(true)}
+                      >
+                        Active
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        disabled={selectedRows.length === 0}
+                        onClick={() => handleBulkStatusUpdate(false)}
+                      >
+                        Inactive
+                      </button>
+
                     </div>
                   </div>
 
@@ -188,8 +245,10 @@ const ListSubCategory = () => {
                             <th>
                               <input
                                 type="checkbox"
-                                id="select-all"
-                                checked={selectedRows.length === subSubCategories.length && subSubCategories.length > 0}
+                                checked={
+                                  selectedRows.length === subSubCategories.length &&
+                                  subSubCategories.length > 0
+                                }
                                 onChange={handleSelectAll}
                               />
                             </th>
@@ -205,13 +264,12 @@ const ListSubCategory = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {filteredSubCategories.length > 0 ? (
-                            filteredSubCategories.map((item, index) => (
+                          {currentRows.length > 0 ? (
+                            currentRows.map((item, index) => (
                               <tr key={item.id}>
                                 <td>
                                   <input
                                     type="checkbox"
-                                    className="row-checkbox"
                                     checked={selectedRows.includes(item.id)}
                                     onChange={() => handleRowCheckboxChange(item.id)}
                                   />
@@ -327,6 +385,11 @@ const ListSubCategory = () => {
               subCategory={selectedSubCategory}
             />
           )}
+          <PaginationComponent
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
     </div>

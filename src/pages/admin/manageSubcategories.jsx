@@ -13,6 +13,10 @@ import { fetchSubCategoryById } from '../../redux/actions/categoryAction';
 import DeleteModal from '../../modals/deleteModal';
 import { toast } from 'react-toastify';
 import ViewSubCategoryModal from '../../modals/viewSubCategoryModal';
+import { Pagination } from 'react-bootstrap';
+import PaginationComponent from '../../includes/pagination';
+import BASE_URL from '../../config/config';
+
 
 const ManageSubCategories = () => {
   const [showModal, setShowModal] = useState(false);
@@ -25,9 +29,13 @@ const ManageSubCategories = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
+    const [selectAll, setSelectAll] = useState(false);
 
-  const BASE_URL = 'http://68.183.89.229:4005';
-  const BASE_URL_DELETE = 'http://68.183.89.229:4005';
+
+  // const BASE_URL = 'http://68.183.89.229:4005';
+  // const BASE_URL_DELETE = 'http://68.183.89.229:4005';
   const dispatch = useDispatch();
   const { categories = [], loading, error } = useSelector((state) => state.categories || {});
 
@@ -94,7 +102,7 @@ const ManageSubCategories = () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`${BASE_URL_DELETE}/categories/${subCategoryToDelete}`, {
+      await axios.delete(`${BASE_URL}/categories/${subCategoryToDelete}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -119,6 +127,65 @@ const ManageSubCategories = () => {
     }
   };
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredSubCategories.slice(indexOfFirstRow, indexOfLastRow);
+
+  const totalPages = Math.ceil(filteredSubCategories.length / rowsPerPage);
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+ const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedIds([]);
+    } else {
+      const ids = currentRows.map((cat) => cat.id);
+      setSelectedIds(ids);
+    }
+    setSelectAll(!selectAll);
+  };
+
+
+    const handleRowCheckboxChange = (id) => {
+    setSelectedRows((prev) =>
+      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+    );
+  };
+
+
+const handleBulkStatusUpdate = async (newStatus) => {
+    if (selectedRows.length === 0) {
+      toast.warning("Please select at least one sub-subcategory.");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.patch(`${BASE_URL}/categories/bulk-update-status`, {
+        ids: selectedRows,
+        status: newStatus,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success(`Status updated to ${newStatus ? 'Active' : 'Inactive'}`);
+      dispatch(fetchCategories());
+      setSelectedRows([]);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || 'Bulk status update failed');
+    }
+  };
+
+
+
   return (
     <div className="wrapper sidebar-mini fixed">
       <HeaderAdmin />
@@ -127,7 +194,7 @@ const ManageSubCategories = () => {
       </aside>
 
       <div className="content-wrapper p-3">
-        <div className="main-header" style={{ marginTop: '0px' }}>
+        <div className="main-header px-3" style={{ marginTop: '0px' }}>
           <h4>Sub Categories</h4>
         </div>
 
@@ -176,8 +243,21 @@ const ManageSubCategories = () => {
                   <div className="row mb-3">
                     <div className="col-lg-6"></div>
                     <div className="col-md-6 text-right pt">
-                      <button className="btn btn-success me-1">Active</button>
-                      <button className="btn btn-default me-1">Inactive</button>
+                       <button
+                className="btn btn-success me-2"
+                disabled={selectedRows.length === 0}
+                onClick={() => handleBulkStatusUpdate(true)}
+              >
+                Active
+              </button>
+              <button
+                className="btn btn-danger"
+                disabled={selectedRows.length === 0}
+                onClick={() => handleBulkStatusUpdate(false)}
+              >
+                Inactive
+              </button>
+
                     </div>
                   </div>
 
@@ -187,7 +267,18 @@ const ManageSubCategories = () => {
                         <thead>
                           <tr>
                             <th>
-                              <input type="checkbox" id="select-all" />
+                              <th>
+                               <input
+                      type="checkbox"
+                      checked={
+                        selectedRows.length === level1SubCategories.length &&
+                        level1SubCategories.length > 0
+                      }
+                      onChange={handleSelectAll}
+                    />
+                              </th>
+
+
                             </th>
                             <th>S.No</th>
                             <th>Parent Category</th>
@@ -203,11 +294,17 @@ const ManageSubCategories = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {filteredSubCategories.length > 0 ? (
-                            filteredSubCategories.map((item, index) => (
+                          {currentRows.length > 0 ? (
+                            currentRows.map((item, index) => (
                               <tr key={item.id}>
                                 <td>
-                                  <input type="checkbox" className="row-checkbox" />
+                                  <input
+                          type="checkbox"
+                          checked={selectedRows.includes(item.id)}
+                          onChange={() => handleRowCheckboxChange(item.id)}
+                        />
+
+
                                 </td>
                                 <td>{index + 1}</td>
                                 <td>{item.category}</td>
@@ -324,7 +421,11 @@ const ManageSubCategories = () => {
         />
       )
       }
-
+      <PaginationComponent
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };
