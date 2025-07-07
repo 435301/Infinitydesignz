@@ -3,13 +3,16 @@ import axios from 'axios';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
-import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash } from 'react-icons/bs';
+import {  BsArrowClockwise, BsEye, BsPencilSquare } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBrands } from '../../redux/actions/brandAction';
 import PaginationComponent from '../../includes/pagination';
 import { toast } from 'react-toastify';
 import BASE_URL from '../../config/config';
 import AddBrandModal from '../../components/addBrandModal';
+import { TiTrash } from 'react-icons/ti';
+import DeleteModal from '../../modals/deleteModal';
+import ViewBrandModal from '../../modals/viewBrandModal';
 
 
 const ManageBrands = () => {
@@ -23,7 +26,10 @@ const ManageBrands = () => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [showAddBrandModal, setShowAddBrandModal] = useState(false);
-
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [brandToDelete, setBrandToDelete] = useState(null);
+    const [showViewModal, setShowViewModal] = useState(false);
+    const [viewBrand, setViewBrand] = useState(null);
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -100,6 +106,31 @@ const ManageBrands = () => {
     }
     setSelectAll(!selectAll);
   };
+
+  const handleDeleteClick = (id) => {
+    setBrandToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.delete(`${BASE_URL}/brands/${brandToDelete}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      toast.success("Brand deleted successfully!");
+      dispatch(fetchBrands());
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("Failed to delete brand.");
+    } finally {
+      setShowDeleteModal(false);
+      setBrandToDelete(null);
+    }
+  };
+
 
   return (
     <div className="sidebar-mini fixed">
@@ -233,12 +264,24 @@ const ManageBrands = () => {
                             >
                               <BsPencilSquare style={{ color: 'green', fontSize: '18px' }} />
                             </a>
+                          
+                            <button
+                              className="btn btn-light icon-btn"
+                              onClick={() => {
+                                setViewBrand(brand);
+                                setShowViewModal(true);
+                              }}
+                            >
+                               <BsEye style={{ fontSize: '18px', color: '#212529' }} />
+                            </button>
                             <button
                               type="button"
                               className="btn btn-light-danger icon-btn b-r-4 delete-btn"
                               title="Delete"
                             >
-                              <BsTrash style={{ color: 'red', fontSize: '18px' }} />
+                              <button className="btn btn-light icon-btn m-2" onClick={() => handleDeleteClick(brand.id)}>
+                                <TiTrash style={{ fontSize: '18px', color: '#212529' }} />
+                              </button>
                             </button>
                           </td>
                         </tr>
@@ -250,7 +293,9 @@ const ManageBrands = () => {
               </div>
             </div>
             <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-            { showAddBrandModal && <AddBrandModal show={showAddBrandModal} onClose={() => setShowAddBrandModal(false)} /> }
+            {showAddBrandModal && <AddBrandModal show={showAddBrandModal} onClose={() => setShowAddBrandModal(false)} />}
+            {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+            {showViewModal && <ViewBrandModal show={showViewModal} onClose={()=>setShowViewModal(false)} brand={viewBrand}/> }
           </div>
         </div>
       </div>
