@@ -30,6 +30,8 @@ const ManageColors = () => {
   const [viewColor, setViewColor] = useState('')
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedColor, setSelectedColor] = useState(null);
+      const [selectedIds, setSelectedIds] = useState([]);
+      const[selectAll, setSelectAll] = useState(false)
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -102,6 +104,33 @@ const ManageColors = () => {
       setColorToDelete(null);
     }
   };
+
+  const handleBulkStatusUpdate = async (newStatus) => {
+    if (selectedRows.length === 0) {
+      toast.warning("Please select at least one sub-subcategory.");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.patch(`${BASE_URL}/common/bulk-update-status`, {
+        entity:"color",
+        ids: selectedRows,
+        status: newStatus,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success(`Status updated to ${newStatus ? 'Active' : 'Inactive'}`);
+      dispatch(fetchColors());
+      setSelectedRows([]);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || 'Bulk status update failed');
+    }
+  };
+
 
   return (
     <div className="sidebar-mini fixed">
@@ -177,8 +206,20 @@ const ManageColors = () => {
               <div className="card-block">
                 <div className="row mb-3">
                   <div className="col-md-12 text-end pt">
-                    <button className="btn btn-success me-1">Active</button>
-                    <button className="btn btn-default me-1">Inactive</button>
+                   <button
+                      className="btn btn-success me-2"
+                      disabled={selectedRows.length === 0}
+                      onClick={() => handleBulkStatusUpdate(true)}
+                    >
+                      Active
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      disabled={selectedRows.length === 0}
+                      onClick={() => handleBulkStatusUpdate(false)}
+                    >
+                      Inactive
+                    </button>
 
                   </div>
                 </div>

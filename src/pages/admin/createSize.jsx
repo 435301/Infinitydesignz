@@ -30,6 +30,9 @@ const ManageSizes = () => {
   const [viewSize, setViewSize] = useState(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedRows, setSelectedRows] = useState([]);
+    const [selectedIds, setSelectedIds] = useState([]);
+    const[selectAll, setSelectAll] = useState(false)
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -88,6 +91,49 @@ const ManageSizes = () => {
       setSizeToDelete(null);
     }
   };
+
+  const handleBulkStatusUpdate = async (newStatus) => {
+    if (selectedRows.length === 0) {
+      toast.warning("Please select at least one sub-subcategory.");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.patch(`${BASE_URL}/common/bulk-update-status`, {
+        entity:"size-uom",
+        ids: selectedRows,
+        status: newStatus,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success(`Status updated to ${newStatus ? 'Active' : 'Inactive'}`);
+      dispatch(fetchSizes());
+      setSelectedRows([]);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || 'Bulk status update failed');
+    }
+  };
+
+  const handleRowCheckboxChange = (id) => {
+    setSelectedRows((prev) =>
+      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+    );
+  };
+
+    const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedIds([]);
+    } else {
+      const ids = currentRows.map((cat) => cat.id);
+      setSelectedIds(ids);
+    }
+    setSelectAll(!selectAll);
+  };
+
 
   return (
     <div className="sidebar-mini fixed">
@@ -160,8 +206,20 @@ const ManageSizes = () => {
               <div className="card-block">
                 <div className="row mb-3">
                   <div className="col-md-12 text-end">
-                    <button className="btn btn-success me-1">Active</button>
-                    <button className="btn btn-default me-1">In Active</button>
+                    <button
+                      className="btn btn-success me-2"
+                      disabled={selectedRows.length === 0}
+                      onClick={() => handleBulkStatusUpdate(true)}
+                    >
+                      Active
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      disabled={selectedRows.length === 0}
+                      onClick={() => handleBulkStatusUpdate(false)}
+                    >
+                      Inactive
+                    </button>
 
                   </div>
                 </div>
@@ -171,7 +229,14 @@ const ManageSizes = () => {
                     <thead>
                       <tr>
                         <th>
-                          <input type="checkbox" id="select-all" />
+                         <input
+                      type="checkbox"
+                      checked={
+                        selectedRows.length === sizes.length &&
+                        sizes.length > 0
+                      }
+                      onChange={handleSelectAll}
+                    />
                         </th>
                         <th>S.No</th>
                         <th>Size</th>
@@ -183,7 +248,11 @@ const ManageSizes = () => {
                       {currentRows.map((size, index) => (
                         <tr key={size.id}>
                           <td>
-                            <input type="checkbox" className="row-checkbox" />
+                            <input
+                          type="checkbox"
+                          checked={selectedRows.includes(size.id)}
+                          onChange={() => handleRowCheckboxChange(size.id)}
+                        />
                           </td>
                           <td>{index + 1}</td>
                           <td>{size.title}</td>
