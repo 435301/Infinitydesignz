@@ -40,14 +40,16 @@ const Sidebar = ({ isCollapsed }) => {
       '/admin/manage-orders',
 
     ],
-    sizes: ['/admin/create-size', '/admin/size-mapping'],
+    sizes: ['/admin/create-size',],
+    brand: ['/admin/create-brand',],
+
     productFeatures: ['/admin/feature-type', '/admin/feature-set', '/admin/feature-list', '/admin/bulk-upload'],
     productFilters: ['/admin/filter-type', '/admin/filter-set', '/admin/filter-list'],
     categories: ['/admin/manage-category', '/admin/manage-subcategory', '/admin/list-subcategory'],
     products: ['/admin/add-product', '/admin/manage-product'],
     users: ['/admin/manage-users'],
     orders: ['/admin/orders'],
-    sliders: ['/admin/sliders' , '/admin/manage-sliders'],
+    sliders: ['/admin/sliders', '/admin/manage-sliders'],
 
     coupons: ['/admin/add-coupon', '/admin/manage-coupons'],
     others: ['/contact', '/keywords'],
@@ -107,23 +109,14 @@ const Sidebar = ({ isCollapsed }) => {
               <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Master Data</span>
               {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
             </div>
+
             {isActiveMenu('masterData') && !isCollapsed && (
               <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                {renderNavLink('/create-brand', 'Create Brand')}
-                {renderNavLink('/brand-mapping', 'Brand Mapping')}
-                <li>
-                  <div onClick={() => toggleMenu('sizes')} style={subLinkStyle(true)}>
-                    <BsDot style={iconDotStyle} />
-                    <span>Sizes</span>
-                    <BsChevronDown style={{ marginLeft: 'auto' }} />
-                  </div>
-                  {isActiveMenu('sizes') && (
-                    <ul style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                      {renderNavLink('/admin/create-size', 'Create Size')}
-                      {renderNavLink('/admin/size-mapping', 'Size Mapping')}
-                    </ul>
-                  )}
-                </li>
+                {renderNavLink('/admin/create-brand', ' Brand')}
+
+                {/* ✅ Sizes as a direct single link (no dropdown) */}
+                {renderNavLink('/admin/create-size', 'Sizes')}
+
                 {renderNavLink('/admin/colors', 'Colors')}
 
                 {/* Product Features */}
@@ -143,7 +136,7 @@ const Sidebar = ({ isCollapsed }) => {
                   )}
                 </li>
 
-                {/* ✅ Product Filters */}
+                {/* Product Filters */}
                 <li>
                   <div onClick={() => toggleMenu('productFilters')} style={subLinkStyle(true)}>
                     <BsDot style={iconDotStyle} />
@@ -161,6 +154,7 @@ const Sidebar = ({ isCollapsed }) => {
               </ul>
             )}
           </li>
+
 
           {/* Categories */}
           <li>
@@ -264,16 +258,16 @@ const Sidebar = ({ isCollapsed }) => {
           </li>
 
           {/* Change Password */}
-         <li>
-  <NavLink
-    to="/admin/change-password" // ← Set the path you want to navigate to
-    className={({ isActive }) => (isActive ? 'active' : '')}
-    style={navLinkStyle(isCollapsed)}
-  >
-    <BsListUl style={mainIconStyle(isCollapsed)} />
-    <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Change Password</span>
-  </NavLink>
-</li>
+          <li>
+            <NavLink
+              to="/admin/change-password" // ← Set the path you want to navigate to
+              className={({ isActive }) => (isActive ? 'active' : '')}
+              style={navLinkStyle(isCollapsed)}
+            >
+              <BsListUl style={mainIconStyle(isCollapsed)} />
+              <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Change Password</span>
+            </NavLink>
+          </li>
 
         </ul>
       </section>
