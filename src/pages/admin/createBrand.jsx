@@ -1,23 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash } from 'react-icons/bs';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchBrands } from '../../redux/actions/brandAction';
 
 const ManageBrands = () => {
+  const dispatch = useDispatch();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const {brands = []} = useSelector((state)=> state.brands || {})
+  console.log('brands', brands)
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
 
-  const brands = [
-    { id: 1, name: 'Godrej Interio', status: 'Active' },
-    { id: 2, name: 'Durian', status: 'Inactive' },
-    { id: 3, name: 'Pepperfry', status: 'Active' },
-    { id: 4, name: 'Nilkamal', status: 'Active' },
-    { id: 5, name: 'Urban Ladder', status: 'Active' },
-  ];
+ useEffect(()=>{
+  dispatch(fetchBrands());
+ }, [dispatch])
 
   return (
     <div className="sidebar-mini fixed">
@@ -56,9 +57,7 @@ const ManageBrands = () => {
                     </select>
                   </div>
                   <div className="col-md-2 d-flex gap-2">
-                    <button className="btn btn-danger">
-                      <BsSearch style={{ fontSize: '18px' }} />
-                    </button>
+                   
                     <button className="btn btn-success">
                       <BsArrowClockwise style={{ fontSize: '18px' }} />
                     </button>
@@ -82,8 +81,7 @@ const ManageBrands = () => {
                   <div className="col-md-6 text-end">
                     <button className="btn btn-success me-1">Active</button>
                     <button className="btn btn-default me-1">In Active</button>
-                    <button className="btn btn-danger me-1">Front Active</button>
-                    <button className="btn btn-warning me-1">Front In Active</button>
+                    
                   </div>
                 </div>
 
@@ -96,6 +94,7 @@ const ManageBrands = () => {
                         </th>
                         <th>S.No</th>
                         <th>Brands</th>
+                        <th>Logo URL</th>
                         <th>Status</th>
                         <th>Action</th>
                       </tr>
@@ -108,6 +107,7 @@ const ManageBrands = () => {
                           </td>
                           <td>{index + 1}</td>
                           <td>{brand.name}</td>
+                          <td>{brand.logo_url}</td>
                           <td>
                             <span className={`badge ${brand.status === 'Active' ? 'text-light-primary' : 'text-light-danger'}`}>
                               {brand.status}
