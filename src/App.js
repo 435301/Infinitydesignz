@@ -21,7 +21,6 @@ import ManageCategories from './pages/admin/manageCategories.jsx';
 import ManageSubCategories from './pages/admin/manageSubcategories.jsx';
 import ListSubCategory from './pages/admin/listSubCategory.jsx';
 import ManageSizes from './pages/admin/createSize.jsx';
-import ManageSizeMapping from './pages/admin/sizeMapping.jsx';
 import ManageColors from './pages/admin/colors.jsx';
 import ManageFeatureType from './pages/admin/featureType.jsx';
 import ManageFeatureSet from './pages/admin/featureSet.jsx';
@@ -83,7 +82,6 @@ function App() {
           <Route path='/admin/manage-subcategory' element={<ManageSubCategories />}></Route>
           <Route path='/admin/list-subcategory' element={<ListSubCategory />}></Route>
           <Route path='/admin/create-size' element={<ManageSizes />}></Route>
-          <Route path='/admin/size-mapping' element={<ManageSizeMapping />}></Route>
           <Route path='/admin/colors' element={<ManageColors />}></Route>
           <Route path='/admin/feature-set' element={<ManageFeatureSet />}></Route>
           <Route path='/admin/feature-type' element={<ManageFeatureType />}></Route>

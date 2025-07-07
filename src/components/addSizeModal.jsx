@@ -17,6 +17,16 @@ const AddSizeModal = ({ show, onClose }) => {
         return Object.keys(newErrors).length === 0;
     };
 
+     const handleTitleChange = (e) => {
+    const value = e.target.value;
+    setTitle(value);
+
+    if (errors.title && value.trim()) {
+      setErrors((prev) => ({ ...prev, title: null }));
+    }
+  };
+
+
     const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
@@ -64,7 +74,7 @@ const AddSizeModal = ({ show, onClose }) => {
                                     name="title"
                                     className={`form-control ${errors.title ? 'is-invalid' : ''}`}
                                     value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
+                                    onChange={handleTitleChange}
                                     placeholder="Enter Size Title"
                                 />
                                 {errors.title && <div className="invalid-feedback">{errors.title}</div>}
