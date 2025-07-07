@@ -9,6 +9,7 @@ import { fetchBrands } from '../../redux/actions/brandAction';
 import PaginationComponent from '../../includes/pagination';
 import { toast } from 'react-toastify';
 import BASE_URL from '../../config/config';
+import AddBrandModal from '../../components/addBrandModal';
 
 
 const ManageBrands = () => {
@@ -18,9 +19,10 @@ const ManageBrands = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-   const [selectedRows, setSelectedRows] = useState([]);
-      const [selectedIds, setSelectedIds] = useState([]);
-      const[selectAll, setSelectAll] = useState(false)
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
+  const [showAddBrandModal, setShowAddBrandModal] = useState(false);
 
 
   const handleToggleSidebar = (collapsed) => {
@@ -57,7 +59,7 @@ const ManageBrands = () => {
     }
   };
 
-    const handleBulkStatusUpdate = async (newStatus) => {
+  const handleBulkStatusUpdate = async (newStatus) => {
     if (selectedRows.length === 0) {
       toast.warning("Please select at least one sub-subcategory.");
       return;
@@ -66,7 +68,7 @@ const ManageBrands = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.patch(`${BASE_URL}/common/bulk-update-status`, {
-        entity:"brands",
+        entity: "brands",
         ids: selectedRows,
         status: newStatus,
       }, {
@@ -89,7 +91,7 @@ const ManageBrands = () => {
     );
   };
 
-    const handleSelectAll = () => {
+  const handleSelectAll = () => {
     if (selectAll) {
       setSelectedIds([]);
     } else {
@@ -155,9 +157,9 @@ const ManageBrands = () => {
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
-                    <a href="/addBrand" className="btn btn-primary" type="button">
+                    <button className="btn btn-primary" type="button" onClick={() => setShowAddBrandModal(true)}>
                       + Add New
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -171,9 +173,9 @@ const ManageBrands = () => {
                     <h5>Brands</h5>
                   </div>
                   <div className="col-md-6 text-end">
-                    <button className="btn btn-success me-1"  disabled={selectedRows.length === 0}
+                    <button className="btn btn-success me-1" disabled={selectedRows.length === 0}
                       onClick={() => handleBulkStatusUpdate(true)}>Active</button>
-                    <button className="btn btn-danger"  disabled={selectedRows.length === 0}
+                    <button className="btn btn-danger" disabled={selectedRows.length === 0}
                       onClick={() => handleBulkStatusUpdate(false)}>In Active</button>
 
                   </div>
@@ -184,18 +186,18 @@ const ManageBrands = () => {
                     <thead>
                       <tr>
                         <th>
-                         <input
-                      type="checkbox"
-                      checked={
-                        selectedRows.length === brands.length &&
-                        brands.length > 0
-                      }
-                      onChange={handleSelectAll}
-                    />
+                          <input
+                            type="checkbox"
+                            checked={
+                              selectedRows.length === brands.length &&
+                              brands.length > 0
+                            }
+                            onChange={handleSelectAll}
+                          />
                         </th>
                         <th>S.No</th>
                         <th>Brands</th>
-                        <th>Logo URL</th>
+                        {/* <th>Logo URL</th> */}
                         <th>Status</th>
                         <th>Action</th>
                       </tr>
@@ -204,15 +206,15 @@ const ManageBrands = () => {
                       {currentRows.map((brand, index) => (
                         <tr key={brand.id}>
                           <td>
-                           <input
-                          type="checkbox"
-                          checked={selectedRows.includes(brand.id)}
-                          onChange={() => handleRowCheckboxChange(brand.id)}
-                        />
+                            <input
+                              type="checkbox"
+                              checked={selectedRows.includes(brand.id)}
+                              onChange={() => handleRowCheckboxChange(brand.id)}
+                            />
                           </td>
                           <td>{index + 1}</td>
                           <td>{brand.name}</td>
-                          <td>{brand.logo_url}</td>
+                          {/* <td>{brand.logo_url}</td> */}
                           <td>
                             <span
                               className={`badge ${brand.status ?
@@ -248,6 +250,7 @@ const ManageBrands = () => {
               </div>
             </div>
             <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            { showAddBrandModal && <AddBrandModal show={showAddBrandModal} onClose={() => setShowAddBrandModal(false)} /> }
           </div>
         </div>
       </div>
