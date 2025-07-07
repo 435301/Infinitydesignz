@@ -1,24 +1,103 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBrands } from '../../redux/actions/brandAction';
+import PaginationComponent from '../../includes/pagination';
+import { toast } from 'react-toastify';
+import BASE_URL from '../../config/config';
+
 
 const ManageBrands = () => {
   const dispatch = useDispatch();
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const {brands = []} = useSelector((state)=> state.brands || {})
+  const { brands = [] } = useSelector((state) => state.brands || {})
   console.log('brands', brands)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+   const [selectedRows, setSelectedRows] = useState([]);
+      const [selectedIds, setSelectedIds] = useState([]);
+      const[selectAll, setSelectAll] = useState(false)
+
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
 
- useEffect(()=>{
-  dispatch(fetchBrands());
- }, [dispatch])
+  useEffect(() => {
+    dispatch(fetchBrands());
+  }, [dispatch])
+
+  const filteredBrands = brands.filter((brand) => {
+
+    const name = brand.name.toLowerCase();
+    const matchesSearch = name.includes(searchTerm.toLowerCase());
+
+    const matchesStatus = statusFilter
+      ? (statusFilter === 'active' ? brand.status === true : brand.status === false)
+      : true;
+
+    return matchesSearch && matchesStatus;
+  });
+
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredBrands.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(filteredBrands.length / rowsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+    const handleBulkStatusUpdate = async (newStatus) => {
+    if (selectedRows.length === 0) {
+      toast.warning("Please select at least one sub-subcategory.");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.patch(`${BASE_URL}/common/bulk-update-status`, {
+        entity:"brands",
+        ids: selectedRows,
+        status: newStatus,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success(`Status updated to ${newStatus ? 'Active' : 'Inactive'}`);
+      dispatch(fetchBrands());
+      setSelectedRows([]);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || 'Bulk status update failed');
+    }
+  };
+
+  const handleRowCheckboxChange = (id) => {
+    setSelectedRows((prev) =>
+      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+    );
+  };
+
+    const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedIds([]);
+    } else {
+      const ids = currentRows.map((brand) => brand.id);
+      setSelectedIds(ids);
+    }
+    setSelectAll(!selectAll);
+  };
 
   return (
     <div className="sidebar-mini fixed">
@@ -47,18 +126,31 @@ const ManageBrands = () => {
               <div className="card-block manage-btn">
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
-                    <input type="text" className="form-control" placeholder="Search By" />
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Search By Brand"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                   </div>
                   <div className="col-md-3">
-                    <select className="form-control">
+                    <select
+                      className="form-control"
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                    >
                       <option value="">- Select Status -</option>
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
                     </select>
                   </div>
                   <div className="col-md-2 d-flex gap-2">
-                   
-                    <button className="btn btn-success">
+
+                    <button className="btn btn-success" onClick={() => {
+                      setSearchTerm('');
+                      setStatusFilter('');
+                    }}>
                       <BsArrowClockwise style={{ fontSize: '18px' }} />
                     </button>
                   </div>
@@ -79,9 +171,11 @@ const ManageBrands = () => {
                     <h5>Brands</h5>
                   </div>
                   <div className="col-md-6 text-end">
-                    <button className="btn btn-success me-1">Active</button>
-                    <button className="btn btn-default me-1">In Active</button>
-                    
+                    <button className="btn btn-success me-1"  disabled={selectedRows.length === 0}
+                      onClick={() => handleBulkStatusUpdate(true)}>Active</button>
+                    <button className="btn btn-danger"  disabled={selectedRows.length === 0}
+                      onClick={() => handleBulkStatusUpdate(false)}>In Active</button>
+
                   </div>
                 </div>
 
@@ -90,7 +184,14 @@ const ManageBrands = () => {
                     <thead>
                       <tr>
                         <th>
-                          <input type="checkbox" id="select-all" />
+                         <input
+                      type="checkbox"
+                      checked={
+                        selectedRows.length === brands.length &&
+                        brands.length > 0
+                      }
+                      onChange={handleSelectAll}
+                    />
                         </th>
                         <th>S.No</th>
                         <th>Brands</th>
@@ -100,17 +201,26 @@ const ManageBrands = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {brands.map((brand, index) => (
+                      {currentRows.map((brand, index) => (
                         <tr key={brand.id}>
                           <td>
-                            <input type="checkbox" className="row-checkbox" />
+                           <input
+                          type="checkbox"
+                          checked={selectedRows.includes(brand.id)}
+                          onChange={() => handleRowCheckboxChange(brand.id)}
+                        />
                           </td>
                           <td>{index + 1}</td>
                           <td>{brand.name}</td>
                           <td>{brand.logo_url}</td>
                           <td>
-                            <span className={`badge ${brand.status === 'Active' ? 'text-light-primary' : 'text-light-danger'}`}>
-                              {brand.status}
+                            <span
+                              className={`badge ${brand.status ?
+                                'text-light-primary'
+                                : 'text-light-danger'
+                                }`}
+                            >
+                              {brand.status ? 'Active' : 'Inactive'}
                             </span>
                           </td>
                           <td>
@@ -137,6 +247,7 @@ const ManageBrands = () => {
 
               </div>
             </div>
+            <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
           </div>
         </div>
       </div>
