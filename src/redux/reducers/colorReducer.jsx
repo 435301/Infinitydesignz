@@ -4,7 +4,10 @@ import {
     FETCH_COLOR_FAILURE,
     ADD_COLORS_REQUEST,
     ADD_COLORS_SUCCESS,
-    ADD_COLORS_FAILURE
+    ADD_COLORS_FAILURE,
+    EDIT_COLORS_REQUEST,
+    EDIT_COLORS_SUCCESS,
+    EDIT_COLORS_FAILURE
 
 } from '../actions/colorAction';
 
@@ -28,6 +31,12 @@ const colorReducer = (state = initialState, action) => {
         case ADD_COLORS_SUCCESS:
             return { ...state, loading: false, colors: action.payload };
         case ADD_COLORS_FAILURE:
+            return { ...state, loading: false, error: action.payload };
+        case EDIT_COLORS_REQUEST:
+            return { ...state, loading: true, error: null };
+        case EDIT_COLORS_SUCCESS:
+            return { ...state, loading: false, colors: action.payload };
+        case EDIT_COLORS_FAILURE:
             return { ...state, loading: false, error: action.payload };
         default:
             return state;

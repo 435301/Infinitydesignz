@@ -8,6 +8,9 @@ export const FETCH_COLOR_FAILURE = 'FETCH_COLOR_FAILURE';
 export const ADD_COLORS_REQUEST ='ADD_COLORS_REQUEST';
 export const ADD_COLORS_SUCCESS ='ADD_COLORS_SUCCESS';
 export const ADD_COLORS_FAILURE ='ADD_COLORS_FAILURE';
+export const EDIT_COLORS_REQUEST = 'EDIT_COLORS_REQUEST';
+export const EDIT_COLORS_SUCCESS = 'EDIT_COLORS_SUCCESS';
+export const EDIT_COLORS_FAILURE = 'EDIT_COLORS_FAILURE'
 
 
 export const fetchColors = () => {
@@ -54,6 +57,29 @@ export const addColors = (formData) => async (dispatch) => {
     dispatch({
       type: 'ADD_COLOR_FAILURE',
       payload: error.response?.data?.message || 'Error adding colors',
+    });
+    throw error; 
+  }
+};
+
+export const editColors = (payload) => async (dispatch) => {
+  dispatch({ type: 'EDIT_COLORS_REQUEST' });
+  try {
+    const token = localStorage.getItem('token');
+     const { id, ...updateData } = payload; 
+    await axios.patch(`${BASE_URL}/colors/${id}`, updateData, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    
+    dispatch({ type: 'EDIT_COLORS_SUCCESS' });
+    dispatch(fetchColors());
+  } catch (error) {
+    dispatch({
+      type: 'EDIT_COLORS_FAILURE',
+      payload: error.response?.data?.message || 'Error editing colors',
     });
     throw error; 
   }

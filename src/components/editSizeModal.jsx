@@ -59,7 +59,7 @@ const EditSizeModal = ({ show, onClose, size }) => {
                 <div className="modal-content">
                     <form onSubmit={handleSubmit} className="app-form" encType="multipart/form-data">
                         <div className="modal-header">
-                            <h5 className="modal-title">Add Size</h5>
+                            <h5 className="modal-title">Edit Size</h5>
                             <button type="button" className="btn-close" onClick={onClose}></button>
                         </div>
                         <div className="modal-body">

@@ -13,6 +13,7 @@ import BASE_URL from '../../config/config';
 import { TiTrash } from 'react-icons/ti';
 import DeleteModal from '../../modals/deleteModal';
 import ViewColorModal from '../../modals/viewColorModal';
+import EditColorModal from '../../components/editColorModal';
 
 const ManageColors = () => {
   const dispatch = useDispatch();
@@ -27,6 +28,8 @@ const ManageColors = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showColorModal, setShowColorModal] = useState('')
   const [viewColor, setViewColor] = useState('')
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedColor, setSelectedColor] = useState(null);
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -237,6 +240,10 @@ const ManageColors = () => {
                               className="btn btn-light icon-btn"
                               style={{ marginRight: '5px' }}
                               title="Edit"
+                              onClick={() => {
+                                setSelectedColor(color);
+                                setEditModalVisible(true);
+                              }}
                             >
                               <BsPencilSquare style={{ fontSize: '18px', color: '#28a745' }} />
                             </button>
@@ -271,6 +278,16 @@ const ManageColors = () => {
             <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
             {showModal && <AddColorModal show={showModal} onClose={() => setShowModal(false)} />}
             {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+            {editModalVisible && (
+              <EditColorModal
+                show={editModalVisible}
+                onClose={() => {
+                  setEditModalVisible(false);
+                  setSelectedColor(null);
+                }}
+                color={selectedColor}
+              />
+            )}
             {showColorModal && (
               <ViewColorModal
                 show={showColorModal}

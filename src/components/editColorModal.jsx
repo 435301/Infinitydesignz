@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChromePicker } from 'react-color';
-import { addColors } from '../redux/actions/colorAction';
+import {  editColors } from '../redux/actions/colorAction';
 import { useDispatch } from 'react-redux';
 
-const AddColorModal = ({ show, onClose }) => {
+const EditColorModal = ({ show, onClose, color }) => {
     const dispatch = useDispatch();
   const [label, setLabel] = useState('');
   const [hex_code, setHexCode] = useState('#000000'); 
   const [status, setStatus] = useState(false);
   const [errors, setErrors] = useState('')
+
+   useEffect(() => {
+          if (color) {
+              setLabel(color.label || '');
+              setStatus(color.status || false);
+              setHexCode(color.hex_code || '#000000');
+          }
+      }, [color, show]);
 
   const handleColorChange = (color) => {
     setHexCode(color.hex.toUpperCase());
@@ -27,6 +35,7 @@ const handleSubmit = async (e) => {
     if (!validate()) return;
 
     const payload = {
+        id: color.id, 
         label,
         status, 
         hex_code,
@@ -35,7 +44,7 @@ const handleSubmit = async (e) => {
     console.log('payload', payload)
 
     try {
-        await dispatch(addColors(payload)); 
+        await dispatch(editColors(payload)); 
         onClose();
         setLabel('');
         setHexCode('')
@@ -56,7 +65,7 @@ const handleSubmit = async (e) => {
         <div className="modal-content">
           <form onSubmit={handleSubmit}>
             <div className="modal-header">
-              <h5 className="modal-title">Add Color</h5>
+              <h5 className="modal-title">Edit Color</h5>
               <button type="button" className="btn-close" onClick={onClose}></button>
             </div>
             <div className="modal-body">
@@ -99,4 +108,4 @@ const handleSubmit = async (e) => {
   );
 };
 
-export default AddColorModal;
+export default EditColorModal;
