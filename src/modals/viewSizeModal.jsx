@@ -11,7 +11,7 @@ const ViewSizeModal = ({ show, onClose, size }) => {
       </Modal.Header>
       <Modal.Body>
         <div className="mb-3">
-           <p><strong>Title:</strong> {size.label}</p>
+           <p><strong>Title:</strong> {size.title}</p>
           <p className="form-control-plaintext"></p>
         </div>
         <div className="mb-3">

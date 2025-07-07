@@ -3,7 +3,7 @@ import axios from 'axios';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
-import {  BsArrowClockwise, BsEye, BsPencilSquare } from 'react-icons/bs';
+import { BsArrowClockwise, BsEye, BsPencilSquare } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBrands } from '../../redux/actions/brandAction';
 import PaginationComponent from '../../includes/pagination';
@@ -13,6 +13,7 @@ import AddBrandModal from '../../components/addBrandModal';
 import { TiTrash } from 'react-icons/ti';
 import DeleteModal from '../../modals/deleteModal';
 import ViewBrandModal from '../../modals/viewBrandModal';
+import EditBrandModal from '../../components/editBrandModal';
 
 
 const ManageBrands = () => {
@@ -28,8 +29,10 @@ const ManageBrands = () => {
   const [showAddBrandModal, setShowAddBrandModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [brandToDelete, setBrandToDelete] = useState(null);
-    const [showViewModal, setShowViewModal] = useState(false);
-    const [viewBrand, setViewBrand] = useState(null);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [viewBrand, setViewBrand] = useState(null);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedBrand, setSelectedBrand] = useState('')
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -257,14 +260,16 @@ const ManageBrands = () => {
                             </span>
                           </td>
                           <td>
-                            <a
-                              href={`/create-brand-edit/${brand.id}`}
-                              className="btn btn-light-success icon-btn b-r-4 me-1"
-                              title="Edit"
+                            <button
+                              className="btn btn-light icon-btn m-2"
+                              onClick={() => {
+                                setSelectedBrand(brand);
+                                setEditModalVisible(true);
+                              }}
                             >
-                              <BsPencilSquare style={{ color: 'green', fontSize: '18px' }} />
-                            </a>
-                          
+                              <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
+                            </button>
+
                             <button
                               className="btn btn-light icon-btn"
                               onClick={() => {
@@ -272,7 +277,7 @@ const ManageBrands = () => {
                                 setShowViewModal(true);
                               }}
                             >
-                               <BsEye style={{ fontSize: '18px', color: '#212529' }} />
+                              <BsEye style={{ fontSize: '18px', color: '#212529' }} />
                             </button>
                             <button
                               type="button"
@@ -295,7 +300,8 @@ const ManageBrands = () => {
             <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
             {showAddBrandModal && <AddBrandModal show={showAddBrandModal} onClose={() => setShowAddBrandModal(false)} />}
             {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
-            {showViewModal && <ViewBrandModal show={showViewModal} onClose={()=>setShowViewModal(false)} brand={viewBrand}/> }
+            {showViewModal && <ViewBrandModal show={showViewModal} onClose={() => setShowViewModal(false)} brand={viewBrand} />}
+            {editModalVisible && <EditBrandModal show={editModalVisible} onClose={() => setEditModalVisible(false)} brand={selectedBrand} />}
           </div>
         </div>
       </div>
