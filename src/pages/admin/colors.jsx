@@ -114,7 +114,7 @@ const ManageColors = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.patch(`${BASE_URL}/common/bulk-update-status`, {
-        entity:"color",
+        entity:"colors",
         ids: selectedRows,
         status: newStatus,
       }, {

@@ -55,6 +55,7 @@ export const addSizes = (formData) => async (dispatch) => {
       },
     });
     dispatch({ type: 'ADD_SIZES_SUCCESS' });
+    toast.success('Size created successfully')
     dispatch(fetchSizes());
   } catch (error) {
     dispatch({
@@ -72,7 +73,7 @@ export const editSizes = (payload) => async (dispatch) => {
     const token = localStorage.getItem('token');
     const { id, ...updateData } = payload; // extract id
 
-    await axios.put(`${BASE_URL}/size-uom/${id}`, updateData, {
+    await axios.patch(`${BASE_URL}/size-uom/${id}`, updateData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -80,6 +81,7 @@ export const editSizes = (payload) => async (dispatch) => {
     });
 
     dispatch({ type: 'EDIT_SIZES_SUCCESS' });
+    toast.success('Size updated successfully')
     dispatch(fetchSizes());
   } catch (error) {
     dispatch({

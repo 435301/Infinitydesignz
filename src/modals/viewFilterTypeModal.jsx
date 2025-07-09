@@ -1,24 +1,18 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
-const ViewSizeModal = ({ show, onClose, size }) => {
-  if (!size) return null;
+const ViewFilterTypeModal = ({ show, onClose, filterType }) => {
+  if (!filterType) return null;
 
   return (
     <Modal show={show} onHide={onClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>View Size</Modal.Title>
+        <Modal.Title>View Filter Type</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <div className="mb-3">
-           <p><strong>Title:</strong> {size.label}</p>
+           <p><strong>Title:</strong> {filterType.name}</p>
           <p className="form-control-plaintext"></p>
-        </div>
-        <div className="mb-3">
-          <label className="form-label fw-bold">Status:</label>
-          <p className={`badge ${size.status ? 'bg-success' : 'bg-danger'}`}>
-            {size.status ? 'Active' : 'Inactive'}
-          </p>
         </div>
       </Modal.Body>
       <Modal.Footer>
@@ -30,4 +24,4 @@ const ViewSizeModal = ({ show, onClose, size }) => {
   );
 };
 
-export default ViewSizeModal;
+export default ViewFilterTypeModal;
