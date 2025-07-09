@@ -5,6 +5,7 @@ import categoryReducer from './categoryReducer';
 import sizeReducer from './sizeReducer';
 import colorReducer from './colorReducer';
 import brandReducer from './brandReducer';
+import featureTypeReducer from './featureTypeReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   sizes:sizeReducer,
   colors:colorReducer,
   brands:brandReducer,
+  featureTypes:featureTypeReducer,
 });
 
 export default rootReducer;
