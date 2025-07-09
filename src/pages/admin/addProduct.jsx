@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
@@ -6,10 +6,26 @@ import '../../css/admin/icofont.css';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { BsPlus } from 'react-icons/bs';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCategories } from '../../redux/actions/categoryAction';
 
 const AddProduct = () => {
+  const dispatch = useDispatch();
+  const { categories = [] } = useSelector((state) => state.categories || {});
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [description, setDescription] = useState('');
+  const [selectedMenu, setSelectedMenu] = useState('');
+  const [selectedSubMenu, setSelectedSubMenu] = useState('');
+  const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
+
+  const menuOptions = categories.filter(cat => cat.parent_id === null);
+  const subMenuOptions = categories.filter(cat => cat.parent_id === parseInt(selectedMenu));
+  const listSubMenuOptions = categories.filter(cat => cat.parent_id === parseInt(selectedSubMenu));
+
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -61,14 +77,43 @@ const AddProduct = () => {
                         <div className="col-lg-12">
                           <h6 className="sub-heading">Category Details</h6>
                           <div className="row">
-                            {['Menu', 'Sub Menu', 'List Sub Menu'].map((label, index) => (
-                              <div className="col-lg-4 mb-3" key={index}>
-                                <label className="form-label">{label} <span className="text-danger">*</span></label>
-                                <select className="form-control">
-                                  <option value="">--Choose {label}--</option>
-                                </select>
-                              </div>
-                            ))}
+                            <div className="col-lg-4 mb-3">
+                              <label className="form-label">Menu <span className="text-danger">*</span></label>
+                              <select className="form-control" value={selectedMenu} onChange={(e) => {
+                                setSelectedMenu(e.target.value);
+                                setSelectedSubMenu('');
+                                setSelectedListSubMenu('');
+                              }}>
+                                <option value="">--Choose Menu--</option>
+                                {menuOptions.map(menu => (
+                                  <option key={menu.id} value={menu.id}>{menu.title}</option>
+                                ))}
+                              </select>
+                            </div>
+
+                            <div className="col-lg-4 mb-3">
+                              <label className="form-label">Sub Menu <span className="text-danger">*</span></label>
+                              <select className="form-control" value={selectedSubMenu} onChange={(e) => {
+                                setSelectedSubMenu(e.target.value);
+                                setSelectedListSubMenu('');
+                              }}>
+                                <option value="">--Choose Sub Menu--</option>
+                                {subMenuOptions.map(sub => (
+                                  <option key={sub.id} value={sub.id}>{sub.title}</option>
+                                ))}
+                              </select>
+                            </div>
+
+                            <div className="col-lg-4 mb-3">
+                              <label className="form-label">List Sub Menu <span className="text-danger">*</span></label>
+                              <select className="form-control" value={selectedListSubMenu} onChange={(e) => setSelectedListSubMenu(e.target.value)}>
+                                <option value="">--Choose List Sub Menu--</option>
+                                {listSubMenuOptions.map(list => (
+                                  <option key={list.id} value={list.id}>{list.title}</option>
+                                ))}
+                              </select>
+                            </div>
+
                           </div>
                         </div>
 
