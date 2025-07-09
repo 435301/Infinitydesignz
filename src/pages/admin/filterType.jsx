@@ -2,27 +2,55 @@ import React, { useState, useEffect } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
-import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash } from 'react-icons/bs';
+import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteFilterType, fetchFilterTypes } from '../../redux/actions/filterTypeAction';
+import PaginationComponent from '../../includes/pagination';
+import AddFilterTypeModal from '../../components/addFilterTypeModal';
+import EditFilterTypeModal from '../../components/editFilterTypeModal';
+import DeleteModal from '../../modals/deleteModal';
+import ViewFilterTypeModal from '../../modals/viewFilterTypeModal';
 
 const ManageFilterType = () => {
+    const dispatch = useDispatch();
+    const { filterTypes = [] } = useSelector((state) => state.filterTypes || {});
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [selectedFilterType, setSelectedFilterType] = useState('');
+    const [filterTypeToDelete, setFilterTypeToDelete] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [viewModal, setViewModal] = useState(false);
+    const [viewFilterType, setFilterType] = useState(null);
+
+    useEffect(() => {
+        dispatch(fetchFilterTypes());
+    }, [dispatch])
 
     const handleToggleSidebar = (collapsed) => {
         setIsSidebarCollapsed(collapsed);
     };
 
-    const [filterTypes, setFilterTypes] = useState([
-        { id: 1, type: 'Small', status: 'Active' },
-        { id: 2, type: 'Medium', status: 'Inactive' },
-        { id: 3, type: 'Medium', status: 'Active' },
-        { id: 4, type: 'Small', status: 'Active' },
-        { id: 5, type: 'Small', status: 'Active' },
-    ]);
+    const filteredFilterTypes = filterTypes.filter((filterType) => {
+        const name = filterType.name.toLowerCase();
+        const matchesSearch = name.includes(searchTerm.toLowerCase());
+        return matchesSearch
+    });
 
-    useEffect(() => {
-        // Simulate API data load
-    }, []);
+    const [currentPage, setCurrentPage] = useState(1);
+    const rowsPerPage = 10;
+    const indexOfLastRow = currentPage * rowsPerPage;
+    const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+    const currentRows = filteredFilterTypes.slice(indexOfFirstRow, indexOfLastRow);
+    const totalPages = Math.ceil(filteredFilterTypes.length / rowsPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        if (pageNumber >= 1 && pageNumber <= totalPages) {
+            setCurrentPage(pageNumber);
+        }
+    };
 
     const handleSelectAll = (e) => {
         if (e.target.checked) {
@@ -38,6 +66,16 @@ const ManageFilterType = () => {
         );
     };
 
+    const handleDelete = async () => {
+        await dispatch(deleteFilterType(filterTypeToDelete));
+        setFilterTypeToDelete(null);
+        setShowDeleteModal(false);
+    }
+
+    const handleDeleteClick = (id) => {
+        setFilterTypeToDelete(id);
+        setShowDeleteModal(true);
+    }
     return (
         <div className="sidebar-mini fixed">
             <div className="wrapper">
@@ -70,23 +108,15 @@ const ManageFilterType = () => {
                                             <input type="text" className="form-control" placeholder="Search By" />
                                         </div>
                                     </div>
-                                    <div className="col-md-3">
-                                        <select className="form-control">
-                                            <option value="">- Select Status -</option>
-                                            <option value="active">Active</option>
-                                            <option value="inactive">Inactive</option>
-                                        </select>
-                                    </div>
+
                                     <div className="col-md-2 d-flex gap-2">
-                                        <button className="btn btn-danger">
-                                            <BsSearch style={{ fontSize: '18px' }} />
-                                        </button>
+
                                         <button className="btn btn-success">
                                             <BsArrowClockwise style={{ fontSize: '18px' }} />
                                         </button>
                                     </div>
                                     <div className="col-md-4 text-end">
-                                        <button className="btn btn-primary" type="button">
+                                        <button className="btn btn-primary" type="button" onClick={() => setShowAddModal(true)}>
                                             + Create Filter Type
                                         </button>
                                     </div>
@@ -98,12 +128,7 @@ const ManageFilterType = () => {
                         <div className="card">
                             <div className="card-block">
                                 <div className="row mb-3">
-                                    <div className="col-md-12 text-end pt">
-                                        <button className="btn btn-success me-1">Active</button>
-                                        <button className="btn btn-default me-1">Inactive</button>
-                                        <button className="btn btn-danger me-1">Front Active</button>
-                                        <button className="btn btn-warning me-1">Front Inactive</button>
-                                    </div>
+
                                 </div>
 
                                 <div className="table-responsive">
@@ -120,12 +145,11 @@ const ManageFilterType = () => {
                                                 </th>
                                                 <th>S.No</th>
                                                 <th>Type</th>
-                                                <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {filterTypes.map((item, index) => (
+                                            {currentRows.map((item, index) => (
                                                 <tr key={item.id}>
                                                     <td>
                                                         <input
@@ -136,35 +160,42 @@ const ManageFilterType = () => {
                                                         />
                                                     </td>
                                                     <td>{index + 1}</td>
-                                                    <td>{item.type}</td>
-                                                    <td>
-                                                        <span
-                                                            className={`badge ${item.status === 'Active' ? 'text-light-primary' : 'text-light-danger'
-                                                                }`}
-                                                        >
-                                                            {item.status}
-                                                        </span>
-                                                    </td>
+                                                    <td>{item.name}</td>
+
                                                     <td>
                                                         <button
                                                             type="button"
                                                             className="btn btn-light icon-btn"
                                                             style={{ marginRight: '5px' }}
                                                             title="Edit"
+                                                            onClick={() => {
+                                                                setSelectedFilterType(item);
+                                                                setEditModalVisible(true);
+                                                            }}
                                                         >
                                                             <BsPencilSquare style={{ fontSize: '18px', color: '#28a745' }} />
+                                                        </button>
+                                                        <button
+                                                            className="btn btn-light icon-btn"
+                                                            onClick={() => {
+                                                                setFilterType(item);
+                                                                setViewModal(true);
+                                                            }}
+                                                        >
+                                                            <BsEye style={{ fontSize: '18px', color: '#212529' }} />
                                                         </button>
                                                         <button
                                                             type="button"
                                                             className="btn btn-light icon-btn delete-btn"
                                                             title="Delete"
+                                                            onClick={() => handleDeleteClick(item.id)}
                                                         >
                                                             <BsTrash style={{ fontSize: '18px', color: '#dc3545' }} />
                                                         </button>
                                                     </td>
                                                 </tr>
                                             ))}
-                                            {filterTypes.length === 0 && (
+                                            {currentRows.length === 0 && (
                                                 <tr>
                                                     <td colSpan="5" className="text-center">
                                                         No filter types found.
@@ -176,6 +207,11 @@ const ManageFilterType = () => {
                                 </div>
                             </div>
                         </div>
+                        <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+                        {showAddModal && <AddFilterTypeModal show={showAddModal} onClose={() => setShowAddModal()} />}
+                        {editModalVisible && <EditFilterTypeModal show={editModalVisible} onClose={() => setEditModalVisible(false)} filterType={selectedFilterType} />}
+                        {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+                        {viewModal && <ViewFilterTypeModal show={viewModal} onClose={() => setViewModal(false)} filterType={viewFilterType} />}
 
                     </div>
                 </div>

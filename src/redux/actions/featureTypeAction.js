@@ -1,6 +1,7 @@
 import axios from "axios";
 import { toast } from 'react-toastify';
 import BASE_URL from "../../config/config";
+import { fetchFilterTypes } from "./filterTypeAction";
 
 export const FETCH_FEATURETYPE_REQUEST = 'FETCH_FEATURETYPE_REQUEST';
 export const FETCH_FEATURETYPE_SUCCESS = 'FETCH_FEATURETYPE_SUCCESS';
@@ -11,7 +12,7 @@ export const ADD_FEATURETYPE_FAILURE ='ADD_FEATURETYPE_FAILURE';
 export const EDIT_FEATURETYPE_REQUEST='EDIT_FEATURETYPE_REQUEST';
 export const EDIT_FEATURETYPE_SUCCESS='EDIT_FEATURETYPE_SUCCESS';
 export const EDIT_FEATURETYPE_FAILURE='EDIT_FEATURETYPE_FAILURE';
-
+export const DELETE_FEATURE_TYPE_SUCCESS ='DELETE_FEATURE_TYPE_SUCCESS'
 
 
 export const fetchFeatureTypes = () => {
@@ -99,7 +100,8 @@ export const deleteFeatureType = (id) => async (dispatch) => {
       },
     });
 
-    dispatch({ type: 'DELETE_FEATURE_TYPE_SUCCESS', payload: id });
+    // dispatch({ type: 'DELETE_FEATURE_TYPE_SUCCESS', payload: id });
+    dispatch(fetchFilterTypes(id));
     toast.success('Feature Type deleted successfully!');
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Failed to delete Feature Type.');
@@ -124,7 +126,7 @@ export const bulkUpdateFeatureTypeStatus = (ids,status) => async (dispatch) => {
         },
       }
     );
-    dispatch(fetchFeatureTypes()); 
+    dispatch(fetchFilterTypes()); 
   } catch (error) {
     console.error(error);
     toast.error(error?.response?.data?.message || 'Failed to update status');

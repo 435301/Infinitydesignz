@@ -17,19 +17,19 @@ const AddFeatureTypeModal = ({ show, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-   const payload = {
-         name: name,
-       };
-   
-       try {
-         await dispatch(addFeatureTypes(payload));
-         onClose();
-        setName('')
-       } catch (err) {
-         setErrors({
-           name: err?.response?.data?.message || 'Something went wrong.',
-         });
-       }
+    const payload = {
+      name: name,
+    };
+
+    try {
+      await dispatch(addFeatureTypes(payload));
+      onClose();
+      setName('')
+    } catch (err) {
+      setErrors({
+        name: err?.response?.data?.message || 'Something went wrong.',
+      });
+    }
   };
 
   if (!show) return null;
@@ -60,8 +60,8 @@ const AddFeatureTypeModal = ({ show, onClose }) => {
               </div>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
-              <button type="submit" className="btn btn-primary">Submit</button>
+              <button type="submit" className="btn btn-success px-4">Save</button>
+              <button type="button" className="btn btn-danger px-4" onClick={onClose}>Close</button>
             </div>
           </form>
         </div>

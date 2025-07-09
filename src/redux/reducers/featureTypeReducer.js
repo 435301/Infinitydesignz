@@ -7,7 +7,8 @@ import {
   ADD_FEATURETYPE_FAILURE,
   EDIT_FEATURETYPE_REQUEST,
   EDIT_FEATURETYPE_SUCCESS,
-  EDIT_FEATURETYPE_FAILURE
+  EDIT_FEATURETYPE_FAILURE,
+  DELETE_FEATURE_TYPE_SUCCESS,
 } from '../actions/featureTypeAction';
 
 const initialState = {
@@ -37,7 +38,7 @@ const featureTypeReducer = (state = initialState, action) => {
       return { ...state, loading: false };
     case EDIT_FEATURETYPE_FAILURE:
       return { ...state, loading: false, error: action.payload };
-    case 'DELETE_FEATURE_TYPE_SUCCESS':
+    case DELETE_FEATURE_TYPE_SUCCESS:
       return {
         ...state,
         featureTypes: state.featureTypes.filter((item) => item.id !== action.payload),
