@@ -12,8 +12,45 @@ import '../../src/css/user/bootstrap.min.css';
 import { Link } from "react-router-dom";
 import MenuImg from '../../src/img/menu-img.webp'
 import { NavDropdown } from "react-bootstrap";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCategories } from "../redux/actions/categoryAction";
+
 
 export default function Header() {
+  const dispatch = useDispatch();
+  const {categories =[]} = useSelector((state)=> state.categories || {});
+
+ useEffect(()=>{
+  dispatch(fetchCategories())
+ }, [dispatch]);
+
+ const groupByParent = (categories) => {
+  const grouped = {};
+  categories.forEach(cat => {
+    const parent = cat.parent_id || 'root';
+    if (!grouped[parent]) grouped[parent] = [];
+    grouped[parent].push(cat);
+  });
+  return grouped;
+};
+const renderMenu = (parentId, grouped) => {
+  const children = grouped[parentId] || [];
+  return (
+    <ul className="dropdown-menu border-0 rounded-0 rounded-bottom m-0 show">
+      {children.map(child => (
+        <li key={child.id} className="dropdown-submenu">
+          <Link to={`/shop.php?category=${child.id}`} className="dropdown-item">
+            {child.title}
+          </Link>
+          {grouped[child.id] && grouped[child.id].length > 0 && renderMenu(child.id, grouped)}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+const groupedCategories = groupByParent(categories);
+
 
   const [query, setQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -30,71 +67,7 @@ export default function Header() {
     "study table",
   ];
 
-const dropdownData = [
-  {
-    title: "Sofas & Seating",
-    items: [
-      { label: "Features", href: "feature.html" },
-      { label: "Our Team", href: "team.html" },
-      { label: "Testimonial", href: "testimonial.html" },
-      { label: "404 Page", href: "404.html" },
-    ],
-  },
-  {
-    title: "Mattresses",
-    items: [
-      { label: "Features", href: "feature.html" },
-      { label: "Our Team", href: "team.html" },
-      { label: "Testimonial", href: "testimonial.html" },
-      { label: "404 Page", href: "404.html" },
-    ],
-  },
-  {
-    title: "Home Decor",
-    items: [
-      { label: "Features", href: "feature.html" },
-      { label: "Our Team", href: "team.html" },
-      { label: "Testimonial", href: "testimonial.html" },
-      { label: "404 Page", href: "404.html" },
-    ],
-  },
-  {
-    title: "Lamps & Lighting",
-    items: [
-      { label: "Features", href: "feature.html" },
-      { label: "Our Team", href: "team.html" },
-      { label: "Testimonial", href: "testimonial.html" },
-      { label: "404 Page", href: "404.html" },
-    ],
-  },
-  {
-    title: "Kitchen & Dining",
-    items: [
-      { label: "Features", href: "feature.html" },
-      { label: "Our Team", href: "team.html" },
-      { label: "Testimonial", href: "testimonial.html" },
-      { label: "404 Page", href: "404.html" },
-    ],
-  },
-  {
-    title: "Luxury",
-    items: [
-      { label: "Features", href: "feature.html" },
-      { label: "Our Team", href: "team.html" },
-      { label: "Testimonial", href: "testimonial.html" },
-      { label: "404 Page", href: "404.html" },
-    ],
-  },
-  {
-    title: "Modular",
-    items: [
-      { label: "Features", href: "feature.html" },
-      { label: "Our Team", href: "team.html" },
-      { label: "Testimonial", href: "testimonial.html" },
-      { label: "404 Page", href: "404.html" },
-    ],
-  },
-];
+
 
 
   const handleSearch = (e) => {
@@ -218,249 +191,18 @@ const dropdownData = [
         </button>
         <div className="collapse navbar-collapse" id="navbarCollapse">
           <div className="navbar-nav mx-auto p-3 p-lg-0 d-flex justify-content-center">
-            <a href="/" className="navbar-brand sticky-logo">
+            <Link href="/" className="navbar-brand sticky-logo">
               <img src={MiniLogo} alt="Logo" style={{ maxHeight: 40, width: "100%" }} />
-            </a>
-
-            {/* Example nav item */}
-            <div className="nav-item dropdown mega-dropdown">
-              <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                Furniture
-              </a>
-              <div className="dropdown-menu mega-menu p-1 border-0 rounded-0 m-0" style={{alignItems:"center"}}>
-                <div className="container">
-                  <div className="row" >
-                    {/* Column 1: Sofas */}
-                    <div className="col-md-3 col-lg-2 col-6">
-                      <h3>Sofas</h3>
-                      {[
-                        "3 Seater Sofas",
-                        "2 Seater Sofas",
-                        "1 Seater Sofas",
-                        "Solo Sets",
-                        "Sectional Sofas",
-                        "LHS Sectionals",
-                        "RHS Sectionals",
-                        "Corner Sofas",
-                      ].map((item, index) => (
-                        <Link key={index} to="/shop.php" className="dropdown-item">
-                          {item}
-                        </Link>
-                      ))}
-                    </div>
-
-                    {/* Column 2: Recliners */}
-                    <div className="col-md-3 col-lg-2 col-6 menu-bg">
-                      <h3>Recliners</h3>
-                      {[
-                        "1 Seater Recliners",
-                        "2 Seater Recliners",
-                        "3 Seater Recliners",
-                        "Recliner Sets",
-                        "Chaise Loungers",
-                        "Sofa Chairs",
-                        "Wing Chairs",
-                      ].map((item, index) => (
-                        <Link key={index} to="/shop.php" className="dropdown-item">
-                          {item}
-                        </Link>
-                      ))}
-                    </div>
-
-                    {/* Column 3: Accent Chairs */}
-                    <div className="col-md-3 col-lg-2 col-6">
-                      <h3>Accent Chairs</h3>
-                      {[
-                        "Arm Chairs",
-                        "Rocking Chairs",
-                        "Folding Chairs",
-                        "Iconic Chairs",
-                        "Cafe Chairs",
-                        "Office Chairs",
-                        "Ergonomic Chairs",
-                        "Executive Chairs",
-                      ].map((item, index) => (
-                        <Link key={index} to="/shop.php" className="dropdown-item">
-                          {item}
-                        </Link>
-                      ))}
-                    </div>
-
-                    {/* Column 4: Dining Chairs */}
-                    <div className="col-md-3 col-lg-2 col-6 menu-bg">
-                      <h3>Dining Chairs</h3>
-                      {[
-                        "Bar Seating",
-                        "Bar Stools & Bar Table Sets",
-                        "Plastic Chairs",
-                        "Table & Chair Sets",
-                        "Settees & Benches",
-                        "Settees",
-                        "Benches",
-                        "Recliners",
-                      ].map((item, index) => (
-                        <Link key={index} to="/shop.php" className="dropdown-item">
-                          {item}
-                        </Link>
-                      ))}
-                    </div>
-
-                    {/* Column 5: Top Brands */}
-                    <div className="col-md-3 col-lg-2 col-6">
-                      <h3>Top Brands</h3>
-                      {[
-                        "Febonic",
-                        "Trend Furniture",
-                        "Durian",
-                        "Godrej Interio",
-                        "Sleepyhead",
-                        "Wakeup India",
-                        "Duroflex",
-                        "Royaloak",
-                      ].map((brand, index) => (
-                        <Link key={index} to="/shop.php" className="dropdown-item">
-                          {brand}
-                        </Link>
-                      ))}
-                    </div>
-                    <div className="col-md-3 col-lg-2 col-6">
-                      <h3>Accent Chairs</h3>
-                      {[
-                        "Arm Chairs",
-                        "Rocking Chairs",
-                        "Folding Chairs",
-                        "Iconic Chairs",
-                        "Cafe Chairs",
-                        "Office Chairs",
-                        "Ergonomic Chairs",
-                        "Executive Chairs",
-                      ].map((item, index) => (
-                        <Link key={index} to="/shop.php" className="dropdown-item">
-                          {item}
-                        </Link>
-                      ))}
-                    </div>
-
-                    {/* Column 4: Dining Chairs */}
-                    <div className="col-md-3 col-lg-2 col-6 menu-bg">
-                      <h3>Dining Chairs</h3>
-                      {[
-                        "Bar Seating",
-                        "Bar Stools & Bar Table Sets",
-                        "Plastic Chairs",
-                        "Table & Chair Sets",
-                        "Settees & Benches",
-                        "Settees",
-                        "Benches",
-                        "Recliners",
-                      ].map((item, index) => (
-                        <Link key={index} to="/shop.php" className="dropdown-item">
-                          {item}
-                        </Link>
-                      ))}
-                    </div>
-
-                    {/* Column 5: Top Brands */}
-                    <div className="col-md-3 col-lg-2 col-6">
-                      <h3>Top Brands</h3>
-                      {[
-                        "Febonic",
-                        "Trend Furniture",
-                        "Durian",
-                        "Godrej Interio",
-                        "Sleepyhead",
-                        "Wakeup India",
-                        "Duroflex",
-                        "Royaloak",
-                      ].map((brand, index) => (
-                        <Link key={index} to="/shop.php" className="dropdown-item">
-                          {brand}
-                        </Link>
-                      ))}
-                    </div>
-
-                    {/* Column 6: Promo Column */}
-                    <div className="col-md-3 col-lg-2 d-none d-md-block promo-column">
-                      <h3 className="promo-heading">Sink Into Comfort</h3>
-                      <p className="promo-subheading">Explore 3-Seater Sofas</p>
-                      <img src={MenuImg} className="w-100" alt="Promotional Image" />
-                    </div>
-                  </div>
-                </div>
+            </Link>
+           {groupedCategories['root']?.map((topLevel) => (
+              <div key={topLevel.id} className="nav-item dropdown">
+                <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                  {topLevel.title}
+                </a>
+                {renderMenu(topLevel.id, groupedCategories)}
               </div>
-            </div>
+            ))}
             
-            <div className="nav-item dropdown">
-              <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                Sofas & Seating
-              </a>
-              <div className="dropdown-menu border-0 rounded-0 rounded-bottom m-0">
-                <a href="feature.html" className="dropdown-item">Features</a>
-                <a href="team.html" className="dropdown-item">Our Team</a>
-                <a href="testimonial.html" className="dropdown-item">Testimonial</a>
-                <a href="404.html" className="dropdown-item">404 Page</a>
-              </div>
-            </div>
-
-            <div class="nav-item dropdown">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Mattresses</a>
-              <div class="dropdown-menu border-0 rounded-0 rounded-bottom m-0">
-                <a href="feature.html" class="dropdown-item">Features</a>
-                <a href="team.html" class="dropdown-item">Our Team</a>
-                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                <a href="404.html" class="dropdown-item">404 Page</a>
-              </div>
-            </div>
-
-            <div class="nav-item dropdown">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Home Decor</a>
-              <div class="dropdown-menu border-0 rounded-0 rounded-bottom m-0">
-                <a href="feature.html" class="dropdown-item">Features</a>
-                <a href="team.html" class="dropdown-item">Our Team</a>
-                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                <a href="404.html" class="dropdown-item">404 Page</a>
-              </div>
-            </div>
-
-            <div class="nav-item dropdown">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Lamps & Lighting</a>
-              <div class="dropdown-menu border-0 rounded-0 rounded-bottom m-0">
-                <a href="feature.html" class="dropdown-item">Features</a>
-                <a href="team.html" class="dropdown-item">Our Team</a>
-                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                <a href="404.html" class="dropdown-item">404 Page</a>
-              </div>
-            </div>
-
-            <div class="nav-item dropdown">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Kitchen & Dining</a>
-              <div class="dropdown-menu border-0 rounded-0 rounded-bottom m-0">
-                <a href="feature.html" class="dropdown-item">Features</a>
-                <a href="team.html" class="dropdown-item">Our Team</a>
-                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                <a href="404.html" class="dropdown-item">404 Page</a>
-              </div>
-            </div>
-
-            <div class="nav-item dropdown">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Luxury</a>
-              <div class="dropdown-menu border-0 rounded-0 rounded-bottom m-0">
-                <a href="feature.html" class="dropdown-item">Features</a>
-                <a href="team.html" class="dropdown-item">Our Team</a>
-                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                <a href="404.html" class="dropdown-item">404 Page</a>
-              </div>
-            </div>
-
-            <div class="nav-item dropdown">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Modular</a>
-              <div class="dropdown-menu border-0 rounded-0 rounded-bottom m-0">
-                <a href="feature.html" class="dropdown-item">Features</a>
-                <a href="team.html" class="dropdown-item">Our Team</a>
-                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                <a href="404.html" class="dropdown-item">404 Page</a>
-              </div>
-            </div>
           </div>
         </div>
       </nav>

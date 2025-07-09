@@ -3,7 +3,7 @@ import './App.css';
 import { useMainScripts } from './hooks/main.js';
 // import ProjectCarousel from './components/users/projectCarousel.jsx';
 import CounterUp from './pages/users/counterUp.jsx';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-router-dom";
 import HomeBannerSection from './pages/users/index.jsx';
 // import 'bootstrap-icons/font/bootstrap-icons.css';
 import ProductTopBar from './pages/users/shop.jsx';
@@ -58,7 +58,7 @@ function App() {
   useMainScripts(); // Runs the converted jQuery logic
 
   return (
-    <Router>
+    <BrowserRouter>
       <div className="App">
         {/* <div id="spinner" className="show">Loading...</div>
         <nav className="sticky-top">Navbar</nav> */}
@@ -85,6 +85,8 @@ function App() {
           <Route path='/admin/list-subcategory' element={<ListSubCategory />}></Route>
           <Route path='/admin/create-size' eleddment={<ManageSizes />}></Route>
           <Route path='/admin/create-brand' element={<ManageBrands />}></Route>
+
+          {/* <Route path='/admin/size-mapping' element={<ManageSizeMapping />}></Route> */}
           <Route path='/admin/colors' element={<ManageColors />}></Route>
           <Route path='/admin/feature-set' element={<ManageFeatureSet />}></Route>
           <Route path='/admin/feature-type' element={<ManageFeatureType />}></Route>
@@ -118,7 +120,7 @@ function App() {
         </Routes>
 
       </div>
-    </Router>
+    </BrowserRouter>
   );
 }
 
