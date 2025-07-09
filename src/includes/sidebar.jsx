@@ -36,13 +36,10 @@ const Sidebar = ({ isCollapsed }) => {
       '/admin/manage-users',
       '/admin/manage-coupons',
       '/admin/sliders',
-
       '/admin/manage-orders',
-
     ],
-    sizes: ['/admin/create-size',],
-    brand: ['/admin/create-brand',],
-
+    sizes: ['/admin/create-size'],
+    brand: ['/admin/create-brand'],
     productFeatures: ['/admin/feature-type', '/admin/feature-set', '/admin/feature-list', '/admin/bulk-upload'],
     productFilters: ['/admin/filter-type', '/admin/filter-set', '/admin/filter-list'],
     categories: ['/admin/manage-category', '/admin/manage-subcategory', '/admin/list-subcategory'],
@@ -50,7 +47,6 @@ const Sidebar = ({ isCollapsed }) => {
     users: ['/admin/manage-users'],
     orders: ['/admin/orders'],
     sliders: ['/admin/sliders', '/admin/manage-sliders'],
-
     coupons: ['/admin/add-coupon', '/admin/manage-coupons'],
     others: ['/contact', '/keywords'],
   };
@@ -87,9 +83,8 @@ const Sidebar = ({ isCollapsed }) => {
 
   return (
     <aside style={asideStyle(isCollapsed)}>
-      <section>
-        <ul className="sidebar-menu" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-
+      <section style={{ height: '100%' }}>
+        <ul className="sidebar-menu mb-4" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
           {/* Dashboard */}
           <li>
             <NavLink
@@ -109,16 +104,11 @@ const Sidebar = ({ isCollapsed }) => {
               <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Master Data</span>
               {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
             </div>
-
             {isActiveMenu('masterData') && !isCollapsed && (
               <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
                 {renderNavLink('/admin/create-brand', ' Brand')}
-
-                {/* ✅ Sizes as a direct single link (no dropdown) */}
                 {renderNavLink('/admin/create-size', 'Sizes')}
-
                 {renderNavLink('/admin/colors', 'Colors')}
-
                 {/* Product Features */}
                 <li>
                   <div onClick={() => toggleMenu('productFeatures')} style={subLinkStyle(true)}>
@@ -135,7 +125,6 @@ const Sidebar = ({ isCollapsed }) => {
                     </ul>
                   )}
                 </li>
-
                 {/* Product Filters */}
                 <li>
                   <div onClick={() => toggleMenu('productFilters')} style={subLinkStyle(true)}>
@@ -154,7 +143,6 @@ const Sidebar = ({ isCollapsed }) => {
               </ul>
             )}
           </li>
-
 
           {/* Categories */}
           <li>
@@ -260,7 +248,7 @@ const Sidebar = ({ isCollapsed }) => {
           {/* Change Password */}
           <li>
             <NavLink
-              to="/admin/change-password" // ← Set the path you want to navigate to
+              to="/admin/change-password"
               className={({ isActive }) => (isActive ? 'active' : '')}
               style={navLinkStyle(isCollapsed)}
             >
@@ -268,7 +256,6 @@ const Sidebar = ({ isCollapsed }) => {
               <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Change Password</span>
             </NavLink>
           </li>
-
         </ul>
       </section>
     </aside>
@@ -279,13 +266,16 @@ const Sidebar = ({ isCollapsed }) => {
 const asideStyle = (isCollapsed) => ({
   width: isCollapsed ? '60px' : '295px',
   color: '#fff',
-  minHeight: '100vh',
+  height: '100vh', // Ensure full viewport height
   position: 'fixed',
   paddingTop: '20px',
+  paddingBottom: '20px',
+
   background: 'rgb(13 167 158)',
-  overflowY: 'auto',
+  overflowY: 'auto', // Enable vertical scrolling
   transition: 'width 0.3s ease',
   zIndex: 900,
+  left: 0, // Align to left of viewport
 });
 
 const navLinkStyle = (isCollapsed, clickable = false) => ({

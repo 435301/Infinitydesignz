@@ -86,7 +86,7 @@ function App() {
           <Route path='/admin/create-size' element={<ManageSizes />}></Route>
           <Route path='/admin/create-brand' element={<ManageBrands />}></Route>
 
-          <Route path='/admin/size-mapping' element={<ManageSizeMapping />}></Route>
+          {/* <Route path='/admin/size-mapping' element={<ManageSizeMapping />}></Route> */}
           <Route path='/admin/colors' element={<ManageColors />}></Route>
           <Route path='/admin/feature-set' element={<ManageFeatureSet />}></Route>
           <Route path='/admin/feature-type' element={<ManageFeatureType />}></Route>
