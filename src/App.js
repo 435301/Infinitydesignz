@@ -83,13 +83,8 @@ function App() {
           <Route path='/admin/manage-category' element={<ManageCategories />}></Route>
           <Route path='/admin/manage-subcategory' element={<ManageSubCategories />}></Route>
           <Route path='/admin/list-subcategory' element={<ListSubCategory />}></Route>
-          <Route path='/admin/create-size' element={<ManageSizes />}></Route>
+          <Route path='/admin/create-size' eleddment={<ManageSizes />}></Route>
           <Route path='/admin/create-brand' element={<ManageBrands />}></Route>
-<<<<<<< HEAD
-
-          {/* <Route path='/admin/size-mapping' element={<ManageSizeMapping />}></Route> */}
-=======
->>>>>>> ffcbf29f21cffe47a31daa7ceef6c14543c9af63
           <Route path='/admin/colors' element={<ManageColors />}></Route>
           <Route path='/admin/feature-set' element={<ManageFeatureSet />}></Route>
           <Route path='/admin/feature-type' element={<ManageFeatureType />}></Route>
