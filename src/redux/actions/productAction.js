@@ -12,7 +12,7 @@ export const EDIT_PRODUCT_REQUEST='EDIT_PRODUCT_REQUEST';
 export const EDIT_PRODUCT_SUCCESS='EDIT_PRODUCT_SUCCESS';
 export const EDIT_PRODUCT_FAILURE='EDIT_PRODUCT_FAILURE';
 export const DELETE_PRODUCT_SUCCESS = 'DELETE_PRODUCT_SUCCESS'
-
+export const FETCH_PRODUCT_BY_ID_SUCCESS = 'FETCH_PRODUCT_BY_ID_SUCCESS';
 
 export const fetchProducts = () => {
 
@@ -89,7 +89,7 @@ export const editProducts = (payload) => async (dispatch) => {
   }
 };
 
-export const deleteFilterType = (id) => async (dispatch) => {
+export const deleteProducts = (id) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
 
@@ -107,4 +107,15 @@ export const deleteFilterType = (id) => async (dispatch) => {
   }
 };
 
+export const fetchProductById = (id) => async (dispatch) => {
+  const token = localStorage.getItem('token');
+  try {
+    const res = await axios.get(`${BASE_URL}/products/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    dispatch({ type: FETCH_PRODUCT_BY_ID_SUCCESS, payload: res.data });
+  } catch (err) {
+    toast.error("Failed to fetch subcategory.");
+  }
+};
 

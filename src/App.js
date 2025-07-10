@@ -48,6 +48,7 @@ import { ToastContainer, toast } from 'react-toastify';
 
 import Slider from 'react-slick';
 import ManageProducts from './pages/admin/manageProduct.jsx';
+import EditProduct from './components/editProduct.jsx';
 
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
@@ -98,6 +99,7 @@ function App() {
           <Route path='/admin/filter-set' element={<ManageFilterSet />}></Route>
           <Route path='/admin/filter-list' element={<ManageFilterList />}></Route>
           <Route path='/admin/add-product' element={<AddProduct/>}></Route>
+          <Route path='/admin/edit-product/:id' element={<EditProduct/>}></Route>
           <Route path='/admin/product-image' element={<AddProductImages />}></Route>
           <Route path='/admin/product-filter' element={<ProductFilters />}></Route>
           <Route path='/admin/manage-product' element={<ManageProducts/>}></Route>

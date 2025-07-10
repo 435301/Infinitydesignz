@@ -4,31 +4,40 @@ import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 import '../../css/admin/manageProduct.css';
-import { BsArrowClockwise } from 'react-icons/bs';
+import { BsArrowClockwise, BsEye, BsPencilSquare, BsTrash } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts } from '../../redux/actions/productAction';
+import { deleteProducts, fetchProducts } from '../../redux/actions/productAction';
 import PaginationComponent from '../../includes/pagination';
+import DeleteModal from '../../modals/deleteModal';
+import EditProduct from '../../components/editProduct';
+import { useNavigate } from 'react-router-dom';
+import BASE_URL from '../../config/config';
 
-const BASE_URL = 'http://68.183.89.229:4005';
+
 
 const ManageProducts = () => {
     const dispatch = useDispatch();
     const { products = [] } = useSelector((state) => state.products);
     console.log('products', products)
+    const navigate = useNavigate();
+ 
 
-<<<<<<< HEAD
-=======
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState(false);
     // console.log('statusFilter',statusFilter)
     const [selectedRows, setSelectedRows] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [productToDelete, setProductToDelete] = useState(null);
+    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState('');
 
->>>>>>> b8396e172f24e45c161a6ba67e92fe2e48abee08
     useEffect(() => {
         dispatch(fetchProducts());
     }, [dispatch])
+
+
 
     const filteredProducts = products.filter((product) => {
         const search = searchTerm.toLowerCase();
@@ -77,6 +86,20 @@ const ManageProducts = () => {
         setSelectAll(!selectAll);
     };
 
+    const handleDelete = async () => {
+        await dispatch(deleteProducts(productToDelete));
+        setProductToDelete(null);
+        setShowDeleteModal(false);
+    }
+
+    const handleDeleteClick = (id) => {
+        setProductToDelete(id);
+        setShowDeleteModal(true);
+    }
+
+    const handleEdit = (id) => {
+        navigate(`/admin/edit-product/${id}`);
+    }
     return (
         <div className="sidebar-mini fixed">
             <div className="wrapper">
@@ -209,9 +232,29 @@ const ManageProducts = () => {
                                                                 </td>
 
                                                                 <td>{new Date(product.created_at).toLocaleString()}</td>
-                                                                <td className="action-buttons mb-0">
-                                                                    <button type="button" className="action-btn action-primary action-icon action-rounded">
-                                                                        <i className="ti-pencil-alt"></i> Update
+                                                                <td>
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-light icon-btn"
+                                                                        style={{ marginRight: '5px' }}
+                                                                        title="Edit"
+                                                                        onClick={()=>handleEdit(product.id)}
+                                                                    >
+                                                                        <BsPencilSquare style={{ fontSize: '18px', color: '#28a745' }} />
+                                                                    </button>
+                                                                    <button
+                                                                        className="btn btn-light icon-btn"
+
+                                                                    >
+                                                                        <BsEye style={{ fontSize: '18px', color: '#212529' }} />
+                                                                    </button>
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-light icon-btn delete-btn"
+                                                                        title="Delete"
+                                                                        onClick={() => handleDeleteClick(product.id)}
+                                                                    >
+                                                                        <BsTrash style={{ fontSize: '18px', color: '#dc3545' }} />
                                                                     </button>
                                                                 </td>
                                                             </tr>
@@ -226,6 +269,8 @@ const ManageProducts = () => {
                             </div>
                         </div>
                         <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+                        {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+
 
                     </div>
                 </div>
