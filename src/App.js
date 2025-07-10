@@ -32,7 +32,7 @@ import BulkManage from './pages/admin/bulkManage.jsx';
 import ManageFilterType from './pages/admin/filterType.jsx';
 import ManageFilterSet from './pages/admin/filterSet.jsx';
 import ManageFilterList from './pages/admin/filterList.jsx';
-import AddProduct from './pages/admin/addProduct.jsx';
+import AddProduct from './components/addProduct.jsx';
 import AddProductImages from './pages/admin/productImage.jsx';
 import ProductFilters from './pages/admin/productFilter.jsx';
 import ProductFeatures from './pages/admin/productFeatures.jsx';
@@ -47,6 +47,7 @@ import { ToastContainer, toast } from 'react-toastify';
 
 
 import Slider from 'react-slick';
+import ManageProducts from './pages/admin/manageProduct.jsx';
 
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
@@ -96,10 +97,10 @@ function App() {
           <Route path='/admin/filter-type' element={<ManageFilterType />}></Route>
           <Route path='/admin/filter-set' element={<ManageFilterSet />}></Route>
           <Route path='/admin/filter-list' element={<ManageFilterList />}></Route>
-          <Route path='/admin/add-product' element={<AddProduct />}></Route>
+          <Route path='/admin/add-product' element={<AddProduct/>}></Route>
           <Route path='/admin/product-image' element={<AddProductImages />}></Route>
           <Route path='/admin/product-filter' element={<ProductFilters />}></Route>
-
+          <Route path='/admin/manage-product' element={<ManageProducts/>}></Route>
           <Route path='/admin/product-features' element={<ProductFeatures />}></Route>
           <Route path='/admin/manage-users' element={<ManageUsers />}></Route>
           <Route path='/admin/orders' element={<ManageOrders />}></Route>
