@@ -15,7 +15,7 @@ const ManageProducts = () => {
     const { products = [] } = useSelector((state) => state.products);
     console.log('products', products)
 
-    useEffect(()=>{
+    useEffect(() => {
         dispatch(fetchProducts());
     }, [dispatch])
 
@@ -26,13 +26,13 @@ const ManageProducts = () => {
                 <aside className="main-sidebar hidden-print">
                     <Sidebar />
                 </aside>
-                <div className="content-wrapper">
+                <div className="content-wrapper p-4">
                     <div className="main-header" style={{ marginTop: '0px' }}>
                         <h5>Manage Products</h5>
                     </div>
 
-                    <div className="container-fluid manage">
-                        <div className="row">
+                    <div className="container-fluid manage ">
+                        <div className="row mb-3">
                             <div className="col-md-12">
                                 <div className="card">
                                     <div className="card-block manage-btn">
@@ -70,8 +70,8 @@ const ManageProducts = () => {
                                         <div className="row mb-3">
                                             <div className="col-md-6"></div>
                                             <div className="col-md-6 text-end">
-                                                <button className="btn btn-success">Active</button>
-                                                <button className="btn btn-default">In Active</button>
+                                                <button className="btn btn-success me-1">Active</button>
+                                                <button className="btn btn-default me-1">In Active</button>
                                                 <button className="btn btn-danger">Delete</button>
                                             </div>
                                         </div>
@@ -121,12 +121,13 @@ const ManageProducts = () => {
                                                                 </td>
                                                                 <td>{product.stock}</td>
                                                                 <td>
-                                                                    <span className={`badge ${product.status ? 'text-light-success' : 'text-light-danger'}`}>
+                                                                    <span className={`badge ${product.status ? 'text-light-primary' : 'text-light-danger'}`}>
                                                                         {product.status ? 'Active' : 'In-Active'}
                                                                     </span>
                                                                 </td>
+
                                                                 <td>{new Date(product.created_at).toLocaleString()}</td>
-                                                                <td className="action-buttons">
+                                                                <td className="action-buttons mb-0">
                                                                     <button type="button" className="action-btn action-primary action-icon action-rounded">
                                                                         <i className="ti-pencil-alt"></i> Update
                                                                     </button>
