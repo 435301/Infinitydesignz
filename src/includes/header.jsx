@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../redux/actions/categoryAction";
 import "../../src/css/user/header.css";
 import "../../src/css/user/userstyle.css";
+import "../../src/css/user/adminHeader.css";
+
 import "../../src/css/user/bootstrap.min.css";
 import Logo from '../../src/img/logo.svg';
 import MiniLogo from '../../src/img/mini-logo.png';
