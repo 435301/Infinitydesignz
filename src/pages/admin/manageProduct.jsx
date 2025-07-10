@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
@@ -7,6 +7,7 @@ import '../../css/admin/manageProduct.css';
 import { BsArrowClockwise } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../../redux/actions/productAction';
+import PaginationComponent from '../../includes/pagination';
 
 const BASE_URL = 'http://68.183.89.229:4005';
 
@@ -15,9 +16,63 @@ const ManageProducts = () => {
     const { products = [] } = useSelector((state) => state.products);
     console.log('products', products)
 
-    useEffect(()=>{
+    const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState(false);
+    // console.log('statusFilter',statusFilter)
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [selectedIds, setSelectedIds] = useState([]);
+    const [selectAll, setSelectAll] = useState(false);
+
+    useEffect(() => {
         dispatch(fetchProducts());
     }, [dispatch])
+
+    const filteredProducts = products.filter((product) => {
+        const search = searchTerm.toLowerCase();
+        const matchesSearch = product?.title?.toLowerCase().includes(search) ||
+            product?.sku?.toLowerCase().includes(search) ||
+            product?.mainCategory?.title?.toLowerCase().includes(search) ||
+            product?.subCategory?.title?.toLowerCase().includes(search) ||
+            product?.listSubCategory?.title?.toLowerCase().includes(search) ||
+            product?.size?.title?.toLowerCase().includes(search) ||
+            product?.color?.label?.toLowerCase().includes(search);
+
+
+        const matchesStatus = statusFilter
+            ? (statusFilter === 'active' ? product.status === true : product.status === false)
+            : true;
+        return matchesSearch && matchesStatus;
+
+    });
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const rowsPerPage = 10;
+    const indexOfLastRow = currentPage * rowsPerPage;
+    const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+    const currentRows = filteredProducts.slice(indexOfFirstRow, indexOfLastRow);
+    const totalPages = Math.ceil(filteredProducts.length / rowsPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        if (pageNumber >= 1 && pageNumber <= totalPages) {
+            setCurrentPage(pageNumber);
+        }
+    };
+
+    const handleRowCheckboxChange = (id) => {
+        setSelectedRows((prev) =>
+            prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+        );
+    };
+
+    const handleSelectAll = () => {
+        if (selectAll) {
+            setSelectedIds([]);
+        } else {
+            const ids = currentRows.map((cat) => cat.id);
+            setSelectedIds(ids);
+        }
+        setSelectAll(!selectAll);
+    };
 
     return (
         <div className="sidebar-mini fixed">
@@ -39,18 +94,31 @@ const ManageProducts = () => {
                                         <div className="row">
                                             <div className="col-md-3">
                                                 <div className="input-group">
-                                                    <input type="text" className="form-control" placeholder="Search by product name, SKU" />
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        placeholder="Search By SKU, Name"
+                                                        value={searchTerm}
+                                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="col-md-3">
-                                                <select className="form-control">
-                                                    <option value="">- Product Status -</option>
+                                                <select
+                                                    className="form-control"
+                                                    value={statusFilter}
+                                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                                >
+                                                    <option value="">- Select Status -</option>
                                                     <option value="active">Active</option>
-                                                    <option value="inactive">In Active</option>
+                                                    <option value="inactive">Inactive</option>
                                                 </select>
                                             </div>
                                             <div className="col-md-2 d-flex gap-2">
-                                                <button className="btn btn-success">
+                                                <button className="btn btn-success" onClick={() => {
+                                                    setSearchTerm('');
+                                                    setStatusFilter('');
+                                                }}>
                                                     <BsArrowClockwise />
                                                 </button>
                                             </div>
@@ -81,7 +149,14 @@ const ManageProducts = () => {
                                                 <table className="table table-lg table-striped align-middle table-hover mb-0">
                                                     <thead>
                                                         <tr>
-                                                            <th><input type="checkbox" id="select-all" /></th>
+                                                            <th><input
+                                                                type="checkbox"
+                                                                checked={
+                                                                    selectedRows.length === products.length &&
+                                                                    products.length > 0
+                                                                }
+                                                                onChange={handleSelectAll}
+                                                            /></th>
                                                             <th>Image</th>
                                                             <th>SKU</th>
                                                             <th>Product Name</th>
@@ -97,9 +172,13 @@ const ManageProducts = () => {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {products.map((product, idx) => (
+                                                        {currentRows.map((product, idx) => (
                                                             <tr key={product.id}>
-                                                                <td><input type="checkbox" className="row-checkbox" /></td>
+                                                                <td><input
+                                                                    type="checkbox"
+                                                                    checked={selectedRows.includes(product.id)}
+                                                                    onChange={() => handleRowCheckboxChange(product.id)}
+                                                                /></td>
                                                                 <td>
                                                                     {product.mainCategory?.mainImage ? (
                                                                         <img src={`${BASE_URL}/uploads/categories/${product.mainCategory.mainImage}`} alt={product.title} style={{ width: '50px' }} />
@@ -142,6 +221,7 @@ const ManageProducts = () => {
                                 </div>
                             </div>
                         </div>
+                        <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
 
                     </div>
                 </div>
