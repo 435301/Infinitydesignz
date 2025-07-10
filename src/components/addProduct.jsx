@@ -11,22 +11,29 @@ import { fetchCategories } from '../redux/actions/categoryAction';
 import { fetchColors } from '../redux/actions/colorAction';
 import { fetchSizes } from '../redux/actions/sizeAction';
 import { addProducts } from '../redux/actions/productAction';
+import { fetchBrands } from '../redux/actions/brandAction';
+import { useNavigate } from 'react-router-dom';
 
-const AddProduct = ({onClose}) => {
+
+const AddProduct = ({ onClose }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const { categories = [] } = useSelector((state) => state.categories || {});
   const { sizes = [] } = useSelector((state) => state.sizes || {});
   const { colors = [] } = useSelector((state) => state.colors || {});
-  // console.log('colors', colors)
+  const { brands = [] } = useSelector((state) => state.brands);
+  // console.log('brands', brands)
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [description, setDescription] = useState('');
   const [selectedMenu, setSelectedMenu] = useState('');
   const [selectedSubMenu, setSelectedSubMenu] = useState('');
   const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
-  const [errors, setErrors] = useState('');
+  const [errors, setErrors] = useState({});
 
-  const [formData, setFormData] = useState({
+
+  const initialFormState = {
     sku: '',
     title: '',
     weight: '',
@@ -44,7 +51,10 @@ const AddProduct = ({onClose}) => {
     length: '',
     sizeId: '',
     colorId: '',
-  });
+    brandId: '',
+  };
+
+  const [formData, setFormData] = useState(initialFormState);
 
   const menuOptions = categories.filter(cat => cat.parent_id === null);
   const subMenuOptions = categories.filter(cat => cat.parent_id === parseInt(selectedMenu));
@@ -54,6 +64,7 @@ const AddProduct = ({onClose}) => {
     dispatch(fetchCategories());
     dispatch(fetchColors());
     dispatch(fetchSizes());
+    dispatch(fetchBrands());
   }, [dispatch]);
 
   // useEffect(() => {
@@ -90,38 +101,111 @@ const AddProduct = ({onClose}) => {
     setIsSidebarCollapsed(collapsed);
   };
 
-  // const validate = () => {
-  //   const newErrors = {};
-  //   if (!brand.trim()) newErrors.brand = 'Brand is required';
-  //   if (status === null) newErrors.status = 'Status is required';
-  //   setErrors(newErrors);
-  //   return Object.keys(newErrors).length === 0;
-  // };
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.sku.trim()) newErrors.sku = 'SKU is required';
+    if (!formData.title.trim()) newErrors.title = 'Title is required';
+    if (!selectedMenu) newErrors.selectedMenu = 'Menu is required';
+    if (!selectedSubMenu) newErrors.selectedSubMenu = 'Sub Menu is required';
+    if (!selectedListSubMenu) newErrors.selectedListSubMenu = 'List Sub Menu is required';
+    if (!formData.stock) newErrors.stock = 'Stock is required';
+    if (!formData.mrp) newErrors.mrp = 'MRP is required';
+    if (!formData.sellingPrice) newErrors.sellingPrice = 'Selling Price is required';
+    if (!formData.brandId) newErrors.brandId = 'Brand is required';
+    if (!formData.sizeId) newErrors.sizeId = 'Size is required';
+    if (!formData.colorId) newErrors.colorId = 'Color is required';
+    if (formData.stock && isNaN(formData.stock)) newErrors.stock = 'Stock must be a number';
+    if (formData.mrp && isNaN(formData.mrp)) newErrors.mrp = 'MRP must be a number';
+    if (formData.sellingPrice && isNaN(formData.sellingPrice)) newErrors.sellingPrice = 'Selling Price must be a number';
+    if (formData.height && isNaN(formData.height)) newErrors.height = 'Height must be a number';
+    if (formData.width && isNaN(formData.width)) newErrors.width = 'Width must be a number';
+    if (formData.length && isNaN(formData.length)) newErrors.length = 'Length must be a number';
+    if (!formData.description.trim()) newErrors.description = 'Description is required';
+    if (!formData.status) newErrors.status = 'Product status is required';
+    if (!formData.searchKeywords.trim()) newErrors.searchKeywords = 'Search Keywords are required';
+    if (!formData.height) newErrors.height = 'Height is required';
+    if (!formData.width) newErrors.width = 'Width is required';
+    if (!formData.length) newErrors.length = 'Length is required';
 
-  const handleSubmit = async(e) => {
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+
+  }
+
+//   const handleInputChange = (field, value) => {
+//   setFormData({ ...formData, [field]: value });
+
+//   // Validate while typing
+//   let fieldError = '';
+
+//   if (['sku', 'title', 'searchKeywords'].includes(field) && !value.trim()) {
+//     fieldError = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+//   }
+
+//   if (['stock', 'mrp', 'sellingPrice', 'height', 'width', 'length'].includes(field)) {
+//     if (!value) {
+//       fieldError = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+//     } else if (isNaN(value)) {
+//       fieldError = `${field.charAt(0).toUpperCase() + field.slice(1)} must be a number`;
+//     }
+//   }
+
+//   setErrors((prev) => ({
+//     ...prev,
+//     [field]: fieldError,
+//   }));
+// };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // if (!validate()) return;
+    setErrors({});
+    if (!validate()) return;
+
     const payload = {
-      ...formData,
+      sku: formData.sku,
+      title: formData.title,
+      description: formData.description,
+      searchKeywords: formData.searchKeywords,
+      stock: parseInt(formData.stock),
+      mrp: parseFloat(formData.mrp),
+      sellingPrice: parseFloat(formData.sellingPrice),
+      height: parseFloat(formData.height),
+      width: parseFloat(formData.width),
+      length: parseFloat(formData.length),
+      sizeId: parseInt(formData.sizeId),
+      colorId: parseInt(formData.colorId),
+      brandId: parseInt(formData.brandId),
       mainCategoryId: parseInt(selectedMenu),
       subCategoryId: parseInt(selectedSubMenu),
       listSubCategoryId: parseInt(selectedListSubMenu),
       status: formData.status === 'enable',
     };
-
     console.log('Submitting Product:', payload);
-     try {
-        await dispatch(addProducts(payload));
-        onClose();
-        setFormData('');
-      } catch (err) {
-        setErrors({
-          brand: err?.response?.data?.message || 'Something went wrong.',
-        });
-      }
-    
+    try {
+      await dispatch(addProducts(payload));
+      setFormData(initialFormState);
+      setDescription('');
+      setSelectedMenu('');
+      setSelectedSubMenu('');
+      setSelectedListSubMenu('');
+      navigate('/admin/manage-product');
+
+    } catch (err) {
+      setErrors({
+        brand: err?.response?.data?.message || 'Something went wrong.',
+      });
+    }
+
   };
 
+  const handleReset = (e) => {
+    e.preventDefault();
+    setFormData(initialFormState);
+    setSelectedMenu('');
+    setSelectedSubMenu('');
+    setSelectedListSubMenu('');
+    setDescription('');
+  };
 
   return (
     <div className="sidebar-mini fixed">
@@ -147,44 +231,59 @@ const AddProduct = ({onClose}) => {
                     <h5 className="text-dark mb-0">Create Product</h5>
                   </div>
                   <div className="card-block">
-                    <form onSubmit={handleSubmit} className="app-form">
+                    <form onSubmit={handleSubmit}  className="app-form">
                       <div className="row">
                         <div className="col-lg-12">
                           <h6 className="sub-heading">Category Details</h6>
                           <div className="row">
                             <div className="col-lg-4 mb-3">
                               <label className="form-label">Menu</label>
-                              <select className="form-control" value={selectedMenu} onChange={(e) => {
+                              <select className={`form-control ${errors.selectedMenu ? 'is-invalid' : ''}`} value={selectedMenu} onChange={(e) => {
                                 setSelectedMenu(e.target.value);
                                 setSelectedSubMenu('');
                                 setSelectedListSubMenu('');
+                                if (errors.selectedMenu) {
+                                  setErrors({ ...errors, selectedMenu: '' });
+                                }
                               }}>
                                 <option value="">--Choose Menu--</option>
                                 {menuOptions.map(menu => (
                                   <option key={menu.id} value={menu.id}>{menu.title}</option>
                                 ))}
                               </select>
+                              {errors.selectedMenu && <div className="invalid-feedback">{errors.selectedMenu}</div>}
                             </div>
                             <div className="col-lg-4 mb-3">
                               <label className="form-label">Sub Menu</label>
-                              <select className="form-control" value={selectedSubMenu} onChange={(e) => {
+                              <select className={`form-control ${errors.selectedSubMenu ? 'is-invalid' : ''}`} value={selectedSubMenu} onChange={(e) => {
                                 setSelectedSubMenu(e.target.value);
                                 setSelectedListSubMenu('');
+                                if (errors.selectedSubMenu) {
+                                  setErrors({ ...errors, selectedSubMenu: '' });
+                                }
                               }}>
                                 <option value="">--Choose Sub Menu--</option>
                                 {subMenuOptions.map(sub => (
                                   <option key={sub.id} value={sub.id}>{sub.title}</option>
                                 ))}
                               </select>
+                              {errors.selectedSubMenu && <div className="invalid-feedback">{errors.selectedSubMenu}</div>}
                             </div>
                             <div className="col-lg-4 mb-3">
                               <label className="form-label">List Sub Menu</label>
-                              <select className="form-control" value={selectedListSubMenu} onChange={(e) => setSelectedListSubMenu(e.target.value)}>
+                              <select className={`form-control ${errors.selectedListSubMenu ? 'is-invalid' : ''}`} value={selectedListSubMenu} onChange={(e) => {
+                                setSelectedListSubMenu(e.target.value);
+                                if (errors.selectedListSubMenu) {
+                                  setErrors({ ...errors, selectedListSubMenu: '' });
+                                }
+                              }}>
                                 <option value="">--Choose List Sub Menu--</option>
                                 {listSubMenuOptions.map(list => (
                                   <option key={list.id} value={list.id}>{list.title}</option>
                                 ))}
                               </select>
+                              {errors.selectedListSubMenu && <div className="invalid-feedback">{errors.selectedListSubMenu}</div>}
+
                             </div>
                           </div>
                         </div>
@@ -204,30 +303,53 @@ const AddProduct = ({onClose}) => {
                             ].map((field, idx) => (
                               <div className="col-lg-4 mb-3" key={idx}>
                                 <label htmlFor={field.id} className="form-label">{field.label}</label>
-                                <input id={field.id} className="form-control" placeholder={field.label} type="text" value={formData[field.id]} onChange={(e) => setFormData({ ...formData, [field.id]: e.target.value })} />
+                                <input id={field.id} className={`form-control ${errors[field.id] ? 'is-invalid' : ''}`} placeholder={field.label} type="text" value={formData[field.id]} onChange={(e) => {
+                                  setFormData({ ...formData, [field.id]: e.target.value });
+                                  if (errors[field.id]) {
+                                    setErrors({ ...errors, [field.id]: '' });
+                                  }
+                                }} />
+                                {errors[field.id] && (
+                                  <div className="invalid-feedback">{errors[field.id]}</div>
+                                )}
                               </div>
                             ))}
 
                             <div className="col-lg-12 mb-3">
-                              <label className="form-label">Description</label>
+                              <label className={`form-control ${errors.description ? 'is-invalid' : ''}`}>Description</label>
                               <CKEditor editor={ClassicEditor} data={description} onChange={(event, editor) => {
                                 const data = editor.getData();
                                 setDescription(data);
                                 setFormData({ ...formData, description: data });
+                                if(errors.description ){
+                                  setErrors({...errors,description:""})
+                                }
                               }} />
+                              {errors.description && <div className="invalid-feedback">{errors.description}</div>}
+
                             </div>
 
                             <div className="col-lg-6 mb-3">
                               <label className="form-label">Product Status</label>
-                              <select className="form-control" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })}>
+                              <select className={`form-control ${errors.status ? 'is-invalid' : ''}`} value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })}>
                                 <option value="enable">Enable</option>
                                 <option value="disable">Disable</option>
                               </select>
+                              {errors.status && <div className="invalid-feedback">{errors.status}</div>}
+
                             </div>
 
                             <div className="col-lg-6 mb-3">
                               <label className="form-label">Search Keywords</label>
-                              <input type="text" className="form-control" placeholder="Comma separated keywords" value={formData.searchKeywords} onChange={(e) => setFormData({ ...formData, searchKeywords: e.target.value })} />
+                              <input type="text" className={`form-control ${errors.searchKeywords ? 'is-invalid' : ''}`} placeholder="Comma separated keywords" value={formData.searchKeywords} onChange={(e) => {
+                                setFormData({ ...formData, searchKeywords: e.target.value });
+                                if (errors.searchKeywords) {
+                                  setErrors({ ...errors, searchKeywords: '' });
+                                }
+                              }}
+                              />
+                              {errors.searchKeywords && <div className="invalid-feedback">{errors.searchKeywords}</div>}
+
                             </div>
                           </div>
                         </div>
@@ -240,43 +362,83 @@ const AddProduct = ({onClose}) => {
                             {['stock', 'mrp', 'sellingPrice', 'height', 'width', 'length'].map((field, idx) => (
                               <div className="col-lg-3 mb-3" key={idx}>
                                 <label className="form-label">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-                                <input type="text" className="form-control" placeholder={field} value={formData[field]} onChange={(e) => setFormData({ ...formData, [field]: e.target.value })} />
+                                <input type="text" className={`form-control ${errors[field] ? 'is-invalid' : ''}`} placeholder={field} value={formData[field]} onChange={(e) => {
+                                  setFormData({ ...formData, [field]: e.target.value });
+                                  if (errors[field]) {
+                                    setErrors({ ...errors, [field]: '' });
+                                  }
+                                }} />
+                                {errors[field] && (
+                                  <div className="invalid-feedback">{errors[field]}</div>
+                                )}
                               </div>
                             ))}
+                            <div className="col-lg-3 mb-3">
+                              <label className="form-label">Brand</label>
+                              <select
+                                className={`form-control ${errors.brandId ? 'is-invalid' : ''}`}
+                                value={formData.brandId}
+                                onChange={(e) => {setFormData({ ...formData, brandId: e.target.value });
+                                if(errors.brandId){
+                                  setErrors({...errors, brandId:""});
+                                }
+                              }}
+                              >
+                                <option value="">--Choose Brand--</option>
+                                {brands.map((s) => (
+                                  <option key={s.id} value={s.id}>{s.name}</option>
+                                ))}
+                              </select>
+                              {errors.brandId && <div className="invalid-feedback">{errors.brandId}</div>}
+
+                            </div>
 
                             <div className="col-lg-3 mb-3">
                               <label className="form-label">Size</label>
                               <select
-                                className="form-control"
+                                className={`form-control ${errors.sizeId ? 'is-invalid' : ''}`}
+
                                 value={formData.sizeId}
-                                onChange={(e) => setFormData({ ...formData, sizeId: e.target.value })}
+                                onChange={(e) =>{ setFormData({ ...formData, sizeId: e.target.value });
+                                 if(errors.sizeId){
+                                  setErrors({...errors, sizeId:""});
+                                }
+                              }}
                               >
                                 <option value="">--Choose Size--</option>
                                 {sizes.map((s) => (
                                   <option key={s.id} value={s.id}>{s.title}</option>
                                 ))}
                               </select>
+                              {errors.sizeId && <div className="invalid-feedback">{errors.sizeId}</div>}
+
                             </div>
 
                             <div className="col-lg-3 mb-3">
                               <label className="form-label">Color</label>
                               <select
-                                className="form-control"
+                                className={`form-control ${errors.colorId ? 'is-invalid' : ''}`}
                                 value={formData.colorId}
-                                onChange={(e) => setFormData({ ...formData, colorId: e.target.value })}
+                                onChange={(e) =>{ setFormData({ ...formData, colorId: e.target.value });
+                               if(errors.colorId){
+                                setErrors({...errors,colorId:""})
+                               }
+                              }}
                               >
                                 <option value="">--Choose Color--</option>
                                 {colors.map((s) => (
                                   <option key={s.id} value={s.id}>{s.label}</option>
                                 ))}
                               </select>
+                              {errors.colorId && <div className="invalid-feedback">{errors.colorId}</div>}
+
                             </div>
                           </div>
                         </div>
 
                         <div className="col-lg-12 text-center my-4">
                           <button type="submit" className="btn btn-primary py-2 px-5 me-2">Submit</button>
-                          <button type="reset" className="btn btn-secondary py-2 px-5">Reset</button>
+                          <button type="reset" className="btn btn-secondary py-2 px-5" onClick={handleReset}>Reset</button>
                         </div>
 
                       </div>
