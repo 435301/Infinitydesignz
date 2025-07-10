@@ -1,0 +1,114 @@
+
+        /* Base action button styles */
+        .action-btn {
+            display: inline-block;
+            font-weight: 400;
+            text-align: center;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Primary action button style (used for Q. and Update buttons) */
+        .action-primary {
+            background-color: #0da79e;
+            color: #fff;
+            border-color: #0da79e;
+        }
+
+        /* Hover effect for primary action buttons */
+        .action-primary:hover {
+            background-color: #0da79e;
+            border-color: #0da79e;
+        }
+
+        /* Vendor action button style (used for Vendors button) */
+        .action-vendor {
+            background-color: #17a2b8;
+            color: #fff;
+            border-color: #17a2b8;
+        }
+
+        /* Hover effect for vendor action buttons */
+        .action-vendor:hover {
+            background-color: #117a8b;
+            border-color: #0d5c6d;
+        }
+
+        /* Action button with icon style */
+        .action-icon {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            /* Space between icon and text */
+        }
+
+        /* Border radius class for action buttons */
+        .action-rounded {
+            border-radius: 4px;
+        }
+
+        /* Ensure consistent spacing for buttons in the Action column */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            /* Space between buttons */
+        }
+
+        /* Style for color swatch in the Colour column */
+        .color-swatch {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #e0e0e0;
+            /* Light gray border for contrast */
+            position: relative;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+
+        /* Tooltip for color name */
+        .color-swatch::after {
+            content: attr(data-color);
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 4px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 10;
+        }
+
+        /* Show tooltip on hover */
+        .color-swatch:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Style for color name text beside swatch */
+        .color-name {
+            margin-left: 8px;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        /* Container for color swatch and name to ensure proper alignment */
+        .color-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            /* Space between swatch and name */
+        }

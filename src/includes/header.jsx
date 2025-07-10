@@ -89,12 +89,12 @@ export default function Header() {
                       <h3>{child.title}</h3>
                       {subChildren.length > 0 ? (
                         subChildren.map((sub) => (
-                          <Link key={sub.id} to={`/shop.php?category=${sub.id}`} className="dropdown-item">
+                          <Link key={sub.id} to={`/shop?category=${sub.id}`} className="dropdown-item">
                             {sub.title}
                           </Link>
                         ))
                       ) : (
-                        <Link to={`/shop.php?category=${child.id}`} className="dropdown-item">
+                        <Link to={`/shop?category=${child.id}`} className="dropdown-item">
                           View All
                         </Link>
                       )}
