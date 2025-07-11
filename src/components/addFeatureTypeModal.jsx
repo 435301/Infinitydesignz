@@ -45,7 +45,7 @@ const AddFeatureTypeModal = ({ show, onClose }) => {
             </div>
             <div className="modal-body">
               <div className="mb-3">
-                <label htmlFor="title" className="form-label">Title</label>
+                <label htmlFor="title" className="form-label">Title<span className='text-danger'>*</span></label>
                 <input
                   id="name"
                   className={`form-control ${errors.name ? 'is-invalid' : ''}`}

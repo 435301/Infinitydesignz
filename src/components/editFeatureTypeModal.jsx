@@ -48,7 +48,7 @@ const EditFeatureTypeModal = ({ show, onClose, featureType }) => {
                 <div className="modal-content">
                     <form onSubmit={handleSubmit}>
                         <div className="modal-header">
-                            <h5 className="modal-title">Edit a Feature Type</h5>
+                            <h5 className="modal-title">Edit a Feature Type<span className='text-danger'>*</span></h5>
                             <button type="button" className="btn-close" onClick={onClose}></button>
                         </div>
                         <div className="modal-body">

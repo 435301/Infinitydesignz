@@ -74,9 +74,6 @@ function App() {
           <Route path='/wishlist' element={<WishlistPage />}></Route>
           <Route path='/addressbook' element={< AddressBook />}></Route>
           <Route path='/checkout' element={< CheckoutPage />}></Route>
-
-
-
           <Route path='/cart' element={<CartItem />}></Route>
           <Route path='/orders' element={<MyOrdersPage />}></Route>
           <Route path='/login' element={<LoginPage />}></Route>
@@ -84,9 +81,8 @@ function App() {
           <Route path='/admin/manage-category' element={<ManageCategories />}></Route>
           <Route path='/admin/manage-subcategory' element={<ManageSubCategories />}></Route>
           <Route path='/admin/list-subcategory' element={<ListSubCategory />}></Route>
-          <Route path='/admin/create-size' eleddment={<ManageSizes />}></Route>
+          <Route path='/admin/create-size' element={<ManageSizes />}></Route>
           <Route path='/admin/create-brand' element={<ManageBrands />}></Route>
-
           {/* <Route path='/admin/size-mapping' element={<ManageSizeMapping />}></Route> */}
           <Route path='/admin/colors' element={<ManageColors />}></Route>
           <Route path='/admin/feature-set' element={<ManageFeatureSet />}></Route>
@@ -110,10 +106,6 @@ function App() {
           <Route path='/admin/sliders' element={<AddSlider />}></Route>
           <Route path='/admin/manage-sliders' element={<ManageSliders />}></Route>
           <Route path='/admin/change-password' element={<ChangePassword />}></Route>
-
-
-
-
         </Routes>
         <Routes>
           <Route element={<AdminLayout />}>
