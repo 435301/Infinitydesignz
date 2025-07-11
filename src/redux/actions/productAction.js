@@ -71,21 +71,23 @@ export const editProducts = (payload) => async (dispatch) => {
     const token = localStorage.getItem('token');
     const { id, ...updateData } = payload; 
 
-    await axios.put(`${BASE_URL}/products/${id}`, updateData, {
+   const response= await axios.put(`${BASE_URL}/products/${id}`, updateData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
 
-    dispatch({ type: 'EDIT_PRODUCT_SUCCESS' });
+    dispatch({ type: 'EDIT_PRODUCT_SUCCESS', payload: response.data  });
     toast.success('product updated Successfully')
     dispatch(fetchProducts());
+     return response.data;
   } catch (error) {
     dispatch({
       type: 'EDIT_PRODUCT_FAILURE',
       payload: error.response?.data?.message || 'Error editing product',
     });
+    throw error;
   }
 };
 

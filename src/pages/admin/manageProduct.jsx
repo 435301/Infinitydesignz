@@ -14,6 +14,7 @@ import EditProduct from '../../components/editProduct';
 import { useNavigate } from 'react-router-dom';
 import BASE_URL from '../../config/config';
 import { toast } from 'react-toastify';
+import ViewProductModal from '../../modals/viewProductModal';
 
 
 const ManageProducts = () => {
@@ -31,8 +32,8 @@ const ManageProducts = () => {
     const [selectAll, setSelectAll] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [productToDelete, setProductToDelete] = useState(null);
-    const [editModalVisible, setEditModalVisible] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState('');
+    const [showViewModal, setShowViewModal] = useState(false);
+    const [viewProduct, setViewProduct] = useState('');
 
     useEffect(() => {
         dispatch(fetchProducts());
@@ -257,6 +258,10 @@ const ManageProducts = () => {
                                                                     </button>
                                                                     <button
                                                                         className="btn btn-light icon-btn"
+                                                                        onClick={()=>{
+                                                                            setShowViewModal(true);
+                                                                            setViewProduct(product);
+                                                                        }}
 
                                                                     >
                                                                         <BsEye style={{ fontSize: '18px', color: '#212529' }} />
@@ -283,8 +288,7 @@ const ManageProducts = () => {
                         </div>
                         <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
                         {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
-
-
+                        {showViewModal && <ViewProductModal show={showViewModal} onClose={() => setShowViewModal(false)} product={viewProduct} />}
                     </div>
                 </div>
             </div>
