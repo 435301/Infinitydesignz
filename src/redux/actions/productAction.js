@@ -119,3 +119,27 @@ export const fetchProductById = (id) => async (dispatch) => {
   }
 };
 
+
+export const bulkUpdateProductStatus = (ids,status) => async (dispatch) => {
+  try {
+    const token = localStorage.getItem('token');
+
+    await axios.patch(
+      `${BASE_URL}/common/bulk-update-status`,
+      {
+        entity: 'products', 
+        ids,
+        status
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    dispatch(fetchProducts()); 
+  } catch (error) {
+    console.error(error);
+    toast.error(error?.response?.data?.message || 'Failed to update status');
+  }
+};

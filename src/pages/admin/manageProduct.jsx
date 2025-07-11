@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Header from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
@@ -6,13 +7,13 @@ import '../../css/admin/icofont.css';
 import '../../css/admin/manageProduct.css';
 import { BsArrowClockwise, BsEye, BsPencilSquare, BsTrash } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteProducts, fetchProducts } from '../../redux/actions/productAction';
+import { bulkUpdateProductStatus, deleteProducts, fetchProducts } from '../../redux/actions/productAction';
 import PaginationComponent from '../../includes/pagination';
 import DeleteModal from '../../modals/deleteModal';
 import EditProduct from '../../components/editProduct';
 import { useNavigate } from 'react-router-dom';
 import BASE_URL from '../../config/config';
-
+import { toast } from 'react-toastify';
 
 
 const ManageProducts = () => {
@@ -20,7 +21,7 @@ const ManageProducts = () => {
     const { products = [] } = useSelector((state) => state.products);
     console.log('products', products)
     const navigate = useNavigate();
- 
+
 
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState(false);
@@ -100,6 +101,16 @@ const ManageProducts = () => {
     const handleEdit = (id) => {
         navigate(`/admin/edit-product/${id}`);
     }
+
+    const handleBulkStatusUpdate = async (newStatus) => {
+        if (selectedRows.length === 0) {
+            toast.warning("Please select at least one feature type.");
+            return;
+        }
+
+        await dispatch(bulkUpdateProductStatus(selectedRows, newStatus));
+        setSelectedRows([]);
+    };
     return (
         <div className="sidebar-mini fixed">
             <div className="wrapper">
@@ -164,9 +175,11 @@ const ManageProducts = () => {
                                         <div className="row mb-3">
                                             <div className="col-md-6"></div>
                                             <div className="col-md-6 text-end">
-                                                <button className="btn btn-success me-1">Active</button>
-                                                <button className="btn btn-default me-1">In Active</button>
-                                                <button className="btn btn-danger">Delete</button>
+                                                <button className="btn btn-success me-1" disabled={selectedRows.length === 0}
+                                                    onClick={() => handleBulkStatusUpdate(true)}>Active</button>
+                                                <button className="btn btn-danger" disabled={selectedRows.length === 0}
+                                                    onClick={() => handleBulkStatusUpdate(false)}>In Active</button>
+
                                             </div>
                                         </div>
 
@@ -238,7 +251,7 @@ const ManageProducts = () => {
                                                                         className="btn btn-light icon-btn"
                                                                         style={{ marginRight: '5px' }}
                                                                         title="Edit"
-                                                                        onClick={()=>handleEdit(product.id)}
+                                                                        onClick={() => handleEdit(product.id)}
                                                                     >
                                                                         <BsPencilSquare style={{ fontSize: '18px', color: '#28a745' }} />
                                                                     </button>

@@ -48,7 +48,15 @@ const productReducer = (state = initialState, action) => {
         ...state,
         product: action.payload,
       };
-     
+     case 'BULK_UPDATE_PRODUCT_STATUS':
+      return {
+        ...state,
+        products: state.products.map(item =>
+          action.payload.ids.includes(item.id)
+            ? { ...item, status: action.payload.status }
+            : item
+        )
+      };
 
     default:
       return state;

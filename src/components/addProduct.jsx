@@ -237,7 +237,7 @@ const AddProduct = ({ onClose }) => {
                           <h6 className="sub-heading">Category Details</h6>
                           <div className="row">
                             <div className="col-lg-4 mb-3">
-                              <label className="form-label">Menu</label>
+                              <label className="form-label">Menu<span className='text-danger'>*</span></label>
                               <select className={`form-control ${errors.selectedMenu ? 'is-invalid' : ''}`} value={selectedMenu} onChange={(e) => {
                                 setSelectedMenu(e.target.value);
                                 setSelectedSubMenu('');
@@ -254,7 +254,7 @@ const AddProduct = ({ onClose }) => {
                               {errors.selectedMenu && <div className="invalid-feedback">{errors.selectedMenu}</div>}
                             </div>
                             <div className="col-lg-4 mb-3">
-                              <label className="form-label">Sub Menu</label>
+                              <label className="form-label">Sub Menu<span className='text-danger'>*</span></label>
                               <select className={`form-control ${errors.selectedSubMenu ? 'is-invalid' : ''}`} value={selectedSubMenu} onChange={(e) => {
                                 setSelectedSubMenu(e.target.value);
                                 setSelectedListSubMenu('');
@@ -270,7 +270,7 @@ const AddProduct = ({ onClose }) => {
                               {errors.selectedSubMenu && <div className="invalid-feedback">{errors.selectedSubMenu}</div>}
                             </div>
                             <div className="col-lg-4 mb-3">
-                              <label className="form-label">List Sub Menu</label>
+                              <label className="form-label">List Sub Menu<span className='text-danger'>*</span></label>
                               <select className={`form-control ${errors.selectedListSubMenu ? 'is-invalid' : ''}`} value={selectedListSubMenu} onChange={(e) => {
                                 setSelectedListSubMenu(e.target.value);
                                 if (errors.selectedListSubMenu) {
@@ -294,15 +294,15 @@ const AddProduct = ({ onClose }) => {
                           <h6 className="sub-heading">Product Details</h6>
                           <div className="row">
                             {[
-                              { id: 'sku', label: 'SKU Code' },
-                              { id: 'title', label: 'Title' },
-                              { id: 'weight', label: 'Weight (gms)' },
-                              { id: 'model', label: 'Model' },
-                              { id: 'sla', label: 'SLA (Delivery Days)' },
-                              { id: 'deliveryCharges', label: 'Delivery Charges' },
+                              { id: 'sku', label: 'SKU Code', required:true },
+                              { id: 'title', label: 'Title',required:true },
+                              { id: 'weight', label: 'Weight (gms)',required:false },
+                              { id: 'model', label: 'Model',required:false },
+                              { id: 'sla', label: 'SLA (Delivery Days)',required:false },
+                              { id: 'deliveryCharges', label: 'Delivery Charges',required:false },
                             ].map((field, idx) => (
                               <div className="col-lg-4 mb-3" key={idx}>
-                                <label htmlFor={field.id} className="form-label">{field.label}</label>
+                                <label htmlFor={field.id} className="form-label">{field.label} {field.required && <span className='text-danger'>*</span>}</label>
                                 <input id={field.id} className={`form-control ${errors[field.id] ? 'is-invalid' : ''}`} placeholder={field.label} type="text" value={formData[field.id]} onChange={(e) => {
                                   setFormData({ ...formData, [field.id]: e.target.value });
                                   if (errors[field.id]) {
@@ -316,7 +316,7 @@ const AddProduct = ({ onClose }) => {
                             ))}
 
                             <div className="col-lg-12 mb-3">
-                              <label className={`form-control ${errors.description ? 'is-invalid' : ''}`}>Description</label>
+                              <label className={`form-control ${errors.description ? 'is-invalid' : ''}`}>Description<span className='text-danger'>*</span></label>
                               <CKEditor editor={ClassicEditor} data={description} onChange={(event, editor) => {
                                 const data = editor.getData();
                                 setDescription(data);
@@ -330,7 +330,7 @@ const AddProduct = ({ onClose }) => {
                             </div>
 
                             <div className="col-lg-6 mb-3">
-                              <label className="form-label">Product Status</label>
+                              <label className="form-label">Product Status<span className='text-danger'>*</span></label>
                               <select className={`form-control ${errors.status ? 'is-invalid' : ''}`} value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })}>
                                 <option value="enable">Enable</option>
                                 <option value="disable">Disable</option>
@@ -340,7 +340,7 @@ const AddProduct = ({ onClose }) => {
                             </div>
 
                             <div className="col-lg-6 mb-3">
-                              <label className="form-label">Search Keywords</label>
+                              <label className="form-label">Search Keywords<span className='text-danger'>*</span></label>
                               <input type="text" className={`form-control ${errors.searchKeywords ? 'is-invalid' : ''}`} placeholder="Comma separated keywords" value={formData.searchKeywords} onChange={(e) => {
                                 setFormData({ ...formData, searchKeywords: e.target.value });
                                 if (errors.searchKeywords) {
@@ -361,7 +361,7 @@ const AddProduct = ({ onClose }) => {
                           <div className="row">
                             {['stock', 'mrp', 'sellingPrice', 'height', 'width', 'length'].map((field, idx) => (
                               <div className="col-lg-3 mb-3" key={idx}>
-                                <label className="form-label">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+                                <label className="form-label">{field.charAt(0).toUpperCase() + field.slice(1)}<span className='text-danger'>*</span></label>
                                 <input type="text" className={`form-control ${errors[field] ? 'is-invalid' : ''}`} placeholder={field} value={formData[field]} onChange={(e) => {
                                   setFormData({ ...formData, [field]: e.target.value });
                                   if (errors[field]) {
@@ -374,7 +374,7 @@ const AddProduct = ({ onClose }) => {
                               </div>
                             ))}
                             <div className="col-lg-3 mb-3">
-                              <label className="form-label">Brand</label>
+                              <label className="form-label">Brand<span className='text-danger'>*</span></label>
                               <select
                                 className={`form-control ${errors.brandId ? 'is-invalid' : ''}`}
                                 value={formData.brandId}
@@ -394,7 +394,7 @@ const AddProduct = ({ onClose }) => {
                             </div>
 
                             <div className="col-lg-3 mb-3">
-                              <label className="form-label">Size</label>
+                              <label className="form-label">Size<span className='text-danger'>*</span></label>
                               <select
                                 className={`form-control ${errors.sizeId ? 'is-invalid' : ''}`}
 
@@ -415,7 +415,7 @@ const AddProduct = ({ onClose }) => {
                             </div>
 
                             <div className="col-lg-3 mb-3">
-                              <label className="form-label">Color</label>
+                              <label className="form-label">Color<span className='text-danger'>*</span></label>
                               <select
                                 className={`form-control ${errors.colorId ? 'is-invalid' : ''}`}
                                 value={formData.colorId}
