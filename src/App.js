@@ -23,7 +23,6 @@ import ListSubCategory from './pages/admin/listSubCategory.jsx';
 import ManageSizes from './pages/admin/createSize.jsx';
 import ManageColors from './pages/admin/colors.jsx';
 import ManageBrands from './pages/admin/createBrand.jsx';
-
 import ManageFeatureType from './pages/admin/featureType.jsx';
 import ManageFeatureSet from './pages/admin/featureSet.jsx';
 import ManageFeatureList from './pages/admin/featureList.jsx';
