@@ -13,7 +13,7 @@ export const EDIT_SIZES_SUCCESS='EDIT_SIZES_SUCCESS';
 export const EDIT_SIZES_FAILURE='EDIT_SIZES_FAILURE';
 
 
-
+//mycode
 export const fetchSizes = () => {
 
   return async (dispatch) => {
@@ -43,6 +43,7 @@ export const fetchSizes = () => {
     }
   };
 };
+
 
 export const addSizes = (formData) => async (dispatch) => {
   dispatch({ type: 'ADD_SIZES_REQUEST' });
