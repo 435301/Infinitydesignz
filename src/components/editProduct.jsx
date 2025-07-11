@@ -156,7 +156,7 @@ const EditProduct = ({ onClose, show }) => {
         if (!validate()) return;
 
         const payload = {
-            id:id,
+            id: id,
             sku: formData.sku,
             title: formData.title,
             description: formData.description,
