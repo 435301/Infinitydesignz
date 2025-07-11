@@ -38,7 +38,7 @@ const AddFilterTypeModal = ({ show, onClose }) => {
     return (
         <Modal show={show} onHide={onClose} centered>
             <Modal.Header closeButton>
-                <Modal.Title>Add Filter Type</Modal.Title>
+                <Modal.Title>Add Filter Type<span className='text-danger'>*</span></Modal.Title>
             </Modal.Header>
 
             <Form onSubmit={handleSubmit}>

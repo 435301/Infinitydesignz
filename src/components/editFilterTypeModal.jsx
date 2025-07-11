@@ -43,7 +43,7 @@ const EditFilterTypeModal = ({ show, onClose, filterType }) => {
     return (
         <Modal show={show} onHide={onClose} centered>
             <Modal.Header closeButton>
-                <Modal.Title>Add Filter Type</Modal.Title>
+                <Modal.Title>Edit Filter Type<span className='text-danger'>*</span></Modal.Title>
             </Modal.Header>
 
             <Form onSubmit={handleSubmit}>
@@ -69,8 +69,10 @@ const EditFilterTypeModal = ({ show, onClose, filterType }) => {
                 </Modal.Body>
 
                 <Modal.Footer>
+                     <div className="modal-footer">
                     <button type="submit" className="btn btn-success px-4">Save</button>
                     <button type="button" className="btn btn-danger px-4" onClick={onClose}>Close</button>
+                    </div>
                 </Modal.Footer>
             </Form>
         </Modal>
