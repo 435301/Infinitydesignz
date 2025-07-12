@@ -42,10 +42,8 @@ import ManageCoupons from './pages/admin/manageCoupons.jsx';
 import AddSlider from './pages/admin/sliders.jsx';
 import ManageSliders from './pages/admin/manageSliders.jsx';
 import ChangePassword from './pages/admin/changePassword.jsx';
-import { ToastContainer, toast } from 'react-toastify';
-
-
-import Slider from 'react-slick';
+import { ToastContainer, toast ,Slide, Zoom, Flip } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import ManageProducts from './pages/admin/manageProduct.jsx';
 import EditProduct from './components/editProduct.jsx';
 
@@ -59,11 +57,25 @@ function App() {
   useMainScripts(); // Runs the converted jQuery logic
 
   return (
+
     <BrowserRouter>
       <div className="App">
         {/* <div id="spinner" className="show">Loading...</div>
         <nav className="sticky-top">Navbar</nav> */}
-       <ToastContainer/>
+        <ToastContainer
+        icon={false}
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          // pauseOnFocusLoss
+          draggable
+          // pauseOnHover
+          theme="dark"
+          transition={Slide}
+        />
 
         <Routes>
           <Route path='/' element={<HomeBannerSection />} />
@@ -93,11 +105,11 @@ function App() {
           <Route path='/admin/filter-type' element={<ManageFilterType />}></Route>
           <Route path='/admin/filter-set' element={<ManageFilterSet />}></Route>
           <Route path='/admin/filter-list' element={<ManageFilterList />}></Route>
-          <Route path='/admin/add-product' element={<AddProduct/>}></Route>
-          <Route path='/admin/edit-product/:id' element={<EditProduct/>}></Route>
+          <Route path='/admin/add-product' element={<AddProduct />}></Route>
+          <Route path='/admin/edit-product/:id' element={<EditProduct />}></Route>
           <Route path='/admin/product-image' element={<AddProductImages />}></Route>
           <Route path='/admin/product-filter' element={<ProductFilters />}></Route>
-          <Route path='/admin/manage-product' element={<ManageProducts/>}></Route>
+          <Route path='/admin/manage-product' element={<ManageProducts />}></Route>
           <Route path='/admin/product-features' element={<ProductFeatures />}></Route>
           <Route path='/admin/manage-users' element={<ManageUsers />}></Route>
           <Route path='/admin/orders' element={<ManageOrders />}></Route>

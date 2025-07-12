@@ -141,7 +141,7 @@ const ManageFeatureType = () => {
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
-                    <button className="btn btn-primary" type="button" onClick={() => setShowAddModal(true)}>
+                    <button className="btn btn-primary" type="button" style={{position:"relative",left:"285px"}} onClick={() => setShowAddModal(true)}>
                       + Create Feature
                     </button>
                   </div>

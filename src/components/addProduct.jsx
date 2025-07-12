@@ -13,6 +13,9 @@ import { fetchSizes } from '../redux/actions/sizeAction';
 import { addProducts } from '../redux/actions/productAction';
 import { fetchBrands } from '../redux/actions/brandAction';
 import { useNavigate } from 'react-router-dom';
+import { addVariants } from '../redux/actions/variantsAction';
+import axios from 'axios';
+import BASE_URL from '../config/config';
 
 
 const AddProduct = ({ onClose }) => {
@@ -31,7 +34,6 @@ const AddProduct = ({ onClose }) => {
   const [selectedSubMenu, setSelectedSubMenu] = useState('');
   const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
   const [errors, setErrors] = useState({});
-
 
   const initialFormState = {
     sku: '',
@@ -67,35 +69,6 @@ const AddProduct = ({ onClose }) => {
     dispatch(fetchBrands());
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   if (products.length > 0) {
-  //     const product = products[0];
-  //     setSelectedMenu(product.mainCategoryId.toString());
-  //     setSelectedSubMenu(product.subCategoryId.toString());
-  //     setSelectedListSubMenu(product.listSubCategoryId.toString());
-
-  //     setFormData({
-  //       sku: product.sku || '',
-  //       title: product.title || '',
-  //       weight: '',
-  //       model: '',
-  //       sla: '',
-  //       deliveryCharges: '',
-  //       description: product.description || '',
-  //       status: product.status ? 'enable' : 'disable',
-  //       searchKeywords: product.searchKeywords || '',
-  //       stock: product.stock || '',
-  //       mrp: product.mrp || '',
-  //       sellingPrice: product.sellingPrice || '',
-  //       height: product.height || '',
-  //       width: product.width || '',
-  //       length: product.length || '',
-  //       sizeId: product.sizeId?.toString() || '',
-  //       colorId: product.colorId?.toString() || '',
-  //     });
-  //     setDescription(product.description || '');
-  //   }
-  // }, [products]);
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -132,29 +105,29 @@ const AddProduct = ({ onClose }) => {
 
   }
 
-//   const handleInputChange = (field, value) => {
-//   setFormData({ ...formData, [field]: value });
+  //   const handleInputChange = (field, value) => {
+  //   setFormData({ ...formData, [field]: value });
 
-//   // Validate while typing
-//   let fieldError = '';
+  //   // Validate while typing
+  //   let fieldError = '';
 
-//   if (['sku', 'title', 'searchKeywords'].includes(field) && !value.trim()) {
-//     fieldError = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
-//   }
+  //   if (['sku', 'title', 'searchKeywords'].includes(field) && !value.trim()) {
+  //     fieldError = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+  //   }
 
-//   if (['stock', 'mrp', 'sellingPrice', 'height', 'width', 'length'].includes(field)) {
-//     if (!value) {
-//       fieldError = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
-//     } else if (isNaN(value)) {
-//       fieldError = `${field.charAt(0).toUpperCase() + field.slice(1)} must be a number`;
-//     }
-//   }
+  //   if (['stock', 'mrp', 'sellingPrice', 'height', 'width', 'length'].includes(field)) {
+  //     if (!value) {
+  //       fieldError = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+  //     } else if (isNaN(value)) {
+  //       fieldError = `${field.charAt(0).toUpperCase() + field.slice(1)} must be a number`;
+  //     }
+  //   }
 
-//   setErrors((prev) => ({
-//     ...prev,
-//     [field]: fieldError,
-//   }));
-// };
+  //   setErrors((prev) => ({
+  //     ...prev,
+  //     [field]: fieldError,
+  //   }));
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -182,12 +155,37 @@ const AddProduct = ({ onClose }) => {
     };
     console.log('Submitting Product:', payload);
     try {
-      await dispatch(addProducts(payload));
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`${BASE_URL}/products`, payload, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const productId = response.data?.id;
+
+      const variantPayloads = variants
+        .filter(v => v.sku && v.stock && v.mrp && v.sellingPrice) 
+        .map(variant => ({
+          ...variant,
+          productId,
+          stock: parseInt(variant.stock),
+          mrp: parseFloat(variant.mrp),
+          sellingPrice: parseFloat(variant.sellingPrice),
+          sizeId: variant.sizeId ? parseInt(variant.sizeId) : null,
+          colorId: variant.colorId ? parseInt(variant.colorId) : null,
+        }));
+
+      if (variantPayloads.length) {
+        await dispatch(addVariants(variantPayloads));
+      }
+
       setFormData(initialFormState);
       setDescription('');
       setSelectedMenu('');
       setSelectedSubMenu('');
       setSelectedListSubMenu('');
+      setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
       navigate('/admin/manage-product');
 
     } catch (err) {
@@ -205,6 +203,29 @@ const AddProduct = ({ onClose }) => {
     setSelectedSubMenu('');
     setSelectedListSubMenu('');
     setDescription('');
+  };
+
+  // variants 
+  const [variants, setVariants] = useState([
+    { sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }
+  ]);
+
+  const handleChange = (index, field, value) => {
+    const updatedVariants = [...variants];
+    updatedVariants[index][field] = value;
+    setVariants(updatedVariants);
+  };
+
+  const addRow = () => {
+    setVariants([
+      ...variants,
+      { sku: '', stock: '', mrp: '', sellingPrice: '', size: '', color: '' }
+    ]);
+  };
+
+  const removeRow = (index) => {
+    const updatedVariants = variants.filter((_, i) => i !== index);
+    setVariants(updatedVariants);
   };
 
   return (
@@ -231,7 +252,7 @@ const AddProduct = ({ onClose }) => {
                     <h5 className="text-dark mb-0">Create Product</h5>
                   </div>
                   <div className="card-block">
-                    <form onSubmit={handleSubmit}  className="app-form">
+                    <form onSubmit={handleSubmit} className="app-form">
                       <div className="row">
                         <div className="col-lg-12">
                           <h6 className="sub-heading">Category Details</h6>
@@ -294,12 +315,12 @@ const AddProduct = ({ onClose }) => {
                           <h6 className="sub-heading">Product Details</h6>
                           <div className="row">
                             {[
-                              { id: 'sku', label: 'SKU Code', required:true },
-                              { id: 'title', label: 'Title',required:true },
-                              { id: 'weight', label: 'Weight (gms)',required:false },
-                              { id: 'model', label: 'Model',required:false },
-                              { id: 'sla', label: 'SLA (Delivery Days)',required:false },
-                              { id: 'deliveryCharges', label: 'Delivery Charges',required:false },
+                              { id: 'sku', label: 'SKU Code', required: true },
+                              { id: 'title', label: 'Title', required: true },
+                              { id: 'weight', label: 'Weight (gms)', required: false },
+                              { id: 'model', label: 'Model', required: false },
+                              { id: 'sla', label: 'SLA (Delivery Days)', required: false },
+                              { id: 'deliveryCharges', label: 'Delivery Charges', required: false },
                             ].map((field, idx) => (
                               <div className="col-lg-4 mb-3" key={idx}>
                                 <label htmlFor={field.id} className="form-label">{field.label} {field.required && <span className='text-danger'>*</span>}</label>
@@ -321,8 +342,8 @@ const AddProduct = ({ onClose }) => {
                                 const data = editor.getData();
                                 setDescription(data);
                                 setFormData({ ...formData, description: data });
-                                if(errors.description ){
-                                  setErrors({...errors,description:""})
+                                if (errors.description) {
+                                  setErrors({ ...errors, description: "" })
                                 }
                               }} />
                               {errors.description && <div className="invalid-feedback">{errors.description}</div>}
@@ -378,11 +399,12 @@ const AddProduct = ({ onClose }) => {
                               <select
                                 className={`form-control ${errors.brandId ? 'is-invalid' : ''}`}
                                 value={formData.brandId}
-                                onChange={(e) => {setFormData({ ...formData, brandId: e.target.value });
-                                if(errors.brandId){
-                                  setErrors({...errors, brandId:""});
-                                }
-                              }}
+                                onChange={(e) => {
+                                  setFormData({ ...formData, brandId: e.target.value });
+                                  if (errors.brandId) {
+                                    setErrors({ ...errors, brandId: "" });
+                                  }
+                                }}
                               >
                                 <option value="">--Choose Brand--</option>
                                 {brands.map((s) => (
@@ -399,11 +421,12 @@ const AddProduct = ({ onClose }) => {
                                 className={`form-control ${errors.sizeId ? 'is-invalid' : ''}`}
 
                                 value={formData.sizeId}
-                                onChange={(e) =>{ setFormData({ ...formData, sizeId: e.target.value });
-                                 if(errors.sizeId){
-                                  setErrors({...errors, sizeId:""});
-                                }
-                              }}
+                                onChange={(e) => {
+                                  setFormData({ ...formData, sizeId: e.target.value });
+                                  if (errors.sizeId) {
+                                    setErrors({ ...errors, sizeId: "" });
+                                  }
+                                }}
                               >
                                 <option value="">--Choose Size--</option>
                                 {sizes.map((s) => (
@@ -419,11 +442,12 @@ const AddProduct = ({ onClose }) => {
                               <select
                                 className={`form-control ${errors.colorId ? 'is-invalid' : ''}`}
                                 value={formData.colorId}
-                                onChange={(e) =>{ setFormData({ ...formData, colorId: e.target.value });
-                               if(errors.colorId){
-                                setErrors({...errors,colorId:""})
-                               }
-                              }}
+                                onChange={(e) => {
+                                  setFormData({ ...formData, colorId: e.target.value });
+                                  if (errors.colorId) {
+                                    setErrors({ ...errors, colorId: "" })
+                                  }
+                                }}
                               >
                                 <option value="">--Choose Color--</option>
                                 {colors.map((s) => (
@@ -434,6 +458,106 @@ const AddProduct = ({ onClose }) => {
 
                             </div>
                           </div>
+                        </div>
+
+                        {/* <ProductVariants/> */}
+                        <div className="col-lg-12 mb-3">
+                          <h6 className="sub-heading pt-4">Other Variants</h6>
+                          <table className="table">
+                            <thead>
+                              <tr>
+                                <th>SKU <span className="text-danger">*</span></th>
+                                <th>Stock <span className="text-danger">*</span></th>
+                                <th>MRP <span className="text-danger">*</span></th>
+                                <th>Selling Price <span className="text-danger">*</span></th>
+                                <th>Size</th>
+                                <th>Color</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {variants.map((variant, index) => (
+                                <tr key={index}>
+                                  <td>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      value={variant.sku}
+                                      onChange={(e) => handleChange(index, 'sku', e.target.value)}
+                                      placeholder="SKU"
+                                    />
+                                  </td>
+                                  <td>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      value={variant.stock}
+                                      onChange={(e) => handleChange(index, 'stock', e.target.value)}
+                                      placeholder="Stock"
+                                    />
+                                  </td>
+                                  <td>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      value={variant.mrp}
+                                      onChange={(e) => handleChange(index, 'mrp', e.target.value)}
+                                      placeholder="MRP"
+                                    />
+                                  </td>
+                                  <td>
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      value={variant.sellingPrice}
+                                      onChange={(e) => handleChange(index, 'sellingPrice', e.target.value)}
+                                      placeholder="Selling Price"
+                                    />
+                                  </td>
+                                  <td>
+                                    <select
+                                      className="form-control"
+                                      value={variant.sizeId}
+                                      onChange={(e) => handleChange(index, 'sizeId', e.target.value)}
+                                    >
+                                      <option value="">-- Choose Size --</option>
+                                      {sizes.map((size) => (
+                                        <option key={size.id} value={size.id}>
+                                          {size.title}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </td>
+                                  <td>
+                                    <select
+                                      className="form-control"
+                                      value={variant.colorId}
+                                      onChange={(e) => handleChange(index, 'colorId', e.target.value)}
+                                    >
+                                      <option value="">-- Choose Color --</option>
+                                      {colors.map((color) => (
+                                        <option key={color.id} value={color.id}>
+                                          {color.label}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </td>
+
+                                  <td>
+                                    {index === variants.length - 1 ? (
+                                      <button type="button" className="btn btn-light-success icon-btn b-r-4" onClick={addRow}>
+                                        +
+                                      </button>
+                                    ) : (
+                                      <button type="button" className="btn btn-danger icon-btn b-r-4" onClick={() => removeRow(index)}>
+                                        -
+                                      </button>
+                                    )}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
                         </div>
 
                         <div className="col-lg-12 text-center my-4">

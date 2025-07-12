@@ -8,6 +8,8 @@ import brandReducer from './brandReducer';
 import featureTypeReducer from './featureTypeReducer';
 import filterTypeReducer from './filterTypeReducer';
 import productReducer from './productReducer';
+import featureSetReducer from './featureSetReducer';
+import variantsReducer from './variantReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -18,6 +20,8 @@ const rootReducer = combineReducers({
   featureTypes:featureTypeReducer,
   filterTypes: filterTypeReducer,
   products:productReducer,
+  featureSets:featureSetReducer,
+  variants:variantsReducer,
 });
 
 export default rootReducer;
