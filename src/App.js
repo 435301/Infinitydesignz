@@ -42,8 +42,7 @@ import ManageCoupons from './pages/admin/manageCoupons.jsx';
 import AddSlider from './pages/admin/sliders.jsx';
 import ManageSliders from './pages/admin/manageSliders.jsx';
 import ChangePassword from './pages/admin/changePassword.jsx';
-<<<<<<< HEAD
-// import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import OffersList from './pages/admin/OffersList.jsx';
 import CreateCoupon from './pages/admin/CreateCoupon.jsx';
 import HomePromotionCategory from './pages/admin/HomePromotionCategory.jsx';
@@ -51,10 +50,6 @@ import HomeScreenCreatePromotion from './pages/admin/HomeScreenCreatePromotion.j
 import HomeScreenPromotions from './pages/admin/HomeScreenPromotions.jsx';
 import CreatePromotion from './pages/admin/CreatePromotion'
 import Slider from 'react-slick';
-=======
->>>>>>> be578eeff989a7fbaf77112996594033d6ccd171
-import { ToastContainer, toast ,Slide, Zoom, Flip } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import ManageProducts from './pages/admin/manageProduct.jsx';
 import EditProduct from './components/editProduct.jsx';
 import PromotionCategoryList from './pages/admin/PromotionCategoryList.jsx';
@@ -83,24 +78,7 @@ function App() {
       <div className="App">
         {/* <div id="spinner" className="show">Loading...</div>
         <nav className="sticky-top">Navbar</nav> */}
-<<<<<<< HEAD
         <ToastContainer />
-=======
->>>>>>> be578eeff989a7fbaf77112996594033d6ccd171
-        <ToastContainer
-        icon={false}
-          position="top-right"
-          autoClose={2000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick={false}
-          rtl={false}
-          // pauseOnFocusLoss
-          draggable
-          // pauseOnHover
-          theme="dark"
-          transition={Slide}
-        />
 
         <Routes>
           <Route path='/' element={<HomeBannerSection />} />
