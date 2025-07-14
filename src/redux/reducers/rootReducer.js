@@ -10,6 +10,7 @@ import filterTypeReducer from './filterTypeReducer';
 import productReducer from './productReducer';
 import featureSetReducer from './featureSetReducer';
 import variantsReducer from './variantReducer';
+import featureListsReducer from './featureListReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   products:productReducer,
   featureSets:featureSetReducer,
   variants:variantsReducer,
+  featureLists:featureListsReducer,
 });
 
 export default rootReducer;

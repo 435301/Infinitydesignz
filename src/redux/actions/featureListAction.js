@@ -1,0 +1,112 @@
+import axios from "axios";
+import { toast } from 'react-toastify';
+import BASE_URL from "../../config/config";
+
+export const FETCH_FEATURELIST_REQUEST = 'FETCH_FEATURELIST_REQUEST';
+export const FETCH_FEATURELIST_SUCCESS = 'FETCH_FEATURELIST_SUCCESS';
+export const FETCH_FEATURELIST_FAILURE = 'FETCH_FEATURELIST_FAILURE';
+export const ADD_FEATURELIST_REQUEST ='ADD_FEATURELIST_REQUEST';
+export const ADD_FEATURELIST_SUCCESS ='ADD_FEATURELIST_SUCCESS';
+export const ADD_FEATURELIST_FAILURE ='ADD_FEATURELIST_FAILURE';
+export const EDIT_FEATURELIST_REQUEST='EDIT_FEATURELIST_REQUEST';
+export const EDIT_FEATURELIST_SUCCESS='EDIT_FEATURELIST_SUCCESS';
+export const EDIT_FEATURELIST_FAILURE='EDIT_FEATURELIST_FAILURE';
+export const DELETE_FEATURELIST_SUCCESS ='DELETE_FEATURELIST_SUCCESS'
+
+
+export const fetchFeatureLists = () => {
+
+  return async (dispatch) => {
+
+    dispatch({ type: FETCH_FEATURELIST_REQUEST });
+
+    try {
+      const token = localStorage.getItem('token');
+      console.log('token', token)
+
+      const response = await axios.get(`${BASE_URL}/feature-lists`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      dispatch({ type: FETCH_FEATURELIST_SUCCESS, payload: response.data });
+    } catch (error) {
+      toast.dismiss();
+      toast.error(error?.response?.data?.message || 'Failed to fetch feature lists');
+      dispatch({
+        type: FETCH_FEATURELIST_FAILURE,
+        payload: error.response?.data?.message || error.message,
+      });
+    }
+  };
+};
+
+export const addFeatureList = (formData) => async (dispatch) => {
+  dispatch({ type: 'ADD_FEATURELIST_REQUEST' });
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(`${BASE_URL}/feature-lists`, formData, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    dispatch({ type: 'ADD_FEATURELIST_SUCCESS' , payload: response.data});
+     toast.success(`Feature List created succefully`);
+    dispatch(fetchFeatureLists());
+  } catch (error) {
+    console.error('Error Response', error?.response?.data)
+    dispatch({
+      type: 'ADD_FEATURELIST_FAILURE',
+      payload: error.response?.data?.message || 'Error adding feature list',
+    });
+    throw error; 
+  }
+};
+
+
+export const editFeatureList = (payload) => async (dispatch) => {
+  dispatch({ type: 'EDIT_FEATURELIST_REQUEST' });
+  try {
+    const token = localStorage.getItem('token');
+    const { id, ...updateData } = payload; 
+
+    await axios.patch(`${BASE_URL}/feature-lists/${id}`, updateData, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    dispatch({ type: 'EDIT_FEATURELIST_SUCCESS' });
+    toast.success('Feature list updated Successfully')
+    dispatch(fetchFeatureLists());
+  } catch (error) {
+    dispatch({
+      type: 'EDIT_FEATURELIST_FAILURE',
+      payload: error.response?.data?.message || 'Error editing feature list',
+    });
+  }
+};
+
+export const deleteFeatureList = (id) => async (dispatch) => {
+  try {
+    const token = localStorage.getItem('token');
+
+    await axios.delete(`${BASE_URL}/feature-lists/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    dispatch({ type: 'DELETE_FEATURESET_SUCCESS', payload: id });
+    dispatch(fetchFeatureLists(id));
+    toast.success('Feature Set deleted successfully!');
+  } catch (error) {
+    toast.error(error?.response?.data?.message || 'Failed to delete Feature Set.');
+    console.error(error);
+  }
+};
+
+

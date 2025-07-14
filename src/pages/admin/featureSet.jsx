@@ -35,7 +35,8 @@ const [viewFeatureSet, setViewFeatureSet] = useState(null);
     dispatch(fetchFeatureSets());
   }, [dispatch]);
 
-  const filteredFeatureSets = featureSets?.filter((featureSet) => {
+  const filteredFeatureSets = (featureSets || [])?.filter((featureSet) => {
+    if(!featureSet && !featureSet?.title) return false
     const title = featureSet.title.toLowerCase();
     const matchesSearch = title.includes(searchTerm.toLowerCase());
     return matchesSearch;
