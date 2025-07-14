@@ -9,6 +9,7 @@ import { deleteFeatureSet, fetchFeatureSets } from '../../redux/actions/featureS
 import PaginationComponent from '../../includes/pagination';
 import EditFeatureSetModal from '../../components/editFeatureSetModal';
 import DeleteModal from '../../modals/deleteModal';
+import ViewFeatureSetModal from '../../modals/viewFeatureSetModal';
 
 const ManageFeatureSet = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,9 @@ const ManageFeatureSet = () => {
   const [editModalVisible, setEditModalVisible] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [featureSetToDelete, setFeatureSetToDelete] = useState(null);
+    const [viewModalVisible, setViewModalVisible] = useState(false);
+const [viewFeatureSet, setViewFeatureSet] = useState(null);
+
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -164,7 +168,10 @@ const ManageFeatureSet = () => {
                             </div>
 
                             <div className="d-flex gap-2">
-                              <button className="btn btn-sm " title="View" >
+                              <button className="btn btn-sm " title="View" onClick={()=>{
+                                setViewFeatureSet(item);
+                                setViewModalVisible(true)
+                              }}>
                                 <BsEye />
                               </button>
                               <button className="btn btn-sm btn-outline-primary" title="Edit"  onClick={() => {
@@ -197,6 +204,7 @@ const ManageFeatureSet = () => {
             {showModal && <AddFeatureSetModal show={showModal} onClose={() => setShowModal(false)} />}
             {editModalVisible && <EditFeatureSetModal show={editModalVisible} onClose={() => setEditModalVisible(false)} featureSet={selectedFeatureSet} />}
               {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+                {viewModalVisible && <ViewFeatureSetModal show={viewModalVisible} onClose={()=>setViewModalVisible(false)} featureSet={viewFeatureSet}/>}
           </div>
         </div>
       </div>
