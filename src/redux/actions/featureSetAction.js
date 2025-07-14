@@ -46,18 +46,20 @@ export const addFeatureSet = (formData) => async (dispatch) => {
   dispatch({ type: 'ADD_FEATURESET_REQUEST' });
   try {
     const token = localStorage.getItem('token');
-    await axios.post(`${BASE_URL}/feature-sets`, formData, {
+    const response = await axios.post(`${BASE_URL}/feature-sets`, formData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
-    dispatch({ type: 'ADD_FEATURESET_SUCCESS' });
+    dispatch({ type: 'ADD_FEATURESET_SUCCESS' , payload: response.data});
      toast.success(`Feature Set created succefully`);
     dispatch(fetchFeatureSets());
+    console.log('Sending to API:', formData);
   } catch (error) {
+    console.error('Error Response', error?.response?.data)
     dispatch({
-      type: 'ADD_FEATURETYPE_FAILURE',
+      type: 'ADD_FEATURESET_FAILURE',
       payload: error.response?.data?.message || 'Error adding feature set',
     });
     throw error; 
@@ -71,7 +73,7 @@ export const editFeatureSet = (payload) => async (dispatch) => {
     const token = localStorage.getItem('token');
     const { id, ...updateData } = payload; 
 
-    await axios.put(`${BASE_URL}/feature-sets/${id}`, updateData, {
+    await axios.patch(`${BASE_URL}/feature-sets/${id}`, updateData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

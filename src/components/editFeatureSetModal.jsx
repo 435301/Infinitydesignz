@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { addFeatureTypes, fetchFeatureTypes } from '../redux/actions/featureTypeAction';
 import { useDispatch, useSelector } from 'react-redux';
 import { BsPlusCircle, BsDashCircle } from 'react-icons/bs';
-import { addFeatureSet } from '../redux/actions/featureSetAction';
+import { addFeatureSet, editFeatureSet } from '../redux/actions/featureSetAction';
 
-const AddFeatureSetModal = ({ show, onClose }) => {
+const EditFeatureSetModal = ({ show, onClose, featureSet }) => {
     const dispatch = useDispatch();
     const { featureTypes = [] } = useSelector((state) => state.featureTypes || {});
     //   console.log('featureTypes',featureTypes)
@@ -16,6 +16,43 @@ const AddFeatureSetModal = ({ show, onClose }) => {
     useEffect(() => {
         dispatch(fetchFeatureTypes());
     }, [dispatch]);
+
+    // useEffect(() => {
+    //     if (featureSet) {
+    //         setFeatureTypesInput(
+    //             Array.isArray(featureSet?.featureTypesInput)
+    //                 ? featureSet?.featureTypesInput
+    //                 : [{ title: featureSet?.title || '', priority: featureSet?.priority || '' }]
+    //         );
+    //     }
+    //     setSelectedFeatureTypeId(
+    //         // featureSet?.featureTypeId?.toString() ||
+    //         featureSet?.featureType?.id?.toString() ||
+    //         ''
+    //     );
+    // }, [featureSet, show]);
+
+    useEffect(() => {
+        if (featureSet) {
+            const initialInput = [{
+                title: featureSet?.title || '',
+                priority: featureSet?.priority || ''
+            }];
+
+            // Only set array if valid
+            if (Array.isArray(initialInput)) {
+                setFeatureTypesInput(initialInput);
+            } else {
+                setFeatureTypesInput([{ title: featureSet?.title || '', priority: featureSet?.priority || '' }]);  // fallback
+            }
+
+            setSelectedFeatureTypeId(
+                featureSet?.featureType?.id?.toString() || ''
+            );
+        }
+    }, [featureSet, show]);
+
+
 
     const validate = () => {
         const newErrors = {};
@@ -60,7 +97,7 @@ const AddFeatureSetModal = ({ show, onClose }) => {
     };
 
     const handleAddField = () => {
-        setFeatureTypesInput([...featureTypesInput, { title: '' }]);
+        setFeatureTypesInput([...featureTypesInput, { title: '', priority: '' }]);
     };
 
     const handleRemoveField = (index) => {
@@ -79,16 +116,17 @@ const AddFeatureSetModal = ({ show, onClose }) => {
         try {
             for (let item of featureTypesInput) {
                 const payload = {
-                    title: item.title,
+                    id: featureSet.id,
+                    title: item?.title,
                     featureTypeId: Number(selectedFeatureTypeId),
                     priority: Number(item.priority),
                     status: false,
                 }
                 console.log('Payload being sent:', payload);
-                await dispatch(addFeatureSet(payload));
+                await dispatch(editFeatureSet(payload));
             }
             onClose();
-            setFeatureTypesInput([{ title: '', priority:'' }]);
+            setFeatureTypesInput([{ title: '', priority: '' }]);
             setSelectedFeatureTypeId('');
         } catch (err) {
             setErrors({
@@ -128,14 +166,14 @@ const AddFeatureSetModal = ({ show, onClose }) => {
                                 {errors.menu && <div className="invalid-feedback">{errors.menu}</div>}
                             </div>
 
-                            {featureTypesInput.map((field, index) => (
+                            {(featureTypesInput || []).map((field = {}, index) => (
                                 <div className="mb-3 d-flex align-items-start gap-2" key={index}>
                                     <div className="flex-fill">
                                         <input
                                             className={`form-control mb-1 ${errors[`title-${index}`] ? 'is-invalid' : ''}`}
                                             type="text"
                                             placeholder="Title"
-                                            value={field.title}
+                                            value={field?.title || ''}
                                             onChange={(e) => handleInputChange(index, 'title', e.target.value)}
                                         />
                                         {errors[`title-${index}`] && (
@@ -147,7 +185,7 @@ const AddFeatureSetModal = ({ show, onClose }) => {
                                             className={`form-control mb-1 ${errors[`priority-${index}`] ? 'is-invalid' : ''}`}
                                             type="number"
                                             placeholder="Priority"
-                                            value={field.priority}
+                                            value={field?.priority || ''}
                                             onChange={(e) => handleInputChange(index, 'priority', e.target.value)}
                                         />
                                         {errors[`priority-${index}`] && (
@@ -178,6 +216,7 @@ const AddFeatureSetModal = ({ show, onClose }) => {
                             ))}
 
 
+
                             {errors.general && (
                                 <div className="text-danger text-center mt-2">{errors.general}</div>
                             )}
@@ -197,4 +236,4 @@ const AddFeatureSetModal = ({ show, onClose }) => {
     );
 };
 
-export default AddFeatureSetModal;
+export default EditFeatureSetModal;
