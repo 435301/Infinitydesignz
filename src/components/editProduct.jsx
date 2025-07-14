@@ -91,10 +91,10 @@ const EditProduct = ({ onClose, show }) => {
             setFormData({
                 sku: product.sku || '',
                 title: product.title || '',
-                weight: product.weight || '',
-                model: product.model || '',
-                sla: product.sla || '',
-                deliveryCharges: product.deliveryCharges || '',
+                weight: product?.productDetails?.weight.toString() || '',
+                model: product?.productDetails?.model || '',
+                sla: product?.productDetails?.sla.toString() || '',
+                deliveryCharges: product?.productDetails?.deliveryCharges.toString() || '',
                 description: product.description || '',
                 status: product.status ? 'enable' : 'disable',
                 searchKeywords: product.searchKeywords || '',
@@ -174,6 +174,12 @@ const EditProduct = ({ onClose, show }) => {
             subCategoryId: parseInt(selectedSubMenu),
             listSubCategoryId: parseInt(selectedListSubMenu),
             status: formData.status === 'enable',
+            productDetails: {
+                model: formData.model,
+                weight: parseFloat(formData.weight),
+                sla: parseInt(formData.sla),
+                deliveryCharges: parseFloat(formData.deliveryCharges),
+            },
         };
         console.log('Submitting Product:', payload);
         try {
