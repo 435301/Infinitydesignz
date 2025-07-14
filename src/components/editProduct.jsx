@@ -273,7 +273,7 @@ const EditProduct = ({ onClose, show }) => {
                     <Sidebar isCollapsed={isSidebarCollapsed} />
                 </aside>
 
-                <div className="content-wrapper py-3" style={{ marginLeft: isSidebarCollapsed ? '60px' : '295px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease' }}>
+                <div className="content-wrapper py-3" style={{ marginLeft: isSidebarCollapsed ? '60px' : '272px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease' }}>
                     <div className="section-nav mt-4 mb-3 d-flex gap-3">
                         <a href="#" className="active">Edit Product</a>
                         <a href='/admin/product-image'>Product Images</a>
@@ -378,7 +378,7 @@ const EditProduct = ({ onClose, show }) => {
                                                             <CKEditor editor={ClassicEditor} data={description} onChange={(event, editor) => {
                                                                 const data = editor.getData();
                                                                 setDescription(data);
-                                                                setFormData({ ...formData, description: data });
+                                                                // setFormData({ ...formData, description: data });
                                                                 if (errors.description) {
                                                                     setErrors({ ...errors, description: "" })
                                                                 }
