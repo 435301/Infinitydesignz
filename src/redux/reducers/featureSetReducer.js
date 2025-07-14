@@ -8,7 +8,7 @@ import {
   EDIT_FEATURESET_REQUEST,
   EDIT_FEATURESET_SUCCESS,
   EDIT_FEATURESET_FAILURE,
-//   DELETE_FEATURE_SET_SUCCESS,
+  //   DELETE_FEATURE_SET_SUCCESS,
 } from '../actions/featureSetAction';
 
 const initialState = {
@@ -29,7 +29,10 @@ const featureSetReducer = (state = initialState, action) => {
     case ADD_FEATURESET_REQUEST:
       return { ...state, loading: true, error: null };
     case ADD_FEATURESET_SUCCESS:
-      return { ...state, loading: false, featureSets: action.payload };
+      return {
+        ...state,
+        featureSets: [...state.featureSets, action.payload],
+      };
     case ADD_FEATURESET_FAILURE:
       return { ...state, loading: false, error: action.payload };
     case EDIT_FEATURESET_REQUEST:

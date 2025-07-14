@@ -10,7 +10,7 @@ import PaginationComponent from '../../includes/pagination';
 
 const ManageFeatureSet = () => {
   const dispatch = useDispatch();
-  const { featureSets = [] } = useSelector((state) => state.featureSets || {});
+  const {featureSets=[] }= useSelector((state) => state.featureSets );
   console.log('featuresets', featureSets)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -25,7 +25,7 @@ const ManageFeatureSet = () => {
     dispatch(fetchFeatureSets());
   }, [dispatch]);
 
-  const filteredFeatureSets = featureSets.filter((featureSet) => {
+  const filteredFeatureSets = featureSets?.filter((featureSet) => {
     const title = featureSet.title.toLowerCase();
     const matchesSearch = title.includes(searchTerm.toLowerCase());
     return matchesSearch;
