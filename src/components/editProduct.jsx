@@ -16,6 +16,7 @@ import { editProducts } from '../redux/actions/productAction';
 import { useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { fetchProductById } from '../redux/actions/productAction';
+import { editVariants } from '../redux/actions/variantsAction';
 
 
 const EditProduct = ({ onClose, show }) => {
@@ -107,7 +108,20 @@ const EditProduct = ({ onClose, show }) => {
                 sizeId: product.sizeId?.toString() || '',
                 colorId: product.colorId?.toString() || '',
                 brandId: product.brandId?.toString() || '',
+                
             });
+            setVariants(
+                Array.isArray(product.variants) && product.variants.length
+                    ? product.variants.map(v => ({
+                        sku: v.sku || '',
+                        stock: v.stock?.toString() || '',
+                        mrp: v.mrp?.toString() || '',
+                        sellingPrice: v.sellingPrice?.toString() || '',
+                        sizeId: v.sizeId?.toString() || '',
+                        colorId: v.colorId?.toString() || ''
+                    }))
+                    : [{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]
+            );
 
             setDescription(product.description || '');
         }
@@ -119,8 +133,8 @@ const EditProduct = ({ onClose, show }) => {
 
     const validate = () => {
         const newErrors = {};
-        if (!formData.sku.trim()) newErrors.sku = 'SKU is required';
-        if (!formData.title.trim()) newErrors.title = 'Title is required';
+        if (!formData.sku?.trim()) newErrors.sku = 'SKU is required';
+        if (!formData.title?.trim()) newErrors.title = 'Title is required';
         if (!selectedMenu) newErrors.selectedMenu = 'Menu is required';
         if (!selectedSubMenu) newErrors.selectedSubMenu = 'Sub Menu is required';
         if (!selectedListSubMenu) newErrors.selectedListSubMenu = 'List Sub Menu is required';
@@ -136,9 +150,9 @@ const EditProduct = ({ onClose, show }) => {
         if (formData.height && isNaN(formData.height)) newErrors.height = 'Height must be a number';
         if (formData.width && isNaN(formData.width)) newErrors.width = 'Width must be a number';
         if (formData.length && isNaN(formData.length)) newErrors.length = 'Length must be a number';
-        if (!formData.description.trim()) newErrors.description = 'Description is required';
+        if (!formData.description?.trim()) newErrors.description = 'Description is required';
         if (!formData.status) newErrors.status = 'Product status is required';
-        if (!formData.searchKeywords.trim()) newErrors.searchKeywords = 'Search Keywords are required';
+        if (!formData.searchKeywords?.trim()) newErrors.searchKeywords = 'Search Keywords are required';
         if (!formData.height) newErrors.height = 'Height is required';
         if (!formData.width) newErrors.width = 'Width is required';
         if (!formData.length) newErrors.length = 'Length is required';
@@ -148,58 +162,76 @@ const EditProduct = ({ onClose, show }) => {
 
     }
 
+ const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrors({});
+    if (!validate()) return;
 
+    const cleanedVariants = variants
+        .filter(v => v.sku && v.stock && v.mrp && v.sellingPrice)
+        .map(v => ({
+            ...v,
+            stock: parseInt(v.stock),
+            mrp: parseFloat(v.mrp),
+            sellingPrice: parseFloat(v.sellingPrice),
+            sizeId: v.sizeId ? parseInt(v.sizeId) : null,
+            colorId: v.colorId ? parseInt(v.colorId) : null,
+        }));
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setErrors({});
-        if (!validate()) return;
+    const payload = {
+        id: id,
+        sku: formData.sku,
+        title: formData.title,
+        description: formData.description,
+        searchKeywords: formData.searchKeywords,
+        stock: parseInt(formData.stock),
+        mrp: parseFloat(formData.mrp),
+        sellingPrice: parseFloat(formData.sellingPrice),
+        height: parseFloat(formData.height),
+        width: parseFloat(formData.width),
+        length: parseFloat(formData.length),
+        sizeId: parseInt(formData.sizeId),
+        colorId: parseInt(formData.colorId),
+        brandId: parseInt(formData.brandId),
+        mainCategoryId: parseInt(selectedMenu),
+        subCategoryId: parseInt(selectedSubMenu),
+        listSubCategoryId: parseInt(selectedListSubMenu),
+        status: formData.status === 'enable',
+        productDetails: {
+            model: formData.model,
+            weight: parseFloat(formData.weight),
+            sla: parseInt(formData.sla),
+            deliveryCharges: parseFloat(formData.deliveryCharges),
+        }
+    };
 
-        const payload = {
-            id: id,
-            sku: formData.sku,
-            title: formData.title,
-            description: formData.description,
-            searchKeywords: formData.searchKeywords,
-            stock: parseInt(formData.stock),
-            mrp: parseFloat(formData.mrp),
-            sellingPrice: parseFloat(formData.sellingPrice),
-            height: parseFloat(formData.height),
-            width: parseFloat(formData.width),
-            length: parseFloat(formData.length),
-            sizeId: parseInt(formData.sizeId),
-            colorId: parseInt(formData.colorId),
-            brandId: parseInt(formData.brandId),
-            mainCategoryId: parseInt(selectedMenu),
-            subCategoryId: parseInt(selectedSubMenu),
-            listSubCategoryId: parseInt(selectedListSubMenu),
-            status: formData.status === 'enable',
-            productDetails: {
-                model: formData.model,
-                weight: parseFloat(formData.weight),
-                sla: parseInt(formData.sla),
-                deliveryCharges: parseFloat(formData.deliveryCharges),
-            },
-        };
-        console.log('Submitting Product:', payload);
-        try {
-            await dispatch(editProducts(payload));
-            onClose();
-            setFormData(initialFormState);
-            setDescription('');
-            setSelectedMenu('');
-            setSelectedSubMenu('');
-            setSelectedListSubMenu('');
-            navigate('/admin/manage-product');
+    console.log('Submitting Product:', payload);
+    try {
+        await dispatch(editProducts(payload));
 
-
-        } catch (err) {
-            setErrors({
-                brand: err?.response?.data?.message || 'Something went wrong.',
-            });
+        // Update each variant individually
+        for (const variant of cleanedVariants) {
+            if (!variant.id) {
+                console.warn("Variant is missing ID:", variant);
+                continue; // skip if no ID (maybe new one not yet saved)
+            }
+            await dispatch(editVariants({ ...variant, productId: id }));
         }
 
-    };
+        onClose();
+        setFormData(initialFormState);
+        setDescription('');
+        setSelectedMenu('');
+        setSelectedSubMenu('');
+        setSelectedListSubMenu('');
+        navigate('/admin/manage-product');
+    } catch (err) {
+        setErrors({
+            brand: err?.response?.data?.message || 'Something went wrong.',
+        });
+    }
+};
+
 
     const handleReset = (e) => {
         e.preventDefault();
@@ -210,6 +242,28 @@ const EditProduct = ({ onClose, show }) => {
         setDescription('');
     };
 
+    const [variants, setVariants] = useState([
+        { sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }
+    ]);
+
+
+    const handleChange = (index, field, value) => {
+        const updatedVariants = [...variants];
+        updatedVariants[index][field] = value;
+        setVariants(updatedVariants);
+    };
+
+    const addRow = () => {
+        setVariants([
+            ...variants,
+            { sku: '', stock: '', mrp: '', sellingPrice: '', size: '', color: '' }
+        ]);
+    };
+
+    const removeRow = (index) => {
+        const updatedVariants = variants.filter((_, i) => i !== index);
+        setVariants(updatedVariants);
+    };
 
     return (
         <div className="sidebar-mini fixed">
@@ -441,6 +495,105 @@ const EditProduct = ({ onClose, show }) => {
 
                                                         </div>
                                                     </div>
+                                                </div>
+
+                                                <div className="col-lg-12 mb-3">
+                                                    <h6 className="sub-heading pt-4">Other Variants</h6>
+                                                    <table className="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>SKU <span className="text-danger">*</span></th>
+                                                                <th>Stock <span className="text-danger">*</span></th>
+                                                                <th>MRP <span className="text-danger">*</span></th>
+                                                                <th>Selling Price <span className="text-danger">*</span></th>
+                                                                <th>Size</th>
+                                                                <th>Color</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {variants.map((variant, index) => (
+                                                                <tr key={index}>
+                                                                    <td>
+                                                                        <input
+                                                                            type="text"
+                                                                            className="form-control"
+                                                                            value={variant.sku}
+                                                                            onChange={(e) => handleChange(index, 'sku', e.target.value)}
+                                                                            placeholder="SKU"
+                                                                        />
+                                                                    </td>
+                                                                    <td>
+                                                                        <input
+                                                                            type="text"
+                                                                            className="form-control"
+                                                                            value={variant.stock}
+                                                                            onChange={(e) => handleChange(index, 'stock', e.target.value)}
+                                                                            placeholder="Stock"
+                                                                        />
+                                                                    </td>
+                                                                    <td>
+                                                                        <input
+                                                                            type="text"
+                                                                            className="form-control"
+                                                                            value={variant.mrp}
+                                                                            onChange={(e) => handleChange(index, 'mrp', e.target.value)}
+                                                                            placeholder="MRP"
+                                                                        />
+                                                                    </td>
+                                                                    <td>
+                                                                        <input
+                                                                            type="text"
+                                                                            className="form-control"
+                                                                            value={variant.sellingPrice}
+                                                                            onChange={(e) => handleChange(index, 'sellingPrice', e.target.value)}
+                                                                            placeholder="Selling Price"
+                                                                        />
+                                                                    </td>
+                                                                    <td>
+                                                                        <select
+                                                                            className="form-control"
+                                                                            value={variant.sizeId}
+                                                                            onChange={(e) => handleChange(index, 'sizeId', e.target.value)}
+                                                                        >
+                                                                            <option value="">-- Choose Size --</option>
+                                                                            {sizes.map((size) => (
+                                                                                <option key={size.id} value={size.id}>
+                                                                                    {size.title}
+                                                                                </option>
+                                                                            ))}
+                                                                        </select>
+                                                                    </td>
+                                                                    <td>
+                                                                        <select
+                                                                            className="form-control"
+                                                                            value={variant.colorId}
+                                                                            onChange={(e) => handleChange(index, 'colorId', e.target.value)}
+                                                                        >
+                                                                            <option value="">-- Choose Color --</option>
+                                                                            {colors.map((color) => (
+                                                                                <option key={color.id} value={color.id}>
+                                                                                    {color.label}
+                                                                                </option>
+                                                                            ))}
+                                                                        </select>
+                                                                    </td>
+
+                                                                    <td>
+                                                                        {index === variants.length - 1 ? (
+                                                                            <button type="button" className="btn btn-light-success icon-btn b-r-4" onClick={addRow}>
+                                                                                +
+                                                                            </button>
+                                                                        ) : (
+                                                                            <button type="button" className="btn btn-danger icon-btn b-r-4" onClick={() => removeRow(index)}>
+                                                                                -
+                                                                            </button>
+                                                                        )}
+                                                                    </td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
                                                 </div>
 
                                                 <div className="col-lg-12 text-center my-4">

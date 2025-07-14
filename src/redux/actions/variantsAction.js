@@ -68,28 +68,37 @@ export const addVariants = (variants) => async (dispatch) => {
   }
 };
 
-export const editVariants = (payload) => async (dispatch) => {
-  dispatch({ type: 'EDIT_VARIANTS_REQUEST' });
+export const editVariants = (variants) => async (dispatch) => {
+  dispatch({ type: 'EDIT_VARIANTS__REQUEST' });
+
   try {
     const token = localStorage.getItem('token');
-    const { id, ...updateData } = payload; 
 
-   const response= await axios.put(`${BASE_URL}/variants/${id}`, updateData, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+    const responses = await Promise.all(
+      variants.map(({ id, ...updateData }) =>
+        axios.put(`${BASE_URL}/variants/${id}`, updateData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        })
+      )
+    );
+
+    dispatch({
+      type: 'EDIT_VARIANTS_SUCCESS',
+      payload: responses.map((res) => res.data),
     });
 
-    dispatch({ type: 'EDIT_VARIANTS_SUCCESS', payload: response.data  });
-    toast.success('variant updated Successfully')
+    toast.success('Variants updated successfully');
     dispatch(fetchVariants());
-     return response.data;
+    return responses.map(res => res.data);
   } catch (error) {
     dispatch({
       type: 'EDIT_VARIANTS_FAILURE',
-      payload: error.response?.data?.message || 'Error editing variant',
+      payload: error.response?.data?.message || 'Failed to edit variants',
     });
+    toast.error('Failed to update variants');
     throw error;
   }
 };
