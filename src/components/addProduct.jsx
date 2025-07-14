@@ -99,6 +99,15 @@ const AddProduct = ({ onClose }) => {
     if (!formData.height) newErrors.height = 'Height is required';
     if (!formData.width) newErrors.width = 'Width is required';
     if (!formData.length) newErrors.length = 'Length is required';
+    if (!formData.weight) newErrors.weight = 'Weight is required';
+    else if (isNaN(formData.weight)) newErrors.weight = 'Weight must be a number';
+
+    if (!formData.sla) newErrors.sla = 'SLA is required';
+    else if (isNaN(formData.sla)) newErrors.sla = 'SLA must be a number';
+
+    if (!formData.deliveryCharges) newErrors.deliveryCharges = 'Delivery Charges are required';
+    else if (isNaN(formData.deliveryCharges)) newErrors.deliveryCharges = 'Delivery Charges must be a number';
+
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -152,6 +161,12 @@ const AddProduct = ({ onClose }) => {
       subCategoryId: parseInt(selectedSubMenu),
       listSubCategoryId: parseInt(selectedListSubMenu),
       status: formData.status === 'enable',
+      productDetails: {
+        model: formData.model,
+        weight: parseFloat(formData.weight),
+        sla: parseInt(formData.sla),
+        deliveryCharges: parseFloat(formData.deliveryCharges),
+      }
     };
     console.log('Submitting Product:', payload);
     try {
@@ -165,7 +180,7 @@ const AddProduct = ({ onClose }) => {
       const productId = response.data?.id;
 
       const variantPayloads = variants
-        .filter(v => v.sku && v.stock && v.mrp && v.sellingPrice) 
+        .filter(v => v.sku && v.stock && v.mrp && v.sellingPrice)
         .map(variant => ({
           ...variant,
           productId,
@@ -318,9 +333,9 @@ const AddProduct = ({ onClose }) => {
                               { id: 'sku', label: 'SKU Code', required: true },
                               { id: 'title', label: 'Title', required: true },
                               { id: 'weight', label: 'Weight (gms)', required: false },
-                              { id: 'model', label: 'Model', required: false },
-                              { id: 'sla', label: 'SLA (Delivery Days)', required: false },
-                              { id: 'deliveryCharges', label: 'Delivery Charges', required: false },
+                              { id: 'model', label: 'Model', required: true },
+                              { id: 'sla', label: 'SLA (Delivery Days)', required: true },
+                              { id: 'deliveryCharges', label: 'Delivery Charges', required: true },
                             ].map((field, idx) => (
                               <div className="col-lg-4 mb-3" key={idx}>
                                 <label htmlFor={field.id} className="form-label">{field.label} {field.required && <span className='text-danger'>*</span>}</label>
