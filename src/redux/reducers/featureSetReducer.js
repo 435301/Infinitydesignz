@@ -8,7 +8,7 @@ import {
   EDIT_FEATURESET_REQUEST,
   EDIT_FEATURESET_SUCCESS,
   EDIT_FEATURESET_FAILURE,
-  //   DELETE_FEATURE_SET_SUCCESS,
+    DELETE_FEATURESET_SUCCESS,
 } from '../actions/featureSetAction';
 
 const initialState = {
@@ -44,11 +44,11 @@ const featureSetReducer = (state = initialState, action) => {
       };
     case EDIT_FEATURESET_FAILURE:
       return { ...state, loading: false, error: action.payload };
-    // case DELETE_FEATURE_SET_SUCCESS:
-    //   return {
-    //     ...state,
-    //     featureSets: state.featureSets.filter((item) => item.id !== action.payload),
-    //   };
+    case DELETE_FEATURESET_SUCCESS:
+      return {
+        ...state,
+        featureSets: state.featureSets.filter((item) => item.id !== action.payload),
+      };
     case 'BULK_UPDATE_FEATURE_SET_STATUS':
       return {
         ...state,
