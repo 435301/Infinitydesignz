@@ -73,7 +73,7 @@ export const editFeatureSet = (payload) => async (dispatch) => {
     const token = localStorage.getItem('token');
     const { id, ...updateData } = payload; 
 
-    await axios.put(`${BASE_URL}/feature-sets/${id}`, updateData, {
+    await axios.patch(`${BASE_URL}/feature-sets/${id}`, updateData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

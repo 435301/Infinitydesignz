@@ -38,7 +38,10 @@ const featureSetReducer = (state = initialState, action) => {
     case EDIT_FEATURESET_REQUEST:
       return { ...state, loading: true, error: null };
     case EDIT_FEATURESET_SUCCESS:
-      return { ...state, loading: false };
+      return {
+        ...state,
+        featureSets: [...state.featureSets, action.payload],
+      };
     case EDIT_FEATURESET_FAILURE:
       return { ...state, loading: false, error: action.payload };
     // case DELETE_FEATURE_SET_SUCCESS:
