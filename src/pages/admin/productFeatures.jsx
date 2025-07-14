@@ -46,7 +46,7 @@ const ProductFeatures = () => {
         <div
           className="content-wrapper py-3"
           style={{
-            marginLeft: isSidebarCollapsed ? '60px' : '295px',
+            marginLeft: isSidebarCollapsed ? '60px' : '272px',
             padding: '20px',
             transition: 'margin-left 0.3s ease',
           }}

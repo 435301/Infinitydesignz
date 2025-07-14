@@ -51,7 +51,7 @@ const AddSlider = () => {
         <div
           className="content-wrapper p-4"
           style={{
-            marginLeft: isSidebarCollapsed ? '60px' : '295px',
+            marginLeft: isSidebarCollapsed ? '60px' : '272px',
             padding: '20px',
             transition: 'margin-left 0.3s ease',
           }}
@@ -117,7 +117,7 @@ const AddSlider = () => {
                     </div>
 
                     <div className="col-lg-12 text-center my-4">
-                      <button type="submit" className="btn btn-success py-2 px-5">SUBMIT</button>
+                      <button type="submit" className="btn btn-success py-2 px-5 me-3">SUBMIT</button>
                       <button type="button" className="btn btn-danger py-2 px-5" onClick={() => window.history.back()}>BACK</button>
                     </div>
                   </div>

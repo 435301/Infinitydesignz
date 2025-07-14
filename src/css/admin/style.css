@@ -1591,9 +1591,18 @@ select.form-control:not([size]):not([multiple]) {
   justify-content: space-around;
   align-items: center;
 }
+.badge-active {
+  background-color: #d4edda !important; /* light green background */
+  color: #28a745 !important;           /* green text */
+}
+
+.badge-inactive {
+  background-color: #f8d7da !important; /* light red background */
+  color: #dc3545 !important;            /* red text */
+}
 
 .main-header {
-  padding: 36px 0 20px 5px;
+  padding: 36px 0 20px 13px;
   margin-top: 0px;
   display: flex;
   align-content: stretch;

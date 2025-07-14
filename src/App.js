@@ -37,18 +37,32 @@ import ProductFilters from './pages/admin/productFilter.jsx';
 import ProductFeatures from './pages/admin/productFeatures.jsx';
 import ManageUsers from './pages/admin/manageUsers.jsx';
 import ManageOrders from './pages/admin/manageOrders.jsx';
-import CreateCoupon from './pages/admin/addCupan.jsx';
+// import CreateCoupon from './pages/admin/addCupan.jsx';
 import ManageCoupons from './pages/admin/manageCoupons.jsx';
 import AddSlider from './pages/admin/sliders.jsx';
 import ManageSliders from './pages/admin/manageSliders.jsx';
 import ChangePassword from './pages/admin/changePassword.jsx';
 import { ToastContainer, toast } from 'react-toastify';
-
-
+import OffersList from './pages/admin/OffersList.jsx';
+import CreateCoupon from './pages/admin/CreateCoupon.jsx';
+import HomePromotionCategory from './pages/admin/HomePromotionCategory.jsx';
+import HomeScreenCreatePromotion from './pages/admin/HomeScreenCreatePromotion.jsx';
+import HomeScreenPromotions from './pages/admin/HomeScreenPromotions.jsx';
+import CreatePromotion from './pages/admin/CreatePromotion'
 import Slider from 'react-slick';
 import ManageProducts from './pages/admin/manageProduct.jsx';
 import EditProduct from './components/editProduct.jsx';
-
+import PromotionCategoryList from './pages/admin/PromotionCategoryList.jsx';
+import CreateAppPromotionHeader from './pages/admin/CreateAppPromotionHeader.jsx'
+import AppCategoryPromotionsList from './pages/admin/AppCategoryPromotionsList'
+import AppCategoryPromotionsCreate from './pages/admin/AppCategoryPromotionsCreate'
+import AppHomePromotionCategories from './pages/admin/AppHomePromotionCategories'
+import CreatePromotionCategory from './pages/admin/CreatePromotionCategory'
+import ManagePromotions from './pages/admin/ManagePromotions.jsx'
+import AppCategoryPromotionForm from './pages/admin/AppCategoryPromotionForm'
+import UserOrdersTable from './pages/admin/UserOrdersTable'
+import ManageContact from './pages/admin/ManageContact.jsx'
+import SearchKeywordsList from './pages/admin/SearchKeywordsList'
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
     <div className="content">{children}</div>
@@ -63,7 +77,7 @@ function App() {
       <div className="App">
         {/* <div id="spinner" className="show">Loading...</div>
         <nav className="sticky-top">Navbar</nav> */}
-       <ToastContainer/>
+        <ToastContainer />
 
         <Routes>
           <Route path='/' element={<HomeBannerSection />} />
@@ -93,11 +107,11 @@ function App() {
           <Route path='/admin/filter-type' element={<ManageFilterType />}></Route>
           <Route path='/admin/filter-set' element={<ManageFilterSet />}></Route>
           <Route path='/admin/filter-list' element={<ManageFilterList />}></Route>
-          <Route path='/admin/add-product' element={<AddProduct/>}></Route>
-          <Route path='/admin/edit-product/:id' element={<EditProduct/>}></Route>
+          <Route path='/admin/add-product' element={<AddProduct />}></Route>
+          <Route path='/admin/edit-product/:id' element={<EditProduct />}></Route>
           <Route path='/admin/product-image' element={<AddProductImages />}></Route>
           <Route path='/admin/product-filter' element={<ProductFilters />}></Route>
-          <Route path='/admin/manage-product' element={<ManageProducts/>}></Route>
+          <Route path='/admin/manage-product' element={<ManageProducts />}></Route>
           <Route path='/admin/product-features' element={<ProductFeatures />}></Route>
           <Route path='/admin/manage-users' element={<ManageUsers />}></Route>
           <Route path='/admin/orders' element={<ManageOrders />}></Route>
@@ -106,6 +120,25 @@ function App() {
           <Route path='/admin/sliders' element={<AddSlider />}></Route>
           <Route path='/admin/manage-sliders' element={<ManageSliders />}></Route>
           <Route path='/admin/change-password' element={<ChangePassword />}></Route>
+          <Route path='/admin/offers' element={<OffersList />}></Route>
+          <Route path='/admin/create-cupon' element={<CreateCoupon />}></Route>
+          <Route path='/admin/home-screen-promotion-category' element={<HomePromotionCategory />}></Route>
+          <Route path='/admin/add-home-promotions-category' element={<HomeScreenCreatePromotion />}></Route>
+          <Route path='/admin/home-screen-create-promotion' element={<HomeScreenPromotions />}></Route>
+          <Route path='/admin/add-home-screen-create-promotion' element={<CreatePromotion />}></Route>
+          <Route path='/admin/menu-promotion-category' element={<PromotionCategoryList />}></Route>
+          <Route path='/admin/add-menu-create-promotions' element={<CreateAppPromotionHeader />}></Route>
+          <Route path='/admin/menu-create-promotion' element={<AppCategoryPromotionsList />}></Route>
+          <Route path='/admin/app-category-promotions-list' element={<AppCategoryPromotionsCreate />}></Route>
+          <Route path='/admin/sub-menu-promotion-category' element={<AppHomePromotionCategories />}></Route>
+          <Route path='/admin/app-home-promotion-categories-app' element={<CreatePromotionCategory />}></Route>
+          <Route path='/admin/sub-menu-create-promotion' element={<ManagePromotions />}></Route>
+          <Route path='/admin/app-category-promotions-list-create' element={<AppCategoryPromotionForm />}></Route>
+          <Route path='/admin/subscriberslist' element={<UserOrdersTable />}></Route>
+          <Route path='/admin/contact' element={<ManageContact />}></Route>
+          <Route path='/admin/keywords' element={<SearchKeywordsList />}></Route>
+
+
         </Routes>
         <Routes>
           <Route element={<AdminLayout />}>

@@ -215,7 +215,7 @@ const AddProduct = ({ onClose }) => {
           <Sidebar isCollapsed={isSidebarCollapsed} />
         </aside>
 
-        <div className="content-wrapper py-3" style={{ marginLeft: isSidebarCollapsed ? '60px' : '295px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease' }}>
+        <div className="content-wrapper py-3" style={{ marginLeft: isSidebarCollapsed ? '60px' : '272px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease' }}>
           <div className="section-nav mt-4 mb-3 d-flex gap-3">
             <a href="#" className="active">Add Product</a>
             <a href='/admin/product-image'>Product Images</a>

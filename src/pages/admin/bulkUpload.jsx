@@ -56,7 +56,7 @@ const BulkUpload = () => {
         <div
           className="content-wrapper"
           style={{
-            marginLeft: isSidebarCollapsed ? '60px' : '295px',
+            marginLeft: isSidebarCollapsed ? '60px' : '272px',
             padding: '20px',
             flex: 1,
             transition: 'margin-left 0.3s ease',

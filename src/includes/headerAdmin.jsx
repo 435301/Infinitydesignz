@@ -1,16 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { BsFullscreen, BsBell, BsGear, BsPerson, BsEnvelopeOpen, BsLock, BsBoxArrowRight, BsSearch } from 'react-icons/bs';
+import {
+  BsFullscreen,
+  BsBell,
+  BsGear,
+  BsPerson,
+  BsEnvelopeOpen,
+  BsLock,
+  BsBoxArrowRight,
+  BsSearch
+} from 'react-icons/bs';
 import logo from '../img/logo.svg';
 import avatar from '../img/avatar-1.png';
 
-const HeaderAdmin = ({ onToggleSidebar }) => {
+// ✅ Default empty function for onToggleSidebar
+const HeaderAdmin = ({ onToggleSidebar = () => {} }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const handleToggle = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed);
-    onToggleSidebar(!isSidebarCollapsed);
+    const newCollapsedState = !isSidebarCollapsed;
+    setIsSidebarCollapsed(newCollapsedState);
+    onToggleSidebar(newCollapsedState); // Safely call the prop
   };
 
   const handleDropdownToggle = () => {
@@ -197,82 +208,22 @@ const HeaderAdmin = ({ onToggleSidebar }) => {
                 }}
               >
                 <li>
-                  <a
-                    href="#!"
-                    onClick={handleDropdownItemClick}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      padding: '8px 15px',
-                      color: '#333',
-                      textDecoration: 'none',
-                    }}
-                  >
-                    <BsGear style={{ fontSize: '18px', marginRight: '5px' }} /> Settings
-                  </a>
+                  <a href="#!" onClick={handleDropdownItemClick} style={linkStyle}><BsGear style={iconStyle} /> Settings</a>
                 </li>
                 <li>
-                  <a
-                    href="#!"
-                    onClick={handleDropdownItemClick}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      padding: '8px 15px',
-                      color: '#333',
-                      textDecoration: 'none',
-                    }}
-                  >
-                    <BsPerson style={{ fontSize: '18px', marginRight: '5px' }} /> Profile
-                  </a>
+                  <a href="#!" onClick={handleDropdownItemClick} style={linkStyle}><BsPerson style={iconStyle} /> Profile</a>
                 </li>
                 <li>
-                  <a
-                    href="#!"
-                    onClick={handleDropdownItemClick}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      padding: '8px 15px',
-                      color: '#333',
-                      textDecoration: 'none',
-                    }}
-                  >
-                    <BsEnvelopeOpen style={{ fontSize: '18px', marginRight: '5px' }} /> My Messages
-                  </a>
+                  <a href="#!" onClick={handleDropdownItemClick} style={linkStyle}><BsEnvelopeOpen style={iconStyle} /> My Messages</a>
                 </li>
                 <li style={{ padding: '0 15px' }}>
                   <div style={{ borderTop: '1px solid #e5e5e5', margin: '5px 0' }}></div>
                 </li>
                 <li>
-                  <a
-                    href="#!"
-                    onClick={handleDropdownItemClick}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      padding: '8px 15px',
-                      color: '#333',
-                      textDecoration: 'none',
-                    }}
-                  >
-                    <BsLock style={{ fontSize: '18px', marginRight: '5px' }} /> Lock Screen
-                  </a>
+                  <a href="#!" onClick={handleDropdownItemClick} style={linkStyle}><BsLock style={iconStyle} /> Lock Screen</a>
                 </li>
                 <li>
-                  <a
-                    href="/login1"
-                    onClick={handleDropdownItemClick}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      padding: '8px 15px',
-                      color: '#333',
-                      textDecoration: 'none',
-                    }}
-                  >
-                    <BsBoxArrowRight style={{ fontSize: '18px', marginRight: '5px' }} /> Logout
-                  </a>
+                  <a href="/login1" onClick={handleDropdownItemClick} style={linkStyle}><BsBoxArrowRight style={iconStyle} /> Logout</a>
                 </li>
               </ul>
             </li>
@@ -280,8 +231,16 @@ const HeaderAdmin = ({ onToggleSidebar }) => {
         </div>
       </nav>
     </header>
-    
   );
+};
+
+const iconStyle = { fontSize: '18px', marginRight: '5px' };
+const linkStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  padding: '8px 15px',
+  color: '#333',
+  textDecoration: 'none',
 };
 
 export default HeaderAdmin;
