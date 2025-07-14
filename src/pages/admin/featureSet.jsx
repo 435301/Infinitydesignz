@@ -3,10 +3,12 @@ import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise } from 'react-icons/bs';
+import AddFeatureSetModal from '../../components/addFeatureSetModal';
 
 const ManageFeatureSet = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
+  const[showModal,setShowModal] = useState(false);
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -89,7 +91,7 @@ const ManageFeatureSet = () => {
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
-                    <button className="btn btn-primary" type="button">
+                    <button className="btn btn-primary" onClick={()=>setShowModal(true) } type="button">
                       + Create Feature Set
                     </button>
                   </div>
@@ -133,6 +135,7 @@ const ManageFeatureSet = () => {
                 <button className="btn btn-primary mt-3">Set Priority</button>
               </div>
             </div>
+           {showModal && <AddFeatureSetModal show={showModal} onClose={()=> setShowModal(false)}/>} 
           </div>
         </div>
       </div>

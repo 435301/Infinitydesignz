@@ -30,10 +30,10 @@ const ViewProductModal = ({ show, onClose, product }) => {
                     <div className="col-md-4">
                         <strong>SKU:</strong> <p>{product.sku}</p>
                         <strong>Title:</strong> <p>{product.title}</p>
-                        <strong>Model:</strong> <p>{product.model || '-'}</p>
-                        <strong>Weight:</strong> <p>{product.weight || '-'}</p>
-                        <strong>SLA:</strong> <p>{product.sla || '-'}</p>
-                        <strong>Delivery Charges:</strong> <p>{product.deliveryCharges || '-'}</p>
+                        <strong>Model:</strong> <p>{product?.productDetails?.model || '-'}</p>
+                        <strong>Weight:</strong> <p>{product?.productDetails?.weight || '-'}</p>
+                        <strong>SLA:</strong> <p>{product?.productDetails?.sla || '-'}</p>
+                        <strong>Delivery Charges:</strong> <p>{product?.productDetails?.deliveryCharges || '-'}</p>
                     </div>
                     <div className="col-md-4">
                         <strong>Stock:</strong> <p>{product.stock}</p>

@@ -46,7 +46,7 @@ export const addProducts = (formData) => async (dispatch) => {
   dispatch({ type: 'ADD_PRODUCT_REQUEST' });
   try {
     const token = localStorage.getItem('token');
-    await axios.post(`${BASE_URL}/products`, formData, {
+   const response = await axios.post(`${BASE_URL}/products`, formData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -55,6 +55,7 @@ export const addProducts = (formData) => async (dispatch) => {
     dispatch({ type: 'ADD_PRODUCT_SUCCESS' });
      toast.success(`Product created succefully`);
     dispatch(fetchProducts());
+    return response.data;
   } catch (error) {
     dispatch({
       type: 'ADD_PRODUCT_FAILURE',

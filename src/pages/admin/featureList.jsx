@@ -3,10 +3,12 @@ import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise } from 'react-icons/bs';
+import AddFeatureListModal from '../../components/addFeatureListModal';
 
 const ManageFeatureList = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const featureGroups = [
     {
@@ -96,7 +98,7 @@ const ManageFeatureList = () => {
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
-                    <button className="btn btn-primary">+ Create Feature Set</button>
+                    <button className="btn btn-primary" onClick={()=> setShowAddModal(true)}>+ Create Feature Set</button>
                   </div>
                 </div>
               </div>
@@ -167,6 +169,7 @@ const ManageFeatureList = () => {
                 ))}
               </div>
             </div>
+           {showAddModal &&<AddFeatureListModal show={showAddModal} onClose={()=> setShowAddModal(false)}/> } 
           </div>
         </div>
       </div>

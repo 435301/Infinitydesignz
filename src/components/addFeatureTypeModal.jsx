@@ -1,33 +1,63 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { addFeatureTypes } from '../redux/actions/featureTypeAction';
 import { useDispatch } from 'react-redux';
+import { BsPlusCircle, BsDashCircle } from 'react-icons/bs';
 
 const AddFeatureTypeModal = ({ show, onClose }) => {
   const dispatch = useDispatch();
-  const [name, setName] = useState('');
+
+  const [featureTypes, setFeatureTypes] = useState([{ name: '' }]);
   const [errors, setErrors] = useState({});
 
   const validate = () => {
     const newErrors = {};
-    if (!name.trim()) newErrors.name = 'Title is required';
+    featureTypes.forEach((field, index) => {
+      if (!field.name.trim()) {
+        newErrors[`name-${index}`] = 'Title is required';
+      }
+    });
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleInputChange = (index, value) => {
+    const updated = [...featureTypes];
+    updated[index].name = value;
+    setFeatureTypes(updated);
+
+    if (errors[`name-${index}`]) {
+      const updatedErrors = { ...errors };
+      delete updatedErrors[`name-${index}`];
+      setErrors(updatedErrors);
+    }
+  };
+
+  const handleAddField = () => {
+    setFeatureTypes([...featureTypes, { name: '' }]);
+  };
+
+  const handleRemoveField = (index) => {
+    const updated = featureTypes.filter((_, i) => i !== index);
+    setFeatureTypes(updated);
+
+    const updatedErrors = { ...errors };
+    delete updatedErrors[`name-${index}`];
+    setErrors(updatedErrors);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    const payload = {
-      name: name,
-    };
 
     try {
-      await dispatch(addFeatureTypes(payload));
+      for (let item of featureTypes) {
+        await dispatch(addFeatureTypes({ name: item.name }));
+      }
       onClose();
-      setName('')
+      setFeatureTypes([{ name: '' }]);
     } catch (err) {
       setErrors({
-        name: err?.response?.data?.message || 'Something went wrong.',
+        general: err?.response?.data?.message || 'Something went wrong.',
       });
     }
   };
@@ -40,24 +70,45 @@ const AddFeatureTypeModal = ({ show, onClose }) => {
         <div className="modal-content">
           <form onSubmit={handleSubmit}>
             <div className="modal-header">
-              <h5 className="modal-title">Add Feature Type</h5>
+              <h5 className="modal-title">Add Feature Types</h5>
               <button type="button" className="btn-close" onClick={onClose}></button>
             </div>
             <div className="modal-body">
-              <div className="mb-3">
-                <label htmlFor="title" className="form-label">Title<span className='text-danger'>*</span></label>
-                <input
-                  id="name"
-                  className={`form-control ${errors.name ? 'is-invalid' : ''}`}
-                  type="text"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    if (errors.name) setErrors(prev => ({ ...prev, name: null }));
-                  }}
-                />
-                {errors.name && <div className="invalid-feedback">{errors.name}</div>}
-              </div>
+              {featureTypes.map((field, index) => (
+                <div className="mb-3 d-flex align-items-center" key={index}>
+                  <input
+                    className={`form-control ${errors[`name-${index}`] ? 'is-invalid' : ''}`}
+                    type="text"
+                    placeholder="Title"
+                    value={field.name}
+                    onChange={(e) => handleInputChange(index, e.target.value)}
+                  />
+                  {featureTypes.length > 1 && (
+                    <button
+                      type="button"
+                      className="btn btn-outline-danger ms-2"
+                      onClick={() => handleRemoveField(index)}
+                    >
+                      <BsDashCircle />
+                    </button>
+                  )}
+                  {index === featureTypes.length - 1 && (
+                    <button
+                      type="button"
+                      className="btn btn-outline-primary ms-2"
+                      onClick={handleAddField}
+                    >
+                      <BsPlusCircle />
+                    </button>
+                  )}
+                  {errors[`name-${index}`] && (
+                    <div className="invalid-feedback d-block ms-2">{errors[`name-${index}`]}</div>
+                  )}
+                </div>
+              ))}
+              {errors.general && (
+                <div className="text-danger text-center mt-2">{errors.general}</div>
+              )}
             </div>
             <div className="modal-footer">
               <button type="submit" className="btn btn-success px-4">Save</button>
