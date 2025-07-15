@@ -1,47 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise } from 'react-icons/bs';
 import AddFeatureListModal from '../../components/addFeatureListModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchFeatureLists } from '../../redux/actions/featureListAction';
+import { fetchFeatureTypes } from '../../redux/actions/featureTypeAction';
+import PaginationComponent from '../../includes/pagination';
 
 const ManageFeatureList = () => {
+  const dispatch = useDispatch();
+  const { featureLists = [] } = useSelector((state) => state.featureLists || {});
+  console.log('featureLists', featureLists)
+  const { featureTypes = [] } = useSelector((state) => state.featureTypes || {});
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const featureGroups = [
-    {
-      title: 'Accessories',
-      productCode: 'Product code',
-      features: [
-        { id: 1, name: 'Pearl Features', count: 0 },
-        { id: 2, name: 'General', count: 1 },
-        { id: 3, name: 'Diamond Features', count: 2 },
-        { id: 4, name: 'Body & Design Features', count: 2 },
-        { id: 5, name: 'Additional Features', count: 2 },
-        { id: 6, name: 'Gold Features', count: 2 },
-        { id: 7, name: 'Important Note', count: 2 },
-        { id: 8, name: 'Chain Features', count: 2 },
-        { id: 9, name: 'In The Box', count: 0 },
-      ],
-    },
-    {
-      title: 'Books',
-      productCode: 'Product code',
-      features: [
-        { id: 10, name: 'Pearl Features', count: 0 },
-        { id: 11, name: 'General', count: 1 },
-        { id: 12, name: 'Diamond Features', count: 2 },
-        { id: 13, name: 'Body & Design Features', count: 2 },
-        { id: 14, name: 'Additional Features', count: 2 },
-        { id: 15, name: 'Gold Features', count: 2 },
-        { id: 16, name: 'Important Note', count: 2 },
-        { id: 17, name: 'Chain Features', count: 2 },
-        { id: 18, name: 'In The Box', count: 0 },
-      ],
-    },
-  ];
+  useEffect(() => {
+    dispatch(fetchFeatureLists());
+    dispatch(fetchFeatureTypes())
+  }, [dispatch]);
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -52,6 +33,64 @@ const ManageFeatureList = () => {
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
+
+  const getFeatureTypeName = (id) => {
+    const type = featureTypes.find((t) => t.id === id);
+    return type?.name || 'Unknown';
+  };
+
+
+  const filteredFeatureList = (featureLists || []).filter((featureList) => {
+    if (!featureList) return false;
+
+    const label = featureList.label?.toLowerCase() || '';
+    const featureSetTitle = featureList.featureSet?.title?.toLowerCase() || '';
+    const featureTypeName = getFeatureTypeName(featureList.featureSet?.featureTypeId).toLowerCase();
+
+    const term = searchTerm.toLowerCase();
+
+    return (
+      label.includes(term) ||
+      featureSetTitle.includes(term) ||
+      featureTypeName.includes(term)
+    );
+  }).map((featureList) => {
+    const featureSetTitle = featureList?.featureSet?.title || 'N/A';
+    const featureTypeName = getFeatureTypeName(featureList?.featureSet?.featureTypeId);
+
+    return {
+      ...featureList,
+      featureSetTitle,
+      featureTypeName,
+    };
+  });
+
+
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredFeatureList.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(filteredFeatureList.length / rowsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+  const groupedFeatures = currentRows.reduce((acc, feature) => {
+    const groupTitle = feature.featureSet?.title || 'Unknown';
+    if (!acc[groupTitle]) {
+      acc[groupTitle] = [];
+    }
+    acc[groupTitle].push(feature);
+    return acc;
+  }, {});
+
+
+
 
   return (
     <div className="sidebar-mini fixed">
@@ -80,25 +119,17 @@ const ManageFeatureList = () => {
               <div className="card-block manage-btn p-3">
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
-                    <input type="text" className="form-control" placeholder="Search By" />
+                    <input type="text" className="form-control" placeholder="Search By Title" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                   </div>
-                  <div className="col-md-3">
-                    <select className="form-control">
-                      <option value="">- Select Status -</option>
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                    </select>
-                  </div>
+                  
                   <div className="col-md-2 d-flex gap-2">
-                    <button className="btn btn-danger">
-                      <BsSearch />
-                    </button>
+                    
                     <button className="btn btn-success">
-                      <BsArrowClockwise />
+                      <BsArrowClockwise onClick={()=>setSearchTerm('')}/>
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
-                    <button className="btn btn-primary" onClick={()=> setShowAddModal(true)}>+ Create Feature Set</button>
+                    <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Create Feature Set</button>
                   </div>
                 </div>
               </div>
@@ -109,25 +140,20 @@ const ManageFeatureList = () => {
               <div className="card-block p-3">
                 <div className="row mb-3">
                   <div className="col-lg-6" />
-                  <div className="col-md-6 text-end pt">
-                    <button className="btn btn-success me-1">Active</button>
-                    <button className="btn btn-default me-1">Inactive</button>
-                    <button className="btn btn-danger me-1">Front Active</button>
-                    <button className="btn btn-warning me-1">Front Inactive</button>
-                  </div>
+
                 </div>
 
-                {featureGroups.map((group, index) => (
+                {Object.entries(groupedFeatures).map(([groupTitle, features], index) => (
                   <div key={index} className="mb-4">
-                    <div className="row  mb-3">
+                    <div className="row mb-3">
                       <div>
-                        <h3>{group.title}</h3>
-                        <h6 className="text-info">{group.productCode}</h6>
+                        <h3>{groupTitle}</h3>
+                        <h6 className="text-info">{getFeatureTypeName(features[0]?.featureSet?.featureTypeId)}</h6>
                       </div>
                     </div>
 
                     <div className="feature-row d-flex flex-wrap gap-3">
-                      {group.features.map((feature) => (
+                      {features.map((feature) => (
                         <div
                           key={feature.id}
                           className="feature-item d-flex justify-content-between align-items-center"
@@ -146,9 +172,9 @@ const ManageFeatureList = () => {
                               onChange={() => handleCheckboxChange(feature.id)}
                               className="me-2"
                             />
-                            {feature.name}
+                            {feature.label}
                           </div>
-                          <span className="badge bg-white text-dark">{feature.count}</span>
+                          <span className="badge bg-white text-dark">{feature.priority}</span>
                         </div>
                       ))}
                     </div>
@@ -167,9 +193,12 @@ const ManageFeatureList = () => {
                     </button>
                   </div>
                 ))}
+
               </div>
             </div>
-           {showAddModal &&<AddFeatureListModal show={showAddModal} onClose={()=> setShowAddModal(false)}/> } 
+            {showAddModal && <AddFeatureListModal show={showAddModal} onClose={() => setShowAddModal(false)} />}
+            <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+
           </div>
         </div>
       </div>

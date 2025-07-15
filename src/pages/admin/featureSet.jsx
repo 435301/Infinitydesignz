@@ -5,9 +5,11 @@ import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise, BsEye, BsPencilSquare, BsTrash } from 'react-icons/bs';
 import AddFeatureSetModal from '../../components/addFeatureSetModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchFeatureSets } from '../../redux/actions/featureSetAction';
+import { deleteFeatureSet, fetchFeatureSets } from '../../redux/actions/featureSetAction';
 import PaginationComponent from '../../includes/pagination';
 import EditFeatureSetModal from '../../components/editFeatureSetModal';
+import DeleteModal from '../../modals/deleteModal';
+import ViewFeatureSetModal from '../../modals/viewFeatureSetModal';
 
 const ManageFeatureSet = () => {
   const dispatch = useDispatch();
@@ -19,6 +21,11 @@ const ManageFeatureSet = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFeatureSet, setSelectedFeatureSet] = useState('');
   const [editModalVisible, setEditModalVisible] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [featureSetToDelete, setFeatureSetToDelete] = useState(null);
+    const [viewModalVisible, setViewModalVisible] = useState(false);
+const [viewFeatureSet, setViewFeatureSet] = useState(null);
+
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -28,7 +35,8 @@ const ManageFeatureSet = () => {
     dispatch(fetchFeatureSets());
   }, [dispatch]);
 
-  const filteredFeatureSets = featureSets?.filter((featureSet) => {
+  const filteredFeatureSets = (featureSets || [])?.filter((featureSet) => {
+    if(!featureSet && !featureSet?.title) return false
     const title = featureSet.title.toLowerCase();
     const matchesSearch = title.includes(searchTerm.toLowerCase());
     return matchesSearch;
@@ -74,6 +82,17 @@ const ManageFeatureSet = () => {
     acc[groupName].push(item);
     return acc;
   }, {});
+
+    const handleDeleteClick = (id) => {
+      setFeatureSetToDelete(id);
+      setShowDeleteModal(true);
+    };
+  
+    const handleDelete = async () => {
+      await dispatch(deleteFeatureSet(featureSetToDelete));
+      setShowDeleteModal(false);
+      setFeatureSetToDelete(null);
+    };
 
 
   return (
@@ -164,7 +183,7 @@ const ManageFeatureSet = () => {
                               }}>
                                 <BsPencilSquare />
                               </button>
-                              <button className="btn btn-sm btn-outline-danger" title="Delete" >
+                              <button className="btn btn-sm btn-outline-danger" title="Delete"  onClick={() => handleDeleteClick(item.id)}  >
                                 <BsTrash />
                               </button>
 
@@ -187,6 +206,8 @@ const ManageFeatureSet = () => {
             <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
             {showModal && <AddFeatureSetModal show={showModal} onClose={() => setShowModal(false)} />}
             {editModalVisible && <EditFeatureSetModal show={editModalVisible} onClose={() => setEditModalVisible(false)} featureSet={selectedFeatureSet} />}
+              {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+                {viewModalVisible && <ViewFeatureSetModal show={viewModalVisible} onClose={()=>setViewModalVisible(false)} featureSet={viewFeatureSet}/>}
           </div>
         </div>
       </div>
