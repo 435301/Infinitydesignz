@@ -223,7 +223,7 @@ const EditFeatureSetModal = ({ show, onClose, featureSet }) => {
                         </div>
                         <div className="modal-footer">
                             <button type="submit" className="btn btn-success px-4">
-                                Save
+                                Saves
                             </button>
                             <button type="button" className="btn btn-danger px-4" onClick={onClose}>
                                 Close

@@ -17,7 +17,7 @@ const ManageFeatureSet = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const[selectedFeatureSet,setSelectedFeatureSet] = useState('');
+  const [selectedFeatureSet, setSelectedFeatureSet] = useState('');
   const [editModalVisible, setEditModalVisible] = useState(false);
 
   const handleToggleSidebar = (collapsed) => {
@@ -33,6 +33,11 @@ const ManageFeatureSet = () => {
     const matchesSearch = title.includes(searchTerm.toLowerCase());
     return matchesSearch;
   });
+  // const filteredFeatureSets = (featureSets || []).filter((featureSet) => {
+  //   if (!featureSet || !featureSet.title) return false;
+  //   const title = featureSet.title.toLowerCase();
+  //   return title.includes(searchTerm.toLowerCase());
+  // });
 
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
@@ -110,7 +115,7 @@ const ManageFeatureSet = () => {
                       <BsArrowClockwise style={{ fontSize: '18px' }} />
                     </button>
                   </div>
-                  <div className="col-md-4 text-end">
+                  <div className="col-md-7 text-end">
                     <button className="btn btn-primary" onClick={() => setShowModal(true)} type="button">
                       + Create Feature Set
                     </button>
@@ -136,7 +141,7 @@ const ManageFeatureSet = () => {
                         {items.map((item) => (
                           <div
                             key={item.id}
-                            className="feature-item d-flex justify-content-between align-items-center mb-2 p-2 border rounded"
+                            className="feature-item d-flex justify-content-between align-items-center me-1 mb-2 p-2 border rounded"
                           >
                             <div className="d-flex align-items-center">
                               <input
@@ -146,14 +151,14 @@ const ManageFeatureSet = () => {
                                 className="me-2"
                               />
                               <strong>{item.title}</strong>
-                             
+
                             </div>
 
                             <div className="d-flex gap-2">
-                              <button className="btn btn-sm " title="View" >
+                              <button className="btn btn-sm btn-outline-primary" title="View" >
                                 <BsEye />
                               </button>
-                              <button className="btn btn-sm btn-outline-primary" title="Edit"  onClick={() => {
+                              <button className="btn btn-sm btn-outline-primary" title="Edit" onClick={() => {
                                 setSelectedFeatureSet(item);
                                 setEditModalVisible(true);
                               }}>
@@ -162,9 +167,9 @@ const ManageFeatureSet = () => {
                               <button className="btn btn-sm btn-outline-danger" title="Delete" >
                                 <BsTrash />
                               </button>
-                              
+
                             </div>
-                             <span className="badge ms-2">{item.priority}</span>
+                            <span className="badge ms-2">{item.priority}</span>
                           </div>
 
                         ))}

@@ -1591,14 +1591,19 @@ select.form-control:not([size]):not([multiple]) {
   justify-content: space-around;
   align-items: center;
 }
+
 .badge-active {
-  background-color: #d4edda !important; /* light green background */
-  color: #28a745 !important;           /* green text */
+  background-color: #d4edda !important;
+  /* light green background */
+  color: #28a745 !important;
+  /* green text */
 }
 
 .badge-inactive {
-  background-color: #f8d7da !important; /* light red background */
-  color: #dc3545 !important;            /* red text */
+  background-color: #f8d7da !important;
+  /* light red background */
+  color: #dc3545 !important;
+  /* red text */
 }
 
 .main-header {
@@ -1832,7 +1837,7 @@ select.form-control:not([size]):not([multiple]) {
 .feature-row {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: start;
 }
 
 .feature-item {
@@ -2105,3 +2110,12 @@ small a {
     /* Restore height for better visibility */
   }
 }
+
+.feature-row .btn {
+  font-size: 14px;
+  padding: 1px 5px !important;
+}
+
+.feature-row .btn-outline-primary {
+  --bs-btn-color: #ffffff;
+  --bs-btn-border-color: #ffffff;}
