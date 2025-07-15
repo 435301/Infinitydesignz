@@ -12,6 +12,7 @@ import featureSetReducer from './featureSetReducer';
 import variantsReducer from './variantReducer';
 import featureListsReducer from './featureListReducer';
 import filterSetReducer from './filterSetReducer';
+import filterListsReducer from './filterListReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
   variants:variantsReducer,
   featureLists:featureListsReducer,
   filterSets:filterSetReducer,
+  filterLists:filterListsReducer,
 });
 
 export default rootReducer;
