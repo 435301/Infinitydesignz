@@ -19,12 +19,12 @@ const ManageFeatureSet = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const[selectedFeatureSet,setSelectedFeatureSet] = useState('');
+  const [selectedFeatureSet, setSelectedFeatureSet] = useState('');
   const [editModalVisible, setEditModalVisible] = useState(false);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [featureSetToDelete, setFeatureSetToDelete] = useState(null);
-    const [viewModalVisible, setViewModalVisible] = useState(false);
-const [viewFeatureSet, setViewFeatureSet] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [featureSetToDelete, setFeatureSetToDelete] = useState(null);
+  const [viewModalVisible, setViewModalVisible] = useState(false);
+  const [viewFeatureSet, setViewFeatureSet] = useState(null);
 
 
   const handleToggleSidebar = (collapsed) => {
@@ -36,11 +36,16 @@ const [viewFeatureSet, setViewFeatureSet] = useState(null);
   }, [dispatch]);
 
   const filteredFeatureSets = (featureSets || [])?.filter((featureSet) => {
-    if(!featureSet && !featureSet?.title) return false
+    if (!featureSet && !featureSet?.title) return false
     const title = featureSet.title.toLowerCase();
     const matchesSearch = title.includes(searchTerm.toLowerCase());
     return matchesSearch;
   });
+  // const filteredFeatureSets = (featureSets || []).filter((featureSet) => {
+  //   if (!featureSet || !featureSet.title) return false;
+  //   const title = featureSet.title.toLowerCase();
+  //   return title.includes(searchTerm.toLowerCase());
+  // });
 
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
@@ -78,16 +83,16 @@ const [viewFeatureSet, setViewFeatureSet] = useState(null);
     return acc;
   }, {});
 
-    const handleDeleteClick = (id) => {
-      setFeatureSetToDelete(id);
-      setShowDeleteModal(true);
-    };
-  
-    const handleDelete = async () => {
-      await dispatch(deleteFeatureSet(featureSetToDelete));
-      setShowDeleteModal(false);
-      setFeatureSetToDelete(null);
-    };
+  const handleDeleteClick = (id) => {
+    setFeatureSetToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleDelete = async () => {
+    await dispatch(deleteFeatureSet(featureSetToDelete));
+    setShowDeleteModal(false);
+    setFeatureSetToDelete(null);
+  };
 
 
   return (
@@ -129,7 +134,7 @@ const [viewFeatureSet, setViewFeatureSet] = useState(null);
                       <BsArrowClockwise style={{ fontSize: '18px' }} />
                     </button>
                   </div>
-                  <div className="col-md-4 text-end">
+                  <div className="col-md-7 text-end">
                     <button className="btn btn-primary" onClick={() => setShowModal(true)} type="button">
                       + Create Feature Set
                     </button>
@@ -155,7 +160,7 @@ const [viewFeatureSet, setViewFeatureSet] = useState(null);
                         {items.map((item) => (
                           <div
                             key={item.id}
-                            className="feature-item d-flex justify-content-between align-items-center mb-2 p-2 border rounded"
+                            className="feature-item d-flex justify-content-between align-items-center me-1 mb-2 p-2 border rounded"
                           >
                             <div className="d-flex align-items-center">
                               <input
@@ -165,32 +170,31 @@ const [viewFeatureSet, setViewFeatureSet] = useState(null);
                                 className="me-2"
                               />
                               <strong>{item.title}</strong>
-                             
+
                             </div>
 
                             <div className="d-flex gap-2">
-                              <button className="btn btn-sm " title="View" onClick={()=>{
-                                setViewFeatureSet(item);
-                                setViewModalVisible(true)
-                              }}>
+                              <button className="btn btn-sm btn-outline-primary" title="View" >
                                 <BsEye />
                               </button>
-                              <button className="btn btn-sm btn-outline-primary" title="Edit"  onClick={() => {
+                              <button className="btn btn-sm btn-outline-primary" title="Edit" onClick={() => {
                                 setSelectedFeatureSet(item);
                                 setEditModalVisible(true);
                               }}>
                                 <BsPencilSquare />
                               </button>
-                              <button className="btn btn-sm btn-outline-danger" title="Delete"  onClick={() => handleDeleteClick(item.id)}  >
+                              <button className="btn btn-sm btn-outline-danger" title="Delete" onClick={() => handleDeleteClick(item.id)}  >
                                 <BsTrash />
                               </button>
-                              
+
                             </div>
-                             <span className="badge ms-2">{item.priority}</span>
+                            <span className="badge ms-2">{item.priority}</span>
                           </div>
 
                         ))}
                       </div>
+                      <button className="btn btn-primary mt-3">Set Priority</button>
+
                     </div>
                   ))}
 
@@ -198,14 +202,13 @@ const [viewFeatureSet, setViewFeatureSet] = useState(null);
 
 
 
-                <button className="btn btn-primary mt-3">Set Priority</button>
               </div>
             </div>
             <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
             {showModal && <AddFeatureSetModal show={showModal} onClose={() => setShowModal(false)} />}
             {editModalVisible && <EditFeatureSetModal show={editModalVisible} onClose={() => setEditModalVisible(false)} featureSet={selectedFeatureSet} />}
-              {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
-                {viewModalVisible && <ViewFeatureSetModal show={viewModalVisible} onClose={()=>setViewModalVisible(false)} featureSet={viewFeatureSet}/>}
+            {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+            {viewModalVisible && <ViewFeatureSetModal show={viewModalVisible} onClose={() => setViewModalVisible(false)} featureSet={viewFeatureSet} />}
           </div>
         </div>
       </div>

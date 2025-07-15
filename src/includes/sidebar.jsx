@@ -31,18 +31,17 @@ const Sidebar = ({ isCollapsed }) => {
       '/admin/filter-type',
       '/admin/filter-set',
       '/admin/filter-list',
-      '/admin/bulk-upload',
     ],
-    productFeatures: ['/admin/feature-type', '/admin/feature-set', '/admin/feature-list', '/admin/bulk-upload'],
+    productFeatures: ['/admin/feature-type', '/admin/feature-set', '/admin/feature-list'],
     productFilters: ['/admin/filter-type', '/admin/filter-set', '/admin/filter-list'],
     categories: ['/admin/manage-category', '/admin/manage-subcategory', '/admin/list-subcategory'],
-    products: ['/admin/add-product', '/admin/manage-product'],
+    products: ['/admin/add-product', '/admin/manage-product', '/admin/bulk-upload'],
     users: ['/admin/manage-users'],
     orders: ['/admin/orders'],
     offers: ['/admin/offers', '/create-coupon'],
     sliders: ['/admin/sliders', '/admin/manage-sliders'],
     coupons: ['/admin/add-coupon', '/admin/manage-coupons'],
-    others: ['/admin/contact', '/admin/keywords' , 'admin/subscriberslist'],
+    others: ['/admin/contact', '/admin/keywords', 'admin/subscriberslist'],
     promotions: [
       '/admin/home-screen-promotion-category',
       '/admin/home-screen-create-promotion',
@@ -165,7 +164,6 @@ const Sidebar = ({ isCollapsed }) => {
                       {renderNavLink('/admin/feature-type', 'Feature Type')}
                       {renderNavLink('/admin/feature-set', 'Feature Set')}
                       {renderNavLink('/admin/feature-list', 'Feature List')}
-                      {renderNavLink('/admin/bulk-upload', 'Bulk Upload')}
                     </ul>
                   )}
                 </li>
@@ -214,6 +212,8 @@ const Sidebar = ({ isCollapsed }) => {
               <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
                 {renderNavLink('/admin/add-product', 'Add Product')}
                 {renderNavLink('/admin/manage-product', 'Manage Product')}
+                {renderNavLink('/admin/bulk-upload', 'Bulk Upload')}
+
               </ul>
             )}
           </li>

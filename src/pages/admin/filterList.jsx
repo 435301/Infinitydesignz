@@ -3,34 +3,35 @@ import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise } from 'react-icons/bs';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchFilterLists } from '../../redux/actions/filterListActions';
 
 const ManageFilterList = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+
+  const dispatch = useDispatch();
+  const { filterLists = [], loading, error } = useSelector((state) => state.filterLists);
+
+  useEffect(() => {
+    dispatch(fetchFilterLists());
+  }, [dispatch]);
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
 
-  const [filterItems, setFilterItems] = useState([
-    { id: 1, name: 'Pearl Features', count: 0 },
-    { id: 2, name: 'General', count: 1 },
-    { id: 3, name: 'Diamond Features', count: 2 },
-    { id: 4, name: 'Body & Design Features', count: 2 },
-    { id: 5, name: 'Additional Features', count: 2 },
-    { id: 6, name: 'Gold Features', count: 2 },
-    { id: 7, name: 'Important Note', count: 2 },
-    { id: 8, name: 'Chain Features', count: 2 },
-    { id: 9, name: 'In The Box', count: 0 },
-  ]);
-
-  useEffect(() => {
-    // Simulate API call if needed
-  }, []);
+  const filteredLists = filterLists.filter((item) => {
+    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter ? item.status === statusFilter : true;
+    return matchesSearch && matchesStatus;
+  });
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedRows(filterItems.map((item) => item.id));
+      setSelectedRows(filteredLists.map((item) => item.id));
     } else {
       setSelectedRows([]);
     }
@@ -69,27 +70,42 @@ const ManageFilterList = () => {
               <div className="card-block manage-btn">
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
-                    <div className="input-group">
-                      <input type="text" className="form-control" placeholder="Search By" />
-                    </div>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Search By"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                   </div>
                   <div className="col-md-3">
-                    <select className="form-control">
+                    <select
+                      className="form-control"
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                    >
                       <option value="">- Select Status -</option>
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
                     </select>
                   </div>
                   <div className="col-md-2 d-flex gap-2">
-                    <button className="btn btn-danger">
+                    <button className="btn btn-danger" onClick={() => dispatch(fetchFilterLists())}>
                       <BsSearch />
                     </button>
-                    <button className="btn btn-success">
+                    <button
+                      className="btn btn-success"
+                      onClick={() => {
+                        setSearchTerm('');
+                        setStatusFilter('');
+                        dispatch(fetchFilterLists());
+                      }}
+                    >
                       <BsArrowClockwise />
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
-                    <button className="btn btn-primary">+ Create Filter Set</button>
+                    <button className="btn btn-primary">+ Create Filter List</button>
                   </div>
                 </div>
               </div>
@@ -99,16 +115,18 @@ const ManageFilterList = () => {
             <div className="card">
               <div className="card-block">
                 <div className="row mb-3">
-                  <div className="col-lg-6">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
-                      <h3>Accessories</h3>
-                      <span
-                        className="badge"
-                        style={{ backgroundColor: '#0da79e', fontSize: '16px', padding: '8px 12px' }}
-                      >
-                        {filterItems.length}
-                      </span>
-                    </div>
+                  <div className="col-lg-6 d-flex align-items-center">
+                    <h3 className="me-2">Accessories</h3>
+                    <span
+                      className="badge"
+                      style={{
+                        backgroundColor: '#0da79e',
+                        fontSize: '16px',
+                        padding: '8px 12px',
+                      }}
+                    >
+                      {filteredLists.length}
+                    </span>
                   </div>
                   <div className="col-md-6 text-end pt">
                     <button className="btn btn-success me-1">Active</button>
@@ -118,44 +136,48 @@ const ManageFilterList = () => {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-                  {filterItems.map((item) => (
-                    <div
-                      key={item.id}
-                      style={{
-                        backgroundColor: '#2ccfc4',
-                        color: '#fff',
-                        padding: '10px 15px',
-                        marginBottom: '10px',
-                        flex: '0 0 32%',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        borderRadius: '4px',
-                      }}
-                    >
-                      <div>
-                        <input
-                          type="checkbox"
-                          checked={selectedRows.includes(item.id)}
-                          onChange={() => handleRowCheckboxChange(item.id)}
-                          style={{ marginRight: '10px' }}
-                        />
-                        {item.name}
-                      </div>
-                      <span
-                        className="badge"
+                <div className="d-flex flex-wrap justify-content-between">
+                  {loading ? (
+                    <p>Loading...</p>
+                  ) : (
+                    filteredLists.map((item) => (
+                      <div
+                        key={item.id}
                         style={{
-                          backgroundColor: '#fff',
-                          color: '#000',
-                          fontSize: '14px',
-                          padding: '5px 10px',
+                          backgroundColor: '#2ccfc4',
+                          color: '#fff',
+                          padding: '10px 15px',
+                          marginBottom: '10px',
+                          flex: '0 0 32%',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          borderRadius: '4px',
                         }}
                       >
-                        {item.count}
-                      </span>
-                    </div>
-                  ))}
+                        <div>
+                          <input
+                            type="checkbox"
+                            checked={selectedRows.includes(item.id)}
+                            onChange={() => handleRowCheckboxChange(item.id)}
+                            style={{ marginRight: '10px' }}
+                          />
+                          {item.name}
+                        </div>
+                        <span
+                          className="badge"
+                          style={{
+                            backgroundColor: '#fff',
+                            color: '#000',
+                            fontSize: '14px',
+                            padding: '5px 10px',
+                          }}
+                        >
+                          {item.count}
+                        </span>
+                      </div>
+                    ))
+                  )}
                 </div>
 
                 <button
@@ -173,7 +195,6 @@ const ManageFilterList = () => {
                 </button>
               </div>
             </div>
-
           </div>
         </div>
       </div>
