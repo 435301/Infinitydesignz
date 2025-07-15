@@ -5,7 +5,7 @@ import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise, BsEye, BsPencilSquare, BsTrash } from 'react-icons/bs';
 import AddFeatureSetModal from '../../components/addFeatureSetModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteFeatureSet, fetchFeatureSets } from '../../redux/actions/featureSetAction';
+import { deleteFeatureSet, fetchFeatureSets, updateFeatureSetPriority } from '../../redux/actions/featureSetAction';
 import PaginationComponent from '../../includes/pagination';
 import EditFeatureSetModal from '../../components/editFeatureSetModal';
 import DeleteModal from '../../modals/deleteModal';
@@ -25,6 +25,7 @@ const ManageFeatureSet = () => {
   const [featureSetToDelete, setFeatureSetToDelete] = useState(null);
   const [viewModalVisible, setViewModalVisible] = useState(false);
   const [viewFeatureSet, setViewFeatureSet] = useState(null);
+  const [editedPriorities, setEditedPriorities] = useState({});
 
 
   const handleToggleSidebar = (collapsed) => {
@@ -188,12 +189,40 @@ const ManageFeatureSet = () => {
                               </button>
 
                             </div>
-                            <span className="badge ms-2">{item.priority}</span>
+                            {selectedRows.includes(item.id) ? (
+                              <input
+                                type="number"
+                                value={editedPriorities[item.id] ?? item.priority}
+                                onChange={(e) =>
+                                  setEditedPriorities((prev) => ({
+                                    ...prev,
+                                    [item.id]: e.target.value
+                                  }))
+                                }
+                                className="form-control"
+                                style={{ width: '50px' }}
+                              />
+                            ) : (
+                              <span className="badge ms-2">{item.priority}</span>
+                            )}
                           </div>
 
                         ))}
                       </div>
-                      <button className="btn btn-primary mt-3">Set Priority</button>
+                      <button className="btn btn-primary mt-3"
+                        onClick={async () => {
+                          for (let id of selectedRows) {
+                            if (editedPriorities[id] !== undefined) {
+                              await dispatch(updateFeatureSetPriority({
+                                id,
+                                priority: parseInt(editedPriorities[id])
+                              }));
+                            }
+                          }
+                          dispatch(fetchFeatureSets());
+                          setEditedPriorities({});
+                          setSelectedRows([]);
+                        }}>Set Priority</button>
 
                     </div>
                   ))}

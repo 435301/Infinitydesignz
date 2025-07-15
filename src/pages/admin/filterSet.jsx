@@ -4,7 +4,7 @@ import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteFilterSet, fetchFilterSets } from '../../redux/actions/filterSetAction';
+import { deleteFilterSet, fetchFilterSets, updateFilterSetPriority } from '../../redux/actions/filterSetAction';
 import PaginationComponent from '../../includes/pagination';
 import AddFilterSetModal from '../../components/addFilterSetModal';
 import EditFilterSetModal from '../../components/editFilterSetModal';
@@ -24,6 +24,8 @@ const ManageFilterSet = () => {
   const [filterSetToDelete, setFilterSetToDelete] = useState(null);
   const [viewModalVisible, setViewModalVisible] = useState(false);
   const [viewFilterSet, setViewFilterSet] = useState(null);
+  const [editedPriorities, setEditedPriorities] = useState({});
+
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -182,28 +184,59 @@ const ManageFilterSet = () => {
                               </button>
 
                             </div>
-                            <span className="badge ms-2">{item.priority}</span>
+                            {selectedRows.includes(item.id) ? (
+                              <input
+                                type="number"
+                                value={editedPriorities[item.id] ?? item.priority}
+                                onChange={(e) =>
+                                  setEditedPriorities((prev) => ({
+                                    ...prev,
+                                    [item.id]: e.target.value
+                                  }))
+                                }
+                                className="form-control"
+                                style={{ width: '50px' }}
+                              />
+                            ) : (
+                              <span className="badge ms-2">{item.priority}</span>
+                            )}
+
                           </div>
 
                         ))}
                       </div>
+                      <button
+                        className="btn"
+                        style={{
+                          backgroundColor: '#0da79e',
+                          color: '#fff',
+                          border: 'none',
+                          padding: '10px 20px',
+                          fontSize: '16px',
+                          marginTop: '20px',
+                        }}
+                        onClick={async () => {
+                          for (let id of selectedRows) {
+                            if (editedPriorities[id] !== undefined) {
+                              await dispatch(updateFilterSetPriority({
+                                id,
+                                priority: parseInt(editedPriorities[id])
+                              }));
+                            }
+                          }
+                          dispatch(fetchFilterSets());
+                          setEditedPriorities({});
+                          setSelectedRows([]);
+                        }}
+                      >
+                        Change Priority
+                      </button>
+
                     </div>
                   ))}
                 </div>
 
-                <button
-                  className="btn"
-                  style={{
-                    backgroundColor: '#0da79e',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '10px 20px',
-                    fontSize: '16px',
-                    marginTop: '20px',
-                  }}
-                >
-                  Set Priority
-                </button>
+
               </div>
             </div>
             <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />

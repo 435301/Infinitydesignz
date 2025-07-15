@@ -5,7 +5,7 @@ import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise, BsEye, BsPencilSquare, BsTrash } from 'react-icons/bs';
 import AddFeatureListModal from '../../components/addFeatureListModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteFeatureList, fetchFeatureLists } from '../../redux/actions/featureListAction';
+import { deleteFeatureList, fetchFeatureLists, updateFeatureListPriority } from '../../redux/actions/featureListAction';
 import { fetchFeatureTypes } from '../../redux/actions/featureTypeAction';
 import PaginationComponent from '../../includes/pagination';
 import EditFeatureListModal from '../../components/editFeatureListModal';
@@ -19,6 +19,7 @@ const ManageFeatureList = () => {
   const { featureTypes = [] } = useSelector((state) => state.featureTypes || {});
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
@@ -26,7 +27,9 @@ const ManageFeatureList = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [featureListToDelete, setFeatureListToDelete] = useState(null);
   const [viewModalVisible, setViewModalVisible] = useState(false);
-  const[viewFeatureList, setviewFeatureList] = useState(null);
+  const [viewFeatureList, setviewFeatureList] = useState(null);
+  const [editedPriorities, setEditedPriorities] = useState({});
+
 
   useEffect(() => {
     dispatch(fetchFeatureLists());
@@ -40,6 +43,12 @@ const ManageFeatureList = () => {
   const handleCheckboxChange = (id) => {
     setSelectedItems((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+   const handleRowCheckboxChange = (id) => {
+    setSelectedRows((prev) =>
+      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
     );
   };
 
@@ -186,8 +195,8 @@ const ManageFeatureList = () => {
                           <div>
                             <input
                               type="checkbox"
-                              checked={selectedItems.includes(feature.id)}
-                              onChange={() => handleCheckboxChange(feature.id)}
+                              checked={selectedRows.includes(feature.id)}
+                              onChange={() => handleRowCheckboxChange(feature.id)}
                               className="me-2"
                             />
                             {feature.label}
@@ -205,12 +214,27 @@ const ManageFeatureList = () => {
                             }}>
                               <BsPencilSquare />
                             </button>
-                            <button className="btn btn-sm btn-outline-danger" title="Delete" onClick={()=> handleDeleteClick(feature.id)}  >
+                            <button className="btn btn-sm btn-outline-danger" title="Delete" onClick={() => handleDeleteClick(feature.id)}  >
                               <BsTrash />
                             </button>
 
                           </div>
-                          <span className="badge bg-white text-dark">{feature.priority}</span>
+                          {selectedRows.includes(feature.id) ? (
+                            <input
+                              type="number"
+                              value={editedPriorities[feature.id] ?? feature.priority}
+                              onChange={(e) =>
+                                setEditedPriorities((prev) => ({
+                                  ...prev,
+                                  [feature.id]: e.target.value
+                                }))
+                              }
+                              className="form-control"
+                              style={{ width: '50px' }}
+                            />
+                          ) : (
+                            <span className="badge ms-2">{feature.priority}</span>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -223,6 +247,19 @@ const ManageFeatureList = () => {
                         border: 'none',
                         padding: '10px 20px',
                         fontSize: '16px',
+                      }}
+                      onClick={async () => {
+                        for (let id of selectedRows) {
+                          if (editedPriorities[id] !== undefined) {
+                            await dispatch(updateFeatureListPriority({
+                              id,
+                              priority: parseInt(editedPriorities[id])
+                            }));
+                          }
+                        }
+                        dispatch(fetchFeatureLists());
+                        setEditedPriorities({});
+                        setSelectedRows([]);
                       }}
                     >
                       Set Priority
@@ -242,7 +279,7 @@ const ManageFeatureList = () => {
               />
             )}
             {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
-            {viewModalVisible && <ViewFeatureListModal show={viewModalVisible} onClose={()=> setViewModalVisible(false)} featureList={viewFeatureList} />}
+            {viewModalVisible && <ViewFeatureListModal show={viewModalVisible} onClose={() => setViewModalVisible(false)} featureList={viewFeatureList} />}
 
           </div>
         </div>

@@ -109,4 +109,18 @@ export const deleteFeatureList = (id) => async (dispatch) => {
   }
 };
 
+export const updateFeatureListPriority = ({ id, priority }) => async (dispatch) => {
+  try {
+    const token = localStorage.getItem('token');
+    await axios.patch(`${BASE_URL}/feature-lists/${id}`, { priority }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
 
+    dispatch(fetchFeatureLists()); 
+  } catch (error) {
+    console.error('Failed to update priority', error);
+  }
+};

@@ -110,4 +110,18 @@ export const deleteFilterSet = (id) => async (dispatch) => {
   }
 };
 
+export const updateFilterSetPriority = ({ id, priority }) => async (dispatch) => {
+  try {
+    const token = localStorage.getItem('token');
+    await axios.patch(`${BASE_URL}/filter-sets/${id}`, { priority }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
 
+    dispatch(fetchFilterSets()); 
+  } catch (error) {
+    console.error('Failed to update priority', error);
+  }
+};

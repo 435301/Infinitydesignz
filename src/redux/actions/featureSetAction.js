@@ -133,3 +133,20 @@ export const bulkUpdateFeatureTypeStatus = (ids,status) => async (dispatch) => {
     toast.error(error?.response?.data?.message || 'Failed to update status');
   }
 };
+
+
+export const updateFeatureSetPriority = ({ id, priority }) => async (dispatch) => {
+  try {
+    const token = localStorage.getItem('token');
+    await axios.patch(`${BASE_URL}/feature-sets/${id}`, { priority }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    dispatch(fetchFeatureSets()); 
+  } catch (error) {
+    console.error('Failed to update priority', error);
+  }
+};
