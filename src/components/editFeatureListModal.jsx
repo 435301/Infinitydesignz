@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BsPlusCircle, BsDashCircle } from 'react-icons/bs';
-import { addFeatureList } from '../redux/actions/featureListAction';
+import { addFeatureList, editFeatureList } from '../redux/actions/featureListAction';
 import { fetchFeatureSets } from '../redux/actions/featureSetAction';
 import { fetchFeatureTypes } from '../redux/actions/featureTypeAction';
 
-const AddFeatureListModal = ({ show, onClose }) => {
+const EditFeatureListModal = ({ show, onClose, featureList }) => {
     const dispatch = useDispatch();
     const { featureSets = [] } = useSelector((state) => state.featureSets);
     const { featureTypes = [] } = useSelector((state) => state.featureTypes);
@@ -20,6 +20,20 @@ const AddFeatureListModal = ({ show, onClose }) => {
         dispatch(fetchFeatureSets());
         dispatch(fetchFeatureTypes());
     }, [dispatch]);
+
+    useEffect(() => {
+        if (featureList) {
+            setFormFields([{ label: featureList.label || '', priority: featureList.priority || 1 }]);
+            setFeatureSetId(featureList.featureSetId?.toString() || '');
+            setStatus(featureList.status ?? true);
+
+            // Derive featureTypeId from nested featureSet
+            if (featureList.featureSet?.featureTypeId) {
+                setFeatureTypeId(featureList.featureSet.featureTypeId.toString());
+            }
+        }
+    }, [featureList]);
+
 
     const validate = () => {
         const newErrors = {};
@@ -55,7 +69,8 @@ const AddFeatureListModal = ({ show, onClose }) => {
 
         try {
             for (let field of formFields) {
-                await dispatch(addFeatureList({
+                await dispatch(editFeatureList({
+                    id:featureList.id,
                     label: field.label,
                     priority: Number(field.priority),
                     status: status,
@@ -118,7 +133,7 @@ const AddFeatureListModal = ({ show, onClose }) => {
                                 )}
                             </div>
 
-           
+
                             {formFields.map((field, index) => (
                                 <div className="mb-3 d-flex align-items-center gap-2" key={index}>
                                     <input
@@ -180,4 +195,4 @@ const AddFeatureListModal = ({ show, onClose }) => {
     );
 };
 
-export default AddFeatureListModal;
+export default EditFeatureListModal;

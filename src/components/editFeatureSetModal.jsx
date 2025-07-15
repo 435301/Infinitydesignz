@@ -12,6 +12,8 @@ const EditFeatureSetModal = ({ show, onClose, featureSet }) => {
     const [featureTypesInput, setFeatureTypesInput] = useState([{ title: '', priority: '' }]);
     const [selectedFeatureTypeId, setSelectedFeatureTypeId] = useState('');
     const [errors, setErrors] = useState({});
+    const [status, setStatus] = useState(true);
+
 
     useEffect(() => {
         dispatch(fetchFeatureTypes());
@@ -49,6 +51,7 @@ const EditFeatureSetModal = ({ show, onClose, featureSet }) => {
             setSelectedFeatureTypeId(
                 featureSet?.featureType?.id?.toString() || ''
             );
+            setStatus(featureSet.status ?? true);
         }
     }, [featureSet, show]);
 
@@ -120,7 +123,8 @@ const EditFeatureSetModal = ({ show, onClose, featureSet }) => {
                     title: item?.title,
                     featureTypeId: Number(selectedFeatureTypeId),
                     priority: Number(item.priority),
-                    status: false,
+                    status: status,
+
                 }
                 console.log('Payload being sent:', payload);
                 await dispatch(editFeatureSet(payload));
@@ -128,6 +132,7 @@ const EditFeatureSetModal = ({ show, onClose, featureSet }) => {
             onClose();
             setFeatureTypesInput([{ title: '', priority: '' }]);
             setSelectedFeatureTypeId('');
+            setStatus(true);
         } catch (err) {
             setErrors({
                 general: err?.response?.data?.message || 'Something went wrong.',
@@ -215,7 +220,18 @@ const EditFeatureSetModal = ({ show, onClose, featureSet }) => {
                                 </div>
                             ))}
 
-
+                            <div className="form-check form-switch mt-3">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    checked={status}
+                                    onChange={() => setStatus(!status)}
+                                    id="statusSwitch"
+                                />
+                                <label className="form-check-label" htmlFor="statusSwitch">
+                                    Status: {status ? 'Active' : 'Inactive'}
+                                </label>
+                            </div>
 
                             {errors.general && (
                                 <div className="text-danger text-center mt-2">{errors.general}</div>

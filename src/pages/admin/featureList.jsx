@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
-import { BsSearch, BsArrowClockwise } from 'react-icons/bs';
+import { BsSearch, BsArrowClockwise, BsEye, BsPencilSquare, BsTrash } from 'react-icons/bs';
 import AddFeatureListModal from '../../components/addFeatureListModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchFeatureLists } from '../../redux/actions/featureListAction';
+import { deleteFeatureList, fetchFeatureLists } from '../../redux/actions/featureListAction';
 import { fetchFeatureTypes } from '../../redux/actions/featureTypeAction';
 import PaginationComponent from '../../includes/pagination';
+import EditFeatureListModal from '../../components/editFeatureListModal';
+import DeleteModal from '../../modals/deleteModal';
+import ViewFeatureListModal from '../../modals/viewFeatureListModal';
 
 const ManageFeatureList = () => {
   const dispatch = useDispatch();
@@ -18,6 +21,12 @@ const ManageFeatureList = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedFeatureList, setSelectedFeatureList] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [featureListToDelete, setFeatureListToDelete] = useState(null);
+  const [viewModalVisible, setViewModalVisible] = useState(false);
+  const[viewFeatureList, setviewFeatureList] = useState(null);
 
   useEffect(() => {
     dispatch(fetchFeatureLists());
@@ -89,7 +98,16 @@ const ManageFeatureList = () => {
     return acc;
   }, {});
 
+  const handleDeleteClick = (id) => {
+    setFeatureListToDelete(id);
+    setShowDeleteModal(true);
+  };
 
+  const handleDelete = async () => {
+    await dispatch(deleteFeatureList(featureListToDelete));
+    setShowDeleteModal(false);
+    setFeatureListToDelete(null);
+  };
 
 
   return (
@@ -121,11 +139,11 @@ const ManageFeatureList = () => {
                   <div className="col-md-3">
                     <input type="text" className="form-control" placeholder="Search By Title" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                   </div>
-                  
+
                   <div className="col-md-2 d-flex gap-2">
-                    
-                    <button className="btn btn-success">
-                      <BsArrowClockwise onClick={()=>setSearchTerm('')}/>
+
+                    <button className="btn btn-success" onClick={() => setSearchTerm('')}>
+                      <BsArrowClockwise />
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
@@ -174,6 +192,24 @@ const ManageFeatureList = () => {
                             />
                             {feature.label}
                           </div>
+                          <div className="d-flex gap-2">
+                            <button className="btn btn-sm " title="View" onClick={() => {
+                              setviewFeatureList(feature);
+                              setViewModalVisible(true)
+                            }}>
+                              <BsEye />
+                            </button>
+                            <button className="btn btn-sm btn-outline-primary" title="Edit" onClick={() => {
+                              setSelectedFeatureList(feature);
+                              setShowEditModal(true);
+                            }}>
+                              <BsPencilSquare />
+                            </button>
+                            <button className="btn btn-sm btn-outline-danger" title="Delete" onClick={()=> handleDeleteClick(feature.id)}  >
+                              <BsTrash />
+                            </button>
+
+                          </div>
                           <span className="badge bg-white text-dark">{feature.priority}</span>
                         </div>
                       ))}
@@ -198,6 +234,15 @@ const ManageFeatureList = () => {
             </div>
             {showAddModal && <AddFeatureListModal show={showAddModal} onClose={() => setShowAddModal(false)} />}
             <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            {showEditModal && (
+              <EditFeatureListModal
+                show={showEditModal}
+                onClose={() => setShowEditModal(false)}
+                featureList={selectedFeatureList}
+              />
+            )}
+            {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+            {viewModalVisible && <ViewFeatureListModal show={viewModalVisible} onClose={()=> setViewModalVisible(false)} featureList={viewFeatureList} />}
 
           </div>
         </div>
