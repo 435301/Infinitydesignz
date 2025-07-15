@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
-import { BsSearch, BsArrowClockwise } from 'react-icons/bs';
+import { BsSearch, BsArrowClockwise, BsPencilSquare } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchFilterSets } from '../../redux/actions/filterSetAction';
 import PaginationComponent from '../../includes/pagination';
+import AddFilterSetModal from '../../components/addFilterSetModal';
+import EditFilterSetModal from '../../components/editFilterSetModal';
 
 const ManageFilterSet = () => {
   const dispatch = useDispatch();
@@ -13,7 +15,9 @@ const ManageFilterSet = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-
+  const[showModal, setShowModal] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const[selectedFilterSet, setSelectedFilterSet] = useState(null);
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -106,7 +110,7 @@ const ManageFilterSet = () => {
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
-                    <button className="btn btn-primary">+ Create Filter Set</button>
+                    <button className="btn btn-primary" onClick={()=> setShowModal(true)}>+ Create Filter Set</button>
                   </div>
                 </div>
               </div>
@@ -148,14 +152,14 @@ const ManageFilterSet = () => {
                                                   setViewModalVisible(true)
                                                 }}>
                                                   <BsEye />
-                                                </button>
+                                                </button> */}
                                                 <button className="btn btn-sm btn-outline-primary" title="Edit"  onClick={() => {
-                                                  setSelectedFeatureSet(item);
+                                                  setSelectedFilterSet(item);
                                                   setEditModalVisible(true);
                                                 }}>
                                                   <BsPencilSquare />
                                                 </button>
-                                                <button className="btn btn-sm btn-outline-danger" title="Delete"  onClick={() => handleDeleteClick(item.id)}  >
+                                                {/* <button className="btn btn-sm btn-outline-danger" title="Delete"  onClick={() => handleDeleteClick(item.id)}  >
                                                   <BsTrash />
                                                 </button> */}
 
@@ -185,7 +189,8 @@ const ManageFilterSet = () => {
               </div>
             </div>
             <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-
+            {showModal && <AddFilterSetModal show={showModal} onClose={() => setShowModal(false)} />}
+            {editModalVisible && <EditFilterSetModal show={editModalVisible} onClose={()=> setEditModalVisible(false)} filterSet={selectedFilterSet}/>}
           </div>
         </div>
       </div>
