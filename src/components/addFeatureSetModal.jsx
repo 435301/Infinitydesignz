@@ -12,6 +12,8 @@ const AddFeatureSetModal = ({ show, onClose }) => {
     const [featureTypesInput, setFeatureTypesInput] = useState([{ title: '', priority: '' }]);
     const [selectedFeatureTypeId, setSelectedFeatureTypeId] = useState('');
     const [errors, setErrors] = useState({});
+    const [status, setStatus] = useState(true);
+
 
     useEffect(() => {
         dispatch(fetchFeatureTypes());
@@ -82,13 +84,14 @@ const AddFeatureSetModal = ({ show, onClose }) => {
                     title: item.title,
                     featureTypeId: Number(selectedFeatureTypeId),
                     priority: Number(item.priority),
-                    status: false,
+                    status: status,
+
                 }
                 console.log('Payload being sent:', payload);
                 await dispatch(addFeatureSet(payload));
             }
             onClose();
-            setFeatureTypesInput([{ title: '', priority:'' }]);
+            setFeatureTypesInput([{ title: '', priority: '' }]);
             setSelectedFeatureTypeId('');
         } catch (err) {
             setErrors({
@@ -176,6 +179,18 @@ const AddFeatureSetModal = ({ show, onClose }) => {
                                     </div>
                                 </div>
                             ))}
+                            <div className="form-check form-switch mt-3">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    checked={status}
+                                    onChange={() => setStatus(!status)}
+                                    id="statusSwitch"
+                                />
+                                <label className="form-check-label" htmlFor="statusSwitch">
+                                    Status: {status ? 'Active' : 'Inactive'}
+                                </label>
+                            </div>
 
 
                             {errors.general && (
