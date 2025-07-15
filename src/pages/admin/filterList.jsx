@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
-import { BsSearch, BsArrowClockwise } from 'react-icons/bs';
+import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchFilterLists } from '../../redux/actions/filterListActions';
+import { deleteFilterList, fetchFilterLists } from '../../redux/actions/filterListActions';
 import { fetchFilterTypes } from '../../redux/actions/filterTypeAction';
 import PaginationComponent from '../../includes/pagination';
+import AddFilterListModal from '../../components/addFilterListModal';
+import EditFilterListModal from '../../components/editFilterListModal';
+import DeleteModal from '../../modals/deleteModal';
+import ViewFilterListModal from '../../modals/viewFilterListModal';
 
 const ManageFilterList = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -14,6 +18,13 @@ const ManageFilterList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
+  const[showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedFilterList, setSelectedFilterList] = useState(null);
+   const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [filterListToDelete, setFilterListToDelete] = useState(null);
+    const[viewModalVisible, setViewModalVisible] = useState(false);
+    const[viewFilterList, setViewFilterList] = useState(null);
 
   const dispatch = useDispatch();
   const { filterLists = [] } = useSelector((state) => state.filterLists);
@@ -91,6 +102,17 @@ const ManageFilterList = () => {
     );
   };
 
+   const handleDeleteClick = (id) => {
+      setFilterListToDelete(id);
+      setShowDeleteModal(true);
+    };
+  
+    const handleDelete = async () => {
+      await dispatch(deleteFilterList(filterListToDelete));
+      setShowDeleteModal(false);
+      setFilterListToDelete(null);
+    };
+
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
@@ -149,7 +171,7 @@ const ManageFilterList = () => {
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
-                    <button className="btn btn-primary">+ Create Filter List</button>
+                    <button className="btn btn-primary" onClick={()=> setShowAddModal(true)}>+ Create Filter List</button>
                   </div>
                 </div>
               </div>
@@ -197,21 +219,21 @@ const ManageFilterList = () => {
                               {filter.label}
                             </div>
                             <div className="d-flex gap-2">
-                              {/* <button className="btn btn-sm " title="View" onClick={() => {
-                                setviewFeatureList(feature);
-                                setViewModalVisible(true)
-                              }}>
+                              <button className="btn btn-sm " title="View" onClick={() => {
+                              setViewFilterList(filter);
+                              setViewModalVisible(true)
+                            }}>
                                 <BsEye />
                               </button>
                               <button className="btn btn-sm btn-outline-primary" title="Edit" onClick={() => {
-                                setSelectedFeatureList(feature);
+                                setSelectedFilterList(filter);
                                 setShowEditModal(true);
                               }}>
                                 <BsPencilSquare />
                               </button>
-                              <button className="btn btn-sm btn-outline-danger" title="Delete" onClick={() => handleDeleteClick(feature.id)}  >
+                              <button className="btn btn-sm btn-outline-danger" title="Delete" onClick={() => handleDeleteClick(filter.id)}  >
                                 <BsTrash />
-                              </button> */}
+                              </button>
 
                             </div>
                             <span className="badge bg-white text-dark">{filter.priority}</span>
@@ -237,6 +259,10 @@ const ManageFilterList = () => {
               </div>
             </div>
              <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            {showAddModal && <AddFilterListModal show={showAddModal} onClose={() => setShowAddModal(false)} />}
+            {showEditModal && <EditFilterListModal show={showEditModal} onClose={()=> setShowEditModal(false)} filterList={selectedFilterList}/>}
+            {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+            {viewModalVisible && <ViewFilterListModal show={viewModalVisible} onClose={()=> setViewModalVisible(false)} filterList={viewFilterList}   />}
           </div>
         </div>
       </div>
