@@ -1990,6 +1990,14 @@ select.form-control:not([size]):not([multiple]) {
   border-radius: 4px;
 }
 
+.image-previews img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
 .multiple-image-preview {
   display: flex;
   flex-wrap: wrap;
@@ -2015,6 +2023,33 @@ select.form-control:not([size]):not([multiple]) {
   text-align: center;
   cursor: pointer;
   font-size: 16px;
+}
+
+/* .image-previews {
+    position: relative;
+    width: 118px;
+    height: 60px;
+    background-color: rgb(249, 249, 249);
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(221, 221, 221);
+    border-image: initial;
+    border-radius: 4px;
+    overflow: hidden;
+} */
+.modal-body .image-previews img {
+  width: 74px;
+  height: 61px;
+  object-fit: fill;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.image-preview .btn-danger {
+    background-color: #f8d7da;
+    color: #dc3545;
+    border: none;
+    font-size: 14px;
+    padding: 3px 12px;
 }
 
 small a {
@@ -2118,4 +2153,5 @@ small a {
 
 .feature-row .btn-outline-primary {
   --bs-btn-color: #ffffff;
-  --bs-btn-border-color: #ffffff;}
+  --bs-btn-border-color: #ffffff;
+}

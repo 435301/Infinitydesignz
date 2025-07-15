@@ -186,9 +186,9 @@ const ImageUpload = ({ label, image, onChange, onRemove }) => (
     <label className="form-label">{label}</label>
     <input type="file" className="form-control" accept="image/*" onChange={onChange} />
     {image && (
-      <div className="image-preview mt-2">
+      <div className="image-previews mt-2">
         <img src={image.preview} alt="Preview" width={100} height={100} className="rounded" />
-        <button type="button" className="btn btn-sm btn-danger mt-1" onClick={onRemove}>×</button>
+        <button type="button" className="btn btn-sm btn-danger mt-1 mx-2" onClick={onRemove}>×</button>
       </div>
     )}
   </div>

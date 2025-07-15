@@ -21,10 +21,10 @@ const ManageFeatureSet = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFeatureSet, setSelectedFeatureSet] = useState('');
   const [editModalVisible, setEditModalVisible] = useState(false);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [featureSetToDelete, setFeatureSetToDelete] = useState(null);
-    const [viewModalVisible, setViewModalVisible] = useState(false);
-const [viewFeatureSet, setViewFeatureSet] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [featureSetToDelete, setFeatureSetToDelete] = useState(null);
+  const [viewModalVisible, setViewModalVisible] = useState(false);
+  const [viewFeatureSet, setViewFeatureSet] = useState(null);
 
 
   const handleToggleSidebar = (collapsed) => {
@@ -36,7 +36,7 @@ const [viewFeatureSet, setViewFeatureSet] = useState(null);
   }, [dispatch]);
 
   const filteredFeatureSets = (featureSets || [])?.filter((featureSet) => {
-    if(!featureSet && !featureSet?.title) return false
+    if (!featureSet && !featureSet?.title) return false
     const title = featureSet.title.toLowerCase();
     const matchesSearch = title.includes(searchTerm.toLowerCase());
     return matchesSearch;
@@ -83,16 +83,16 @@ const [viewFeatureSet, setViewFeatureSet] = useState(null);
     return acc;
   }, {});
 
-    const handleDeleteClick = (id) => {
-      setFeatureSetToDelete(id);
-      setShowDeleteModal(true);
-    };
-  
-    const handleDelete = async () => {
-      await dispatch(deleteFeatureSet(featureSetToDelete));
-      setShowDeleteModal(false);
-      setFeatureSetToDelete(null);
-    };
+  const handleDeleteClick = (id) => {
+    setFeatureSetToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleDelete = async () => {
+    await dispatch(deleteFeatureSet(featureSetToDelete));
+    setShowDeleteModal(false);
+    setFeatureSetToDelete(null);
+  };
 
 
   return (
@@ -183,7 +183,7 @@ const [viewFeatureSet, setViewFeatureSet] = useState(null);
                               }}>
                                 <BsPencilSquare />
                               </button>
-                              <button className="btn btn-sm btn-outline-danger" title="Delete"  onClick={() => handleDeleteClick(item.id)}  >
+                              <button className="btn btn-sm btn-outline-danger" title="Delete" onClick={() => handleDeleteClick(item.id)}  >
                                 <BsTrash />
                               </button>
 
@@ -193,6 +193,8 @@ const [viewFeatureSet, setViewFeatureSet] = useState(null);
 
                         ))}
                       </div>
+                      <button className="btn btn-primary mt-3">Set Priority</button>
+
                     </div>
                   ))}
 
@@ -200,14 +202,13 @@ const [viewFeatureSet, setViewFeatureSet] = useState(null);
 
 
 
-                <button className="btn btn-primary mt-3">Set Priority</button>
               </div>
             </div>
             <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
             {showModal && <AddFeatureSetModal show={showModal} onClose={() => setShowModal(false)} />}
             {editModalVisible && <EditFeatureSetModal show={editModalVisible} onClose={() => setEditModalVisible(false)} featureSet={selectedFeatureSet} />}
-              {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
-                {viewModalVisible && <ViewFeatureSetModal show={viewModalVisible} onClose={()=>setViewModalVisible(false)} featureSet={viewFeatureSet}/>}
+            {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+            {viewModalVisible && <ViewFeatureSetModal show={viewModalVisible} onClose={() => setViewModalVisible(false)} featureSet={viewFeatureSet} />}
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { editCategory } from '../redux/actions/categoryAction';
-import { toast } from 'react-toastify'
+import { toast } from 'react-toastify';
 import BASE_URL from '../config/config';
 
 const EditCategoryModal = ({ show, setShow, category }) => {
@@ -12,17 +12,22 @@ const EditCategoryModal = ({ show, setShow, category }) => {
   const [webIcon, setWebIcon] = useState(null);
   const [mainImage, setMainImage] = useState(null);
   const [status, setStatus] = useState(false);
-   const [errors, setErrors] = useState({});
-  // const BASE_URL = 'http://68.183.89.229:4005'
+  const [errors, setErrors] = useState({});
+
+  // ✅ Utility to safely build image URLs
+  const buildImageUrl = (path) => {
+    if (!path) return null;
+    return `${BASE_URL.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
+  };
 
   useEffect(() => {
     if (category) {
       setCategoryTitle(category.title || '');
-      setAppIcon(category.appIcon ? { file: null, preview: `${BASE_URL}${category.appIcon}` } : null);
-      setWebIcon(category.webImage ? { file: null, preview: `${BASE_URL}${category.webImage}` } : null);
-      setMainImage(category.mainImage ? { file: null, preview: `${BASE_URL}${category.mainImage}` } : null);
+      setAppIcon(category.appIcon ? { file: null, preview: buildImageUrl(category.appIcon) } : null);
+      setWebIcon(category.webImage ? { file: null, preview: buildImageUrl(category.webImage) } : null);
+      setMainImage(category.mainImage ? { file: null, preview: buildImageUrl(category.mainImage) } : null);
+      setStatus(!!category.status);
     }
-    setStatus(!!category.status);
   }, [category]);
 
   const handleFileChange = (setter) => (e) => {
@@ -31,18 +36,15 @@ const EditCategoryModal = ({ show, setShow, category }) => {
   };
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    if (name === 'status' && type === 'checkbox' ) {
-    setStatus(checked);
-  }
+    const { name, type, checked } = e.target;
+    if (name === 'status' && type === 'checkbox') {
+      setStatus(checked);
+    }
   };
-
-  console.log('Checkbox status:', status);
-
 
   const removeImage = (setter) => () => setter(null);
 
-   const validate = () => {
+  const validate = () => {
     const newErrors = {};
     if (!categoryTitle.trim()) {
       newErrors.categoryTitle = 'Category Title is required';
@@ -51,10 +53,9 @@ const EditCategoryModal = ({ show, setShow, category }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-    const handleTitleChange = (e) => {
+  const handleTitleChange = (e) => {
     const value = e.target.value;
     setCategoryTitle(value);
-
     if (errors.categoryTitle && value.trim()) {
       setErrors((prev) => ({ ...prev, categoryTitle: null }));
     }
@@ -62,7 +63,8 @@ const EditCategoryModal = ({ show, setShow, category }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if(!validate()) return
+    if (!validate()) return;
+
     const formData = new FormData();
     formData.append('title', categoryTitle);
     formData.append('status', status ? true : false);
@@ -74,8 +76,6 @@ const EditCategoryModal = ({ show, setShow, category }) => {
     toast.success('Category updated successfully!');
     setShow(false);
   };
-
-
 
   if (!show) return null;
 
@@ -96,22 +96,42 @@ const EditCategoryModal = ({ show, setShow, category }) => {
                   </label>
                   <input
                     type="text"
-                   className={`form-control ${errors.categoryTitle ? 'is-invalid' : ''}`}
+                    className={`form-control ${errors.categoryTitle ? 'is-invalid' : ''}`}
                     value={categoryTitle}
                     onChange={handleTitleChange}
-                    // required
                   />
-                   {errors.categoryTitle && (
+                  {errors.categoryTitle && (
                     <div className="invalid-feedback">{errors.categoryTitle}</div>
                   )}
                 </div>
 
-                <ImageUpload label="App Icon" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />
-                <ImageUpload label="Web Icon" image={webIcon} onChange={handleFileChange(setWebIcon)} onRemove={removeImage(setWebIcon)} />
-                <ImageUpload label="Main Image" image={mainImage} onChange={handleFileChange(setMainImage)} onRemove={removeImage(setMainImage)} />
+                <ImageUpload
+                  label="App Icon"
+                  image={appIcon}
+                  onChange={handleFileChange(setAppIcon)}
+                  onRemove={removeImage(setAppIcon)}
+                />
+                <ImageUpload
+                  label="Web Icon"
+                  image={webIcon}
+                  onChange={handleFileChange(setWebIcon)}
+                  onRemove={removeImage(setWebIcon)}
+                />
+                <ImageUpload
+                  label="Main Image"
+                  image={mainImage}
+                  onChange={handleFileChange(setMainImage)}
+                  onRemove={removeImage(setMainImage)}
+                />
 
                 <div className="form-check ps-4 m-4">
-                  <input className="form-check-input" type="checkbox" name="status" checked={status} onChange={handleChange} />
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    name="status"
+                    checked={status}
+                    onChange={handleChange}
+                  />
                   <label className="form-check-label">Active</label>
                 </div>
               </div>
@@ -132,9 +152,20 @@ const ImageUpload = ({ label, image, onChange, onRemove }) => (
     <label className="form-label">{label}</label>
     <input type="file" className="form-control" accept="image/*" onChange={onChange} />
     {image?.preview && (
-      <div className="image-preview mt-2">
-        <img src={image.preview} alt="Preview" width={100} height={100} className="rounded" />
-        <button type="button" className="btn btn-sm btn-danger mt-1" onClick={onRemove}>×</button>
+      <div className="image-previews mt-2">
+        <img
+          src={image.preview}
+          alt="Preview"
+          width={100}
+          height={100}
+          className="rounded border"
+          onError={(e) => {
+            e.target.src = '/default-image.jpg'; // Optional fallback
+          }}
+        />
+        <button type="button" className="btn btn-sm btn-danger mt-1 mx-2" onClick={onRemove}>
+          &times;
+        </button>
       </div>
     )}
   </div>
