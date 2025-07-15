@@ -5,10 +5,12 @@ import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise, BsEye, BsPencilSquare, BsTrash } from 'react-icons/bs';
 import AddFeatureListModal from '../../components/addFeatureListModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchFeatureLists } from '../../redux/actions/featureListAction';
+import { deleteFeatureList, fetchFeatureLists } from '../../redux/actions/featureListAction';
 import { fetchFeatureTypes } from '../../redux/actions/featureTypeAction';
 import PaginationComponent from '../../includes/pagination';
 import EditFeatureListModal from '../../components/editFeatureListModal';
+import DeleteModal from '../../modals/deleteModal';
+import ViewFeatureListModal from '../../modals/viewFeatureListModal';
 
 const ManageFeatureList = () => {
   const dispatch = useDispatch();
@@ -21,6 +23,10 @@ const ManageFeatureList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedFeatureList, setSelectedFeatureList] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [featureListToDelete, setFeatureListToDelete] = useState(null);
+  const [viewModalVisible, setViewModalVisible] = useState(false);
+  const[viewFeatureList, setviewFeatureList] = useState(null);
 
   useEffect(() => {
     dispatch(fetchFeatureLists());
@@ -92,7 +98,16 @@ const ManageFeatureList = () => {
     return acc;
   }, {});
 
+  const handleDeleteClick = (id) => {
+    setFeatureListToDelete(id);
+    setShowDeleteModal(true);
+  };
 
+  const handleDelete = async () => {
+    await dispatch(deleteFeatureList(featureListToDelete));
+    setShowDeleteModal(false);
+    setFeatureListToDelete(null);
+  };
 
 
   return (
@@ -179,8 +194,8 @@ const ManageFeatureList = () => {
                           </div>
                           <div className="d-flex gap-2">
                             <button className="btn btn-sm " title="View" onClick={() => {
-                              // setViewFeatureSet(item);
-                              // setViewModalVisible(true)
+                              setviewFeatureList(feature);
+                              setViewModalVisible(true)
                             }}>
                               <BsEye />
                             </button>
@@ -190,7 +205,7 @@ const ManageFeatureList = () => {
                             }}>
                               <BsPencilSquare />
                             </button>
-                            <button className="btn btn-sm btn-outline-danger" title="Delete"   >
+                            <button className="btn btn-sm btn-outline-danger" title="Delete" onClick={()=> handleDeleteClick(feature.id)}  >
                               <BsTrash />
                             </button>
 
@@ -226,6 +241,8 @@ const ManageFeatureList = () => {
                 featureList={selectedFeatureList}
               />
             )}
+            {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+            {viewModalVisible && <ViewFeatureListModal show={viewModalVisible} onClose={()=> setViewModalVisible(false)} featureList={viewFeatureList} />}
 
           </div>
         </div>

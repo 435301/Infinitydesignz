@@ -100,11 +100,11 @@ export const deleteFeatureList = (id) => async (dispatch) => {
       },
     });
 
-    dispatch({ type: 'DELETE_FEATURESET_SUCCESS', payload: id });
+    dispatch({ type: 'DELETE_FEATURELIST_SUCCESS', payload: id });
     dispatch(fetchFeatureLists(id));
-    toast.success('Feature Set deleted successfully!');
+    toast.success('Feature List deleted successfully!');
   } catch (error) {
-    toast.error(error?.response?.data?.message || 'Failed to delete Feature Set.');
+    toast.error(error?.response?.data?.message || 'Failed to delete Feature List.');
     console.error(error);
   }
 };
