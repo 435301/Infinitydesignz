@@ -1,48 +1,52 @@
-import React, { useState } from 'react';
-import { addFeatureTypes } from '../redux/actions/featureTypeAction';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { BsPlusCircle, BsDashCircle } from 'react-icons/bs';
+import { addFeatureList } from '../redux/actions/featureListAction';
+import { fetchFeatureSets } from '../redux/actions/featureSetAction';
+import { fetchFeatureTypes } from '../redux/actions/featureTypeAction';
 
 const AddFeatureListModal = ({ show, onClose }) => {
     const dispatch = useDispatch();
-
-    const [featureTypes, setFeatureTypes] = useState([{ name: '' }]);
+    const { featureSets = [] } = useSelector((state) => state.featureSets);
+    const { featureTypes = [] } = useSelector((state) => state.featureTypes);
+    // console.log('featureTypes',featureTypes)
+    const [formFields, setFormFields] = useState([{ label: '', priority: 1 }]);
+    const [featureSetId, setFeatureSetId] = useState('');
+    const [featureTypeId, setFeatureTypeId] = useState('');
+    const [status, setStatus] = useState(true);
     const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        dispatch(fetchFeatureSets());
+        dispatch(fetchFeatureTypes());
+    }, [dispatch]);
 
     const validate = () => {
         const newErrors = {};
-        featureTypes.forEach((field, index) => {
-            if (!field.name.trim()) {
-                newErrors[`name-${index}`] = 'Title is required';
+        if (!featureSetId) newErrors.featureSetId = 'Feature Set is required';
+        if (!featureTypeId) newErrors.featureTypeId = 'Feature Type is required';
+        formFields.forEach((field, index) => {
+            if (!field.label.trim()) {
+                newErrors[`label-${index}`] = 'Label is required';
             }
         });
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleInputChange = (index, value) => {
-        const updated = [...featureTypes];
-        updated[index].name = value;
-        setFeatureTypes(updated);
-
-        if (errors[`name-${index}`]) {
-            const updatedErrors = { ...errors };
-            delete updatedErrors[`name-${index}`];
-            setErrors(updatedErrors);
-        }
+    const handleInputChange = (index, key, value) => {
+        const updated = [...formFields];
+        updated[index][key] = value;
+        setFormFields(updated);
     };
 
     const handleAddField = () => {
-        setFeatureTypes([...featureTypes, { name: '' }]);
+        setFormFields([...formFields, { label: '', priority: 1 }]);
     };
 
     const handleRemoveField = (index) => {
-        const updated = featureTypes.filter((_, i) => i !== index);
-        setFeatureTypes(updated);
-
-        const updatedErrors = { ...errors };
-        delete updatedErrors[`name-${index}`];
-        setErrors(updatedErrors);
+        const updated = formFields.filter((_, i) => i !== index);
+        setFormFields(updated);
     };
 
     const handleSubmit = async (e) => {
@@ -50,15 +54,21 @@ const AddFeatureListModal = ({ show, onClose }) => {
         if (!validate()) return;
 
         try {
-            for (let item of featureTypes) {
-                await dispatch(addFeatureTypes({ name: item.name }));
+            for (let field of formFields) {
+                await dispatch(addFeatureList({
+                    label: field.label,
+                    priority: Number(field.priority),
+                    status: status,
+                    featureSetId: parseInt(featureSetId)
+                }));
             }
             onClose();
-            setFeatureTypes([{ name: '' }]);
+            setFormFields([{ label: '', priority: 1 }]);
+            setFeatureSetId('');
+            setFeatureTypeId('');
+            setStatus(true);
         } catch (err) {
-            setErrors({
-                general: err?.response?.data?.message || 'Something went wrong.',
-            });
+            setErrors({ general: err?.response?.data?.message || 'Something went wrong.' });
         }
     };
 
@@ -70,72 +80,91 @@ const AddFeatureListModal = ({ show, onClose }) => {
                 <div className="modal-content">
                     <form onSubmit={handleSubmit}>
                         <div className="modal-header">
-                            <h5 className="modal-title">Add Feature Types</h5>
+                            <h5 className="modal-title">Add Feature List</h5>
                             <button type="button" className="btn-close" onClick={onClose}></button>
                         </div>
                         <div className="modal-body">
-                            <div className="col-lg-4 mb-3">
-                                <label className="form-label">Feature Type<span className="text-danger">*</span></label>
+                            <div className="mb-3">
+                                <label className="form-label">Feature Type <span className="text-danger">*</span></label>
                                 <select
-                                    className={`form-control `}
-                                    // value={menu}
-                                    // onChange={handleMenuChange}
-                                // required
+                                    className={`form-control ${errors.featureTypeId ? 'is-invalid' : ''}`}
+                                    value={featureTypeId}
+                                    onChange={(e) => setFeatureTypeId(e.target.value)}
                                 >
-                                    <option value="">-- Select Parent Category --</option>
-                                   
+                                    <option value="">-- Select Feature Type --</option>
+                                    {featureTypes.map((fs) => (
+                                        <option key={fs.id} value={fs.id}>{fs.name}</option>
+                                    ))}
                                 </select>
-                                {errors.menu && (
-                                    <div className="invalid-feedback">{errors.menu}</div>
+                                {errors.featureTypeId && (
+                                    <div className="invalid-feedback">{errors.featureTypeId}</div>
                                 )}
                             </div>
-                            <div className="col-lg-4 mb-3">
-                                <label className="form-label">Feature Set<span className="text-danger">*</span></label>
+                            {/* Feature Set Dropdown */}
+                            <div className="mb-3">
+                                <label className="form-label">Feature Set <span className="text-danger">*</span></label>
                                 <select
-                                    className={`form-control `}
-                                    // value={menu}
-                                    // onChange={handleMenuChange}
-                                // required
+                                    className={`form-control ${errors.featureSetId ? 'is-invalid' : ''}`}
+                                    value={featureSetId}
+                                    onChange={(e) => setFeatureSetId(e.target.value)}
                                 >
-                                    <option value="">-- Select Parent Category --</option>
-                                   
+                                    <option value="">-- Select Feature Set --</option>
+                                    {featureSets.map((fs) => (
+                                        <option key={fs.id} value={fs.id}>{fs.title}</option>
+                                    ))}
                                 </select>
-                                {errors.menu && (
-                                    <div className="invalid-feedback">{errors.menu}</div>
+                                {errors.featureSetId && (
+                                    <div className="invalid-feedback">{errors.featureSetId}</div>
                                 )}
                             </div>
-                            {featureTypes.map((field, index) => (
-                                <div className="mb-3 d-flex align-items-center" key={index}>
+
+           
+                            {formFields.map((field, index) => (
+                                <div className="mb-3 d-flex align-items-center gap-2" key={index}>
                                     <input
-                                        className={`form-control ${errors[`name-${index}`] ? 'is-invalid' : ''}`}
+                                        className={`form-control ${errors[`label-${index}`] ? 'is-invalid' : ''}`}
                                         type="text"
-                                        placeholder="Title"
-                                        value={field.name}
-                                        onChange={(e) => handleInputChange(index, e.target.value)}
+                                        placeholder="Label"
+                                        value={field.label}
+                                        onChange={(e) => handleInputChange(index, 'label', e.target.value)}
                                     />
-                                    {featureTypes.length > 1 && (
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline-danger ms-2"
-                                            onClick={() => handleRemoveField(index)}
-                                        >
+                                    <input
+                                        className="form-control"
+                                        type="number"
+                                        placeholder="Priority"
+                                        value={field.priority}
+                                        onChange={(e) => handleInputChange(index, 'priority', e.target.value)}
+                                        style={{ maxWidth: '100px' }}
+                                    />
+                                    {formFields.length > 1 && (
+                                        <button type="button" className="btn btn-outline-danger" onClick={() => handleRemoveField(index)}>
                                             <BsDashCircle />
                                         </button>
                                     )}
-                                    {index === featureTypes.length - 1 && (
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline-primary ms-2"
-                                            onClick={handleAddField}
-                                        >
+                                    {index === formFields.length - 1 && (
+                                        <button type="button" className="btn btn-outline-primary" onClick={handleAddField}>
                                             <BsPlusCircle />
                                         </button>
                                     )}
-                                    {errors[`name-${index}`] && (
-                                        <div className="invalid-feedback d-block ms-2">{errors[`name-${index}`]}</div>
+                                    {errors[`label-${index}`] && (
+                                        <div className="invalid-feedback d-block ms-2">{errors[`label-${index}`]}</div>
                                     )}
                                 </div>
                             ))}
+
+                            <div className="form-check form-switch mt-3">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    checked={status}
+                                    onChange={() => setStatus(!status)}
+                                    id="statusSwitch"
+                                />
+                                <label className="form-check-label" htmlFor="statusSwitch">
+                                    Status: {status ? 'Active' : 'Inactive'}
+                                </label>
+                            </div>
+
                             {errors.general && (
                                 <div className="text-danger text-center mt-2">{errors.general}</div>
                             )}

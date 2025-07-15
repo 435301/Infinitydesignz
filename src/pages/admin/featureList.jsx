@@ -124,8 +124,8 @@ const ManageFeatureList = () => {
                   
                   <div className="col-md-2 d-flex gap-2">
                     
-                    <button className="btn btn-success">
-                      <BsArrowClockwise onClick={()=>setSearchTerm('')}/>
+                    <button className="btn btn-success" onClick={()=>setSearchTerm('')}>
+                      <BsArrowClockwise />
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
