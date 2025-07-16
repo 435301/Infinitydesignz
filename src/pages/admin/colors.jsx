@@ -18,61 +18,47 @@ import EditColorModal from '../../components/editColorModal';
 const ManageColors = () => {
   const dispatch = useDispatch();
   const { colors = [] } = useSelector((state) => state.colors || {});
-  console.log('colors', colors)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [ColorToDelete, setColorToDelete] = useState(null);
+  const [colorToDelete, setColorToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showColorModal, setShowColorModal] = useState('')
-  const [viewColor, setViewColor] = useState('')
+  const [showColorModal, setShowColorModal] = useState(false);
+  const [viewColor, setViewColor] = useState(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedColor, setSelectedColor] = useState(null);
-      const [selectedIds, setSelectedIds] = useState([]);
-      const[selectAll, setSelectAll] = useState(false)
-
-  const handleToggleSidebar = (collapsed) => {
-    setIsSidebarCollapsed(collapsed);
-  };
 
   useEffect(() => {
     dispatch(fetchColors());
   }, [dispatch]);
 
   const filteredColors = colors.filter((color) => {
-
-    const label = color.label.toLowerCase();
+    const label = color.label?.toLowerCase() || '';
     const matchesSearch = label.includes(searchTerm.toLowerCase());
-
     const matchesStatus = statusFilter
       ? (statusFilter === 'active' ? color.status === true : color.status === false)
       : true;
-
     return matchesSearch && matchesStatus;
   });
 
-
-  const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
-  const indexOfLastRow = currentPage * rowsPerPage;
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = filteredColors.slice(indexOfFirstRow, indexOfLastRow);
+  const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(filteredColors.length / rowsPerPage);
+  const currentRows = filteredColors.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+
+  const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
 
   const handlePageChange = (pageNumber) => {
-    if (pageNumber >= 1 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber);
-    }
+    if (pageNumber >= 1 && pageNumber <= totalPages) setCurrentPage(pageNumber);
   };
 
   const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelectedRows(colors.map((item) => item.id));
-    } else {
-      setSelectedRows([]);
-    }
+    setSelectedRows(e.target.checked ? colors.map((item) => item.id) : []);
   };
 
   const handleRowCheckboxChange = (id) => {
@@ -89,15 +75,12 @@ const ManageColors = () => {
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem("token");
-
-      await axios.delete(`${BASE_URL}/colors/${ColorToDelete}`, {
+      await axios.delete(`${BASE_URL}/colors/${colorToDelete}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      toast.success("color deleted successfully!");
+      toast.success("Color deleted successfully!");
       dispatch(fetchColors());
     } catch (error) {
-      console.error("Delete error:", error);
       toast.error("Failed to delete color.");
     } finally {
       setShowDeleteModal(false);
@@ -107,22 +90,18 @@ const ManageColors = () => {
 
   const handleBulkStatusUpdate = async (newStatus) => {
     if (selectedRows.length === 0) {
-      toast.warning("Please select at least one sub-subcategory.");
+      toast.warning("Please select at least one color.");
       return;
     }
-
     try {
       const token = localStorage.getItem('token');
       await axios.patch(`${BASE_URL}/common/bulk-update-status`, {
-        entity:"colors",
+        entity: "colors",
         ids: selectedRows,
         status: newStatus,
       }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       toast.success(`Status updated to ${newStatus ? 'Active' : 'Inactive'}`);
       dispatch(fetchColors());
       setSelectedRows([]);
@@ -131,7 +110,6 @@ const ManageColors = () => {
     }
   };
 
-
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
@@ -139,7 +117,6 @@ const ManageColors = () => {
         <aside className="main-sidebar hidden-print">
           <Sidebar isCollapsed={isSidebarCollapsed} />
         </aside>
-
         <div
           className="content-wrapper mb-4"
           style={{
@@ -152,22 +129,18 @@ const ManageColors = () => {
           <div className="main-header" style={{ marginTop: '0px' }}>
             <h4>Colors</h4>
           </div>
-
           <div className="container-fluid manage">
-            {/* Search and Filters */}
             <div className="card mb-3">
               <div className="card-block manage-btn">
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
-                    <div className="input-group">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Search By Color"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                    </div>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Search By Color"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                   </div>
                   <div className="col-md-3">
                     <select
@@ -181,7 +154,6 @@ const ManageColors = () => {
                     </select>
                   </div>
                   <div className="col-md-2 d-flex gap-2">
-
                     <button
                       className="btn btn-success"
                       onClick={() => {
@@ -200,13 +172,11 @@ const ManageColors = () => {
                 </div>
               </div>
             </div>
-
-            {/* Table */}
             <div className="card">
               <div className="card-block">
                 <div className="row mb-3">
                   <div className="col-md-12 text-end pt">
-                   <button
+                    <button
                       className="btn btn-success me-2"
                       disabled={selectedRows.length === 0}
                       onClick={() => handleBulkStatusUpdate(true)}
@@ -220,7 +190,6 @@ const ManageColors = () => {
                     >
                       Inactive
                     </button>
-
                   </div>
                 </div>
                 <div className="table-responsive">
@@ -253,7 +222,7 @@ const ManageColors = () => {
                               onChange={() => handleRowCheckboxChange(color.id)}
                             />
                           </td>
-                          <td>{index + 1}</td>
+                          <td>{index + 1 + (currentPage - 1) * rowsPerPage}</td>
                           <td>{color.label}</td>
                           <td>
                             <div style={{
@@ -264,13 +233,9 @@ const ManageColors = () => {
                               border: '1px solid #ccc'
                             }} ></div>
                           </td>
-
                           <td>
                             <span
-                              className={`badge ${color.status ?
-                                'text-light-primary'
-                                : 'text-light-danger'
-                                }`}
+                              className={`badge ${color.status ? 'text-light-primary' : 'text-light-danger'}`}
                             >
                               {color.status ? 'Active' : 'Inactive'}
                             </span>
@@ -297,15 +262,18 @@ const ManageColors = () => {
                             >
                               <BsEye style={{ fontSize: '18px', color: '#212529' }} />
                             </button>
-                            <button className="btn btn-light icon-btn m-2" onClick={() => handleDeleteClick(color.id)}>
+                            <button
+                              className="btn btn-light icon-btn m-2"
+                              onClick={() => handleDeleteClick(color.id)}
+                            >
                               <TiTrash style={{ fontSize: '18px', color: '#212529' }} />
                             </button>
                           </td>
                         </tr>
                       ))}
-                      {colors.length === 0 && (
+                      {filteredColors.length === 0 && (
                         <tr>
-                          <td colSpan="5" className="text-center">
+                          <td colSpan="6" className="text-center">
                             No colors found.
                           </td>
                         </tr>
@@ -313,12 +281,27 @@ const ManageColors = () => {
                     </tbody>
                   </table>
                 </div>
-
               </div>
             </div>
-            <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-            {showModal && <AddColorModal show={showModal} onClose={() => setShowModal(false)} />}
-            {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+            {showModal && (
+              <AddColorModal
+                show={showModal}
+                onClose={() => setShowModal(false)}
+              />
+            )}
+            {showDeleteModal && (
+              <DeleteModal
+                show={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={handleDelete}
+                message="Are you sure you want to delete this color?"
+              />
+            )}
             {editModalVisible && (
               <EditColorModal
                 show={editModalVisible}
