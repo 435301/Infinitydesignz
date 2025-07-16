@@ -19,53 +19,42 @@ import EditSizeModal from '../../components/editSizeModal';
 const ManageSizes = () => {
   const dispatch = useDispatch();
   const { sizes = [] } = useSelector((state) => state.sizes || {});
-  console.log('sizes', sizes)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [SizeToDelete, setSizeToDelete] = useState(null);
+  const [sizeToDelete, setSizeToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [viewSize, setViewSize] = useState(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
-    const [selectedIds, setSelectedIds] = useState([]);
-    const[selectAll, setSelectAll] = useState(false)
-
-  const handleToggleSidebar = (collapsed) => {
-    setIsSidebarCollapsed(collapsed);
-  };
-
+  const [selectAll, setSelectAll] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     dispatch(fetchSizes());
   }, [dispatch]);
 
   const filteredSizes = sizes.filter((size) => {
-
-    const title = size.title.toLowerCase();
-    const matchesSearch = title.includes(searchTerm.toLowerCase());
-
+    const matchesSearch = size.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter
       ? (statusFilter === 'active' ? size.status === true : size.status === false)
       : true;
-
     return matchesSearch && matchesStatus;
   });
 
-  const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = filteredSizes.slice(indexOfFirstRow, indexOfLastRow);
   const totalPages = Math.ceil(filteredSizes.length / rowsPerPage);
 
+  const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
+
   const handlePageChange = (pageNumber) => {
-    if (pageNumber >= 1 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber);
-    }
+    if (pageNumber >= 1 && pageNumber <= totalPages) setCurrentPage(pageNumber);
   };
 
   const handleDeleteClick = (id) => {
@@ -76,15 +65,12 @@ const ManageSizes = () => {
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem("token");
-
-      await axios.delete(`${BASE_URL}/size-uom/${SizeToDelete}`, {
+      await axios.delete(`${BASE_URL}/size-uom/${sizeToDelete}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       toast.success("Size deleted successfully!");
       dispatch(fetchSizes());
     } catch (error) {
-      console.error("Delete error:", error);
       toast.error("Failed to delete size.");
     } finally {
       setShowDeleteModal(false);
@@ -94,22 +80,18 @@ const ManageSizes = () => {
 
   const handleBulkStatusUpdate = async (newStatus) => {
     if (selectedRows.length === 0) {
-      toast.warning("Please select at least one sub-subcategory.");
+      toast.warning("Please select at least one size.");
       return;
     }
-
     try {
       const token = localStorage.getItem('token');
       await axios.patch(`${BASE_URL}/common/bulk-update-status`, {
-        entity:"size-uom",
+        entity: "size-uom",
         ids: selectedRows,
         status: newStatus,
       }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       toast.success(`Status updated to ${newStatus ? 'Active' : 'Inactive'}`);
       dispatch(fetchSizes());
       setSelectedRows([]);
@@ -124,25 +106,23 @@ const ManageSizes = () => {
     );
   };
 
-    const handleSelectAll = () => {
+  const handleSelectAll = () => {
     if (selectAll) {
-      setSelectedIds([]);
+      setSelectedRows([]);
     } else {
-      const ids = currentRows.map((cat) => cat.id);
-      setSelectedIds(ids);
+      setSelectedRows(currentRows.map((size) => size.id));
     }
     setSelectAll(!selectAll);
   };
 
-
   return (
+    <>
     <div className="sidebar-mini fixed">
       <div className="wrapper">
         <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
         <aside className="main-sidebar hidden-print">
           <Sidebar isCollapsed={isSidebarCollapsed} />
         </aside>
-
         <div
           className="content-wrapper mb-4"
           style={{
@@ -155,9 +135,7 @@ const ManageSizes = () => {
           <div className="main-header" style={{ marginTop: '0px' }}>
             <h4>Create a Size</h4>
           </div>
-
           <div className="container-fluid manage">
-            {/* Top Filters and Buttons */}
             <div className="card mb-3">
               <div className="card-block manage-btn">
                 <div className="row g-3 align-items-center">
@@ -187,90 +165,79 @@ const ManageSizes = () => {
                       onClick={() => {
                         setSearchTerm('');
                         setStatusFilter('');
-                      }}
-                    >
-                      <BsArrowClockwise />
-                    </button>
+                        }}
+                      >
+                        <BsArrowClockwise />
+                      </button>
+                      </div>
+                      <div className="col-md-4 text-end">
+                      <button className="btn btn-primary" style={{ padding: '8px 20px', fontWeight: 600 }} type="button" onClick={() => setShowModal(true)}>
+                        + Create New
+                      </button>
+                      </div>
+                    </div>
+                    </div>
                   </div>
-                  <div className="col-md-4 text-end">
-                    <button className="btn btn-primary" type="button" onClick={() => setShowModal(true)}>
-                      + Create New
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Sizes Table */}
-            <div className="card">
-              <div className="card-block">
-                <div className="row mb-3">
-                  <div className="col-md-12 text-end">
-                    <button
-                      className="btn btn-success me-2"
-                      disabled={selectedRows.length === 0}
-                      onClick={() => handleBulkStatusUpdate(true)}
-                    >
-                      Active
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      disabled={selectedRows.length === 0}
-                      onClick={() => handleBulkStatusUpdate(false)}
-                    >
-                      Inactive
-                    </button>
-
-                  </div>
-                </div>
-
-                <div className="table-responsive">
-                  <table className="table table-striped table-hover table-lg align-middle mb-0">
-                    <thead>
-                      <tr>
+                  <div className="card">
+                    <div className="card-block">
+                    <div className="row mb-3">
+                      <div className="col-md-12 text-end">
+                      <button
+                        className="btn btn-success me-2"
+                        disabled={selectedRows.length === 0}
+                        onClick={() => handleBulkStatusUpdate(true)}
+                      >
+                        Active
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        disabled={selectedRows.length === 0}
+                        onClick={() => handleBulkStatusUpdate(false)}
+                      >
+                        Inactive
+                      </button>
+                      </div>
+                    </div>
+                    <div className="table-responsive">
+                      <table className="table table-striped table-hover table-lg align-middle mb-0">
+                      <thead>
+                        <tr>
                         <th>
-                         <input
-                      type="checkbox"
-                      checked={
-                        selectedRows.length === sizes.length &&
-                        sizes.length > 0
-                      }
-                      onChange={handleSelectAll}
-                    />
+                          <input
+                          type="checkbox"
+                          checked={selectedRows.length === currentRows.length && currentRows.length > 0}
+                          onChange={handleSelectAll}
+                          />
                         </th>
                         <th>S.No</th>
                         <th>Size</th>
                         <th>Status</th>
                         <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {currentRows.map((size, index) => (
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {currentRows.map((size, index) => (
                         <tr key={size.id}>
                           <td>
-                            <input
-                          type="checkbox"
-                          checked={selectedRows.includes(size.id)}
-                          onChange={() => handleRowCheckboxChange(size.id)}
-                        />
+                          <input
+                            type="checkbox"
+                            checked={selectedRows.includes(size.id)}
+                            onChange={() => handleRowCheckboxChange(size.id)}
+                          />
                           </td>
-                          <td>{index + 1}</td>
+                          <td>{index + 1 + indexOfFirstRow}</td>
                           <td>{size.title}</td>
                           <td>
-
-                            <span
-                              className={`badge ${size.status ?
-                                'text-light-primary'
-                                : 'text-light-danger'
-                                }`}
-                            >
-                              {size.status ? 'Active' : 'Inactive'}
-                            </span>
+                          <span
+                            className={`badge ${size.status ? 'text-light-primary' : 'text-light-danger'}`}
+                          >
+                            {size.status ? 'Active' : 'Inactive'}
+                          </span>
                           </td>
                           <td>
-                            <button
-                              className="btn btn-light icon-btn m-2"
-                              onClick={() => {
+                          <button
+                            className="btn btn-light icon-btn m-2"
+                            onClick={() => {
                                 setSelectedSize(size);
                                 setEditModalVisible(true);
                               }}
@@ -286,7 +253,10 @@ const ManageSizes = () => {
                             >
                               <BsEye style={{ fontSize: '18px', color: '#212529' }} />
                             </button>
-                            <button className="btn btn-light icon-btn m-2" onClick={() => handleDeleteClick(size.id)}>
+                            <button
+                              className="btn btn-light icon-btn m-2"
+                              onClick={() => handleDeleteClick(size.id)}
+                            >
                               <TiTrash style={{ fontSize: '18px', color: '#212529' }} />
                             </button>
                           </td>
@@ -297,9 +267,22 @@ const ManageSizes = () => {
                 </div>
               </div>
             </div>
-            <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-            {showModal && <AddSizeModal show={showModal} onClose={() => setShowModal(false)} />}
-            {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+            {showModal && (
+              <AddSizeModal show={showModal} onClose={() => setShowModal(false)} />
+            )}
+            {showDeleteModal && (
+              <DeleteModal
+                show={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={handleDelete}
+                message="Are you sure you want to delete this size?"
+              />
+            )}
             {showViewModal && (
               <ViewSizeModal
                 show={showViewModal}
@@ -320,7 +303,8 @@ const ManageSizes = () => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 
