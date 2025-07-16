@@ -222,7 +222,7 @@ const ManageFeatureSet = () => {
                           dispatch(fetchFeatureSets());
                           setEditedPriorities({});
                           setSelectedRows([]);
-                        }}>Set Priority</button>
+                        }}>Change Priority</button>
 
                     </div>
                   ))}

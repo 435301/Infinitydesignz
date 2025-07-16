@@ -262,7 +262,7 @@ const ManageFeatureList = () => {
                         setSelectedRows([]);
                       }}
                     >
-                      Set Priority
+                      Change Priority
                     </button>
                   </div>
                 ))}
