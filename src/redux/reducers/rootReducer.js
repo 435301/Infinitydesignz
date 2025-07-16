@@ -28,6 +28,8 @@ const rootReducer = combineReducers({
   featureLists:featureListsReducer,
   filterSets:filterSetReducer,
   filterLists:filterListsReducer,
+  productFeatures:productReducer,
+  productFilters:productReducer,
 });
 
 export default rootReducer;
