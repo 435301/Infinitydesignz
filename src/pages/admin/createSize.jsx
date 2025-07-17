@@ -5,7 +5,7 @@ import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteSize, fetchSizes } from '../../redux/actions/sizeAction';
+import { bulkUpdateSizeStatus, deleteSize, fetchSizes } from '../../redux/actions/sizeAction';
 import PaginationComponent from '../../includes/pagination';
 import { toast } from 'react-toastify';
 import BASE_URL from '../../config/config';
@@ -69,27 +69,14 @@ const ManageSizes = () => {
 
   };
 
-  const handleBulkStatusUpdate = async (newStatus) => {
-    if (selectedRows.length === 0) {
-      toast.warning("Please select at least one size.");
-      return;
-    }
-    try {
-      const token = localStorage.getItem('token');
-      await axios.patch(`${BASE_URL}/common/bulk-update-status`, {
-        entity: "size-uom",
-        ids: selectedRows,
-        status: newStatus,
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      toast.success(`Status updated to ${newStatus ? 'Active' : 'Inactive'}`);
-      dispatch(fetchSizes());
-      setSelectedRows([]);
-    } catch (error) {
-      toast.error(error?.response?.data?.message || 'Bulk status update failed');
-    }
-  };
+ const handleBulkStatusUpdate = async (newStatus) => {
+     if (selectedRows.length === 0) {
+       toast.warning("Please select at least one size.");
+       return;
+     }
+     await dispatch(bulkUpdateSizeStatus(selectedRows, newStatus));
+     setSelectedRows([]);
+   };
 
   const handleRowCheckboxChange = (id) => {
     setSelectedRows((prev) =>

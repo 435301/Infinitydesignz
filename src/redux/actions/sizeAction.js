@@ -12,6 +12,7 @@ export const EDIT_SIZES_REQUEST='EDIT_SIZES_REQUEST';
 export const EDIT_SIZES_SUCCESS='EDIT_SIZES_SUCCESS';
 export const EDIT_SIZES_FAILURE='EDIT_SIZES_FAILURE';
 export const DELETE_SIZE_SUCCESS = 'DELETE_SIZE_SUCCESS';
+export const BULK_UPDATE_SIZE_SUCCESS = 'BULK_UPDATE_SIZE_SUCCESS';
 
 //mycode
 export const fetchSizes = () => {
@@ -106,3 +107,27 @@ export const deleteSize = (id) => async (dispatch) => {
     toast.error(error?.response?.data?.message || 'Failed to delete size');
   }
 }
+
+export const bulkUpdateSizeStatus = (ids,status) => async (dispatch) => {
+  try {
+    const token = localStorage.getItem('token');
+
+    await axios.patch(
+      `${BASE_URL}/common/bulk-update-status`,
+      {
+        entity: 'size-uom', 
+        ids,
+        status
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    dispatch(fetchSizes()); 
+  } catch (error) {
+    console.error(error);
+    toast.error(error?.response?.data?.message || 'Failed to update size status.');
+  }
+};

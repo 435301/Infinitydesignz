@@ -5,7 +5,7 @@ import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteColor, fetchColors } from '../../redux/actions/colorAction';
+import { bulkUpdateColorStatus, deleteColor, fetchColors } from '../../redux/actions/colorAction';
 import PaginationComponent from '../../includes/pagination';
 import AddColorModal from '../../components/addColorModal';
 import { toast } from 'react-toastify';
@@ -79,28 +79,14 @@ const ManageColors = () => {
     
   };
 
-  const handleBulkStatusUpdate = async (newStatus) => {
+ const handleBulkStatusUpdate = async (newStatus) => {
     if (selectedRows.length === 0) {
       toast.warning("Please select at least one color.");
       return;
     }
-    try {
-      const token = localStorage.getItem('token');
-      await axios.patch(`${BASE_URL}/common/bulk-update-status`, {
-        entity: "colors",
-        ids: selectedRows,
-        status: newStatus,
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      toast.success(`Status updated to ${newStatus ? 'Active' : 'Inactive'}`);
-      dispatch(fetchColors());
-      setSelectedRows([]);
-    } catch (error) {
-      toast.error(error?.response?.data?.message || 'Bulk status update failed');
-    }
+    await dispatch(bulkUpdateColorStatus(selectedRows, newStatus));
+    setSelectedRows([]);
   };
-
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">

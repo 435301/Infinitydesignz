@@ -5,7 +5,7 @@ import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import { BsArrowClockwise, BsEye, BsPencilSquare } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteBrand, fetchBrands } from '../../redux/actions/brandAction';
+import { bulkUpdateBrandStatus, deleteBrand, fetchBrands } from '../../redux/actions/brandAction';
 import PaginationComponent from '../../includes/pagination';
 import { toast } from 'react-toastify';
 import BASE_URL from '../../config/config';
@@ -61,28 +61,7 @@ const ManageBrands = () => {
     if (pageNumber >= 1 && pageNumber <= totalPages) setCurrentPage(pageNumber);
   };
 
-  // Bulk status update
-  const handleBulkStatusUpdate = async (newStatus) => {
-    if (selectedRows.length === 0) {
-      toast.warning("Please select at least one brand.");
-      return;
-    }
-    try {
-      const token = localStorage.getItem('token');
-      await axios.patch(`${BASE_URL}/common/bulk-update-status`, {
-        entity: "brands",
-        ids: selectedRows,
-        status: newStatus,
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      toast.success(`Status updated to ${newStatus ? 'Active' : 'Inactive'}`);
-      dispatch(fetchBrands());
-      setSelectedRows([]);
-    } catch (error) {
-      toast.error(error?.response?.data?.message || 'Bulk status update failed');
-    }
-  };
+  
 
   // Row selection
   const handleRowCheckboxChange = (id) => {
@@ -128,6 +107,16 @@ const ManageBrands = () => {
   const handleResetFilters = () => {
     setSearchTerm('');
     setStatusFilter('');
+  };
+
+   const handleBulkStatusUpdate = async (newStatus) => {
+    if (selectedRows.length === 0) {
+      toast.warning("Please select at least one brand.");
+      return;
+    }
+  
+    await dispatch(bulkUpdateBrandStatus(selectedRows, newStatus));
+    setSelectedRows([]);
   };
 
   return (

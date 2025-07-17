@@ -8,7 +8,8 @@ import {
   EDIT_SIZES_REQUEST,
   EDIT_SIZES_SUCCESS,
   EDIT_SIZES_FAILURE,
-  DELETE_SIZE_SUCCESS
+  DELETE_SIZE_SUCCESS,
+  BULK_UPDATE_SIZE_SUCCESS
 } from '../actions/sizeAction';
 
 const initialState = {
@@ -42,6 +43,13 @@ const sizeReducer = (state = initialState, action) => {
       return {
         ...state,
         sizes: state.sizes.filter((item) => item.id !== action.payload),
+      }
+      case BULK_UPDATE_SIZE_SUCCESS:
+      return {
+        ...state,
+        sizes: state.sizes.map((size) =>
+          action.payload.find((s) => s.id === size.id) ? { ...size, ...action.payload.find((s) => s.id === size.id) } : size
+        ),
       }
     default:
       return state;

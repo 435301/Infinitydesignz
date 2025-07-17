@@ -12,7 +12,7 @@ export const EDIT_BRAND_REQUEST='EDIT_BRAND_REQUEST';
 export const EDIT_BRAND_SUCCESS='EDIT_BRAND_SUCCESS';
 export const EDIT_BRAND_FAILURE='EDIT_BRAND_FAILURE';
 export const DELETE_BRAND_SUCCESS = 'DELETE_BRAND_SUCCESS';
-
+export const BULK_UPDATE_BRAND_SUCCESS = 'BULK_UPDATE_BRAND_SUCCESS';
 
 export const fetchBrands = () => {
 
@@ -106,5 +106,29 @@ export const deleteBrand = (id) => async (dispatch) => {
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Failed to delete brand.');
     console.error(error);
+  }
+};
+
+export const bulkUpdateBrandStatus = (ids,status) => async (dispatch) => {
+  try {
+    const token = localStorage.getItem('token');
+
+    await axios.patch(
+      `${BASE_URL}/common/bulk-update-status`,
+      {
+        entity: 'brands', 
+        ids,
+        status
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    dispatch(fetchBrands()); 
+  } catch (error) {
+    console.error(error);
+    toast.error(error?.response?.data?.message || 'Failed to update brand status.');
   }
 };
