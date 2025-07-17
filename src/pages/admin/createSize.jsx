@@ -133,7 +133,7 @@ const ManageSizes = () => {
           }}
         >
           <div className="main-header" style={{ marginTop: '0px' }}>
-            <h4>Create a Size</h4>
+            <h4>Sizes</h4>
           </div>
           <div className="container-fluid manage">
             <div className="card mb-3">
@@ -172,7 +172,7 @@ const ManageSizes = () => {
                       </div>
                       <div className="col-md-4 text-end">
                       <button className="btn btn-primary" style={{ padding: '8px 20px', fontWeight: 600 }} type="button" onClick={() => setShowModal(true)}>
-                        + Create New
+                        + Add New
                       </button>
                       </div>
                     </div>

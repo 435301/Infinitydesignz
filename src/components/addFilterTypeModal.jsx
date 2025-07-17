@@ -44,10 +44,10 @@ const AddFilterTypeModal = ({ show, onClose }) => {
             <Form onSubmit={handleSubmit}>
                 <Modal.Body>
                     <Form.Group controlId="title">
-                        <Form.Label>Title</Form.Label>
+                        <Form.Label>Title<span className='text-danger'>*</span></Form.Label>
                         <Form.Control
                             type="text"
-                            placeholder="Enter Title"
+                            placeholder=" Filter Type"
                             value={title}
                             onChange={(e) => {
                                 setTitle(e.target.value);

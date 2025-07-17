@@ -112,7 +112,7 @@ const ManageFilterSet = () => {
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
                     <div className="input-group">
-                      <input type="text" className="form-control" placeholder="Search By Title" value={searchTerm}
+                      <input type="text" className="form-control" placeholder="Search By filter type, set" value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)} />
                     </div>
                   </div>
@@ -130,7 +130,7 @@ const ManageFilterSet = () => {
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
-                    <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Create Filter Set</button>
+                    <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Add Filter Set</button>
                   </div>
                 </div>
               </div>

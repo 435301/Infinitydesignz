@@ -160,7 +160,6 @@ const ManageBrands = () => {
             <h4>Brands</h4>
           </div>
           <div className="container-fluid manage">
-            /* Filter and Add Brand Section */
                   <div className="card mb-3">
                     <div className="card-block manage-btn">
                     <div className="row g-3 align-items-center">

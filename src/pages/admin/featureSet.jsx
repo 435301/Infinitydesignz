@@ -124,7 +124,7 @@ const ManageFeatureSet = () => {
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
                     <div className="input-group">
-                      <input type="text" className="form-control" placeholder="Search By Title" value={searchTerm}
+                      <input type="text" className="form-control" placeholder="Search By feature type and set" value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)} />
                     </div>
                   </div>
@@ -137,7 +137,7 @@ const ManageFeatureSet = () => {
                   </div>
                   <div className="col-md-7 text-end">
                     <button className="btn btn-primary" onClick={() => setShowModal(true)} type="button">
-                      + Create Feature Set
+                      + Add Feature Set
                     </button>
                   </div>
                 </div>

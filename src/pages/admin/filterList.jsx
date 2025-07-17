@@ -145,7 +145,7 @@ const ManageFilterList = () => {
                     <input
                       type="text"
                       className="form-control"
-                      placeholder="Search By"
+                      placeholder="Search By filter type, set, list"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -173,7 +173,7 @@ const ManageFilterList = () => {
                     </button>
                   </div>
                   <div className="col-md-4 text-end">
-                    <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Create Filter List</button>
+                    <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Add Filter List</button>
                   </div>
                 </div>
               </div>

@@ -75,34 +75,37 @@ const AddFeatureTypeModal = ({ show, onClose }) => {
             </div>
             <div className="modal-body">
               {featureTypes.map((field, index) => (
-                <div className="mb-3 d-flex align-items-center" key={index}>
-                  <input
-                    className={`form-control ${errors[`name-${index}`] ? 'is-invalid' : ''}`}
-                    type="text"
-                    placeholder="Title"
-                    value={field.name}
-                    onChange={(e) => handleInputChange(index, e.target.value)}
-                  />
-                  {featureTypes.length > 1 && (
-                    <button
-                      type="button"
-                      className="btn btn-outline-danger ms-2"
-                      onClick={() => handleRemoveField(index)}
-                    >
-                      <BsDashCircle />
-                    </button>
-                  )}
-                  {index === featureTypes.length - 1 && (
-                    <button
-                      type="button"
-                      className="btn btn-outline-primary ms-2"
-                      onClick={handleAddField}
-                    >
-                      <BsPlusCircle />
-                    </button>
-                  )}
+                <div className="mb-3" key={index}>
+                  <label className="form-label">Feature Type<span className='text-danger'>*</span></label>
+                  <div className="d-flex align-items-center">
+                    <input
+                      className={`form-control ${errors[`name-${index}`] ? 'is-invalid' : ''}`}
+                      type="text"
+                      placeholder="Title"
+                      value={field.name}
+                      onChange={(e) => handleInputChange(index, e.target.value)}
+                    />
+                    {featureTypes.length > 1 && (
+                      <button
+                        type="button"
+                        className="btn btn-outline-danger ms-2"
+                        onClick={() => handleRemoveField(index)}
+                      >
+                        <BsDashCircle />
+                      </button>
+                    )}
+                    {index === featureTypes.length - 1 && (
+                      <button
+                        type="button"
+                        className="btn btn-outline-primary ms-2"
+                        onClick={handleAddField}
+                      >
+                        <BsPlusCircle />
+                      </button>
+                    )}
+                  </div>
                   {errors[`name-${index}`] && (
-                    <div className="invalid-feedback d-block ms-2">{errors[`name-${index}`]}</div>
+                    <div className="invalid-feedback d-block mt-1">{errors[`name-${index}`]}</div>
                   )}
                 </div>
               ))}

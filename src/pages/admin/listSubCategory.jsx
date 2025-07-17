@@ -183,7 +183,7 @@ const ListSubCategory = () => {
                 <div className="card-block manage-btn">
                   <div className="row align-items-center">
                     <div className="col-md-3">
-                      <input type="text" className="form-control" placeholder="Search By" value={searchTerm}
+                      <input type="text" className="form-control" placeholder="Search By category, sub and list category" value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)} />
                     </div>
                     <div className="col-md-3">

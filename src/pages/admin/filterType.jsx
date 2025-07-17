@@ -105,7 +105,7 @@ const ManageFilterType = () => {
                                 <div className="row g-3 align-items-center">
                                     <div className="col-md-3">
                                         <div className="input-group">
-                                            <input type="text" className="form-control" placeholder="Search By" />
+                                            <input type="text" className="form-control" placeholder="Search By filter type" />
                                         </div>
                                     </div>
 
@@ -117,7 +117,7 @@ const ManageFilterType = () => {
                                     </div>
                                     <div className="col-md-4 text-end">
                                         <button className="btn btn-primary" type="button" style={{position:"relative",left:"285px"}} onClick={() => setShowAddModal(true)}>
-                                            + Create Filter Type
+                                            + Add Filter Type
                                         </button>
                                     </div>
                                 </div>

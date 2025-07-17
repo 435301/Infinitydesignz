@@ -112,7 +112,7 @@ const AddFilterSetModal = ({ show, onClose }) => {
                         <div className="modal-body">
                             <div className="mb-3">
                                 <label className="form-label">
-                                    Filter Set <span className="text-danger">*</span>
+                                    Filter Type <span className="text-danger">*</span>
                                 </label>
                                 <select
                                     className={`form-control ${errors.menu ? 'is-invalid' : ''}`}
@@ -132,10 +132,11 @@ const AddFilterSetModal = ({ show, onClose }) => {
                             {filterTypesInput.map((field, index) => (
                                 <div className="mb-3 d-flex align-items-start gap-2" key={index}>
                                     <div className="flex-fill">
+                                    
                                         <input
                                             className={`form-control mb-1 ${errors[`title-${index}`] ? 'is-invalid' : ''}`}
                                             type="text"
-                                            placeholder="Title"
+                                            placeholder="Filter Set Title"
                                             value={field.title}
                                             onChange={(e) => handleInputChange(index, 'title', e.target.value)}
                                         />

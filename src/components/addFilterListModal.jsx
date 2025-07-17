@@ -9,7 +9,7 @@ const AddFilterListModal = ({ show, onClose }) => {
     const { filterSets = [] } = useSelector((state) => state.filterSets);
     const { filterTypes = [] } = useSelector((state) => state.filterTypes);
     // console.log('featureTypes',featureTypes)
-    const [formFields, setFormFields] = useState([{ label: '', priority: 1 }]);
+    const [formFields, setFormFields] = useState([{ label: '', priority: '' }]);
     const [filterSetId, setFilterSetId] = useState('');
     const [filterTypeId, setFilterTypeId] = useState('');
     const [status, setStatus] = useState(true);
@@ -123,7 +123,7 @@ const AddFilterListModal = ({ show, onClose }) => {
                                     <input
                                         className={`form-control ${errors[`label-${index}`] ? 'is-invalid' : ''}`}
                                         type="text"
-                                        placeholder="Label"
+                                        placeholder="Filter Set Title"
                                         value={field.label}
                                         onChange={(e) => handleInputChange(index, 'label', e.target.value)}
                                     />

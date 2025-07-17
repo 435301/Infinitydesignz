@@ -166,7 +166,7 @@ const ManageColors = () => {
                   </div>
                   <div className="col-md-4 text-end">
                     <button className="btn btn-primary" type="button" onClick={() => setShowModal(true)}>
-                      + Create New
+                      + Add New
                     </button>
                   </div>
                 </div>
