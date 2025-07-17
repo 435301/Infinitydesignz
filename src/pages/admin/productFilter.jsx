@@ -1,39 +1,104 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
+import axios from 'axios';
+import BASE_URL from '../../config/config';
 
 const ProductFilters = () => {
-  // const {products=[] }= useSelector((state) => state.filters || '');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [filters, setFilters] = useState({
-    fabric: '',
-    design: '',
-    occasion: '',
-    type: '',
-  });
+  const [products, setProducts] = useState([]);
+  const [filterValues, setFilterValues] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
-
-  const handleChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
+  const handleToggleSidebar = (collapsed) => {
+    setIsSidebarCollapsed(collapsed);
   };
 
-  const handleSubmit = (e) => {
+  const handleChange = (productId, filterListId, value) => {
+    const key = `${productId}-${filterListId}`;
+    setFilterValues((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Filter Data:', filters);
-    // You can send this data via API (e.g., axios.post)
+
+    const dataToSend = [];
+
+    products.forEach((product) => {
+      product.filterSets.forEach((set) => {
+        set.filterLists.forEach((filterList) => {
+          const key = `${product.id}-${filterList.id}`;
+          const value = filterValues[key];
+          if (value) {
+            dataToSend.push({
+              productId: product.id,
+              filterListId: filterList.id,
+              value,
+            });
+          }
+        });
+      });
+    });
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`${BASE_URL}/product-filters`, dataToSend, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      alert('Filters updated successfully!');
+    } catch (err) {
+      console.error('Error submitting filters:', err);
+      alert('Failed to update filters.');
+    }
   };
 
-  const handleReset = () => {
-    setFilters({
-      fabric: '',
-      design: '',
-      occasion: '',
-      type: '',
-    });
-  };
+  useEffect(() => {
+    const fetchProductsAndFilters = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const productRes = await axios.get(`${BASE_URL}/products`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const productList = productRes.data;
+
+        const enrichedProducts = await Promise.all(
+          productList.map(async (product) => {
+            const categoryId = product?.category?.id;
+            if (!categoryId) return { ...product, filterSets: [] };
+
+            try {
+              const categoryRes = await axios.get(`${BASE_URL}/categories/${categoryId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              const filterSets = categoryRes?.data?.filterType?.filterSets || [];
+              return { ...product, filterSets };
+            } catch (err) {
+              console.error(`Failed to fetch filters for category ${categoryId}`, err);
+              return { ...product, filterSets: [] };
+            }
+          })
+        );
+
+        setProducts(enrichedProducts);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        setError('Failed to load product filters.');
+        setLoading(false);
+      }
+    };
+
+    fetchProductsAndFilters();
+  }, []);
 
   return (
     <div className="sidebar-mini fixed">
@@ -52,9 +117,9 @@ const ProductFilters = () => {
           }}
         >
           <div className="section-nav">
-            <a href='/admin/add-product'>Add Product</a>
-            <a href='/admin/add-image' >Product Images</a>
-            <a href="" className='active'>Product Filters</a>
+            <a href="/admin/add-product">Add Product</a>
+            <a href="/admin/product-image">Product Images</a>
+            <a href="" className="active">Product Filters</a>
             <a href="/admin/product-features">Product Features</a>
           </div>
 
@@ -63,42 +128,68 @@ const ProductFilters = () => {
               <div className="col-lg-12">
                 <div className="card">
                   <div className="card-block py-3">
-                    <form className="app-form mt-3" onSubmit={handleSubmit} onReset={handleReset}>
-                      {[
-                        { id: 'fabric', label: 'Fabric', options: ['Nylon', 'Cotton', 'Silk'] },
-                        { id: 'design', label: 'Design', options: ['Plaid', 'Striped', 'Floral'] },
-                        { id: 'occasion', label: 'Occasion', options: ['Party', 'Casual', 'Formal'] },
-                        { id: 'type', label: 'Type', options: ['Blouse', 'Shirt', 'Dress'] },
-                      ].map((filter, idx) => (
-                        <div className="row mb-3 justify-content-center" key={idx}>
-                          <div className="col-lg-3 col-md-3">
-                            <label htmlFor={filter.id} className="form-label">{filter.label}</label>
-                          </div>
-                          <div className="col-lg-3">
-                            <select
-                              id={filter.id}
-                              name={filter.id}
-                              className="form-control"
-                              value={filters[filter.id]}
-                              onChange={handleChange}
-                              required
-                            >
-                              <option value="">Choose Filter</option>
-                              {filter.options.map((opt) => (
-                                <option key={opt} value={opt.toLowerCase()}>{opt}</option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-                      ))}
+                    {loading ? (
+                      <p>Loading...</p>
+                    ) : error ? (
+                      <p className="text-danger">{error}</p>
+                    ) : (
+                      <form className="app-form mt-3" onSubmit={handleSubmit}>
+                        {products.map((product) => (
+                          <div key={product.id} className="mb-4">
+                            <h6 className="text-primary mb-3">
+                              {product.title} (SKU: {product.sku})
+                            </h6>
 
-                      <div className="row">
-                        <div className="col-lg-12 text-center">
-                          <button type="submit" className="btn btn-primary py-2 px-5 me-2">Update Filters</button>
-                          <button type="reset" className="btn btn-reset py-2 px-5">Reset</button>
+                            {product.filterSets.length === 0 ? (
+                              <p className="text-muted">No filter sets found for this product.</p>
+                            ) : (
+                              product.filterSets.map((set) => (
+                                <div key={set.id} className="mb-3">
+                                  <h6 className="sub-heading mb-2">{set.title}</h6>
+                                  <div className="row">
+                                    {set.filterLists?.map((filterList) => {
+                                      const inputKey = `${product.id}-${filterList.id}`;
+                                      return (
+                                        <div key={inputKey} className="col-lg-6 mb-3">
+                                          <label htmlFor={inputKey} className="form-label">
+                                            {filterList.label}
+                                          </label>
+                                          <input
+                                            type="text"
+                                            id={inputKey}
+                                            className="form-control"
+                                            value={filterValues[inputKey] || ''}
+                                            onChange={(e) =>
+                                              handleChange(product.id, filterList.id, e.target.value)
+                                            }
+                                            placeholder={`Enter ${filterList.label}`}
+                                          />
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        ))}
+
+                        <div className="row">
+                          <div className="col-lg-12 text-center">
+                            <button type="submit" className="btn btn-primary py-2 px-5 me-2">
+                              Update Filters
+                            </button>
+                            <button
+                              type="reset"
+                              className="btn btn-reset py-2 px-5"
+                              onClick={() => setFilterValues({})}
+                            >
+                              Reset
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    </form>
+                      </form>
+                    )}
                   </div>
                 </div>
               </div>
