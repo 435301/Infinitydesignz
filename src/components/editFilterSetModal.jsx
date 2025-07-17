@@ -127,7 +127,7 @@ const EditFilterSetModal = ({ show, onClose,filterSet }) => {
                 <div className="modal-content">
                     <form onSubmit={handleSubmit}>
                         <div className="modal-header">
-                            <h5 className="modal-title">Add Filter Set</h5>
+                            <h5 className="modal-title">Edit Filter Set</h5>
                             <button type="button" className="btn-close" onClick={onClose}></button>
                         </div>
                         <div className="modal-body">

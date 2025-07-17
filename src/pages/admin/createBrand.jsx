@@ -5,7 +5,7 @@ import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import { BsArrowClockwise, BsEye, BsPencilSquare } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBrands } from '../../redux/actions/brandAction';
+import { bulkUpdateBrandStatus, deleteBrand, fetchBrands } from '../../redux/actions/brandAction';
 import PaginationComponent from '../../includes/pagination';
 import { toast } from 'react-toastify';
 import BASE_URL from '../../config/config';
@@ -61,28 +61,7 @@ const ManageBrands = () => {
     if (pageNumber >= 1 && pageNumber <= totalPages) setCurrentPage(pageNumber);
   };
 
-  // Bulk status update
-  const handleBulkStatusUpdate = async (newStatus) => {
-    if (selectedRows.length === 0) {
-      toast.warning("Please select at least one brand.");
-      return;
-    }
-    try {
-      const token = localStorage.getItem('token');
-      await axios.patch(`${BASE_URL}/common/bulk-update-status`, {
-        entity: "brands",
-        ids: selectedRows,
-        status: newStatus,
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      toast.success(`Status updated to ${newStatus ? 'Active' : 'Inactive'}`);
-      dispatch(fetchBrands());
-      setSelectedRows([]);
-    } catch (error) {
-      toast.error(error?.response?.data?.message || 'Bulk status update failed');
-    }
-  };
+  
 
   // Row selection
   const handleRowCheckboxChange = (id) => {
@@ -108,20 +87,10 @@ const ManageBrands = () => {
   };
 
   const handleDelete = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`${BASE_URL}/brands/${brandToDelete}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      toast.success("Brand deleted successfully!");
-      dispatch(fetchBrands());
-    } catch (error) {
-      toast.error("Failed to delete brand.");
-    } finally {
-      setShowDeleteModal(false);
-      setBrandToDelete(null);
-    }
-  };
+    await dispatch(deleteBrand(brandToDelete));
+    setBrandToDelete(null);
+    setShowDeleteModal(false);
+  }
 
   // Table actions
   const handleEditClick = (brand) => {
@@ -138,6 +107,16 @@ const ManageBrands = () => {
   const handleResetFilters = () => {
     setSearchTerm('');
     setStatusFilter('');
+  };
+
+   const handleBulkStatusUpdate = async (newStatus) => {
+    if (selectedRows.length === 0) {
+      toast.warning("Please select at least one brand.");
+      return;
+    }
+  
+    await dispatch(bulkUpdateBrandStatus(selectedRows, newStatus));
+    setSelectedRows([]);
   };
 
   return (
@@ -160,44 +139,43 @@ const ManageBrands = () => {
             <h4>Brands</h4>
           </div>
           <div className="container-fluid manage">
-            /* Filter and Add Brand Section */
-                  <div className="card mb-3">
-                    <div className="card-block manage-btn">
-                    <div className="row g-3 align-items-center">
-                      <div className="col-md-3">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Search By Brand"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                      </div>
-                      <div className="col-md-3">
-                      <select
-                        className="form-control"
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                      >
-                        <option value="">- Select Status -</option>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                      </select>
-                      </div>
-                      <div className="col-md-2 d-flex gap-2">
-                      <button className="btn btn-success" onClick={handleResetFilters}>
-                        <BsArrowClockwise style={{ fontSize: '18px' }} />
-                      </button>
-                      </div>
-                      <div className="col-md-4 text-end">
-                      <button className="btn btn-primary" type="button" onClick={() => setShowAddBrandModal(true)}>
-                        + Add New
-                      </button>
-                      </div>
-                    </div>
-                    </div>
+            <div className="card mb-3">
+              <div className="card-block manage-btn">
+                <div className="row g-3 align-items-center">
+                  <div className="col-md-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Search By Brand"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                   </div>
-                  {/* Brands Table Section */}
+                  <div className="col-md-3">
+                    <select
+                      className="form-control"
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                    >
+                      <option value="">- Select Status -</option>
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                    </select>
+                  </div>
+                  <div className="col-md-2 d-flex gap-2">
+                    <button className="btn btn-success" onClick={handleResetFilters}>
+                      <BsArrowClockwise style={{ fontSize: '18px' }} />
+                    </button>
+                  </div>
+                  <div className="col-md-4 text-end">
+                    <button className="btn btn-primary" type="button" onClick={() => setShowAddBrandModal(true)}>
+                      + Add New
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Brands Table Section */}
             <div className="card">
               <div className="card-block">
                 <div className="row mb-3">

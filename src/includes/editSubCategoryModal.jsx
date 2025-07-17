@@ -8,7 +8,7 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
   const { subCategory } = useSelector((state) => state.categories || {});
 
   const [form, setForm] = useState({
-    parent_id: '',
+    parentId: '',
     title: '',
     seoTitle: '',
     seoDescription: '',
@@ -16,7 +16,7 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
     status: true,
   });
 
-  console.log(form.parent_id, 'form')
+  console.log(form.parentId, 'form')
   const [appIcon, setAppIcon] = useState(null);
   const [webIcon, setWebIcon] = useState(null);
   const [mainImage, setMainImage] = useState(null);
@@ -32,7 +32,7 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
   useEffect(() => {
     if (subCategory) {
       setForm({
-        parent_id: subCategory.parent_id ? subCategory.parent_id.toString() : '',
+        parentId: subCategory.parentId ? subCategory.parentId.toString() : '',
         title: subCategory.title || '',
         seoTitle: subCategory.seoTitle || '',
         seoDescription: subCategory.seoDescription || '',
@@ -74,7 +74,7 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
-    if (!form.parent_id) newErrors.parent_id = 'Parent category is required';
+    if (!form.parentId) newErrors.parentId = 'Parent category is required';
     if (!form.title.trim()) newErrors.title = 'Title is required';
 
     if (Object.keys(newErrors).length > 0) {
@@ -83,7 +83,7 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
     }
     const data = new FormData();
     data.append('title', form.title);
-    data.append('parent_id', form.parent_id);
+    data.append('parentId', form.parentId);
     data.append('seoTitle', form.seoTitle);
     data.append('seoDescription', form.seoDescription);
     data.append('seoKeywords', form.seoKeywords);
@@ -100,7 +100,7 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
 
   const { categories } = useSelector((state) => state.categories || {});
 
-  const check = categories.filter(c => c.parent_id === null).map(cat => (
+  const check = categories.filter(c => c.parentId === null).map(cat => (
     <option key={cat.id} value={cat.id}>{cat.title}</option>
   ))
   console.log('check', check[0].props.children)
@@ -121,9 +121,9 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
                 <div className="col-lg-4 mb-3">
                   <label className="form-label">Parent Category<span className="text-danger">*</span></label>
                   <select
-                    className={`form-control ${errors.parent_id ? 'is-invalid' : ''}`}
-                    name="parent_id"
-                    value={form.parent_id?.toString() || ''} 
+                    className={`form-control ${errors.parentId ? 'is-invalid' : ''}`}
+                    name="parentId"
+                    value={form.parentId?.toString() || ''} 
                     onChange={handleChange}
                     // required
                   >
@@ -135,7 +135,7 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
                     ))}
 
                   </select>
-                  {errors.parent_id && <div className="invalid-feedback">{errors.parent_id}</div>}
+                  {errors.parentId && <div className="invalid-feedback">{errors.parentId}</div>}
                 </div>
 
                 <div className="col-lg-4 mb-3">

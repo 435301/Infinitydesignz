@@ -146,7 +146,7 @@ const ManageFeatureList = () => {
               <div className="card-block manage-btn p-3">
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
-                    <input type="text" className="form-control" placeholder="Search By Title" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                    <input type="text" className="form-control" placeholder="Search By feature type, set , list" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                   </div>
 
                   <div className="col-md-2 d-flex gap-2">
@@ -155,8 +155,13 @@ const ManageFeatureList = () => {
                       <BsArrowClockwise />
                     </button>
                   </div>
+<<<<<<< HEAD
                   <div className="col-md-7 text-end">
                     <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Create Feature Set</button>
+=======
+                  <div className="col-md-4 text-end">
+                    <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Add Feature List</button>
+>>>>>>> 2fb7b307564f66da0bd97469542d7e7a7230d006
                   </div>
                 </div>
               </div>

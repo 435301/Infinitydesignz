@@ -24,10 +24,9 @@ export const EDIT_LISTSUBCATEGORY_SUCCESS = 'EDIT_LISTSUBCATEGORY_SUCCESS';
 export const EDIT_LISTSUBCATEGORY_FAILURE = 'EDIT_SUBCATEGORY_FAILURE';
 export const FETCH_SUBCATEGORY_BY_ID_SUCCESS = 'FETCH_SUBCATEGORY_BY_ID_SUCCESS';
 export const FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS = 'FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS';
-
-
-
-// const BASE_URL = 'http://68.183.89.229:4005/categories';
+export const DELETE_CATEGORY_SUCCESS = 'DELETE_CATEGORY_SUCCESS';
+export const DELETE_SUBCATEGORY_SUCCESS = 'DELETE_SUBCATEGORY_SUCCESS';
+export const DELETE_LISTSUBCATEGORY_SUCCESS = 'DELETE_LISTSUBCATEGORY_SUCCESS';
 
 export const fetchCategories = () => {
 
@@ -200,3 +199,42 @@ export const fetchListSubCategoryById = (id) => async (dispatch) => {
     toast.error("Failed to fetch Listsubcategory.");
   }
 };
+
+export const deleteCategory = (id) => async (dispatch) => {
+  const token = localStorage.getItem('token');
+  try {
+    await axios.delete(`${BASE_URL}/categories/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    dispatch(fetchCategories());
+    toast.success("Category deleted successfully.");
+  } catch (err) {
+    toast.error("Failed to delete category.");
+  }
+}
+
+export const deleteSubCategory = (id) => async (dispatch) => {
+  const token = localStorage.getItem('token');
+  try {
+    await axios.delete(`${BASE_URL}/categories/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    dispatch(fetchCategories());
+    toast.success("Subcategory deleted successfully.");
+  } catch (err) {
+    toast.error("Failed to delete subcategory.");
+  }
+}
+
+export const deleteListSubCategory = (id) => async (dispatch) => {
+  const token = localStorage.getItem('token');
+  try {
+    await axios.delete(`${BASE_URL}/categories/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    dispatch(fetchCategories());
+    toast.success("ListSubcategory deleted successfully.");
+  } catch (err) {
+    toast.error("Failed to delete ListSubcategory.");
+  }
+}

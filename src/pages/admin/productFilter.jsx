@@ -5,6 +5,7 @@ import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 
 const ProductFilters = () => {
+  // const {products=[] }= useSelector((state) => state.filters || '');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [filters, setFilters] = useState({
     fabric: '',

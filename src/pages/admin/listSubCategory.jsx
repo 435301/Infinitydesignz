@@ -4,7 +4,7 @@ import '../../css/admin/style.css';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCategories } from '../../redux/actions/categoryAction';
+import { deleteListSubCategory, fetchCategories } from '../../redux/actions/categoryAction';
 import { BsPencilSquare, BsEye, BsSearch, BsArrowClockwise } from 'react-icons/bs';
 import AddListSubCategoryModal from '../../includes/addListSubCategory';
 import EditListSubCategoryModal from '../../includes/editListSubCategoryModal';
@@ -39,13 +39,13 @@ const ListSubCategory = () => {
 
   useEffect(() => {
     if (categories.length) {
-      const topLevel = categories.filter((cat) => cat.parent_id === null);
-      const subCats = categories.filter((cat) => cat.parent_id !== null);
+      const topLevel = categories.filter((cat) => cat.parentId === null);
+      const subCats = categories.filter((cat) => cat.parentId !== null);
       const subCatIds = subCats.map((cat) => cat.id);
-      const subSubCats = categories.filter((cat) => subCatIds.includes(cat.parent_id));
+      const subSubCats = categories.filter((cat) => subCatIds.includes(cat.parentId));
       const mapped = subSubCats.map((subSub) => {
-        const parent = categories.find((c) => c.id === subSub.parent_id); // subcategory
-        const grandParent = categories.find((c) => c.id === parent?.parent_id); // main category
+        const parent = categories.find((c) => c.id === subSub.parentId); // subcategory
+        const grandParent = categories.find((c) => c.id === parent?.parentId); // main category
         return {
           ...subSub,
           subCategory: parent?.title || 'N/A',
@@ -106,24 +106,10 @@ const ListSubCategory = () => {
   };
 
   const handleDelete = async () => {
-    try {
-      const token = localStorage.getItem("token");
+    await dispatch(deleteListSubCategory(ListSubCategoryToDelete));
+    setShowDeleteModal(false);
+    setListSubCategoryToDelete(null);
 
-      await axios.delete(`${BASE_URL}/categories/${ListSubCategoryToDelete}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      toast.success("Category deleted successfully!");
-      dispatch(fetchCategories());
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast.error(error?.response?.data?.message || "Failed to delete category.");
-    } finally {
-      setShowDeleteModal(false);
-      setListSubCategoryToDelete(null);
-    }
   };
   const handleViewClick = (id) => {
     const listsubCat = subSubCategories.find((item) => item.id === id);
@@ -183,7 +169,7 @@ const ListSubCategory = () => {
                 <div className="card-block manage-btn">
                   <div className="row align-items-center">
                     <div className="col-md-3">
-                      <input type="text" className="form-control" placeholder="Search By" value={searchTerm}
+                      <input type="text" className="form-control" placeholder="Search By category, sub and list category" value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)} />
                     </div>
                     <div className="col-md-3">

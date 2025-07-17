@@ -10,7 +10,7 @@ const AddFeatureListModal = ({ show, onClose }) => {
     const { featureSets = [] } = useSelector((state) => state.featureSets);
     const { featureTypes = [] } = useSelector((state) => state.featureTypes);
     // console.log('featureTypes',featureTypes)
-    const [formFields, setFormFields] = useState([{ label: '', priority: 1 }]);
+    const [formFields, setFormFields] = useState([{ label: '', priority: '' }]);
     const [featureSetId, setFeatureSetId] = useState('');
     const [featureTypeId, setFeatureTypeId] = useState('');
     const [status, setStatus] = useState(true);
@@ -124,7 +124,7 @@ const AddFeatureListModal = ({ show, onClose }) => {
                                     <input
                                         className={`form-control ${errors[`label-${index}`] ? 'is-invalid' : ''}`}
                                         type="text"
-                                        placeholder="Label"
+                                        placeholder="Feature list label"
                                         value={field.label}
                                         onChange={(e) => handleInputChange(index, 'label', e.target.value)}
                                     />

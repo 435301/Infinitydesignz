@@ -4,7 +4,7 @@ import '../../css/admin/style.css';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCategories } from '../../redux/actions/categoryAction';
+import { deleteSubCategory, fetchCategories } from '../../redux/actions/categoryAction';
 import { BsPencilSquare, BsEye, BsSearch, BsArrowClockwise } from 'react-icons/bs';
 import { TiTrash } from "react-icons/ti";
 import AddSubCategoryModal from '../../includes/addSubCategory';
@@ -31,7 +31,7 @@ const ManageSubCategories = () => {
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
   const [selectedIds, setSelectedIds] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
-    const [selectAll, setSelectAll] = useState(false);
+  const [selectAll, setSelectAll] = useState(false);
 
 
   // const BASE_URL = 'http://68.183.89.229:4005';
@@ -59,11 +59,11 @@ const ManageSubCategories = () => {
 
   useEffect(() => {
     if (categories.length) {
-      const topLevel = categories.filter((cat) => cat.parent_id === null);
+      const topLevel = categories.filter((cat) => cat.parentId === null);
       const subCategories = categories
-        .filter((cat) => cat.parent_id !== null && topLevel.some((parent) => parent.id === cat.parent_id))
+        .filter((cat) => cat.parentId !== null && topLevel.some((parent) => parent.id === cat.parentId))
         .map((subCat) => {
-          const parent = categories.find((c) => c.id === subCat.parent_id);
+          const parent = categories.find((c) => c.id === subCat.parentId);
           return {
             ...subCat,
             category: parent?.title || 'N/A', // Top-level category title
@@ -99,24 +99,10 @@ const ManageSubCategories = () => {
   };
 
   const handleDelete = async () => {
-    try {
-      const token = localStorage.getItem("token");
+    await dispatch(deleteSubCategory(subCategoryToDelete));
+    setShowDeleteModal(false);
+    setSubCategoryToDelete(null);
 
-      await axios.delete(`${BASE_URL}/categories/${subCategoryToDelete}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      toast.success("Category deleted successfully!");
-      dispatch(fetchCategories());
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast.error(error?.response?.data?.message || "Failed to delete category.");
-    } finally {
-      setShowDeleteModal(false);
-      setSubCategoryToDelete(null);
-    }
   };
 
   const handleViewClick = (id) => {
@@ -141,7 +127,7 @@ const ManageSubCategories = () => {
     }
   };
 
- const handleSelectAll = () => {
+  const handleSelectAll = () => {
     if (selectAll) {
       setSelectedIds([]);
     } else {
@@ -152,14 +138,14 @@ const ManageSubCategories = () => {
   };
 
 
-    const handleRowCheckboxChange = (id) => {
+  const handleRowCheckboxChange = (id) => {
     setSelectedRows((prev) =>
       prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
     );
   };
 
 
-const handleBulkStatusUpdate = async (newStatus) => {
+  const handleBulkStatusUpdate = async (newStatus) => {
     if (selectedRows.length === 0) {
       toast.warning("Please select at least one sub-subcategory.");
       return;
@@ -206,7 +192,7 @@ const handleBulkStatusUpdate = async (newStatus) => {
                   <div className="row">
                     <div className="col-md-3">
                       <div className="input-group">
-                        <input type="text" className="form-control" placeholder="Search By Parent Category" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                        <input type="text" className="form-control" placeholder="Search By category , sub category" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                         <span className="input-group-btn"></span>
                       </div>
                     </div>
@@ -243,20 +229,20 @@ const handleBulkStatusUpdate = async (newStatus) => {
                   <div className="row mb-3">
                     <div className="col-lg-6"></div>
                     <div className="col-md-6 text-right pt">
-                       <button
-                className="btn btn-success me-2"
-                disabled={selectedRows.length === 0}
-                onClick={() => handleBulkStatusUpdate(true)}
-              >
-                Active
-              </button>
-              <button
-                className="btn btn-danger"
-                disabled={selectedRows.length === 0}
-                onClick={() => handleBulkStatusUpdate(false)}
-              >
-                Inactive
-              </button>
+                      <button
+                        className="btn btn-success me-2"
+                        disabled={selectedRows.length === 0}
+                        onClick={() => handleBulkStatusUpdate(true)}
+                      >
+                        Active
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        disabled={selectedRows.length === 0}
+                        onClick={() => handleBulkStatusUpdate(false)}
+                      >
+                        Inactive
+                      </button>
 
                     </div>
                   </div>
@@ -268,14 +254,14 @@ const handleBulkStatusUpdate = async (newStatus) => {
                           <tr>
                             <th>
                               <th>
-                               <input
-                      type="checkbox"
-                      checked={
-                        selectedRows.length === level1SubCategories.length &&
-                        level1SubCategories.length > 0
-                      }
-                      onChange={handleSelectAll}
-                    />
+                                <input
+                                  type="checkbox"
+                                  checked={
+                                    selectedRows.length === level1SubCategories.length &&
+                                    level1SubCategories.length > 0
+                                  }
+                                  onChange={handleSelectAll}
+                                />
                               </th>
 
 
@@ -299,10 +285,10 @@ const handleBulkStatusUpdate = async (newStatus) => {
                               <tr key={item.id}>
                                 <td>
                                   <input
-                          type="checkbox"
-                          checked={selectedRows.includes(item.id)}
-                          onChange={() => handleRowCheckboxChange(item.id)}
-                        />
+                                    type="checkbox"
+                                    checked={selectedRows.includes(item.id)}
+                                    onChange={() => handleRowCheckboxChange(item.id)}
+                                  />
 
 
                                 </td>

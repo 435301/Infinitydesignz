@@ -12,8 +12,8 @@ const AddFeatureSetModal = ({ show, onClose }) => {
     const [featureTypesInput, setFeatureTypesInput] = useState([{ title: '', priority: '' }]);
     const [selectedFeatureTypeId, setSelectedFeatureTypeId] = useState('');
     const [errors, setErrors] = useState({});
-    const [status, setStatus] = useState(true);
-
+        const [status, setStatus] = useState(true);
+    
 
     useEffect(() => {
         dispatch(fetchFeatureTypes());
@@ -84,7 +84,7 @@ const AddFeatureSetModal = ({ show, onClose }) => {
                     title: item.title,
                     featureTypeId: Number(selectedFeatureTypeId),
                     priority: Number(item.priority),
-                    status: status,
+                                        status: status,
 
                 }
                 console.log('Payload being sent:', payload);
@@ -137,7 +137,7 @@ const AddFeatureSetModal = ({ show, onClose }) => {
                                         <input
                                             className={`form-control mb-1 ${errors[`title-${index}`] ? 'is-invalid' : ''}`}
                                             type="text"
-                                            placeholder="Title"
+                                            placeholder="Feature Set Title"
                                             value={field.title}
                                             onChange={(e) => handleInputChange(index, 'title', e.target.value)}
                                         />

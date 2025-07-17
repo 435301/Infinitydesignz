@@ -84,7 +84,7 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
 
         formData.append('title', title);
         formData.append('status', status ? true : false)
-        formData.append('parent_id', subMenu); // <-- This is important
+        formData.append('parentId', subMenu); // <-- This is important
         formData.append('seoTitle', seoTitle);
         formData.append('seoDescription', seoDescription);
         formData.append('seoKeywords', seoKeywords);
@@ -98,8 +98,8 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
 
     if (!show) return null;
 
-    const parentCategories = categories.filter(c => c.parent_id === null);
-    const subCategories = categories.filter(c => c.parent_id === Number(menu));
+    const parentCategories = categories.filter(c => c.parentId === null);
+    const subCategories = categories.filter(c => c.parentId === Number(menu));
 
     return (
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>

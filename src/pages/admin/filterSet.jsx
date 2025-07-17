@@ -112,7 +112,7 @@ const ManageFilterSet = () => {
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
                     <div className="input-group">
-                      <input type="text" className="form-control" placeholder="Search By Title" value={searchTerm}
+                      <input type="text" className="form-control" placeholder="Search By filter type, set" value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)} />
                     </div>
                   </div>
@@ -129,8 +129,13 @@ const ManageFilterSet = () => {
                       <BsArrowClockwise onClick={() => setSearchTerm('')} />
                     </button>
                   </div>
+<<<<<<< HEAD
                   <div className="col-md-7 text-end">
                     <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Create Filter Set</button>
+=======
+                  <div className="col-md-4 text-end">
+                    <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Add Filter Set</button>
+>>>>>>> 2fb7b307564f66da0bd97469542d7e7a7230d006
                   </div>
                 </div>
               </div>
