@@ -297,7 +297,7 @@ header .wrapper {
   height: 100%;
   background-color: #eceff3;
   margin-left: 274px;
-  z-index: 820;
+  /* z-index: 820; */
   -webkit-transition: all 0.3s ease-in-out;
   -moz-transition: all 0.3s ease-in-out;
   -ms-transition: all 0.3s ease-in-out;
@@ -325,7 +325,7 @@ header .wrapper {
 
 @media (max-width: 767px) {
   .fixed .content-wrapper {
-    margin-top: 174px;
+    margin-top: 0px;
   }
 }
 
@@ -729,7 +729,7 @@ header .wrapper {
     -webkit-transform: translate(-230px, 0);
     -moz-transform: translate(-230px, 0);
     -ms-transform: translate(-230px, 0);
-    transform: translate(-230px, 0);
+    transform: translate(-250px, 0);
   }
 
   .main-sidebar {
@@ -737,7 +737,7 @@ header .wrapper {
     top: 0;
     left: 0;
     background: #0da79e;
-    padding-top: 159px;
+    padding-top: 0px;
     min-height: 100vh;
     width: 228px;
     z-index: 810;
@@ -1744,7 +1744,16 @@ select.form-control:not([size]):not([multiple]) {
 
 
 @media (max-width: 767px) {
-
+.search-bx input[type="search"] {
+    background-color: #eceff3;
+    color: #172b4c;
+    font-size: 16px;
+    padding-left: 20px;
+    border: none;
+    border-radius: 5px 0px 0px 5px;
+    height: 33px;
+    width: 33px;
+}
   .manage-btn .btn-primary {
     color: #fff;
     background-color: #0da79e;
@@ -1811,7 +1820,7 @@ select.form-control:not([size]):not([multiple]) {
   }
 
   .card {
-    margin-bottom: 0px !important;
+    margin-bottom: 10px !important;
   }
 }
 
@@ -2124,8 +2133,6 @@ small a {
   /* Show when image is selected */
 }
 
-/* Removed CSS for Link field validation styling since JS is removed */
-/* Responsive adjustments */
 @media (max-width: 991px) {
   .col-lg-4 {
     margin-bottom: 1.5rem;

@@ -148,12 +148,12 @@ const Dashboard = () => {
           {/* Top 5 Products and Vendors */}
           <div className="row">
             {/* Products Table */}
-            <div className="col-sm-6">
+            <div className="col-sm-6 mb-3">
               <div className="card">
                 <div className="card-block" style={{ padding: '15px' }}>
                   <h5 className="mb-3">Top 5 Selling Products</h5>
                   <div className="table-responsive">
-                    <table className="table table-striped table-hover">
+                    <table className="table table-striped table-hover ">
                       <thead>
                         <tr>
                           <th>S No</th>

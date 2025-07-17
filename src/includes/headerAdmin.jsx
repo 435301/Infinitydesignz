@@ -13,7 +13,7 @@ import logo from '../img/logo.svg';
 import avatar from '../img/avatar-1.png';
 
 // ✅ Default empty function for onToggleSidebar
-const HeaderAdmin = ({ onToggleSidebar = () => {} }) => {
+const HeaderAdmin = ({ onToggleSidebar = () => { } }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -100,7 +100,7 @@ const HeaderAdmin = ({ onToggleSidebar = () => {} }) => {
         </a>
 
         <ul style={{ display: 'flex', alignItems: 'center', listStyle: 'none', margin: 0, padding: 0 }}>
-          <li>
+          <li className="d-none d-md-block">
             <div className="search-bx" style={{ position: 'relative' }}>
               <input
                 type="search"
@@ -122,6 +122,7 @@ const HeaderAdmin = ({ onToggleSidebar = () => {} }) => {
               />
             </div>
           </li>
+
         </ul>
 
         <div style={{ display: 'flex', alignItems: 'center' }}>
