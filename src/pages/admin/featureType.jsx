@@ -140,15 +140,9 @@ const ManageFeatureType = () => {
                       <BsArrowClockwise style={{ fontSize: '18px' }} />
                     </button>
                   </div>
-<<<<<<< HEAD
                   <div className="col-md-7 text-end">
                     <button className="btn btn-primary" type="button" style={{}} onClick={() => setShowAddModal(true)}>
                       + Create Feature
-=======
-                  <div className="col-md-4 text-end">
-                    <button className="btn btn-primary" type="button" style={{position:"relative",left:"285px"}} onClick={() => setShowAddModal(true)}>
-                      + Add Feature
->>>>>>> 2fb7b307564f66da0bd97469542d7e7a7230d006
                     </button>
                   </div>
                 </div>

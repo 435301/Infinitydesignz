@@ -129,13 +129,8 @@ const ManageFilterSet = () => {
                       <BsArrowClockwise onClick={() => setSearchTerm('')} />
                     </button>
                   </div>
-<<<<<<< HEAD
                   <div className="col-md-7 text-end">
                     <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Create Filter Set</button>
-=======
-                  <div className="col-md-4 text-end">
-                    <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Add Filter Set</button>
->>>>>>> 2fb7b307564f66da0bd97469542d7e7a7230d006
                   </div>
                 </div>
               </div>
