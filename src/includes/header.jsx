@@ -62,7 +62,7 @@ export default function Header() {
   const groupCategories = () => {
     const grouped = {};
     categories.forEach(cat => {
-      const parent = cat.parent_id || 'root';
+      const parent = cat.parentId || 'root';
       if (!grouped[parent]) grouped[parent] = [];
       grouped[parent].push(cat);
     });

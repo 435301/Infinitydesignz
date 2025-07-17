@@ -10,7 +10,7 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
 
     const [form, setForm] = useState({
         title: '',
-        parent_id: '',
+        parentId: '',
         seoTitle: '',
         seoDescription: '',
         seoKeywords: '',
@@ -33,7 +33,7 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
         if (singleCategory && singleCategory.id === subCategoryId) {
             setForm({
                 title: singleCategory.title || '',
-                parent_id: singleCategory.parent_id || '',
+                parentId: singleCategory.parentId || '',
                 seoTitle: singleCategory.seoTitle || '',
                 seoDescription: singleCategory.seoDescription || '',
                 seoKeywords: singleCategory.seoKeywords || '',
@@ -65,14 +65,14 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
 
     // const handleChange = (e) => {
     //     const { name, value, type, checked } = e.target;
-    //     setForm({ ...form, [name]: name === 'parent_id' ? parseInt(value) : type === 'checkbox' ? checked : value });
+    //     setForm({ ...form, [name]: name === 'parentId' ? parseInt(value) : type === 'checkbox' ? checked : value });
 
 
     // };
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        const newValue = name === 'parent_id' ? parseInt(value) : type === 'checkbox' ? checked : value;
+        const newValue = name === 'parentId' ? parseInt(value) : type === 'checkbox' ? checked : value;
         console.log(`Field ${name} changed to:`, newValue);
         setForm({ ...form, [name]: newValue });
         if (errors[name] && value.trim() !== '') {
@@ -84,7 +84,7 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
     const handleSubmit = async (e) => {
         e.preventDefault();
         const newErrors = {};
-        if (!form.parent_id) newErrors.parent_id = 'Sub category is required';
+        if (!form.parentId) newErrors.parentId = 'Sub category is required';
         if (!form.title.trim()) newErrors.title = 'Title is required';
 
         if (Object.keys(newErrors).length > 0) {
@@ -93,7 +93,7 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
         }
         const data = new FormData();
         data.append('title', form.title);
-        data.append('parent_id', form.parent_id);
+        data.append('parentId', form.parentId);
         data.append('seoTitle', form.seoTitle);
         data.append('seoDescription', form.seoDescription);
         data.append('seoKeywords', form.seoKeywords);
@@ -110,12 +110,12 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
     if (!show) return null;
 
     //   const subCategories = categories?.filter((c) => {
-    //     const parent = categories.find((cat) => cat.id === c.parent_id);
-    //     return parent?.parent_id === null;
+    //     const parent = categories.find((cat) => cat.id === c.parentId);
+    //     return parent?.parentId === null;
     //   });
     const isSubCategoryLevel = (cat) => {
-        const parent = categories.find((parent) => parent.id === cat.parent_id);
-        return parent && parent.parent_id === null;
+        const parent = categories.find((parent) => parent.id === cat.parentId);
+        return parent && parent.parentId === null;
     };
 
     const subCategories = categories.filter(isSubCategoryLevel);
@@ -134,13 +134,13 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
                             <div className="row align-items-center">
                                 <div className="col-lg-4 mb-3">
                                     <label className="form-label">Sub Category<span className="text-danger">*</span></label>
-                                    <select className={`form-control ${errors.parent_id ? 'is-invalid' : ''}`} name="parent_id" value={form.parent_id?.toString()} onChange={handleChange} >
+                                    <select className={`form-control ${errors.parentId ? 'is-invalid' : ''}`} name="parentId" value={form.parentId?.toString()} onChange={handleChange} >
                                         <option value="">-- Select Sub Category --</option>
                                         {subCategories?.map((cat) => (
                                             <option key={cat.id} value={cat.id?.toString()}>{cat.title}</option>
                                         ))}
                                     </select>
-                                    {errors.parent_id && <div className="invalid-feedback">{errors.parent_id}</div>}
+                                    {errors.parentId && <div className="invalid-feedback">{errors.parentId}</div>}
                                 </div>
 
                                 <div className="col-lg-4 mb-3">

@@ -59,11 +59,11 @@ const ManageSubCategories = () => {
 
   useEffect(() => {
     if (categories.length) {
-      const topLevel = categories.filter((cat) => cat.parent_id === null);
+      const topLevel = categories.filter((cat) => cat.parentId === null);
       const subCategories = categories
-        .filter((cat) => cat.parent_id !== null && topLevel.some((parent) => parent.id === cat.parent_id))
+        .filter((cat) => cat.parentId !== null && topLevel.some((parent) => parent.id === cat.parentId))
         .map((subCat) => {
-          const parent = categories.find((c) => c.id === subCat.parent_id);
+          const parent = categories.find((c) => c.id === subCat.parentId);
           return {
             ...subCat,
             category: parent?.title || 'N/A', // Top-level category title

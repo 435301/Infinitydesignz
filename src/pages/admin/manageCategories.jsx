@@ -38,7 +38,7 @@ const ManageCategories = () => {
   }, [dispatch]);
 
   const filteredCategories = categories.filter((cat) => {
-    const isTopLevel = cat.parent_id === null;
+    const isTopLevel = cat.parentId === null;
     if (!isTopLevel) return false;
 
     const title = cat.title.toLowerCase();
@@ -242,7 +242,7 @@ const ManageCategories = () => {
                     </thead>
                     <tbody>
                       {currentRows.length > 0 ? currentRows.map((cat, index) => {
-                        const parentCategory = categories.find(p => p.id === cat.parent_id);
+                        const parentCategory = categories.find(p => p.id === cat.parentId);
                         const isSelected = selectedIds.includes(cat.id);
 
                         return (

@@ -67,7 +67,7 @@ const AddSubCategoryModal = ({ show, setShow }) => {
 
         formData.append('title', title);
         formData.append('status', status ? true : false)
-        formData.append('parent_id', menu); // <-- This is important
+        formData.append('parentId', menu); // <-- This is important
         formData.append('seoTitle', seoTitle);
         formData.append('seoDescription', seoDescription);
         formData.append('seoKeywords', seoKeywords);
@@ -105,7 +105,7 @@ const AddSubCategoryModal = ({ show, setShow }) => {
                                     >
                                         <option value="">-- Select Parent Category --</option>
                                         {categories
-                                            .filter(cat => cat.parent_id === null)
+                                            .filter(cat => cat.parentId === null)
                                             .map(cat => (
                                                 <option key={cat.id} value={cat.id}>{cat.title}</option>
                                             ))}

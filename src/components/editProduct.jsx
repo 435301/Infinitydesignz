@@ -70,9 +70,9 @@ const EditProduct = ({ onClose, show }) => {
 
     const [formData, setFormData] = useState(initialFormState);
 
-    const menuOptions = categories.filter(cat => cat.parent_id === null);
-    const subMenuOptions = categories.filter(cat => cat.parent_id === parseInt(selectedMenu));
-    const listSubMenuOptions = categories.filter(cat => cat.parent_id === parseInt(selectedSubMenu));
+    const menuOptions = categories.filter(cat => cat.parentId === null);
+    const subMenuOptions = categories.filter(cat => cat.parentId === parseInt(selectedMenu));
+    const listSubMenuOptions = categories.filter(cat => cat.parentId === parseInt(selectedSubMenu));
 
     useEffect(() => {
         dispatch(fetchCategories());

@@ -39,13 +39,13 @@ const ListSubCategory = () => {
 
   useEffect(() => {
     if (categories.length) {
-      const topLevel = categories.filter((cat) => cat.parent_id === null);
-      const subCats = categories.filter((cat) => cat.parent_id !== null);
+      const topLevel = categories.filter((cat) => cat.parentId === null);
+      const subCats = categories.filter((cat) => cat.parentId !== null);
       const subCatIds = subCats.map((cat) => cat.id);
-      const subSubCats = categories.filter((cat) => subCatIds.includes(cat.parent_id));
+      const subSubCats = categories.filter((cat) => subCatIds.includes(cat.parentId));
       const mapped = subSubCats.map((subSub) => {
-        const parent = categories.find((c) => c.id === subSub.parent_id); // subcategory
-        const grandParent = categories.find((c) => c.id === parent?.parent_id); // main category
+        const parent = categories.find((c) => c.id === subSub.parentId); // subcategory
+        const grandParent = categories.find((c) => c.id === parent?.parentId); // main category
         return {
           ...subSub,
           subCategory: parent?.title || 'N/A',
