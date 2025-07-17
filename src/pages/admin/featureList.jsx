@@ -46,7 +46,7 @@ const ManageFeatureList = () => {
     );
   };
 
-   const handleRowCheckboxChange = (id) => {
+  const handleRowCheckboxChange = (id) => {
     setSelectedRows((prev) =>
       prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
     );
@@ -155,7 +155,7 @@ const ManageFeatureList = () => {
                       <BsArrowClockwise />
                     </button>
                   </div>
-                  <div className="col-md-4 text-end">
+                  <div className="col-md-7 text-end">
                     <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Create Feature Set</button>
                   </div>
                 </div>
@@ -165,10 +165,7 @@ const ManageFeatureList = () => {
             {/* Feature Group Sections */}
             <div className="card">
               <div className="card-block p-3">
-                <div className="row mb-3">
-                  <div className="col-lg-6" />
-
-                </div>
+              
 
                 {Object.entries(groupedFeatures).map(([groupTitle, features], index) => (
                   <div key={index} className="mb-4">

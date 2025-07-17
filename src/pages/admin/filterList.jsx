@@ -172,7 +172,7 @@ const ManageFilterList = () => {
                       <BsArrowClockwise />
                     </button>
                   </div>
-                  <div className="col-md-4 text-end">
+                  <div className="col-md-7 text-end">
                     <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Create Filter List</button>
                   </div>
                 </div>
