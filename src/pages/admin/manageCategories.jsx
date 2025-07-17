@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { BsPencilSquare, BsEye, BsArrowClockwise } from 'react-icons/bs';
 import { TiTrash } from "react-icons/ti";
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCategories } from '../../redux/actions/categoryAction';
+import { deleteCategory, fetchCategories } from '../../redux/actions/categoryAction';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import AddCategoryModal from '../../includes/addCategory';
@@ -29,7 +29,7 @@ const ManageCategories = () => {
   const [categoryToDelete, setCategoryToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [categoryToEdit, setCategoryToEdit] = useState(null);
- const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
 
@@ -69,13 +69,13 @@ const ManageCategories = () => {
   };
 
 
-    const handleRowCheckboxChange = (id) => {
+  const handleRowCheckboxChange = (id) => {
     setSelectedRows((prev) =>
       prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
     );
   };
 
- const handleBulkStatusUpdate = async (newStatus) => {
+  const handleBulkStatusUpdate = async (newStatus) => {
     if (selectedRows.length === 0) {
       toast.warning("Please select at least one sub-subcategory.");
       return;
@@ -114,22 +114,10 @@ const ManageCategories = () => {
   };
 
   const handleDelete = async () => {
-    try {
-      const token = localStorage.getItem("token");
+    await dispatch(deleteCategory(categoryToDelete));
+    setShowDeleteModal(false);
+    setCategoryToDelete(null);
 
-      await axios.delete(`${BASE_URL}/categories/${categoryToDelete}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      toast.success("Category deleted successfully!");
-      dispatch(fetchCategories());
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast.error("Failed to delete category.");
-    } finally {
-      setShowDeleteModal(false);
-      setCategoryToDelete(null);
-    }
   };
 
   const handleEditClick = async (id) => {
@@ -212,20 +200,20 @@ const ManageCategories = () => {
               <div className="card-block">
                 <div className="row mb-3">
                   <div className="col-md-12 text-end">
-                     <button
-                className="btn btn-success me-2"
-                disabled={selectedRows.length === 0}
-                onClick={() => handleBulkStatusUpdate(true)}
-              >
-                Active
-              </button>
-              <button
-                className="btn btn-danger"
-                disabled={selectedRows.length === 0}
-                onClick={() => handleBulkStatusUpdate(false)}
-              >
-                Inactive
-              </button>
+                    <button
+                      className="btn btn-success me-2"
+                      disabled={selectedRows.length === 0}
+                      onClick={() => handleBulkStatusUpdate(true)}
+                    >
+                      Active
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      disabled={selectedRows.length === 0}
+                      onClick={() => handleBulkStatusUpdate(false)}
+                    >
+                      Inactive
+                    </button>
                   </div>
                 </div>
 
@@ -235,13 +223,13 @@ const ManageCategories = () => {
                       <tr>
                         <th>
                           <input
-                      type="checkbox"
-                      checked={
-                        selectedRows.length === categories.length &&
-                        categories.length > 0
-                      }
-                      onChange={handleSelectAll}
-                    />
+                            type="checkbox"
+                            checked={
+                              selectedRows.length === categories.length &&
+                              categories.length > 0
+                            }
+                            onChange={handleSelectAll}
+                          />
                         </th>
                         <th>S.No</th>
                         <th>Category</th>
@@ -260,11 +248,11 @@ const ManageCategories = () => {
                         return (
                           <tr key={cat.id}>
                             <td>
-                               <input
-                          type="checkbox"
-                          checked={selectedRows.includes(cat.id)}
-                          onChange={() => handleRowCheckboxChange(cat.id)}
-                        />
+                              <input
+                                type="checkbox"
+                                checked={selectedRows.includes(cat.id)}
+                                onChange={() => handleRowCheckboxChange(cat.id)}
+                              />
                             </td>
                             <td>{index + 1}</td>
                             <td>{parentCategory ? parentCategory.title : cat.title}</td>

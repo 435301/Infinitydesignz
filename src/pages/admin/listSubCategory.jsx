@@ -4,7 +4,7 @@ import '../../css/admin/style.css';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCategories } from '../../redux/actions/categoryAction';
+import { deleteListSubCategory, fetchCategories } from '../../redux/actions/categoryAction';
 import { BsPencilSquare, BsEye, BsSearch, BsArrowClockwise } from 'react-icons/bs';
 import AddListSubCategoryModal from '../../includes/addListSubCategory';
 import EditListSubCategoryModal from '../../includes/editListSubCategoryModal';
@@ -106,24 +106,10 @@ const ListSubCategory = () => {
   };
 
   const handleDelete = async () => {
-    try {
-      const token = localStorage.getItem("token");
+    await dispatch(deleteListSubCategory(ListSubCategoryToDelete));
+    setShowDeleteModal(false);
+    setListSubCategoryToDelete(null);
 
-      await axios.delete(`${BASE_URL}/categories/${ListSubCategoryToDelete}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      toast.success("Category deleted successfully!");
-      dispatch(fetchCategories());
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast.error(error?.response?.data?.message || "Failed to delete category.");
-    } finally {
-      setShowDeleteModal(false);
-      setListSubCategoryToDelete(null);
-    }
   };
   const handleViewClick = (id) => {
     const listsubCat = subSubCategories.find((item) => item.id === id);

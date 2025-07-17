@@ -21,7 +21,10 @@ import {
   FETCH_SUBCATEGORY_BY_ID_SUCCESS,
   EDIT_LISTSUBCATEGORY_FAILURE,
   EDIT_LISTSUBCATEGORY_SUCCESS,
-  FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS
+  FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS,
+  DELETE_CATEGORY_SUCCESS,
+  DELETE_SUBCATEGORY_SUCCESS,
+  DELETE_LISTSUBCATEGORY_SUCCESS
 } from '../actions/categoryAction';
 
 const initialState = {
@@ -78,7 +81,13 @@ const categoryReducer = (state = initialState, action) => {
       return { ...state, loading: true , error: action.payload };
        case FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS:
       return { ...state, loading: false, singleCategory: action.payload };
-    default:
+      case DELETE_CATEGORY_SUCCESS:
+      return { ...state, loading: false, categories: state.categories.filter(category => category.id !== action.payload) };
+      case DELETE_SUBCATEGORY_SUCCESS:
+      return { ...state, loading: false, subCategory: state.subCategory.filter(sub => sub.id !== action.payload) };
+      case DELETE_LISTSUBCATEGORY_SUCCESS:
+        return { ...state, loading: false, singleCategory: state.singleCategory.filter(item => item.id !== action.payload) }; 
+       default:
       return state;
   }
 };
