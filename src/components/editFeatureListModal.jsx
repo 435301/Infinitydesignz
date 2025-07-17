@@ -95,7 +95,7 @@ const EditFeatureListModal = ({ show, onClose, featureList }) => {
                 <div className="modal-content">
                     <form onSubmit={handleSubmit}>
                         <div className="modal-header">
-                            <h5 className="modal-title">Add Feature List</h5>
+                            <h5 className="modal-title">Edit Feature List</h5>
                             <button type="button" className="btn-close" onClick={onClose}></button>
                         </div>
                         <div className="modal-body">
