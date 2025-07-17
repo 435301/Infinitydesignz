@@ -5,7 +5,7 @@ import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchColors } from '../../redux/actions/colorAction';
+import { deleteColor, fetchColors } from '../../redux/actions/colorAction';
 import PaginationComponent from '../../includes/pagination';
 import AddColorModal from '../../components/addColorModal';
 import { toast } from 'react-toastify';
@@ -73,19 +73,10 @@ const ManageColors = () => {
   };
 
   const handleDelete = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`${BASE_URL}/colors/${colorToDelete}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      toast.success("Color deleted successfully!");
-      dispatch(fetchColors());
-    } catch (error) {
-      toast.error("Failed to delete color.");
-    } finally {
+     await dispatch(deleteColor(colorToDelete));
       setShowDeleteModal(false);
       setColorToDelete(null);
-    }
+    
   };
 
   const handleBulkStatusUpdate = async (newStatus) => {

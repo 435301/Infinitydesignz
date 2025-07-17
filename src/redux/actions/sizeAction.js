@@ -11,7 +11,7 @@ export const ADD_SIZES_FAILURE ='ADD_SIZES_FAILURE';
 export const EDIT_SIZES_REQUEST='EDIT_SIZES_REQUEST';
 export const EDIT_SIZES_SUCCESS='EDIT_SIZES_SUCCESS';
 export const EDIT_SIZES_FAILURE='EDIT_SIZES_FAILURE';
-
+export const DELETE_SIZE_SUCCESS = 'DELETE_SIZE_SUCCESS';
 
 //mycode
 export const fetchSizes = () => {
@@ -91,3 +91,18 @@ export const editSizes = (payload) => async (dispatch) => {
     });
   }
 };
+
+export const deleteSize = (id) => async (dispatch) => {
+  try {
+    const token = localStorage.getItem('token');
+    await axios.delete(`${BASE_URL}/size-uom/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    dispatch({ type: 'DELETE_SIZE_SUCCESS', payload: id });
+    toast.success('Size deleted successfully');
+  } catch (error) {
+    toast.error(error?.response?.data?.message || 'Failed to delete size');
+  }
+}

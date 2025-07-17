@@ -7,7 +7,8 @@ import {
   ADD_BRAND_FAILURE,
   EDIT_BRAND_REQUEST,
   EDIT_BRAND_SUCCESS,
-  EDIT_BRAND_FAILURE
+  EDIT_BRAND_FAILURE,
+  DELETE_BRAND_SUCCESS
 } from '../actions/brandAction';
 
 const initialState = {
@@ -37,6 +38,11 @@ const brandReducer = (state = initialState, action) => {
       return { ...state, loading: false };
     case EDIT_BRAND_FAILURE:
       return { ...state, loading: false, error: action.payload };
+       case DELETE_BRAND_SUCCESS:
+      return {
+        ...state,
+        brands: state.brands.filter((item) => item.id !== action.payload),
+      };
     default:
       return state;
   }

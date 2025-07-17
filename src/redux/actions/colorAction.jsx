@@ -11,7 +11,7 @@ export const ADD_COLORS_FAILURE ='ADD_COLORS_FAILURE';
 export const EDIT_COLORS_REQUEST = 'EDIT_COLORS_REQUEST';
 export const EDIT_COLORS_SUCCESS = 'EDIT_COLORS_SUCCESS';
 export const EDIT_COLORS_FAILURE = 'EDIT_COLORS_FAILURE'
-
+export const DELETE_COLOR_SUCCESS = 'DELETE_COLOR_SUCCESS';
 
 export const fetchColors = () => {
 
@@ -84,5 +84,23 @@ export const editColors = (payload) => async (dispatch) => {
       payload: error.response?.data?.message || 'Error editing colors',
     });
     throw error; 
+  }
+};
+
+export const deleteColor = (id) => async (dispatch) => {
+  try {
+    const token = localStorage.getItem('token');
+
+    await axios.delete(`${BASE_URL}/colors/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    dispatch(fetchColors(id));
+    toast.success('Color deleted successfully!');
+  } catch (error) {
+    toast.error(error?.response?.data?.message || 'Failed to delete color.');
+    console.error(error);
   }
 };

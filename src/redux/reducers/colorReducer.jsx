@@ -7,7 +7,8 @@ import {
     ADD_COLORS_FAILURE,
     EDIT_COLORS_REQUEST,
     EDIT_COLORS_SUCCESS,
-    EDIT_COLORS_FAILURE
+    EDIT_COLORS_FAILURE,
+    DELETE_COLOR_SUCCESS
 
 } from '../actions/colorAction';
 
@@ -38,6 +39,11 @@ const colorReducer = (state = initialState, action) => {
             return { ...state, loading: false, colors: action.payload };
         case EDIT_COLORS_FAILURE:
             return { ...state, loading: false, error: action.payload };
+        case DELETE_COLOR_SUCCESS:
+            return {
+                ...state,
+                colors: state.colors.filter((item) => item.id !== action.payload),
+            };
         default:
             return state;
     }
