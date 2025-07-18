@@ -7,6 +7,7 @@ import AddProduct from '../../components/addProduct';
 
 const ProductPage = () => {
   const [activeTab, setActiveTab] = useState('add');
+   const [productId, setProductId] = useState(null);
 
   return (
     <div className="container-fluid mt-4">
@@ -17,7 +18,10 @@ const ProductPage = () => {
         className="mb-3"
       >
         <Tab eventKey="add" title="Add Product">
-          <AddProduct />
+         <AddProduct
+              setProductId={setProductId}
+            //   onNext={() => setActiveTab('features')}
+            />
         </Tab>
         
         <Tab eventKey="images" title="Product Images">
@@ -27,7 +31,7 @@ const ProductPage = () => {
           <ProductFilters />
         </Tab>
         <Tab eventKey="features" title="Product Features">
-          <ProductFeatures />
+           <ProductFeatures productId={productId} />
         </Tab>
        
       </Tabs>

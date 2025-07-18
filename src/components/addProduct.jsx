@@ -17,7 +17,7 @@ import { addVariants } from '../redux/actions/variantsAction';
 import axios from 'axios';
 import BASE_URL from '../config/config';
 
-const AddProduct = ({ onClose }) => {
+const AddProduct = ({ onClose, setProductId, onNext}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -61,27 +61,32 @@ const AddProduct = ({ onClose }) => {
   const subMenuOptions = categories.filter(cat => cat.parentId === parseInt(selectedMenu));
   const listSubMenuOptions = categories.filter(cat => cat.parentId === parseInt(selectedSubMenu));
 
-  useEffect(() => {
-    dispatch(fetchCategories());
-    dispatch(fetchColors());
-    dispatch(fetchSizes());
-    dispatch(fetchBrands());
+useEffect(() => {
+  dispatch(fetchCategories());
+  dispatch(fetchColors());
+  dispatch(fetchSizes());
+  dispatch(fetchBrands());
 
-     const savedDraft = localStorage.getItem('productDraft');
-    if (savedDraft) {
-      const draft = JSON.parse(savedDraft);
-      setFormData(draft.formData || initialFormState);
-      setSelectedMenu(draft.selectedMenu || '');
-      setSelectedSubMenu(draft.selectedSubMenu || '');
-      setSelectedListSubMenu(draft.selectedListSubMenu || '');
-      setDescription(draft.description || '');
-      setVariants(draft.variants || [{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
-    }
+  const savedDraft = localStorage.getItem('addProductDraft');
+  if (savedDraft) {
+    const { formData, selectedMenu, selectedSubMenu, selectedListSubMenu, description, variants } = JSON.parse(savedDraft);
+    setFormData(formData);
+    setSelectedMenu(selectedMenu);
+    setSelectedSubMenu(selectedSubMenu);
+    setSelectedListSubMenu(selectedListSubMenu);
+    setDescription(description);
+    setVariants(variants);
+  } else {
+    setFormData(initialFormState);
+    setSelectedMenu('');
+    setSelectedSubMenu('');
+    setSelectedListSubMenu('');
+    setDescription('');
+    setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
+  }
+}, [dispatch]);
 
-  }, [dispatch]);
 
-
-  
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -127,29 +132,6 @@ const AddProduct = ({ onClose }) => {
 
   }
 
-  //   const handleInputChange = (field, value) => {
-  //   setFormData({ ...formData, [field]: value });
-
-  //   // Validate while typing
-  //   let fieldError = '';
-
-  //   if (['sku', 'title', 'searchKeywords'].includes(field) && !value.trim()) {
-  //     fieldError = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
-  //   }
-
-  //   if (['stock', 'mrp', 'sellingPrice', 'height', 'width', 'length'].includes(field)) {
-  //     if (!value) {
-  //       fieldError = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
-  //     } else if (isNaN(value)) {
-  //       fieldError = `${field.charAt(0).toUpperCase() + field.slice(1)} must be a number`;
-  //     }
-  //   }
-
-  //   setErrors((prev) => ({
-  //     ...prev,
-  //     [field]: fieldError,
-  //   }));
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -191,6 +173,7 @@ const AddProduct = ({ onClose }) => {
         },
       });
       const productId = response.data?.id;
+      console.log('Product created with ID:', productId);
 
       const variantPayloads = variants
         .filter(v => v.sku && v.stock && v.mrp && v.sellingPrice)
@@ -207,15 +190,14 @@ const AddProduct = ({ onClose }) => {
       if (variantPayloads.length) {
         await dispatch(addVariants(variantPayloads));
       }
-
-   // Clear form and draft
       setFormData(initialFormState);
       setDescription('');
       setSelectedMenu('');
       setSelectedSubMenu('');
       setSelectedListSubMenu('');
       setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
-      localStorage.removeItem('productDraft');
+      setProductId(productId);
+      // onNext && onNext(); 
       navigate('/admin/manage-product')
 
     } catch (err) {
@@ -225,6 +207,20 @@ const AddProduct = ({ onClose }) => {
     }
 
   };
+
+  const handleSaveDraft = () => {
+  const draft = {
+    formData,
+    selectedMenu,
+    selectedSubMenu,
+    selectedListSubMenu,
+    description,
+    variants,
+  };
+  localStorage.setItem('addProductDraft', JSON.stringify(draft));
+  alert('Draft saved successfully!');
+};
+
 
   const handleReset = (e) => {
     e.preventDefault();
@@ -246,18 +242,6 @@ const AddProduct = ({ onClose }) => {
     setVariants(updatedVariants);
   };
 
-    const handleSaveDraft = () => {
-    const draftData = {
-      formData,
-      selectedMenu,
-      selectedSubMenu,
-      selectedListSubMenu,
-      description,
-      variants
-    };
-    localStorage.setItem('productDraft', JSON.stringify(draftData));
-    alert('Draft saved locally!');
-  };
 
   const addRow = () => {
     setVariants([
@@ -289,7 +273,7 @@ const AddProduct = ({ onClose }) => {
                     <h5 className="text-dark mb-0">Create Product</h5>
                   </div>
                   <div className="card-block">
-                    <form onSubmit={handleSubmit} className="app-form">
+                    <form onSubmit={handleSaveDraft} className="app-form">
                       <div className="row">
                         <div className="col-lg-12">
                           <h6 className="sub-heading">Category Details</h6>
@@ -598,9 +582,9 @@ const AddProduct = ({ onClose }) => {
                         </div>
 
                         <div className="col-lg-12 text-center my-4">
-                          <button type="submit" className="btn btn-primary py-2 px-5 me-2">Submit</button>
+                          {/* <button type="submit" className="btn btn-primary py-2 px-5 me-2">Submit</button> */}
+                           <button type="button" className="btn btn-warning py-2 px-5 me-2" onClick={handleSaveDraft}>Save as Draft</button>
                           <button type="reset" className="btn btn-secondary py-2 px-5" onClick={handleReset}>Reset</button>
-                           <button type="button" className="btn btn-warning py-2 px-5" onClick={handleSaveDraft}>Save Draft</button>
                         </div>
 
                       </div>
