@@ -74,18 +74,45 @@ const ProductFilters = () => {
         const enrichedProducts = await Promise.all(
           productList.map(async (product) => {
             const categoryId = product?.category?.id;
-            if (!categoryId) return { ...product, filterSets: [] };
+            let filterSets = [];
 
+            if (categoryId) {
+              try {
+                const categoryRes = await axios.get(`${BASE_URL}/categories/${categoryId}`, {
+                  headers: { Authorization: `Bearer ${token}` },
+                });
+                filterSets = categoryRes?.data?.filterType?.filterSets || [];
+              } catch (err) {
+                console.error(`Failed to fetch filters for category ${categoryId}`, err);
+              }
+            }
+
+            // Fetch saved filter values for this product
+            let savedFilters = [];
             try {
-              const categoryRes = await axios.get(`${BASE_URL}/categories/${categoryId}`, {
+              const savedFilterRes = await axios.get(`${BASE_URL}/product-filters/${product.id}`, {
                 headers: { Authorization: `Bearer ${token}` },
               });
-              const filterSets = categoryRes?.data?.filterType?.filterSets || [];
-              return { ...product, filterSets };
+              savedFilters = savedFilterRes.data || [];
             } catch (err) {
-              console.error(`Failed to fetch filters for category ${categoryId}`, err);
-              return { ...product, filterSets: [] };
+              console.warn(`No saved filters for product ${product.id}`, err);
             }
+
+            // Pre-fill filterValues
+            const allValues = {};
+            savedFilters.forEach(({ filterListId, value }) => {
+              const key = `${product.id}-${filterListId}`;
+              allValues[key] = value;
+            });
+
+            // Batch update state only once
+            setFilterValues((prev) => ({
+              ...prev,
+              ...allValues,
+            }));
+
+
+            return { ...product, filterSets };
           })
         );
 

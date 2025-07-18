@@ -13,49 +13,46 @@ const ProductFeatures = () => {
   const [error, setError] = useState('');
   const [featureValues, setFeatureValues] = useState({});
 
-
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const dataToSend = [];
+    const dataToSend = [];
 
-  products.forEach((product) => {
-    product.featureSets.forEach((set) => {
-      set.featureLists.forEach((feature) => {
-        const inputKey = `${product.id}-${feature.id}`;
-        const value = featureValues[inputKey];
-        if (value) {
-          dataToSend.push({
-            productId: product.id,
-            featureListId: feature.id,
-            value,
-          });
-        }
+    products.forEach((product) => {
+      product.featureSets.forEach((set) => {
+        set.featureLists.forEach((feature) => {
+          const inputKey = `${product.id}-${feature.id}`;
+          const value = featureValues[inputKey];
+          if (value) {
+            dataToSend.push({
+              productId: product.id,
+              featureListId: feature.id,
+              value,
+            });
+          }
+        });
       });
     });
-  });
 
-  try {
-    const token = localStorage.getItem('token');
-    await axios.post(`${BASE_URL}/products`, dataToSend, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    alert('Features updated successfully!');
-  } catch (err) {
-    console.error('Error submitting features:', err);
-    alert('Failed to update features.');
-  }
-};
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`${BASE_URL}/products`, dataToSend, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      alert('Features updated successfully!');
+    } catch (err) {
+      console.error('Error submitting features:', err);
+      alert('Failed to update features.');
+    }
+  };
 
-
-  // Fetch products and their category-specific feature sets
   useEffect(() => {
     const fetchProductsAndFeatures = async () => {
       try {
@@ -65,21 +62,16 @@ const ProductFeatures = () => {
         });
         const productList = productRes.data;
 
-        // For each product, fetch its feature sets based on its categoryId
         const enrichedProducts = await Promise.all(
           productList.map(async (product) => {
             const categoryId = product?.category?.id;
-            console.log(categoryId,'categoryId')
-
             if (!categoryId) return { ...product, featureSets: [] };
 
             try {
-               const token = localStorage.getItem('token');
               const categoryRes = await axios.get(`${BASE_URL}/categories/${categoryId}`, {
                 headers: { Authorization: `Bearer ${token}` },
               });
               const featureSets = categoryRes?.data?.featureType?.featureSets || [];
-              console.log(featureSets, 'featureSets')
               return { ...product, featureSets };
             } catch (err) {
               console.error(`Failed to fetch feature sets for category ${categoryId}`, err);
@@ -100,29 +92,28 @@ const ProductFeatures = () => {
     fetchProductsAndFeatures();
   }, []);
 
-  
   const renderInput = (label, productId, featureId) => {
-  const inputKey = `${productId}-${featureId}`;
-  return (
-    <div className="col-lg-6 mb-3" key={inputKey}>
-      <label htmlFor={inputKey} className="form-label">{label}</label>
-      <input
-        type="text"
-        id={inputKey}
-        name={inputKey}
-        className="form-control"
-        value={featureValues[inputKey] || ''}
-        placeholder={`Enter ${label}`}
-        onChange={(e) =>
-          setFeatureValues((prev) => ({
-            ...prev,
-            [inputKey]: e.target.value,
-          }))
-        }
-      />
-    </div>
-  );
-};
+    const inputKey = `${productId}-${featureId}`;
+    return (
+      <div className="col-lg-6 mb-3" key={inputKey}>
+        <label htmlFor={inputKey} className="form-label">{label}</label>
+        <input
+          type="text"
+          id={inputKey}
+          name={inputKey}
+          className="form-control"
+          value={featureValues[inputKey] || ''}
+          placeholder={`Enter ${label}`}
+          onChange={(e) =>
+            setFeatureValues((prev) => ({
+              ...prev,
+              [inputKey]: e.target.value,
+            }))
+          }
+        />
+      </div>
+    );
+  };
 
   return (
     <div className="sidebar-mini fixed">
@@ -170,12 +161,11 @@ const ProductFeatures = () => {
                                 <p className="text-muted">No feature sets found for this product.</p>
                               ) : (
                                 product.featureSets.map((set) => (
-                                  <div key={set.id} className="mb-3">
-                                    <h6 className="sub-heading mb-2">{set.title}</h6>
+                                  <div key={set.id} className="mb-4 border p-3 rounded shadow-sm">
+                                    <h6 className="sub-heading mb-3">{set.title}</h6>
                                     <div className="row">
                                       {set.featureLists?.map((feature) =>
-                                       renderInput(feature.label, product.id, feature.id)
-
+                                        renderInput(feature.label, product.id, feature.id)
                                       )}
                                     </div>
                                   </div>
@@ -183,7 +173,6 @@ const ProductFeatures = () => {
                               )}
                             </div>
                           ))}
-
                           <div className="col-lg-12 text-center my-4">
                             <button type="submit" className="btn btn-primary py-2 px-5 me-2">
                               Update Features
