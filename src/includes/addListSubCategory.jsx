@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../css/admin/style.css';
 import AddCategoryModal from './addCategory';
 import { useDispatch, useSelector } from 'react-redux';
 import { listSubCategory } from '../redux/actions/categoryAction';
+import { fetchFeatureTypes } from '../redux/actions/featureTypeAction';
 
 const AddListSubCategoryModal = ({ show, setShow }) => {
     const dispatch = useDispatch();
     const [menu, setMenu] = useState('');
     const [subMenu, setSubMenu] = useState('');
-
+    const[featureType, setFeatureType] = useState('');
     const [title, setTitle] = useState('');
     const [seoTitle, setSeoTitle] = useState('');
     const [seoDescription, setSeoDescription] = useState('');
@@ -20,6 +21,11 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
     const [errors, setErrors] = useState({});
 
     const { categories } = useSelector(state => state.categories || {});
+    const { featureTypes } = useSelector(state => state.featureTypes || {});
+
+    useEffect(() => {
+        dispatch(fetchFeatureTypes());
+    }, [dispatch]);
 
     const handleFileChange = (setter) => (e) => {
         const file = e.target.files[0];
@@ -62,6 +68,16 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
         setSubMenu('');
 
         if (errors.menu && selectedId.trim()) {
+            setErrors((prev) => ({ ...prev, menu: null }));
+        }
+    };
+
+       const handleFeatureTypeChange = (e) => {
+        const selectedId = e.target.value;
+        const numericId = selectedId ? Number(selectedId) : '';
+        setFeatureType(numericId);
+
+        if (errors.featureType && featureType.trim()) {
             setErrors((prev) => ({ ...prev, menu: null }));
         }
     };
@@ -191,6 +207,23 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
                                         onChange={(e) => setSeoDescription(e.target.value)}
                                         placeholder="Enter SEO Description"
                                     />
+                                </div>
+
+                                <div className="col-lg-4 mb-3">
+                                    <label className="form-label">Feature Type<span className="text-danger">*</span></label>
+                                    <select
+                                        className={`form-control ${errors.featureType ? 'is-invalid' : ''}`}
+                                        value={featureType || ''}
+                                        onChange={handleFeatureTypeChange}
+                                    >
+                                        <option value="">-- Select Category --</option>
+                                        {featureTypes.map(cat => (
+                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                        ))}
+                                    </select>
+                                    {errors.featureType && (
+                                        <div className="invalid-feedback">{errors.featureType}</div>
+                                    )}
                                 </div>
 
                                 <div className="col-lg-4 mb-3">

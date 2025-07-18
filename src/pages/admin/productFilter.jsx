@@ -13,12 +13,10 @@ const ProductFilters = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const handleToggleSidebar = (collapsed) => {
-    setIsSidebarCollapsed(collapsed);
-  };
+  const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
 
-  const handleChange = (productId, filterListId, value) => {
-    const key = `${productId}-${filterListId}`;
+  const handleChange = (productId, filterSetId, value) => {
+    const key = `${productId}-${filterSetId}`;
     setFilterValues((prev) => ({
       ...prev,
       [key]: value,
@@ -32,17 +30,15 @@ const ProductFilters = () => {
 
     products.forEach((product) => {
       product.filterSets.forEach((set) => {
-        set.filterLists.forEach((filterList) => {
-          const key = `${product.id}-${filterList.id}`;
-          const value = filterValues[key];
-          if (value) {
-            dataToSend.push({
-              productId: product.id,
-              filterListId: filterList.id,
-              value,
-            });
-          }
-        });
+        const key = `${product.id}-${set.id}`;
+        const value = filterValues[key];
+        if (value) {
+          dataToSend.push({
+            productId: product.id,
+            filterSetId: set.id,
+            value,
+          });
+        }
       });
     });
 
@@ -61,6 +57,10 @@ const ProductFilters = () => {
     }
   };
 
+  const handleReset = () => {
+    setFilterValues({});
+  };
+
   useEffect(() => {
     const fetchProductsAndFilters = async () => {
       try {
@@ -68,6 +68,7 @@ const ProductFilters = () => {
         const productRes = await axios.get(`${BASE_URL}/products`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         const productList = productRes.data;
 
         const enrichedProducts = await Promise.all(
@@ -116,12 +117,7 @@ const ProductFilters = () => {
             transition: 'margin-left 0.3s ease',
           }}
         >
-          <div className="section-nav">
-            <a href="/admin/add-product">Add Product</a>
-            <a href="/admin/product-image">Product Images</a>
-            <a href="" className="active">Product Filters</a>
-            <a href="/admin/product-features">Product Features</a>
-          </div>
+
 
           <div className="container-fluid">
             <div className="row">
@@ -133,44 +129,45 @@ const ProductFilters = () => {
                     ) : error ? (
                       <p className="text-danger">{error}</p>
                     ) : (
-                      <form className="app-form mt-3" onSubmit={handleSubmit}>
+                      <form className="app-form mt-3" onSubmit={handleSubmit} onReset={handleReset}>
                         {products.map((product) => (
-                          <div key={product.id} className="mb-4">
-                            <h6 className="text-primary mb-3">
-                              {product.title} (SKU: {product.sku})
-                            </h6>
+                          <div key={product.id} className="mb-4 border-bottom pb-4">
+                          
+                             { product.filterSets.map((set) => {
+                                const inputKey = `${product.id}-${set.id}`;
+                                const options = set.filterLists?.map((fl) => fl.label) || [];
 
-                            {product.filterSets.length === 0 ? (
-                              <p className="text-muted">No filter sets found for this product.</p>
-                            ) : (
-                              product.filterSets.map((set) => (
-                                <div key={set.id} className="mb-3">
-                                  <h6 className="sub-heading mb-2">{set.title}</h6>
-                                  <div className="row">
-                                    {set.filterLists?.map((filterList) => {
-                                      const inputKey = `${product.id}-${filterList.id}`;
-                                      return (
-                                        <div key={inputKey} className="col-lg-6 mb-3">
-                                          <label htmlFor={inputKey} className="form-label">
-                                            {filterList.label}
-                                          </label>
-                                          <input
-                                            type="text"
-                                            id={inputKey}
-                                            className="form-control"
-                                            value={filterValues[inputKey] || ''}
-                                            onChange={(e) =>
-                                              handleChange(product.id, filterList.id, e.target.value)
-                                            }
-                                            placeholder={`Enter ${filterList.label}`}
-                                          />
-                                        </div>
-                                      );
-                                    })}
+                                return (
+                                  <div key={set.id} className="row mb-3 justify-content-center">
+                                    <div className="col-lg-3 col-md-3">
+                                      <label htmlFor={inputKey} className="form-label">
+                                        {set.title}
+                                      </label>
+                                    </div>
+                                    <div className="col-lg-3">
+                                      <select
+                                        id={inputKey}
+                                        name={inputKey}
+                                        className="form-control"
+                                        value={filterValues[inputKey] || ''}
+                                        onChange={(e) =>
+                                          handleChange(product.id, set.id, e.target.value)
+                                        }
+                                        required
+                                      >
+                                        <option value="">Choose {set.title}</option>
+                                        {options.map((opt, idx) => (
+                                          <option key={idx} value={opt}>
+                                            {opt}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
                                   </div>
-                                </div>
-                              ))
-                            )}
+                                );
+                              })
+                          
+                    }
                           </div>
                         ))}
 
@@ -179,11 +176,7 @@ const ProductFilters = () => {
                             <button type="submit" className="btn btn-primary py-2 px-5 me-2">
                               Update Filters
                             </button>
-                            <button
-                              type="reset"
-                              className="btn btn-reset py-2 px-5"
-                              onClick={() => setFilterValues({})}
-                            >
+                            <button type="reset" className="btn btn-reset py-2 px-5">
                               Reset
                             </button>
                           </div>

@@ -63,6 +63,8 @@ import AppCategoryPromotionForm from './pages/admin/AppCategoryPromotionForm'
 import UserOrdersTable from './pages/admin/UserOrdersTable'
 import ManageContact from './pages/admin/ManageContact.jsx'
 import SearchKeywordsList from './pages/admin/SearchKeywordsList'
+import ProductCard from './components/productCard.jsx';
+import ProductPage from './pages/admin/productPage.jsx';
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
     <div className="content">{children}</div>
@@ -138,6 +140,7 @@ function App() {
           <Route path='/admin/subscriberslist' element={<UserOrdersTable />}></Route>
           <Route path='/admin/contact' element={<ManageContact />}></Route>
           <Route path='/admin/keywords' element={<SearchKeywordsList />}></Route>
+          <Route path='/admin/product' element={<ProductPage />}></Route>
 
 
         </Routes>

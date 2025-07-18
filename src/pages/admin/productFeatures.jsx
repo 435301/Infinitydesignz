@@ -140,12 +140,7 @@ const ProductFeatures = () => {
             transition: 'margin-left 0.3s ease',
           }}
         >
-          <div className="section-nav mb-3 d-flex gap-3">
-            <a href="/admin/add-product">Add Product</a>
-            <a href="/admin/product-image">Product Images</a>
-            <a href="/admin/product-filter">Product Filters</a>
-            <a href="#" className="active">Product Features</a>
-          </div>
+      
 
           <div className="container-fluid">
             <div className="row">

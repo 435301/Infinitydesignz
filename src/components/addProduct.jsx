@@ -17,7 +17,6 @@ import { addVariants } from '../redux/actions/variantsAction';
 import axios from 'axios';
 import BASE_URL from '../config/config';
 
-
 const AddProduct = ({ onClose }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -67,8 +66,22 @@ const AddProduct = ({ onClose }) => {
     dispatch(fetchColors());
     dispatch(fetchSizes());
     dispatch(fetchBrands());
+
+     const savedDraft = localStorage.getItem('productDraft');
+    if (savedDraft) {
+      const draft = JSON.parse(savedDraft);
+      setFormData(draft.formData || initialFormState);
+      setSelectedMenu(draft.selectedMenu || '');
+      setSelectedSubMenu(draft.selectedSubMenu || '');
+      setSelectedListSubMenu(draft.selectedListSubMenu || '');
+      setDescription(draft.description || '');
+      setVariants(draft.variants || [{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
+    }
+
   }, [dispatch]);
 
+
+  
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -195,13 +208,15 @@ const AddProduct = ({ onClose }) => {
         await dispatch(addVariants(variantPayloads));
       }
 
+   // Clear form and draft
       setFormData(initialFormState);
       setDescription('');
       setSelectedMenu('');
       setSelectedSubMenu('');
       setSelectedListSubMenu('');
       setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
-      navigate('/admin/manage-product');
+      localStorage.removeItem('productDraft');
+      navigate('/admin/manage-product')
 
     } catch (err) {
       setErrors({
@@ -231,6 +246,19 @@ const AddProduct = ({ onClose }) => {
     setVariants(updatedVariants);
   };
 
+    const handleSaveDraft = () => {
+    const draftData = {
+      formData,
+      selectedMenu,
+      selectedSubMenu,
+      selectedListSubMenu,
+      description,
+      variants
+    };
+    localStorage.setItem('productDraft', JSON.stringify(draftData));
+    alert('Draft saved locally!');
+  };
+
   const addRow = () => {
     setVariants([
       ...variants,
@@ -252,12 +280,6 @@ const AddProduct = ({ onClose }) => {
         </aside>
 
         <div className="content-wrapper py-3" style={{ marginLeft: isSidebarCollapsed ? '60px' : '272px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease' }}>
-          <div className="section-nav mt-4 mb-3 d-flex gap-3">
-            <a href="#" className="active">Add Product</a>
-            <a href='/admin/product-image'>Product Images</a>
-            <a href="/admin/product-filter">Product Filters</a>
-            <a href="/admin/product-features">Product Features</a>
-          </div>
 
           <div className="container-fluid">
             <div className="row">
@@ -578,6 +600,7 @@ const AddProduct = ({ onClose }) => {
                         <div className="col-lg-12 text-center my-4">
                           <button type="submit" className="btn btn-primary py-2 px-5 me-2">Submit</button>
                           <button type="reset" className="btn btn-secondary py-2 px-5" onClick={handleReset}>Reset</button>
+                           <button type="button" className="btn btn-warning py-2 px-5" onClick={handleSaveDraft}>Save Draft</button>
                         </div>
 
                       </div>
