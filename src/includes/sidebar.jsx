@@ -40,7 +40,7 @@ const Sidebar = ({ isCollapsed }) => {
     orders: ['/admin/orders'],
     offers: ['/admin/offers', '/create-coupon'],
     sliders: ['/admin/sliders', '/admin/manage-sliders'],
-    coupons: ['/admin/add-coupon', '/admin/manage-coupons'],
+    // coupons: ['/admin/add-coupon', '/admin/manage-coupons'],
     others: ['/admin/contact', '/admin/keywords', 'admin/subscriberslist'],
     promotions: [
       '/admin/home-screen-promotion-category',
@@ -259,7 +259,7 @@ const Sidebar = ({ isCollapsed }) => {
           </li>
 
           {/* Coupons */}
-          <li>
+          {/* <li>
             <div onClick={() => toggleMenu('coupons')} style={navLinkStyle(isCollapsed, true)}>
               <BsBriefcase style={mainIconStyle(isCollapsed)} />
               <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Coupons</span>
@@ -271,7 +271,7 @@ const Sidebar = ({ isCollapsed }) => {
                 {renderNavLink('/admin/manage-coupons', 'Manage Coupons')}
               </ul>
             )}
-          </li>
+          </li> */}
 
           {/* Promotions */}
           <li>
