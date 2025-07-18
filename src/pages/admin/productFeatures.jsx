@@ -6,6 +6,8 @@ import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 import axios from 'axios';
 import BASE_URL from '../../config/config';
+import '../../css/admin/style.css';
+import '../../css/admin/icofont.css';
 
 
 const ProductFeatures = () => {

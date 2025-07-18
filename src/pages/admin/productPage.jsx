@@ -4,6 +4,10 @@ import ProductFilters from './productFilter';
 import ProductFeatures from './productFeatures';
 import AddProductImages from './productImage';
 import AddProduct from '../../components/addProduct';
+import HeaderAdmin from '../../includes/headerAdmin';
+import Sidebar from '../../includes/sidebar';
+import '../../css/admin/style.css';
+import '../../css/admin/icofont.css';
 
 const ProductPage = () => {
   const [activeTab, setActiveTab] = useState('add');

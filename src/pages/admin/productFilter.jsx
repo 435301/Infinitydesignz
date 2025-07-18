@@ -1,19 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import HeaderAdmin from '../../includes/headerAdmin';
-import Sidebar from '../../includes/sidebar';
-import '../../css/admin/style.css';
-import '../../css/admin/icofont.css';
 import axios from 'axios';
 import BASE_URL from '../../config/config';
+import '../../css/admin/style.css';
+import '../../css/admin/icofont.css';
 
 const ProductFilters = () => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [products, setProducts] = useState([]);
   const [filterValues, setFilterValues] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
-  const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
 
   const handleChange = (productId, filterSetId, value) => {
     const key = `${productId}-${filterSetId}`;
@@ -111,7 +106,6 @@ const ProductFilters = () => {
               ...allValues,
             }));
 
-
             return { ...product, filterSets };
           })
         );
@@ -129,95 +123,75 @@ const ProductFilters = () => {
   }, []);
 
   return (
-    <div className="sidebar-mini fixed">
-      <div className="wrapper">
-        <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
-        <aside className="main-sidebar hidden-print">
-          <Sidebar isCollapsed={isSidebarCollapsed} />
-        </aside>
+    <div className="container-fluid">
+      <div className="row">
+        <div className="col-lg-12">
+          <div className="card">
+            <div className="card-header py-3">
+              <h5 className="text-dark mb-0">Manage Product Filters</h5>
+            </div>
+            <div className="card-block">
+              {loading ? (
+                <p>Loading...</p>
+              ) : error ? (
+                <p className="text-danger">{error}</p>
+              ) : (
+                <form className="app-form mt-3" onSubmit={handleSubmit} onReset={handleReset}>
+                  {products.map((product) => (
+                    <div key={product.id} className="mb-4 border-bottom pb-4">
+                      {product.filterSets.map((set) => {
+                        const inputKey = `${product.id}-${set.id}`;
+                        const options = set.filterLists?.map((fl) => fl.label) || [];
 
-        <div
-          className="content-wrapper py-3"
-          style={{
-            marginLeft: isSidebarCollapsed ? '60px' : '272px',
-            padding: '20px',
-            transition: 'margin-left 0.3s ease',
-          }}
-        >
-
-
-          <div className="container-fluid">
-            <div className="row">
-              <div className="col-lg-12">
-                <div className="card">
-                  <div className="card-block py-3">
-                    {loading ? (
-                      <p>Loading...</p>
-                    ) : error ? (
-                      <p className="text-danger">{error}</p>
-                    ) : (
-                      <form className="app-form mt-3" onSubmit={handleSubmit} onReset={handleReset}>
-                        {products.map((product) => (
-                          <div key={product.id} className="mb-4 border-bottom pb-4">
-                          
-                             { product.filterSets.map((set) => {
-                                const inputKey = `${product.id}-${set.id}`;
-                                const options = set.filterLists?.map((fl) => fl.label) || [];
-
-                                return (
-                                  <div key={set.id} className="row mb-3 justify-content-center">
-                                    <div className="col-lg-3 col-md-3">
-                                      <label htmlFor={inputKey} className="form-label">
-                                        {set.title}
-                                      </label>
-                                    </div>
-                                    <div className="col-lg-3">
-                                      <select
-                                        id={inputKey}
-                                        name={inputKey}
-                                        className="form-control"
-                                        value={filterValues[inputKey] || ''}
-                                        onChange={(e) =>
-                                          handleChange(product.id, set.id, e.target.value)
-                                        }
-                                        required
-                                      >
-                                        <option value="">Choose {set.title}</option>
-                                        {options.map((opt, idx) => (
-                                          <option key={idx} value={opt}>
-                                            {opt}
-                                          </option>
-                                        ))}
-                                      </select>
-                                    </div>
-                                  </div>
-                                );
-                              })
-                          
-                    }
+                        return (
+                          <div key={set.id} className="row mb-3 justify-content-center">
+                            <div className="col-lg-3 col-md-3">
+                              <label htmlFor={inputKey} className="form-label">
+                                {set.title}
+                              </label>
+                            </div>
+                            <div className="col-lg-3">
+                              <select
+                                id={inputKey}
+                                name={inputKey}
+                                className="form-control"
+                                value={filterValues[inputKey] || ''}
+                                onChange={(e) =>
+                                  handleChange(product.id, set.id, e.target.value)
+                                }
+                                required
+                              >
+                                <option value="">Choose {set.title}</option>
+                                {options.map((opt, idx) => (
+                                  <option key={idx} value={opt}>
+                                    {opt}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
                           </div>
-                        ))}
+                        );
+                      })}
+                    </div>
+                  ))}
 
-                        <div className="row">
-                          <div className="col-lg-12 text-center">
-                            <button type="submit" className="btn btn-primary py-2 px-5 me-2">
-                              Update Filters
-                            </button>
-                            <button type="reset" className="btn btn-reset py-2 px-5">
-                              Reset
-                            </button>
-                          </div>
-                        </div>
-                      </form>
-                    )}
+                  <div className="row">
+                    <div className="col-lg-12 text-center my-4">
+                      <button type="submit" className="btn btn-primary py-2 px-5 me-2">
+                        Update Filters
+                      </button>
+                      <button type="reset" className="btn btn-secondary py-2 px-5">
+                        Reset
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </form>
+              )}
             </div>
           </div>
         </div>
-      </div >
-    </div >
+      </div>
+    </div>
   );
 };
 
