@@ -311,12 +311,18 @@ header .wrapper {
 }
 
 /* addsizemodal css */
-
+/* 
 .show {
   background-color: rgba(0, 0, 0, 0.5);
+} */
+
+.nav-tabs .nav-link {
+
+    border-top-left-radius:10px;
+    border-top-right-radius:10px;
+    font-size: 15px;
+    text-align: center;
 }
-
-
 @media (max-width: 1024px) {
   .content-wrapper {
     margin-left: 300px;

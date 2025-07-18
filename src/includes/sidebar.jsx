@@ -35,7 +35,7 @@ const Sidebar = ({ isCollapsed }) => {
     productFeatures: ['/admin/feature-type', '/admin/feature-set', '/admin/feature-list'],
     productFilters: ['/admin/filter-type', '/admin/filter-set', '/admin/filter-list'],
     categories: ['/admin/manage-category', '/admin/manage-subcategory', '/admin/list-subcategory'],
-    products: ['/admin/add-product', '/admin/manage-product', '/admin/bulk-upload'],
+    products: ['/admin/product', '/admin/manage-product', '/admin/bulk-upload'],
     users: ['/admin/manage-users'],
     orders: ['/admin/orders'],
     offers: ['/admin/offers', '/create-coupon'],
@@ -210,7 +210,7 @@ const Sidebar = ({ isCollapsed }) => {
             </div>
             {isActiveMenu('products') && !isCollapsed && (
               <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                {renderNavLink('/admin/add-product', 'Add Product')}
+                {renderNavLink('/admin/product', 'Add Product')}
                 {renderNavLink('/admin/manage-product', 'Manage Product')}
                 {renderNavLink('/admin/bulk-upload', 'Bulk Upload')}
 
