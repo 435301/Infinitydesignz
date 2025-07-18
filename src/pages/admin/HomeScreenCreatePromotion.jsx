@@ -8,6 +8,8 @@ import '../../css/admin/style.css';
 
 
 const HomeScreenCreatePromotion = () => {
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
     const [formData, setFormData] = useState({
         title: '',
         displayCount: '',
@@ -15,6 +17,9 @@ const HomeScreenCreatePromotion = () => {
         image: null,
         status: '',
     });
+    const handleToggleSidebar = (collapsed) => {
+        setIsSidebarCollapsed(collapsed);
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -52,11 +57,13 @@ const HomeScreenCreatePromotion = () => {
     return (
         <div className="sidebar-mini fixed">
             <div className="wrapper">
-                <HeaderAdmin />
+                <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
                 <aside className="main-sidebar hidden-print">
-                    <Sidebar />
+                    <Sidebar isCollapsed={isSidebarCollapsed} />
                 </aside>
-                <div className="content-wrapper p-4">
+
+                <div className="content-wrapper mb-4" style={{ marginLeft: isSidebarCollapsed ? '60px' : '272px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease', }}>
+
                     <div className="container-fluid">
                         <div className="row py-4">
                             <div className="col-lg-12">

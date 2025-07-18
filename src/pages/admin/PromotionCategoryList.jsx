@@ -6,7 +6,12 @@ import '../../css/admin/icofont.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const PromotionCategoryList = () => {
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
     const [editModalOpen, setEditModalOpen] = useState(false);
+  const handleToggleSidebar = (collapsed) => {
+    setIsSidebarCollapsed(collapsed);
+  };
 
     const data = [
         { id: 1, title: 'Modern Sofa Set', menu: 'Modern Sofa Set', submenu: 1, displayCount: 12, displayRows: 1, priority: 1, status: 'Active' },
@@ -21,11 +26,13 @@ const PromotionCategoryList = () => {
     return (
         <div className="sidebar-mini fixed">
             <div className="wrapper">
-                <HeaderAdmin />
+                <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
                 <aside className="main-sidebar hidden-print">
-                    <Sidebar />
+                    <Sidebar isCollapsed={isSidebarCollapsed} />
                 </aside>
-                <div className="content-wrapper p-4">
+
+                <div className="content-wrapper mb-4" style={{ marginLeft: isSidebarCollapsed ? '60px' : '272px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease', }}>
+
                     <div className="main-header mt-0">
                         <h4>Create Promotion Category</h4>
                     </div>

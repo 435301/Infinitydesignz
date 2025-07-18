@@ -57,15 +57,10 @@ const ManageUsers = () => {
           <Sidebar isCollapsed={isSidebarCollapsed} />
         </aside>
 
-        <div
-          className="content-wrapper mb-4"
-          style={{
-            marginLeft: isSidebarCollapsed ? '60px' : '272px',
-            padding: '20px',
-            flex: 1,
-            transition: 'margin-left 0.3s ease',
-          }}
-        >          <div className="main-header mt-0">
+        <div className="content-wrapper mb-4" style={{ marginLeft: isSidebarCollapsed ? '60px' : '272px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease', }}>
+        
+        
+          <div className="main-header mt-0">
             <h4>Users</h4>
             <ol className="breadcrumb breadcrumb-title breadcrumb-arrow">
               <li className="breadcrumb-item"><a href="#">Manage</a></li>

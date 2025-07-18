@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import {
   BsFullscreen,
@@ -12,16 +13,15 @@ import {
 import logo from '../img/logo.svg';
 import avatar from '../img/avatar-1.png';
 
-// ✅ Default empty function for onToggleSidebar
 const HeaderAdmin = ({ onToggleSidebar = () => { } }) => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(window.innerWidth <= 767);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const handleToggle = () => {
     const newCollapsedState = !isSidebarCollapsed;
     setIsSidebarCollapsed(newCollapsedState);
-    onToggleSidebar(newCollapsedState); // Safely call the prop
+    onToggleSidebar(newCollapsedState);
   };
 
   const handleDropdownToggle = () => {
@@ -41,6 +41,16 @@ const HeaderAdmin = ({ onToggleSidebar = () => { } }) => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobile = window.innerWidth <= 767;
+      setIsSidebarCollapsed(isMobile);
+      onToggleSidebar(isMobile);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [onToggleSidebar]);
 
   return (
     <header
@@ -76,6 +86,7 @@ const HeaderAdmin = ({ onToggleSidebar = () => { } }) => {
             cursor: 'pointer',
             color: '#0da79e',
           }}
+          aria-label="Toggle sidebar"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -122,7 +133,6 @@ const HeaderAdmin = ({ onToggleSidebar = () => { } }) => {
               />
             </div>
           </li>
-
         </ul>
 
         <div style={{ display: 'flex', alignItems: 'center' }}>
