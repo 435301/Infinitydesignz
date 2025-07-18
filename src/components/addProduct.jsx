@@ -12,7 +12,7 @@ import { addVariants } from '../redux/actions/variantsAction';
 import axios from 'axios';
 import BASE_URL from '../config/config';
 
-const AddProduct = ({ onClose, setProductId, onNext}) => {
+const AddProduct = ({ onClose }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -62,36 +62,27 @@ const AddProduct = ({ onClose, setProductId, onNext}) => {
     { sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' },
   ]);
 
-useEffect(() => {
-  dispatch(fetchCategories());
-  dispatch(fetchColors());
-  dispatch(fetchSizes());
-  dispatch(fetchBrands());
+  useEffect(() => {
+    dispatch(fetchCategories());
+    dispatch(fetchColors());
+    dispatch(fetchSizes());
+    dispatch(fetchBrands());
 
-  const savedDraft = localStorage.getItem('addProductDraft');
-  if (savedDraft) {
-    const { formData, selectedMenu, selectedSubMenu, selectedListSubMenu, description, variants } = JSON.parse(savedDraft);
-    setFormData(formData);
-    setSelectedMenu(selectedMenu);
-    setSelectedSubMenu(selectedSubMenu);
-    setSelectedListSubMenu(selectedListSubMenu);
-    setDescription(description);
-    setVariants(variants);
-  } else {
-    setFormData(initialFormState);
-    setSelectedMenu('');
-    setSelectedSubMenu('');
-    setSelectedListSubMenu('');
-    setDescription('');
-    setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
-  }
-}, [dispatch]);
-
-
-
-  const handleToggleSidebar = (collapsed) => {
-    setIsSidebarCollapsed(collapsed);
-  };
+    const savedDraft = localStorage.getItem('productDraft');
+    if (savedDraft) {
+      const draft = JSON.parse(savedDraft);
+      setFormData(draft.formData || initialFormState);
+      setSelectedMenu(draft.selectedMenu || '');
+      setSelectedSubMenu(draft.selectedSubMenu || '');
+      setSelectedListSubMenu(draft.selectedListSubMenu || '');
+      setDescription(draft.description || '');
+      setVariants(
+        draft.variants || [
+          { sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' },
+        ]
+      );
+    }
+  }, [dispatch]);
 
   const validate = () => {
     const newErrors = {};
@@ -136,9 +127,7 @@ useEffect(() => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-
-  }
-
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -180,7 +169,6 @@ useEffect(() => {
         },
       });
       const productId = response.data?.id;
-      console.log('Product created with ID:', productId);
 
       const variantPayloads = variants
         .filter((v) => v.sku && v.stock && v.mrp && v.sellingPrice)
@@ -197,36 +185,21 @@ useEffect(() => {
       if (variantPayloads.length) {
         await dispatch(addVariants(variantPayloads));
       }
+
       setFormData(initialFormState);
       setDescription('');
       setSelectedMenu('');
       setSelectedSubMenu('');
       setSelectedListSubMenu('');
       setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
-      setProductId(productId);
-      // onNext && onNext(); 
-      navigate('/admin/manage-product')
-
+      localStorage.removeItem('productDraft');
+      navigate('/admin/manage-product');
     } catch (err) {
       setErrors({
         form: err?.response?.data?.message || 'Something went wrong.',
       });
     }
   };
-
-  const handleSaveDraft = () => {
-  const draft = {
-    formData,
-    selectedMenu,
-    selectedSubMenu,
-    selectedListSubMenu,
-    description,
-    variants,
-  };
-  localStorage.setItem('addProductDraft', JSON.stringify(draft));
-  alert('Draft saved successfully!');
-};
-
 
   const handleReset = (e) => {
     e.preventDefault();
@@ -244,6 +217,18 @@ useEffect(() => {
     setVariants(updatedVariants);
   };
 
+  const handleSaveDraft = () => {
+    const draftData = {
+      formData,
+      selectedMenu,
+      selectedSubMenu,
+      selectedListSubMenu,
+      description,
+      variants,
+    };
+    localStorage.setItem('productDraft', JSON.stringify(draftData));
+    alert('Draft saved locally!');
+  };
 
   const addRow = () => {
     setVariants([
