@@ -1,4 +1,4 @@
-import React, { useState  } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tabs, Tab } from 'react-bootstrap';
 import ProductFilters from './productFilter';
 import ProductFeatures from './productFeatures';
@@ -8,22 +8,33 @@ import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProducts } from '../../redux/actions/productAction';
 
 const ProductPage = ({ createdProductId, selectedFeatureType }) => {
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState('add');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [createdProductIdState, setCreatedProductId] = useState(null);
   const [createdProductInfo, setCreatedProductInfo] = useState(null);
+  const { products = [] } = useSelector((state) => state.products);
 
+
+  useEffect(() => {
+    dispatch(fetchProducts())
+  }, [dispatch]);
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
 
+  const selectedProduct = products.find(p => p.id === createdProductInfo?.id);
+ console.log('Selected Product:', selectedProduct);
+
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
-        
+
         <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
         <aside className="main-sidebar hidden-print">
           <Sidebar isCollapsed={isSidebarCollapsed} />
@@ -60,10 +71,15 @@ const ProductPage = ({ createdProductId, selectedFeatureType }) => {
                         }} />
                       </Tab>
                       <Tab eventKey="images" title="Product Images" disabled={!createdProductInfo}>
-                        <AddProductImages   />
+                        {createdProductInfo && (
+                          <AddProductImages
+                            createdProductId={createdProductInfo.id}
+                            product={selectedProduct}
+                          />
+                        )}
                       </Tab>
-                      <Tab eventKey="filters" title="Product Filters"  disabled={!createdProductInfo}>
-                       {createdProductInfo && (
+                      <Tab eventKey="filters" title="Product Filters" disabled={!createdProductInfo}>
+                        {createdProductInfo && (
                           <ProductFilters
                             createdProductId={createdProductInfo.id}
                             filterTypeId={createdProductInfo.filterTypeId}
@@ -71,8 +87,8 @@ const ProductPage = ({ createdProductId, selectedFeatureType }) => {
                           />
                         )}
                       </Tab>
-                      <Tab eventKey="features" title="Product Features"  disabled={!createdProductInfo}>
-                       
+                      <Tab eventKey="features" title="Product Features" disabled={!createdProductInfo}>
+
                         {createdProductInfo && (
                           <ProductFeatures
                             createdProductId={createdProductInfo.id}
