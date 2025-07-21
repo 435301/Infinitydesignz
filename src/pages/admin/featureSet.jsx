@@ -34,7 +34,7 @@ const ManageFeatureSet = () => {
     dispatch(fetchFeatureSets());
   }, [dispatch]);
 
-  const handleToggleSidebar = setIsSidebarCollapsed;
+  const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed); // Fixed: Added parameter
 
   const filteredFeatureSets = featureSets.filter(
     (featureSet) =>
@@ -80,11 +80,11 @@ const ManageFeatureSet = () => {
       selectedRows.map((id) =>
         editedPriorities[id] !== undefined
           ? dispatch(
-              updateFeatureSetPriority({
-                id,
-                priority: parseInt(editedPriorities[id], 10),
-              })
-            )
+            updateFeatureSetPriority({
+              id,
+              priority: parseInt(editedPriorities[id], 10),
+            })
+          )
           : null
       )
     );
@@ -154,7 +154,12 @@ const ManageFeatureSet = () => {
                     ([featureTypeName, items]) => (
                       <div key={featureTypeName} className="mb-4">
                         <div className="col-lg-6 d-flex align-items-center">
-                          <h5 className="mb-2">{featureTypeName}</h5>
+                          <div className="feature-set-header">
+
+                            <h3 className="mb-2">
+                              {featureTypeName} <span className="badge">{items.length}</span>
+                            </h3>
+                          </div>
                         </div>
                         <div className="feature-row">
                           {items.map((item) => (
@@ -219,8 +224,16 @@ const ManageFeatureSet = () => {
                             </div>
                           ))}
                         </div>
-                        <button
-                          className="btn btn-primary mt-3"
+                       <button
+                        className="btn"
+                        style={{
+                          backgroundColor: '#0da79e',
+                          color: '#fff',
+                          border: 'none',
+                          padding: '10px 20px',
+                          fontSize: '16px',
+                          marginTop: '20px',
+                        }}
                           onClick={handlePriorityChange}
                           disabled={selectedRows.length === 0}
                         >

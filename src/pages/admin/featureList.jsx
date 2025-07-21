@@ -15,7 +15,7 @@ import ViewFeatureListModal from '../../modals/viewFeatureListModal';
 const ManageFeatureList = () => {
   const dispatch = useDispatch();
   const { featureLists = [] } = useSelector((state) => state.featureLists || {});
-  console.log('featureLists', featureLists)
+  console.log('featureLists', featureLists);
   const { featureTypes = [] } = useSelector((state) => state.featureTypes || {});
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -27,13 +27,12 @@ const ManageFeatureList = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [featureListToDelete, setFeatureListToDelete] = useState(null);
   const [viewModalVisible, setViewModalVisible] = useState(false);
-  const [viewFeatureList, setviewFeatureList] = useState(null);
+  const [viewFeatureList, setViewFeatureList] = useState(null); // Fixed typo: setviewFeatureList -> setViewFeatureList
   const [editedPriorities, setEditedPriorities] = useState({});
-
 
   useEffect(() => {
     dispatch(fetchFeatureLists());
-    dispatch(fetchFeatureTypes())
+    dispatch(fetchFeatureTypes());
   }, [dispatch]);
 
   const handleToggleSidebar = (collapsed) => {
@@ -56,7 +55,6 @@ const ManageFeatureList = () => {
     const type = featureTypes.find((t) => t.id === id);
     return type?.name || 'Unknown';
   };
-
 
   const filteredFeatureList = (featureLists || []).filter((featureList) => {
     if (!featureList) return false;
@@ -82,8 +80,6 @@ const ManageFeatureList = () => {
       featureTypeName,
     };
   });
-
-
 
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
@@ -118,7 +114,6 @@ const ManageFeatureList = () => {
     setFeatureListToDelete(null);
   };
 
-
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
@@ -146,17 +141,30 @@ const ManageFeatureList = () => {
               <div className="card-block manage-btn p-3">
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
-                    <input type="text" className="form-control" placeholder="Search By feature type, set , list" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Search By feature type, set , list"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                   </div>
 
                   <div className="col-md-2 d-flex gap-2">
-
-                    <button className="btn btn-success" onClick={() => setSearchTerm('')}>
+                    <button
+                      className="btn btn-success"
+                      onClick={() => setSearchTerm('')}
+                    >
                       <BsArrowClockwise />
                     </button>
                   </div>
                   <div className="col-md-7 text-end">
-                    <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Create Feature Set</button>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => setShowAddModal(true)}
+                    >
+                      + Create Feature Set
+                    </button>
                   </div>
                 </div>
               </div>
@@ -165,15 +173,18 @@ const ManageFeatureList = () => {
             {/* Feature Group Sections */}
             <div className="card">
               <div className="card-block p-3">
-              
-
                 {Object.entries(groupedFeatures).map(([groupTitle, features], index) => (
                   <div key={index} className="mb-4">
                     <div className="row mb-3">
-                      <div>
-                        <h3>{groupTitle}</h3>
-                        <h6 className="text-info">{getFeatureTypeName(features[0]?.featureSet?.featureTypeId)}</h6>
-                      </div>
+                      <div className="feature-set-header">
+                        <h3>
+                          {groupTitle} <span className="badge ">{features.length}</span>
+                        </h3>
+                         </div>
+                        <h6 className="text-info">
+                          {getFeatureTypeName(features[0]?.featureSet?.featureTypeId)}
+                        </h6>
+                     
                     </div>
 
                     <div className="feature-row d-flex flex-wrap gap-3">
@@ -199,22 +210,33 @@ const ManageFeatureList = () => {
                             {feature.label}
                           </div>
                           <div className="d-flex gap-2">
-                            <button className="btn btn-sm " title="View" onClick={() => {
-                              setviewFeatureList(feature);
-                              setViewModalVisible(true)
-                            }}>
+                            <button
+                              className="btn btn-sm"
+                              title="View"
+                              onClick={() => {
+                                setViewFeatureList(feature);
+                                setViewModalVisible(true);
+                              }}
+                            >
                               <BsEye />
                             </button>
-                            <button className="btn btn-sm btn-outline-primary" title="Edit" onClick={() => {
-                              setSelectedFeatureList(feature);
-                              setShowEditModal(true);
-                            }}>
+                            <button
+                              className="btn btn-sm btn-outline-primary"
+                              title="Edit"
+                              onClick={() => {
+                                setSelectedFeatureList(feature);
+                                setShowEditModal(true);
+                              }}
+                            >
                               <BsPencilSquare />
                             </button>
-                            <button className="btn btn-sm btn-outline-danger" title="Delete" onClick={() => handleDeleteClick(feature.id)}  >
+                            <button
+                              className="btn btn-sm btn-outline-danger"
+                              title="Delete"
+                              onClick={() => handleDeleteClick(feature.id)}
+                            >
                               <BsTrash />
                             </button>
-
                           </div>
                           {selectedRows.includes(feature.id) ? (
                             <input
@@ -223,7 +245,7 @@ const ManageFeatureList = () => {
                               onChange={(e) =>
                                 setEditedPriorities((prev) => ({
                                   ...prev,
-                                  [feature.id]: e.target.value
+                                  [feature.id]: e.target.value,
                                 }))
                               }
                               className="form-control"
@@ -248,10 +270,12 @@ const ManageFeatureList = () => {
                       onClick={async () => {
                         for (let id of selectedRows) {
                           if (editedPriorities[id] !== undefined) {
-                            await dispatch(updateFeatureListPriority({
-                              id,
-                              priority: parseInt(editedPriorities[id])
-                            }));
+                            await dispatch(
+                              updateFeatureListPriority({
+                                id,
+                                priority: parseInt(editedPriorities[id]),
+                              })
+                            );
                           }
                         }
                         dispatch(fetchFeatureLists());
@@ -263,11 +287,19 @@ const ManageFeatureList = () => {
                     </button>
                   </div>
                 ))}
-
               </div>
             </div>
-            {showAddModal && <AddFeatureListModal show={showAddModal} onClose={() => setShowAddModal(false)} />}
-            <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            {showAddModal && (
+              <AddFeatureListModal
+                show={showAddModal}
+                onClose={() => setShowAddModal(false)}
+              />
+            )}
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
             {showEditModal && (
               <EditFeatureListModal
                 show={showEditModal}
@@ -275,9 +307,21 @@ const ManageFeatureList = () => {
                 featureList={selectedFeatureList}
               />
             )}
-            {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
-            {viewModalVisible && <ViewFeatureListModal show={viewModalVisible} onClose={() => setViewModalVisible(false)} featureList={viewFeatureList} />}
-
+            {showDeleteModal && (
+              <DeleteModal
+                show={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={handleDelete}
+                message="Are you sure you want to delete this category?"
+              />
+            )}
+            {viewModalVisible && (
+              <ViewFeatureListModal
+                show={viewModalVisible}
+                onClose={() => setViewModalVisible(false)}
+                featureList={viewFeatureList}
+              />
+            )}
           </div>
         </div>
       </div>

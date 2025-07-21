@@ -26,13 +26,12 @@ const ManageFilterSet = () => {
   const [viewFilterSet, setViewFilterSet] = useState(null);
   const [editedPriorities, setEditedPriorities] = useState({});
 
-
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
 
-  const filteredFilterSets = (filterSets || [])?.filter((filterSet) => {
-    if (!filterSet && !filterSet?.title) return false
+  const filteredFilterSets = (filterSets || []).filter((filterSet) => {
+    if (!filterSet && !filterSet?.title) return false;
     const title = filterSet.title.toLowerCase();
     const matchesSearch = title.includes(searchTerm.toLowerCase());
     return matchesSearch;
@@ -54,8 +53,6 @@ const ManageFilterSet = () => {
   useEffect(() => {
     dispatch(fetchFilterSets());
   }, [dispatch]);
-
-
 
   const handleRowCheckboxChange = (id) => {
     setSelectedRows((prev) =>
@@ -82,7 +79,6 @@ const ManageFilterSet = () => {
     setShowDeleteModal(false);
     setFilterSetToDelete(null);
   };
-
 
   return (
     <div className="sidebar-mini fixed">
@@ -112,8 +108,13 @@ const ManageFilterSet = () => {
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
                     <div className="input-group">
-                      <input type="text" className="form-control" placeholder="Search By filter type, set" value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)} />
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search By filter type, set"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
                     </div>
                   </div>
                   {/* <div className="col-md-3">
@@ -124,9 +125,8 @@ const ManageFilterSet = () => {
                     </select>
                   </div> */}
                   <div className="col-md-2 d-flex gap-2">
-
-                    <button className="btn btn-success">
-                      <BsArrowClockwise onClick={() => setSearchTerm('')} />
+                    <button className="btn btn-success" onClick={() => setSearchTerm('')}>
+                      <BsArrowClockwise />
                     </button>
                   </div>
                   <div className="col-md-7 text-end">
@@ -139,15 +139,17 @@ const ManageFilterSet = () => {
             {/* Header & Actions */}
             <div className="card">
               <div className="card-block">
-                <div className="row mb-3">
-
-
-                </div>
-                <div >
+                <div className="row mb-3"></div>
+                <div>
                   {Object.entries(groupedFilterSets).map(([filterTypeName, items]) => (
                     <div key={filterTypeName} className="mb-4">
                       <div className="col-lg-6 d-flex align-items-center">
-                        <h5 className="mb-2">{filterTypeName}</h5>
+                       
+                        <div class="feature-set-header">
+                          <h3 className="mb-2">
+                            {filterTypeName} <span className="badge ">{items.length}</span>
+                          </h3>
+                        </div>
                       </div>
                       <div className="feature-row">
                         {items.map((item) => (
@@ -163,26 +165,36 @@ const ManageFilterSet = () => {
                                 className="me-2"
                               />
                               <strong>{item.title}</strong>
-
                             </div>
 
                             <div className="d-flex gap-2">
-                              <button className="btn btn-sm " title="View" onClick={() => {
-                                setViewFilterSet(item);
-                                setViewModalVisible(true)
-                              }}>
+                              <button
+                                className="btn btn-sm"
+                                title="View"
+                                onClick={() => {
+                                  setViewFilterSet(item);
+                                  setViewModalVisible(true);
+                                }}
+                              >
                                 <BsEye />
                               </button>
-                              <button className="btn btn-sm btn-outline-primary" title="Edit" onClick={() => {
-                                setSelectedFilterSet(item);
-                                setEditModalVisible(true);
-                              }}>
+                              <button
+                                className="btn btn-sm btn-outline-primary"
+                                title="Edit"
+                                onClick={() => {
+                                  setSelectedFilterSet(item);
+                                  setEditModalVisible(true);
+                                }}
+                              >
                                 <BsPencilSquare />
                               </button>
-                              <button className="btn btn-sm btn-outline-danger" title="Delete" onClick={() => handleDeleteClick(item.id)}  >
+                              <button
+                                className="btn btn-sm btn-outline-danger"
+                                title="Delete"
+                                onClick={() => handleDeleteClick(item.id)}
+                              >
                                 <BsTrash />
                               </button>
-
                             </div>
                             {selectedRows.includes(item.id) ? (
                               <input
@@ -191,7 +203,7 @@ const ManageFilterSet = () => {
                                 onChange={(e) =>
                                   setEditedPriorities((prev) => ({
                                     ...prev,
-                                    [item.id]: e.target.value
+                                    [item.id]: e.target.value,
                                   }))
                                 }
                                 className="form-control"
@@ -200,9 +212,7 @@ const ManageFilterSet = () => {
                             ) : (
                               <span className="badge ms-2">{item.priority}</span>
                             )}
-
                           </div>
-
                         ))}
                       </div>
                       <button
@@ -218,10 +228,12 @@ const ManageFilterSet = () => {
                         onClick={async () => {
                           for (let id of selectedRows) {
                             if (editedPriorities[id] !== undefined) {
-                              await dispatch(updateFilterSetPriority({
-                                id,
-                                priority: parseInt(editedPriorities[id])
-                              }));
+                              await dispatch(
+                                updateFilterSetPriority({
+                                  id,
+                                  priority: parseInt(editedPriorities[id]),
+                                })
+                              );
                             }
                           }
                           dispatch(fetchFilterSets());
@@ -231,20 +243,44 @@ const ManageFilterSet = () => {
                       >
                         Change Priority
                       </button>
-
                     </div>
                   ))}
                 </div>
-
-
               </div>
             </div>
-            <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-            {showModal && <AddFilterSetModal show={showModal} onClose={() => setShowModal(false)} />}
-            {editModalVisible && <EditFilterSetModal show={editModalVisible} onClose={() => setEditModalVisible(false)} filterSet={selectedFilterSet} />}
-            {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
-            {viewModalVisible && <ViewFilterSetModal show={viewModalVisible} onClose={() => setViewModalVisible(false)} filterSet={viewFilterSet} />}
-
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+            {showModal && (
+              <AddFilterSetModal
+                show={showModal}
+                onClose={() => setShowModal(false)}
+              />
+            )}
+            {editModalVisible && (
+              <EditFilterSetModal
+                show={editModalVisible}
+                onClose={() => setEditModalVisible(false)}
+                filterSet={selectedFilterSet}
+              />
+            )}
+            {showDeleteModal && (
+              <DeleteModal
+                show={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={handleDelete}
+                message="Are you sure you want to delete this category?"
+              />
+            )}
+            {viewModalVisible && (
+              <ViewFilterSetModal
+                show={viewModalVisible}
+                onClose={() => setViewModalVisible(false)}
+                filterSet={viewFilterSet}
+              />
+            )}
           </div>
         </div>
       </div>

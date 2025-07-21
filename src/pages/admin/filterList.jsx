@@ -27,11 +27,9 @@ const ManageFilterList = () => {
   const [viewFilterList, setViewFilterList] = useState(null);
   const [editedPriorities, setEditedPriorities] = useState({});
 
-
   const dispatch = useDispatch();
   const { filterLists = [] } = useSelector((state) => state.filterLists);
   const { filterTypes = [] } = useSelector((state) => state.filterTypes || {});
-
 
   useEffect(() => {
     dispatch(fetchFilterLists());
@@ -47,13 +45,12 @@ const ManageFilterList = () => {
     return type?.name || 'Unknown';
   };
 
+  const filteredFilterList = (filterLists || []).filter((filterList) => {
+    if (!filterList) return false;
 
-  const filteredFilterList = (filterLists || []).filter((filterLists) => {
-    if (!filterLists) return false;
-
-    const label = filterLists.label?.toLowerCase() || '';
-    const filterSetTitle = filterLists.filterSet?.title?.toLowerCase() || '';
-    const filterTypeName = getFilterTypeName(filterLists.filterSet?.filterTypeId).toLowerCase();
+    const label = filterList.label?.toLowerCase() || '';
+    const filterSetTitle = filterList.filterSet?.title?.toLowerCase() || '';
+    const filterTypeName = getFilterTypeName(filterList.filterSet?.filterTypeId).toLowerCase();
 
     const term = searchTerm.toLowerCase();
 
@@ -72,8 +69,6 @@ const ManageFilterList = () => {
       filterTypeName,
     };
   });
-
-
 
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
@@ -97,8 +92,7 @@ const ManageFilterList = () => {
     return acc;
   }, {});
 
-
-   const handleRowCheckboxChange = (id) => {
+  const handleRowCheckboxChange = (id) => {
     setSelectedRows((prev) =>
       prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
     );
@@ -166,7 +160,6 @@ const ManageFilterList = () => {
                       className="btn btn-success"
                       onClick={() => {
                         setSearchTerm('');
-
                       }}
                     >
                       <BsArrowClockwise />
@@ -182,18 +175,18 @@ const ManageFilterList = () => {
             {/* Filter List Items */}
             <div className="card">
               <div className="card-block">
-                <div className="row mb-3">
+                <div className="row mb-3"></div>
 
-
-                </div>
-
-                <div >
-
+                <div>
                   {Object.entries(groupedFilters).map(([groupTitle, filters], index) => (
                     <div key={index} className="mb-4">
                       <div className="row mb-3">
                         <div>
-                          <h3>{groupTitle}</h3>
+                          <div className="feature-set-header p-2" style={{ backgroundColor: '#d9edf7' }}>
+                            <h3>{groupTitle}</h3>
+                            <span className="badge">{filters.length}</span>
+                          </div>
+
                           <h6 className="text-info">{getFilterTypeName(filters[0]?.filterSet?.filterTypeId)}</h6>
                         </div>
                       </div>
@@ -221,22 +214,33 @@ const ManageFilterList = () => {
                               {filter.label}
                             </div>
                             <div className="d-flex gap-2">
-                              <button className="btn btn-sm " title="View" onClick={() => {
-                                setViewFilterList(filter);
-                                setViewModalVisible(true)
-                              }}>
+                              <button
+                                className="btn btn-sm"
+                                title="View"
+                                onClick={() => {
+                                  setViewFilterList(filter);
+                                  setViewModalVisible(true);
+                                }}
+                              >
                                 <BsEye />
                               </button>
-                              <button className="btn btn-sm btn-outline-primary" title="Edit" onClick={() => {
-                                setSelectedFilterList(filter);
-                                setShowEditModal(true);
-                              }}>
+                              <button
+                                className="btn btn-sm btn-outline-primary"
+                                title="Edit"
+                                onClick={() => {
+                                  setSelectedFilterList(filter);
+                                  setShowEditModal(true);
+                                }}
+                              >
                                 <BsPencilSquare />
                               </button>
-                              <button className="btn btn-sm btn-outline-danger" title="Delete" onClick={() => handleDeleteClick(filter.id)}  >
+                              <button
+                                className="btn btn-sm btn-outline-danger"
+                                title="Delete"
+                                onClick={() => handleDeleteClick(filter.id)}
+                              >
                                 <BsTrash />
                               </button>
-
                             </div>
                             {selectedRows.includes(filter.id) ? (
                               <input
@@ -245,7 +249,7 @@ const ManageFilterList = () => {
                                 onChange={(e) =>
                                   setEditedPriorities((prev) => ({
                                     ...prev,
-                                    [filter.id]: e.target.value
+                                    [filter.id]: e.target.value,
                                   }))
                                 }
                                 className="form-control"
@@ -270,10 +274,12 @@ const ManageFilterList = () => {
                         onClick={async () => {
                           for (let id of selectedRows) {
                             if (editedPriorities[id] !== undefined) {
-                              await dispatch(updateFilterListPriority({
-                                id,
-                                priority: parseInt(editedPriorities[id])
-                              }));
+                              await dispatch(
+                                updateFilterListPriority({
+                                  id,
+                                  priority: parseInt(editedPriorities[id]),
+                                })
+                              );
                             }
                           }
                           dispatch(fetchFilterLists());
@@ -288,11 +294,39 @@ const ManageFilterList = () => {
                 </div>
               </div>
             </div>
-            <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-            {showAddModal && <AddFilterListModal show={showAddModal} onClose={() => setShowAddModal(false)} />}
-            {showEditModal && <EditFilterListModal show={showEditModal} onClose={() => setShowEditModal(false)} filterList={selectedFilterList} />}
-            {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
-            {viewModalVisible && <ViewFilterListModal show={viewModalVisible} onClose={() => setViewModalVisible(false)} filterList={viewFilterList} />}
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+            {showAddModal && (
+              <AddFilterListModal
+                show={showAddModal}
+                onClose={() => setShowAddModal(false)}
+              />
+            )}
+            {showEditModal && (
+              <EditFilterListModal
+                show={showEditModal}
+                onClose={() => setShowEditModal(false)}
+                filterList={selectedFilterList}
+              />
+            )}
+            {showDeleteModal && (
+              <DeleteModal
+                show={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={handleDelete}
+                message="Are you sure you want to delete this category?"
+              />
+            )}
+            {viewModalVisible && (
+              <ViewFilterListModal
+                show={viewModalVisible}
+                onClose={() => setViewModalVisible(false)}
+                filterList={viewFilterList}
+              />
+            )}
           </div>
         </div>
       </div>
