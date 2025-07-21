@@ -17,7 +17,6 @@ import { addVariants } from '../redux/actions/variantsAction';
 import axios from 'axios';
 import BASE_URL from '../config/config';
 
-
 const AddProduct = ({ onClose, onProductCreated }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -26,7 +25,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
   const { sizes = [] } = useSelector((state) => state.sizes || {});
   const { colors = [] } = useSelector((state) => state.colors || {});
   const { brands = [] } = useSelector((state) => state.brands);
-  console.log('colors', colors)
+  console.log('colors', colors);
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [description, setDescription] = useState('');
@@ -59,24 +58,27 @@ const AddProduct = ({ onClose, onProductCreated }) => {
 
   const [formData, setFormData] = useState(initialFormState);
 
-  const menuOptions = categories.filter(cat => cat.parentId === null);
-  const subMenuOptions = categories.filter(cat => cat.parentId === parseInt(selectedMenu));
-  const listSubMenuOptions = categories.filter(cat => cat.parentId === parseInt(selectedSubMenu));
-  console.log('listSubMenuOptions', listSubMenuOptions)
+  const menuOptions = categories.filter((cat) => cat.parentId === null);
+  const subMenuOptions = categories.filter((cat) => cat.parentId === parseInt(selectedMenu));
+  const listSubMenuOptions = categories.filter((cat) => cat.parentId === parseInt(selectedSubMenu));
+  console.log('listSubMenuOptions', listSubMenuOptions);
   const featureTypeId = listSubMenuOptions[0]?.featureTypeId || '';
-
-  console.log('featureTypeId', featureTypeId)
+  console.log('featureTypeId', featureTypeId);
   const featureTypeName = listSubMenuOptions[0]?.featureType?.name || '';
-  console.log('featureTypeName', featureTypeName)
+  console.log('featureTypeName', featureTypeName);
 
-  const selectedFeatureTypeId = listSubMenuOptions.find(option => option.id === parseInt(selectedListSubMenu))?.featureTypeId || null;
+  const selectedFeatureTypeId =
+    listSubMenuOptions.find((option) => option.id === parseInt(selectedListSubMenu))?.featureTypeId || null;
   console.log('selectedFeatureTypeId', selectedFeatureTypeId);
-  const featureType = listSubMenuOptions.find(option => option.id === parseInt(selectedListSubMenu))?.featureType || null;
+  const featureType =
+    listSubMenuOptions.find((option) => option.id === parseInt(selectedListSubMenu))?.featureType || null;
   console.log('selectedFeatureTypeId', featureType);
 
-  const selectedFilterTypeId = listSubMenuOptions.find(option => option.id === parseInt(selectedListSubMenu))?.filterTypeId || null;
+  const selectedFilterTypeId =
+    listSubMenuOptions.find((option) => option.id === parseInt(selectedListSubMenu))?.filterTypeId || null;
   console.log('selectedFilterTypeId', selectedFilterTypeId);
-  const filterType = listSubMenuOptions.find(option => option.id === parseInt(selectedListSubMenu))?.filterType || null;
+  const filterType =
+    listSubMenuOptions.find((option) => option.id === parseInt(selectedListSubMenu))?.filterType || null;
   console.log('filterType', filterType);
 
   useEffect(() => {
@@ -85,7 +87,6 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     dispatch(fetchSizes());
     dispatch(fetchBrands());
   }, [dispatch]);
-
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -106,7 +107,8 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     if (!formData.colorId) newErrors.colorId = 'Color is required';
     if (formData.stock && isNaN(formData.stock)) newErrors.stock = 'Stock must be a number';
     if (formData.mrp && isNaN(formData.mrp)) newErrors.mrp = 'MRP must be a number';
-    if (formData.sellingPrice && isNaN(formData.sellingPrice)) newErrors.sellingPrice = 'Selling Price must be a number';
+    if (formData.sellingPrice && isNaN(formData.sellingPrice))
+      newErrors.sellingPrice = 'Selling Price must be a number';
     if (formData.height && isNaN(formData.height)) newErrors.height = 'Height must be a number';
     if (formData.width && isNaN(formData.width)) newErrors.width = 'Width must be a number';
     if (formData.length && isNaN(formData.length)) newErrors.length = 'Length must be a number';
@@ -118,19 +120,15 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     if (!formData.length) newErrors.length = 'Length is required';
     if (!formData.weight) newErrors.weight = 'Weight is required';
     else if (isNaN(formData.weight)) newErrors.weight = 'Weight must be a number';
-
     if (!formData.sla) newErrors.sla = 'SLA is required';
     else if (isNaN(formData.sla)) newErrors.sla = 'SLA must be a number';
-
     if (!formData.deliveryCharges) newErrors.deliveryCharges = 'Delivery Charges are required';
-    else if (isNaN(formData.deliveryCharges)) newErrors.deliveryCharges = 'Delivery Charges must be a number';
-
+    else if (isNaN(formData.deliveryCharges))
+      newErrors.deliveryCharges = 'Delivery Charges must be a number';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-
-  }
-
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -153,8 +151,6 @@ const AddProduct = ({ onClose, onProductCreated }) => {
       colorId: parseInt(formData.colorId),
       brandId: parseInt(formData.brandId),
       categoryId: parseInt(selectedMenu),
-      // subCategoryId: parseInt(selectedSubMenu),
-      // listSubCategoryId: parseInt(selectedListSubMenu),
       status: formData.status === 'enable',
       featureTypeId: selectedFeatureTypeId,
       featureType: featureType,
@@ -165,22 +161,22 @@ const AddProduct = ({ onClose, onProductCreated }) => {
         weight: parseFloat(formData.weight),
         sla: parseInt(formData.sla),
         deliveryCharges: parseFloat(formData.deliveryCharges),
-      }
+      },
     };
     console.log('Submitting Product:', payload);
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(`${BASE_URL}/products`, payload, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
       const productId = response.data?.id;
       console.log('Product created successfully:', response.data);
       const variantPayloads = variants
-        .filter(v => v.sku && v.stock && v.mrp && v.sellingPrice)
-        .map(variant => ({
+        .filter((v) => v.sku && v.stock && v.mrp && v.sellingPrice)
+        .map((variant) => ({
           ...variant,
           productId,
           stock: parseInt(variant.stock),
@@ -193,37 +189,37 @@ const AddProduct = ({ onClose, onProductCreated }) => {
       if (variantPayloads.length) {
         await dispatch(addVariants(variantPayloads));
       }
-      console.log('varaints payloads', variantPayloads)
+      console.log('Variants payloads', variantPayloads);
+
+      // Reset all form data
       setFormData(initialFormState);
       setDescription('');
       setSelectedMenu('');
       setSelectedSubMenu('');
       setSelectedListSubMenu('');
-      setCreatedProductId(response.data.id)
       setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
-      const createdProductId = response.data.id;
+
+      setCreatedProductId(response.data.id);
+
+      // Notify parent component
       if (onProductCreated) {
         onProductCreated({
           id: response.data.id,
-          // featureTypeId: selectedFeatureTypeId,
-          // featureTypeName: featureTypeName,
           featureTypeId: selectedFeatureTypeId,
           featureType: featureType,
           filterTypeId: selectedFilterTypeId,
           filterType: filterType,
         });
       }
-      console.log('createdProductId', createdProductId)
-
-      // navigate('/admin/manage-product');
-
-
+      // Only close if it's a modal, otherwise stay on the same page
+      if (onClose) {
+        onClose(); // Close the modal if provided
+      }
     } catch (err) {
       setErrors({
         brand: err?.response?.data?.message || 'Something went wrong.',
       });
     }
-
   };
 
   const handleReset = (e) => {
@@ -233,11 +229,12 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     setSelectedSubMenu('');
     setSelectedListSubMenu('');
     setDescription('');
+    setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
   };
 
-  // variants 
+  // Variants
   const [variants, setVariants] = useState([
-    { sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }
+    { sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' },
   ]);
 
   const handleChange = (index, field, value) => {
@@ -249,17 +246,14 @@ const AddProduct = ({ onClose, onProductCreated }) => {
   const addRow = () => {
     setVariants([
       ...variants,
-      { sku: '', stock: '', mrp: '', sellingPrice: '', size: '', color: '' }
+      { sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' },
     ]);
   };
-
-  console.log('variants', variants)
 
   const removeRow = (index) => {
     const updatedVariants = variants.filter((_, i) => i !== index);
     setVariants(updatedVariants);
   };
-
 
   return (
     <div className="container-fluid">
@@ -276,53 +270,82 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                     <h6 className="sub-heading">Category Details</h6>
                     <div className="row">
                       <div className="col-lg-4 mb-3">
-                        <label className="form-label">Menu<span className='text-danger'>*</span></label>
-                        <select className={`form-control ${errors.selectedMenu ? 'is-invalid' : ''}`} value={selectedMenu} onChange={(e) => {
-                          setSelectedMenu(e.target.value);
-                          setSelectedSubMenu('');
-                          setSelectedListSubMenu('');
-                          if (errors.selectedMenu) {
-                            setErrors({ ...errors, selectedMenu: '' });
-                          }
-                        }}>
+                        <label className="form-label">
+                          Menu<span className="text-danger">*</span>
+                        </label>
+                        <select
+                          className={`form-control ${errors.selectedMenu ? 'is-invalid' : ''}`}
+                          value={selectedMenu}
+                          onChange={(e) => {
+                            setSelectedMenu(e.target.value);
+                            setSelectedSubMenu('');
+                            setSelectedListSubMenu('');
+                            if (errors.selectedMenu) {
+                              setErrors({ ...errors, selectedMenu: '' });
+                            }
+                          }}
+                        >
                           <option value="">--Choose Menu--</option>
-                          {menuOptions.map(menu => (
-                            <option key={menu.id} value={menu.id}>{menu.title}</option>
+                          {menuOptions.map((menu) => (
+                            <option key={menu.id} value={menu.id}>
+                              {menu.title}
+                            </option>
                           ))}
                         </select>
-                        {errors.selectedMenu && <div className="invalid-feedback">{errors.selectedMenu}</div>}
+                        {errors.selectedMenu && (
+                          <div className="invalid-feedback">{errors.selectedMenu}</div>
+                        )}
                       </div>
                       <div className="col-lg-4 mb-3">
-                        <label className="form-label">Sub Menu<span className='text-danger'>*</span></label>
-                        <select className={`form-control ${errors.selectedSubMenu ? 'is-invalid' : ''}`} value={selectedSubMenu} onChange={(e) => {
-                          setSelectedSubMenu(e.target.value);
-                          setSelectedListSubMenu('');
-                          if (errors.selectedSubMenu) {
-                            setErrors({ ...errors, selectedSubMenu: '' });
-                          }
-                        }}>
+                        <label className="form-label">
+                          Sub Menu<span className="text-danger">*</span>
+                        </label>
+                        <select
+                          className={`form-control ${errors.selectedSubMenu ? 'is-invalid' : ''}`}
+                          value={selectedSubMenu}
+                          onChange={(e) => {
+                            setSelectedSubMenu(e.target.value);
+                            setSelectedListSubMenu('');
+                            if (errors.selectedSubMenu) {
+                              setErrors({ ...errors, selectedSubMenu: '' });
+                            }
+                          }}
+                        >
                           <option value="">--Choose Sub Menu--</option>
-                          {subMenuOptions.map(sub => (
-                            <option key={sub.id} value={sub.id}>{sub.title}</option>
+                          {subMenuOptions.map((sub) => (
+                            <option key={sub.id} value={sub.id}>
+                              {sub.title}
+                            </option>
                           ))}
                         </select>
-                        {errors.selectedSubMenu && <div className="invalid-feedback">{errors.selectedSubMenu}</div>}
+                        {errors.selectedSubMenu && (
+                          <div className="invalid-feedback">{errors.selectedSubMenu}</div>
+                        )}
                       </div>
                       <div className="col-lg-4 mb-3">
-                        <label className="form-label">List Sub Menu<span className='text-danger'>*</span></label>
-                        <select className={`form-control ${errors.selectedListSubMenu ? 'is-invalid' : ''}`} value={selectedListSubMenu} onChange={(e) => {
-                          setSelectedListSubMenu(e.target.value);
-                          if (errors.selectedListSubMenu) {
-                            setErrors({ ...errors, selectedListSubMenu: '' });
-                          }
-                        }}>
+                        <label className="form-label">
+                          List Sub Menu<span className="text-danger">*</span>
+                        </label>
+                        <select
+                          className={`form-control ${errors.selectedListSubMenu ? 'is-invalid' : ''}`}
+                          value={selectedListSubMenu}
+                          onChange={(e) => {
+                            setSelectedListSubMenu(e.target.value);
+                            if (errors.selectedListSubMenu) {
+                              setErrors({ ...errors, selectedListSubMenu: '' });
+                            }
+                          }}
+                        >
                           <option value="">--Choose List Sub Menu--</option>
-                          {listSubMenuOptions.map(list => (
-                            <option key={list.id} value={list.id}>{list.title}</option>
+                          {listSubMenuOptions.map((list) => (
+                            <option key={list.id} value={list.id}>
+                              {list.title}
+                            </option>
                           ))}
                         </select>
-                        {errors.selectedListSubMenu && <div className="invalid-feedback">{errors.selectedListSubMenu}</div>}
-
+                        {errors.selectedListSubMenu && (
+                          <div className="invalid-feedback">{errors.selectedListSubMenu}</div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -335,60 +358,92 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                       {[
                         { id: 'sku', label: 'SKU Code', required: true },
                         { id: 'title', label: 'Title', required: true },
-                        { id: 'weight', label: 'Weight (gms)', required: false },
+                        { id: 'weight', label: 'Weight (gms)', required: true },
                         { id: 'model', label: 'Model', required: true },
                         { id: 'sla', label: 'SLA (Delivery Days)', required: true },
                         { id: 'deliveryCharges', label: 'Delivery Charges', required: true },
                       ].map((field, idx) => (
                         <div className="col-lg-4 mb-3" key={idx}>
-                          <label htmlFor={field.id} className="form-label">{field.label} {field.required && <span className='text-danger'>*</span>}</label>
-                          <input id={field.id} className={`form-control ${errors[field.id] ? 'is-invalid' : ''}`} placeholder={field.label} type="text" value={formData[field.id]} onChange={(e) => {
-                            setFormData({ ...formData, [field.id]: e.target.value });
-                            if (errors[field.id]) {
-                              setErrors({ ...errors, [field.id]: '' });
-                            }
-                          }} />
+                          <label htmlFor={field.id} className="form-label">
+                            {field.label} {field.required && <span className="text-danger">*</span>}
+                          </label>
+                          <input
+                            id={field.id}
+                            className={`form-control ${errors[field.id] ? 'is-invalid' : ''}`}
+                            placeholder={field.label}
+                            type="text"
+                            value={formData[field.id]}
+                            onChange={(e) => {
+                              setFormData({ ...formData, [field.id]: e.target.value });
+                              if (errors[field.id]) {
+                                setErrors({ ...errors, [field.id]: '' });
+                              }
+                            }}
+                          />
                           {errors[field.id] && (
                             <div className="invalid-feedback">{errors[field.id]}</div>
                           )}
                         </div>
                       ))}
-
                       <div className="col-lg-12 mb-3">
-                        <label className={`form-control ${errors.description ? 'is-invalid' : ''}`}>Description<span className='text-danger'>*</span></label>
-                        <CKEditor editor={ClassicEditor} data={description} onChange={(event, editor) => {
-                          const data = editor.getData();
-                          setDescription(data);
-                          setFormData({ ...formData, description: data });
-                          if (errors.description) {
-                            setErrors({ ...errors, description: "" })
-                          }
-                        }} />
-                        {errors.description && <div className="invalid-feedback">{errors.description}</div>}
+                        <label className={`form-label ${errors.description ? 'is-invalid' : ''}`}>
+                          Description<span className="text-danger">*</span>
+                        </label>
+                        <CKEditor
+                          key={formData.description}
+                          editor={ClassicEditor}
+                          data={formData.description}
+                          onChange={(event, editor) => {
+                            const data = editor.getData();
+                            setFormData((prev) => ({ ...prev, description: data }));
+                            if (errors.description) {
+                              setErrors((prev) => ({ ...prev, description: '' }));
+                            }
+                          }}
+                        />
 
+                        {errors.description && (
+                          <div className="invalid-feedback">{errors.description}</div>
+                        )}
                       </div>
 
+
                       <div className="col-lg-6 mb-3">
-                        <label className="form-label">Product Status<span className='text-danger'>*</span></label>
-                        <select className={`form-control ${errors.status ? 'is-invalid' : ''}`} value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })}>
+                        <label className="form-label">
+                          Product Status<span className="text-danger">*</span>
+                        </label>
+                        <select
+                          className={`form-control ${errors.status ? 'is-invalid' : ''}`}
+                          value={formData.status}
+                          onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                        >
                           <option value="enable">Enable</option>
                           <option value="disable">Disable</option>
                         </select>
-                        {errors.status && <div className="invalid-feedback">{errors.status}</div>}
-
+                        {errors.status && (
+                          <div className="invalid-feedback">{errors.status}</div>
+                        )}
                       </div>
 
                       <div className="col-lg-6 mb-3">
-                        <label className="form-label">Search Keywords<span className='text-danger'>*</span></label>
-                        <input type="text" className={`form-control ${errors.searchKeywords ? 'is-invalid' : ''}`} placeholder="Comma separated keywords" value={formData.searchKeywords} onChange={(e) => {
-                          setFormData({ ...formData, searchKeywords: e.target.value });
-                          if (errors.searchKeywords) {
-                            setErrors({ ...errors, searchKeywords: '' });
-                          }
-                        }}
+                        <label className="form-label">
+                          Search Keywords<span className="text-danger">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          className={`form-control ${errors.searchKeywords ? 'is-invalid' : ''}`}
+                          placeholder="Comma separated keywords"
+                          value={formData.searchKeywords}
+                          onChange={(e) => {
+                            setFormData({ ...formData, searchKeywords: e.target.value });
+                            if (errors.searchKeywords) {
+                              setErrors({ ...errors, searchKeywords: '' });
+                            }
+                          }}
                         />
-                        {errors.searchKeywords && <div className="invalid-feedback">{errors.searchKeywords}</div>}
-
+                        {errors.searchKeywords && (
+                          <div className="invalid-feedback">{errors.searchKeywords}</div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -400,85 +455,107 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                     <div className="row">
                       {['stock', 'mrp', 'sellingPrice', 'height', 'width', 'length'].map((field, idx) => (
                         <div className="col-lg-3 mb-3" key={idx}>
-                          <label className="form-label">{field.charAt(0).toUpperCase() + field.slice(1)}<span className='text-danger'>*</span></label>
-                          <input type="text" className={`form-control ${errors[field] ? 'is-invalid' : ''}`} placeholder={field} value={formData[field]} onChange={(e) => {
-                            setFormData({ ...formData, [field]: e.target.value });
-                            if (errors[field]) {
-                              setErrors({ ...errors, [field]: '' });
-                            }
-                          }} />
+                          <label className="form-label">
+                            {field.charAt(0).toUpperCase() + field.slice(1)}
+                            <span className="text-danger">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            className={`form-control ${errors[field] ? 'is-invalid' : ''}`}
+                            placeholder={field}
+                            value={formData[field]}
+                            onChange={(e) => {
+                              setFormData({ ...formData, [field]: e.target.value });
+                              if (errors[field]) {
+                                setErrors({ ...errors, [field]: '' });
+                              }
+                            }}
+                          />
                           {errors[field] && (
                             <div className="invalid-feedback">{errors[field]}</div>
                           )}
                         </div>
                       ))}
                       <div className="col-lg-3 mb-3">
-                        <label className="form-label">Brand<span className='text-danger'>*</span></label>
+                        <label className="form-label">
+                          Brand<span className="text-danger">*</span>
+                        </label>
                         <select
                           className={`form-control ${errors.brandId ? 'is-invalid' : ''}`}
                           value={formData.brandId}
                           onChange={(e) => {
                             setFormData({ ...formData, brandId: e.target.value });
                             if (errors.brandId) {
-                              setErrors({ ...errors, brandId: "" });
+                              setErrors({ ...errors, brandId: '' });
                             }
                           }}
                         >
                           <option value="">--Choose Brand--</option>
                           {brands.map((s) => (
-                            <option key={s.id} value={s.id}>{s.name}</option>
+                            <option key={s.id} value={s.id}>
+                              {s.name}
+                            </option>
                           ))}
                         </select>
-                        {errors.brandId && <div className="invalid-feedback">{errors.brandId}</div>}
-
+                        {errors.brandId && (
+                          <div className="invalid-feedback">{errors.brandId}</div>
+                        )}
                       </div>
 
                       <div className="col-lg-3 mb-3">
-                        <label className="form-label">Size<span className='text-danger'>*</span></label>
+                        <label className="form-label">
+                          Size<span className="text-danger">*</span>
+                        </label>
                         <select
                           className={`form-control ${errors.sizeId ? 'is-invalid' : ''}`}
-
                           value={formData.sizeId}
                           onChange={(e) => {
                             setFormData({ ...formData, sizeId: e.target.value });
                             if (errors.sizeId) {
-                              setErrors({ ...errors, sizeId: "" });
+                              setErrors({ ...errors, sizeId: '' });
                             }
                           }}
                         >
                           <option value="">--Choose Size--</option>
                           {sizes.map((s) => (
-                            <option key={s.id} value={s.id}>{s.title}</option>
+                            <option key={s.id} value={s.id}>
+                              {s.title}
+                            </option>
                           ))}
                         </select>
-                        {errors.sizeId && <div className="invalid-feedback">{errors.sizeId}</div>}
-
+                        {errors.sizeId && (
+                          <div className="invalid-feedback">{errors.sizeId}</div>
+                        )}
                       </div>
 
                       <div className="col-lg-3 mb-3">
-                        <label className="form-label">Color<span className='text-danger'>*</span></label>
+                        <label className="form-label">
+                          Color<span className="text-danger">*</span>
+                        </label>
                         <select
                           className={`form-control ${errors.colorId ? 'is-invalid' : ''}`}
                           value={formData.colorId}
                           onChange={(e) => {
                             setFormData({ ...formData, colorId: e.target.value });
                             if (errors.colorId) {
-                              setErrors({ ...errors, colorId: "" })
+                              setErrors({ ...errors, colorId: '' });
                             }
                           }}
                         >
                           <option value="">--Choose Color--</option>
                           {colors.map((s) => (
-                            <option key={s.id} value={s.id}>{s.label}</option>
+                            <option key={s.id} value={s.id}>
+                              {s.label}
+                            </option>
                           ))}
                         </select>
-                        {errors.colorId && <div className="invalid-feedback">{errors.colorId}</div>}
-
+                        {errors.colorId && (
+                          <div className="invalid-feedback">{errors.colorId}</div>
+                        )}
                       </div>
                     </div>
                   </div>
 
-                  {/* <ProductVariants/> */}
                   <div className="col-lg-12 mb-3">
                     <h6 className="sub-heading pt-4">Other Variants</h6>
                     <table className="table">
@@ -563,11 +640,19 @@ const AddProduct = ({ onClose, onProductCreated }) => {
 
                             <td>
                               {index === variants.length - 1 ? (
-                                <button type="button" className="btn btn-light-success icon-btn b-r-4" onClick={addRow}>
-                                  +
+                                <button
+                                  type="button"
+                                  className="btn btn-light-success icon-btn b-r-4"
+                                  onClick={addRow}
+                                >
+                                  <BsPlus />
                                 </button>
                               ) : (
-                                <button type="button" className="btn btn-danger icon-btn b-r-4" onClick={() => removeRow(index)}>
+                                <button
+                                  type="button"
+                                  className="btn btn-danger icon-btn b-r-4"
+                                  onClick={() => removeRow(index)}
+                                >
                                   -
                                 </button>
                               )}
@@ -579,10 +664,17 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                   </div>
 
                   <div className="col-lg-12 text-center my-4">
-                    <button type="submit" className="btn btn-primary py-2 px-5 me-2">Save</button>
-                    <button type="reset" className="btn btn-secondary py-2 px-5" onClick={handleReset}>Reset</button>
+                    <button type="submit" className="btn btn-primary py-2 px-5 me-2">
+                      Save
+                    </button>
+                    <button
+                      type="reset"
+                      className="btn btn-secondary py-2 px-5"
+                      onClick={handleReset}
+                    >
+                      Reset
+                    </button>
                   </div>
-
                 </div>
               </form>
             </div>
@@ -590,10 +682,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
         </div>
       </div>
     </div>
-
   );
 };
-
-
 
 export default AddProduct;
