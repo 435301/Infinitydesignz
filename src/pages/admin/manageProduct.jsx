@@ -161,7 +161,7 @@ const ManageProducts = () => {
                                                 </button>
                                             </div>
                                             <div className="col-md-4 text-end">
-                                                <a href="/admin/add-product" className="btn btn-primary">+ Add Product</a>
+                                                <a href="/admin/product" className="btn btn-primary">+ Add Product</a>
                                             </div>
                                         </div>
                                     </div>
