@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { addVariants } from '../redux/actions/variantsAction';
 import axios from 'axios';
 import BASE_URL from '../config/config';
+import { toast } from 'react-toastify';
 
 
 const AddProduct = ({ onClose, onProductCreated }) => {
@@ -178,6 +179,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
       });
       const productId = response.data?.id;
       console.log('Product created successfully:', response.data);
+      toast.success('Product created successfully!');
       const variantPayloads = variants
         .filter(v => v.sku && v.stock && v.mrp && v.sellingPrice)
         .map(variant => ({
@@ -219,6 +221,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
 
 
     } catch (err) {
+      toast.error(err?.response?.data?.message || 'Something went wrong.');
       setErrors({
         brand: err?.response?.data?.message || 'Something went wrong.',
       });

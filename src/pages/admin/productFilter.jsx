@@ -5,18 +5,19 @@ import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 import axios from 'axios';
 import BASE_URL from '../../config/config';
+import { toast } from 'react-toastify';
 
 const ProductFilters = ({ createdProductId, filterTypeId, filterType }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [filters, setFilters] = useState({});
-  
+
 
   const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
   useEffect(() => {
     if (filterType?.filterSets) {
       const initialState = {};
       filterType.filterSets.forEach(set => {
-        initialState[set.id] = ''; 
+        initialState[set.id] = '';
       });
       setFilters(initialState);
     }
@@ -43,14 +44,14 @@ const ProductFilters = ({ createdProductId, filterTypeId, filterType }) => {
       for (let payload of payloadArray) {
         await axios.post(`${BASE_URL}/product-filters`, payload);
       }
-
+      toast.success('Filters submitted successfully!');
     } catch (error) {
       console.error('Submission failed:', error);
-      alert('Failed to submit features.');
+      toast.error('Failed to submit filters.');
     }
   };
 
- 
+
   const handleReset = () => {
     if (filterType?.filterSets) {
       const resetState = {};

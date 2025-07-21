@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 import BASE_URL from '../../config/config';
+import { toast } from 'react-toastify';
 
 const ProductFeatures = ({ createdProductId, featureTypeId, featureType }) => {
   const [formValues, setFormValues] = useState({});
@@ -29,10 +30,10 @@ const ProductFeatures = ({ createdProductId, featureTypeId, featureType }) => {
       for (let payload of payloadArray) {
         await axios.post(`${BASE_URL}/product-features`, payload);
       }
-
+      toast.success('Features submitted successfully!');
     } catch (error) {
       console.error('Submission failed:', error);
-      alert('Failed to submit features.');
+      toast.error('Failed to submit features.');
     }
   };
 
