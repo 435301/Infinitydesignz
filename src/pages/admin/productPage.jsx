@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState  } from 'react';
 import { Tabs, Tab } from 'react-bootstrap';
 import ProductFilters from './productFilter';
 import ProductFeatures from './productFeatures';
@@ -23,6 +23,7 @@ const ProductPage = ({ createdProductId, selectedFeatureType }) => {
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
+        
         <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
         <aside className="main-sidebar hidden-print">
           <Sidebar isCollapsed={isSidebarCollapsed} />
@@ -58,10 +59,10 @@ const ProductPage = ({ createdProductId, selectedFeatureType }) => {
                           setCreatedProductInfo(productInfo);
                         }} />
                       </Tab>
-                      <Tab eventKey="images" title="Product Images">
-                        <AddProductImages />
+                      <Tab eventKey="images" title="Product Images" disabled={!createdProductInfo}>
+                        <AddProductImages   />
                       </Tab>
-                      <Tab eventKey="filters" title="Product Filters">
+                      <Tab eventKey="filters" title="Product Filters"  disabled={!createdProductInfo}>
                        {createdProductInfo && (
                           <ProductFilters
                             createdProductId={createdProductInfo.id}
@@ -70,7 +71,7 @@ const ProductPage = ({ createdProductId, selectedFeatureType }) => {
                           />
                         )}
                       </Tab>
-                      <Tab eventKey="features" title="Product Features">
+                      <Tab eventKey="features" title="Product Features"  disabled={!createdProductInfo}>
                        
                         {createdProductInfo && (
                           <ProductFeatures

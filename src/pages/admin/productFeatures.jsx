@@ -27,10 +27,9 @@ const ProductFeatures = ({ createdProductId, featureTypeId, featureType }) => {
 
     try {
       for (let payload of payloadArray) {
-        await axios.post(`${BASE_URL}/products`, payload);
+        await axios.post(`${BASE_URL}/product-features`, payload);
       }
 
-      alert('Features submitted successfully!');
     } catch (error) {
       console.error('Submission failed:', error);
       alert('Failed to submit features.');

@@ -18,7 +18,7 @@ import axios from 'axios';
 import BASE_URL from '../config/config';
 
 
-const AddProduct = ({ onClose ,onProductCreated}) => {
+const AddProduct = ({ onClose, onProductCreated }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -63,25 +63,21 @@ const AddProduct = ({ onClose ,onProductCreated}) => {
   const subMenuOptions = categories.filter(cat => cat.parentId === parseInt(selectedMenu));
   const listSubMenuOptions = categories.filter(cat => cat.parentId === parseInt(selectedSubMenu));
   console.log('listSubMenuOptions', listSubMenuOptions)
-  // const featureTypeId = listSubMenuOptions.map(item => item.featureTypeId);
   const featureTypeId = listSubMenuOptions[0]?.featureTypeId || '';
 
-console.log('featureTypeId', featureTypeId)
+  console.log('featureTypeId', featureTypeId)
+  const featureTypeName = listSubMenuOptions[0]?.featureType?.name || '';
+  console.log('featureTypeName', featureTypeName)
 
-
-// const featureTypeName = listSubMenuOptions[0]?.featureType?.name || '';
-const featureTypeName = listSubMenuOptions[0]?.featureType?.name || '';
-console.log('featureTypeName', featureTypeName)
-
-const selectedFeatureTypeId = listSubMenuOptions.find(option => option.id === parseInt(selectedListSubMenu))?.featureTypeId || null;
+  const selectedFeatureTypeId = listSubMenuOptions.find(option => option.id === parseInt(selectedListSubMenu))?.featureTypeId || null;
   console.log('selectedFeatureTypeId', selectedFeatureTypeId);
   const featureType = listSubMenuOptions.find(option => option.id === parseInt(selectedListSubMenu))?.featureType || null;
   console.log('selectedFeatureTypeId', featureType);
 
-const selectedFilterTypeId = listSubMenuOptions.find(option => option.id === parseInt(selectedListSubMenu))?.filterTypeId || null;
+  const selectedFilterTypeId = listSubMenuOptions.find(option => option.id === parseInt(selectedListSubMenu))?.filterTypeId || null;
   console.log('selectedFilterTypeId', selectedFilterTypeId);
   const filterType = listSubMenuOptions.find(option => option.id === parseInt(selectedListSubMenu))?.filterType || null;
-console.log('filterType', filterType);
+  console.log('filterType', filterType);
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -138,6 +134,7 @@ console.log('filterType', filterType);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setErrors({});
     if (!validate()) return;
 
@@ -159,10 +156,10 @@ console.log('filterType', filterType);
       // subCategoryId: parseInt(selectedSubMenu),
       // listSubCategoryId: parseInt(selectedListSubMenu),
       status: formData.status === 'enable',
-       featureTypeId: selectedFeatureTypeId,
-       featureType:featureType,
-       filterTypeId: selectedFilterTypeId,
-        filterType:filterType,
+      featureTypeId: selectedFeatureTypeId,
+      featureType: featureType,
+      filterTypeId: selectedFilterTypeId,
+      filterType: filterType,
       productDetails: {
         model: formData.model,
         weight: parseFloat(formData.weight),
@@ -202,24 +199,22 @@ console.log('filterType', filterType);
       setSelectedMenu('');
       setSelectedSubMenu('');
       setSelectedListSubMenu('');
-       setCreatedProductId(response.data.id)
+      setCreatedProductId(response.data.id)
       setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
-       const createdProductId = response.data.id; 
-if (onProductCreated) {
-  onProductCreated({
-    id: response.data.id,
-    // featureTypeId: selectedFeatureTypeId,
-    // featureTypeName: featureTypeName,
-     featureTypeId: selectedFeatureTypeId,
-       featureType:featureType,
-    filterTypeId: selectedFilterTypeId,
-    filterType:filterType,
-  });
-}
-       console.log('createdProductId', createdProductId)
-     
+      const createdProductId = response.data.id;
+      if (onProductCreated) {
+        onProductCreated({
+          id: response.data.id,
+          // featureTypeId: selectedFeatureTypeId,
+          // featureTypeName: featureTypeName,
+          featureTypeId: selectedFeatureTypeId,
+          featureType: featureType,
+          filterTypeId: selectedFilterTypeId,
+          filterType: filterType,
+        });
+      }
+      console.log('createdProductId', createdProductId)
 
-  alert('Product added successfully');
       // navigate('/admin/manage-product');
 
 
@@ -264,6 +259,7 @@ if (onProductCreated) {
     const updatedVariants = variants.filter((_, i) => i !== index);
     setVariants(updatedVariants);
   };
+
 
   return (
     <div className="container-fluid">
@@ -583,7 +579,7 @@ if (onProductCreated) {
                   </div>
 
                   <div className="col-lg-12 text-center my-4">
-                    <button type="submit" className="btn btn-primary py-2 px-5 me-2">Submit</button>
+                    <button type="submit" className="btn btn-primary py-2 px-5 me-2">Save</button>
                     <button type="reset" className="btn btn-secondary py-2 px-5" onClick={handleReset}>Reset</button>
                   </div>
 
@@ -597,5 +593,7 @@ if (onProductCreated) {
 
   );
 };
+
+
 
 export default AddProduct;

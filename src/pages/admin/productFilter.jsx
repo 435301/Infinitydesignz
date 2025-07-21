@@ -3,48 +3,54 @@ import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
+import axios from 'axios';
+import BASE_URL from '../../config/config';
 
 const ProductFilters = ({ createdProductId, filterTypeId, filterType }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [filters, setFilters] = useState({});
+  
 
   const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
-
-  // Initialize filter state based on incoming filterType
   useEffect(() => {
     if (filterType?.filterSets) {
       const initialState = {};
       filterType.filterSets.forEach(set => {
-        initialState[set.id] = ''; // using filterSet.id as key
+        initialState[set.id] = ''; 
       });
       setFilters(initialState);
     }
   }, [filterType]);
 
-  const handleChange = (e, filterSetId) => {
-    setFilters({ ...filters, [filterSetId]: e.target.value });
+  const handleChange = (e, filterListId) => {
+    setFilters({ ...filters, [filterListId]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Filter Data Submitted:', {
-      productId: createdProductId,
-      filterTypeId: filterTypeId,
-      filters,
-    });
 
-    // Example API call using axios (uncomment if needed)
-    /*
-    axios.post(`${BASE_URL}/products/filters`, {
+    const payloadArray = Object.entries(filters).map(([filterListId]) => ({
       productId: createdProductId,
-      filterTypeId,
-      filters
-    })
-    .then(response => console.log('Saved:', response.data))
-    .catch(error => console.error('Error:', error));
-    */
+      filterListId: parseInt(filterListId),
+    }));
+
+    console.log('Submitting payload:', payloadArray);
+
+    try {
+      for (let payload of payloadArray) {
+        await axios.post(`${BASE_URL}/product-filters`, payload);
+      }
+
+    } catch (error) {
+      console.error('Submission failed:', error);
+      alert('Failed to submit features.');
+    }
   };
 
+ 
   const handleReset = () => {
     if (filterType?.filterSets) {
       const resetState = {};
