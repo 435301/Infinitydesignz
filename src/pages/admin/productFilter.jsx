@@ -1,78 +1,59 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import BASE_URL from '../../config/config';
+import React, { useState, useEffect } from 'react';
+import HeaderAdmin from '../../includes/headerAdmin';
+import Sidebar from '../../includes/sidebar';
+import '../../css/admin/style.css';
+import '../../css/admin/icofont.css';
 
-const ProductFilters = ({ createdProductId }) => {
-  console.log('createdProductId', createdProductId);
+const ProductFilters = ({ createdProductId, filterTypeId, filterType }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [filterSets, setFilterSets] = useState([]);
-  const [filterValues, setFilterValues] = useState({});
+  const [filters, setFilters] = useState({});
 
   const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
 
+  // Initialize filter state based on incoming filterType
   useEffect(() => {
-    if (createdProductId) {
-      axios.get(`${BASE_URL}/products/${createdProductId}`)
-        .then((res) => {
-          const product = res.data;
-          const filterType = product.category?.filterType;
-          const sets = filterType?.filterSets || [];
-          const initialValues = {};
-          sets.forEach((set) => {
-            set.filterLists.forEach((filter) => {
-              initialValues[filter.label] = '';
-            });
-          });
-
-          setFilterSets(sets);
-          setFilterValues(initialValues);
-        })
-        .catch((err) => {
-          console.error('Failed to fetch product filter data:', err);
-        });
+    if (filterType?.filterSets) {
+      const initialState = {};
+      filterType.filterSets.forEach(set => {
+        initialState[set.id] = ''; // using filterSet.id as key
+      });
+      setFilters(initialState);
     }
-  }, [createdProductId]);
+  }, [filterType]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFilterValues((prev) => ({ ...prev, [name]: value }));
+  const handleChange = (e, filterSetId) => {
+    setFilters({ ...filters, [filterSetId]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Submitted Filters:', filterValues);
-    // axios.post('/api/filters/update', { createdProductId, filters: filterValues });
+    console.log('Filter Data Submitted:', {
+      productId: createdProductId,
+      filterTypeId: filterTypeId,
+      filters,
+    });
+
+    // Example API call using axios (uncomment if needed)
+    /*
+    axios.post(`${BASE_URL}/products/filters`, {
+      productId: createdProductId,
+      filterTypeId,
+      filters
+    })
+    .then(response => console.log('Saved:', response.data))
+    .catch(error => console.error('Error:', error));
+    */
   };
 
   const handleReset = () => {
-    const resetValues = {};
-    Object.keys(filterValues).forEach((key) => (resetValues[key] = ''));
-    setFilterValues(resetValues);
+    if (filterType?.filterSets) {
+      const resetState = {};
+      filterType.filterSets.forEach(set => {
+        resetState[set.id] = '';
+      });
+      setFilters(resetState);
+    }
   };
-
-  const renderDropdown = (label) => (
-    <div className="row mb-3 justify-content-center" key={label}>
-      <div className="col-lg-3 col-md-3">
-        <label htmlFor={label} className="form-label">{label}</label>
-      </div>
-      <div className="col-lg-3">
-        <select
-          id={label}
-          name={label}
-          className="form-control"
-          value={filterValues[label] || ''}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Choose {label}</option>
-          {/* Replace this with real options via API or constants */}
-          {['Option 1', 'Option 2', 'Option 3'].map((opt) => (
-            <option key={opt} value={opt.toLowerCase()}>{opt}</option>
-          ))}
-        </select>
-      </div>
-    </div>
-  );
 
   return (
     <div className="container-fluid">
@@ -81,10 +62,26 @@ const ProductFilters = ({ createdProductId }) => {
           <div className="card">
             <div className="card-block py-3">
               <form className="app-form mt-3" onSubmit={handleSubmit} onReset={handleReset}>
-                {filterSets.map((set) => (
-                  <div key={set.id}>
-                    <h6 className="sub-heading mb-3">{set.title}</h6>
-                    {set.filterLists.map((filter) => renderDropdown(filter.label))}
+                {filterType?.filterSets?.map((filterSet, idx) => (
+                  <div className="row mb-3 justify-content-center" key={idx}>
+                    <div className="col-lg-3 col-md-3">
+                      <label htmlFor={`filter-${filterSet.id}`} className="form-label">{filterSet.title}</label>
+                    </div>
+                    <div className="col-lg-3">
+                      <select
+                        id={`filter-${filterSet.id}`}
+                        name={`filter-${filterSet.id}`}
+                        className="form-control"
+                        value={filters[filterSet.id] || ''}
+                        onChange={(e) => handleChange(e, filterSet.id)}
+                        required
+                      >
+                        <option value="">Choose {filterSet.title}</option>
+                        {filterSet.filterLists?.map((list) => (
+                          <option key={list.id} value={list.label}>{list.label}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 ))}
 

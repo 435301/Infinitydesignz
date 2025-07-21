@@ -4,12 +4,14 @@ import AddCategoryModal from './addCategory';
 import { useDispatch, useSelector } from 'react-redux';
 import { listSubCategory } from '../redux/actions/categoryAction';
 import { fetchFeatureTypes } from '../redux/actions/featureTypeAction';
+import { fetchFilterTypes } from '../redux/actions/filterTypeAction';
 
 const AddListSubCategoryModal = ({ show, setShow }) => {
     const dispatch = useDispatch();
     const [menu, setMenu] = useState('');
     const [subMenu, setSubMenu] = useState('');
     const[featureType, setFeatureType] = useState('');
+    const[filterType, setFilterType] = useState('');
     const [title, setTitle] = useState('');
     const [seoTitle, setSeoTitle] = useState('');
     const [seoDescription, setSeoDescription] = useState('');
@@ -22,9 +24,12 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
 
     const { categories } = useSelector(state => state.categories || {});
     const { featureTypes } = useSelector(state => state.featureTypes || {});
+    const {filterTypes} = useSelector(state => state.filterTypes || {});
+    console.log('filterTypes', filterTypes);
 
     useEffect(() => {
         dispatch(fetchFeatureTypes());
+        dispatch(fetchFilterTypes());
     }, [dispatch]);
 
     const handleFileChange = (setter) => (e) => {
@@ -82,6 +87,16 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
         }
     };
 
+      const handleFilterTypeChange = (e) => {
+        const selectedId = e.target.value;
+        const numericId = selectedId ? Number(selectedId) : '';
+        setFilterType(numericId);
+
+        if (errors.filterType && filterType.trim()) {
+            setErrors((prev) => ({ ...prev, menu: null }));
+        }
+    };
+
 
     const handleSubMenuChange = (e) => {
         const value = e.target.value;
@@ -105,6 +120,7 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
         formData.append('seoDescription', seoDescription);
         formData.append('seoKeywords', seoKeywords);
         formData.append('featureTypeId', featureType);
+        formData.append('filterTypeId', filterType);
 
         if (appIcon?.file) formData.append('appIcon', appIcon.file);
         if (webIcon?.file) formData.append('webImage', webIcon.file);
@@ -225,6 +241,23 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
                                     </select>
                                     {errors.featureType && (
                                         <div className="invalid-feedback">{errors.featureType}</div>
+                                    )}
+                                </div>
+
+                                  <div className="col-lg-4 mb-3">
+                                    <label className="form-label">Filter Type<span className="text-danger">*</span></label>
+                                    <select
+                                        className={`form-control ${errors.filterType ? 'is-invalid' : ''}`}
+                                        value={filterType || ''}
+                                        onChange={handleFilterTypeChange}
+                                    >
+                                        <option value="">-- Select Category --</option>
+                                        {filterTypes.map(cat => (
+                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                        ))}
+                                    </select>
+                                    {errors.filterType && (
+                                        <div className="invalid-feedback">{errors.filterType}</div>
                                     )}
                                 </div>
 

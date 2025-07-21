@@ -62,18 +62,16 @@ const ProductPage = ({ createdProductId, selectedFeatureType }) => {
                         <AddProductImages />
                       </Tab>
                       <Tab eventKey="filters" title="Product Filters">
-                        <ProductFilters createdProductId={createdProductIdState} />
+                       {createdProductInfo && (
+                          <ProductFilters
+                            createdProductId={createdProductInfo.id}
+                            filterTypeId={createdProductInfo.filterTypeId}
+                            filterType={createdProductInfo.filterType}
+                          />
+                        )}
                       </Tab>
                       <Tab eventKey="features" title="Product Features">
-                        {/* <ProductFeatures createdProductId={createdProductIdState} /> */}
-                        {/* {createdProductInfo && (
-                          <ProductFeatures
-                            createdProductId={createdProductInfo.id}
-                            featureTypeId={createdProductInfo.featureTypeId}
-                            featureTypeName={createdProductInfo.featureTypeName}
-                          />
-
-                        )} */}
+                       
                         {createdProductInfo && (
                           <ProductFeatures
                             createdProductId={createdProductInfo.id}

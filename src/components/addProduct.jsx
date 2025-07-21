@@ -78,6 +78,10 @@ const selectedFeatureTypeId = listSubMenuOptions.find(option => option.id === pa
   const featureType = listSubMenuOptions.find(option => option.id === parseInt(selectedListSubMenu))?.featureType || null;
   console.log('selectedFeatureTypeId', featureType);
 
+const selectedFilterTypeId = listSubMenuOptions.find(option => option.id === parseInt(selectedListSubMenu))?.filterTypeId || null;
+  console.log('selectedFilterTypeId', selectedFilterTypeId);
+  const filterType = listSubMenuOptions.find(option => option.id === parseInt(selectedListSubMenu))?.filterType || null;
+console.log('filterType', filterType);
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -157,6 +161,8 @@ const selectedFeatureTypeId = listSubMenuOptions.find(option => option.id === pa
       status: formData.status === 'enable',
        featureTypeId: selectedFeatureTypeId,
        featureType:featureType,
+       filterTypeId: selectedFilterTypeId,
+        filterType:filterType,
       productDetails: {
         model: formData.model,
         weight: parseFloat(formData.weight),
@@ -206,6 +212,8 @@ if (onProductCreated) {
     // featureTypeName: featureTypeName,
      featureTypeId: selectedFeatureTypeId,
        featureType:featureType,
+    filterTypeId: selectedFilterTypeId,
+    filterType:filterType,
   });
 }
        console.log('createdProductId', createdProductId)
