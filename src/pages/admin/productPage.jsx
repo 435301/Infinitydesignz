@@ -9,9 +9,12 @@ import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 
-const ProductPage = () => {
+const ProductPage = ({createdProductId}) => {
   const [activeTab, setActiveTab] = useState('add');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+const [createdProductIdState, setCreatedProductId] = useState(null);
+
+
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -48,16 +51,16 @@ const ProductPage = () => {
                       className="mb-3"
                     >
                       <Tab eventKey="add" title="Add Product">
-                        <AddProduct />
+                       <AddProduct onProductCreated={setCreatedProductId} />
                       </Tab>
                       <Tab eventKey="images" title="Product Images">
                         <AddProductImages />
                       </Tab>
                       <Tab eventKey="filters" title="Product Filters">
-                        <ProductFilters />
+                        <ProductFilters createdProductId={createdProductIdState} />
                       </Tab>
                       <Tab eventKey="features" title="Product Features">
-                        <ProductFeatures />
+                        <ProductFeatures createdProductId={createdProductIdState} />
                       </Tab>
                     </Tabs>
                   </div>

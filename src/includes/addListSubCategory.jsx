@@ -104,11 +104,13 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
         formData.append('seoTitle', seoTitle);
         formData.append('seoDescription', seoDescription);
         formData.append('seoKeywords', seoKeywords);
+        formData.append('featureTypeId', featureType);
 
         if (appIcon?.file) formData.append('appIcon', appIcon.file);
         if (webIcon?.file) formData.append('webImage', webIcon.file);
         if (mainImage?.file) formData.append('mainImage', mainImage.file);
         dispatch(listSubCategory(formData));
+        console.log('Form Data:', formData);
         setShow(false);
     };
 

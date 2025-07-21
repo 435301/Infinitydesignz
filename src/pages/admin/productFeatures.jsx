@@ -1,116 +1,90 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import BASE_URL from '../../config/config';
-import '../../css/admin/style.css';
-import '../../css/admin/icofont.css';
 
-const ProductFeatures = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [featureValues, setFeatureValues] = useState({});
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const dataToSend = [];
-
-    products.forEach((product) => {
-      product.featureSets.forEach((set) => {
-        set.featureLists.forEach((feature) => {
-          const inputKey = `${product.id}-${feature.id}`;
-          const value = featureValues[inputKey];
-          if (value) {
-            dataToSend.push({
-              productId: product.id,
-              featureListId: feature.id,
-              value,
-            });
-          }
-        });
-      });
-    });
-
-    try {
-      const token = localStorage.getItem('token');
-      await axios.post(`${BASE_URL}/product-features`, dataToSend, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      alert('Features updated successfully!');
-    } catch (err) {
-      console.error('Error submitting features:', err);
-      alert('Failed to update features.');
-    }
-  };
-
-  const handleReset = () => {
-    setFeatureValues({});
-  };
+const ProductFeatures = ({ createdProductId }) => {
+  console.log('createdProductId', createdProductId);
+  const [featureSets, setFeatureSets] = useState([]);
+  const [formData, setFormData] = useState({});
+  
 
   useEffect(() => {
-    const fetchProductsAndFeatures = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const productRes = await axios.get(`${BASE_URL}/products`, {
-          headers: { Authorization: `Bearer ${token}` },
+    if (createdProductId) {
+      axios.get(`${BASE_URL}/products/${createdProductId}`)
+        .then((res) => {
+          const product = res.data;
+          console.log('res',res.data.features)
+          const sets = product.category?.featureType?.featureSets || [];
+          setFeatureSets(sets);
+          const initialForm = {};
+          sets.forEach((set) => {
+            set.featureLists.forEach((feature) => {
+              initialForm[feature.label] = ''; 
+            });
+          });
+
+          setFormData(initialForm);
+        })
+        .catch((err) => {
+          console.error('Error fetching product features:', err);
         });
-        const productList = productRes.data;
+    }
+  }, [createdProductId]);
 
-        const enrichedProducts = await Promise.all(
-          productList.map(async (product) => {
-            const categoryId = product?.category?.id;
-            if (!categoryId) return { ...product, featureSets: [] };
-
-            try {
-              const categoryRes = await axios.get(`${BASE_URL}/categories/${categoryId}`, {
-                headers: { Authorization: `Bearer ${token}` },
-              });
-              const featureSets = categoryRes?.data?.featureType?.featureSets || [];
-              return { ...product, featureSets };
-            } catch (err) {
-              console.error(`Failed to fetch feature sets for category ${categoryId}`, err);
-              return { ...product, featureSets: [] };
-            }
-          })
-        );
-
-        setProducts(enrichedProducts);
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        setError('Failed to load product features.');
-        setLoading(false);
-      }
-    };
-
-    fetchProductsAndFeatures();
-  }, []);
-
-  const renderInput = (label, productId, featureId) => {
-    const inputKey = `${productId}-${featureId}`;
-    return (
-      <div className="col-lg-6 mb-3" key={inputKey}>
-        <label htmlFor={inputKey} className="form-label">{label}</label>
-        <input
-          type="text"
-          id={inputKey}
-          name={inputKey}
-          className="form-control"
-          value={featureValues[inputKey] || ''}
-          placeholder={`Enter ${label}`}
-          onChange={(e) =>
-            setFeatureValues((prev) => ({
-              ...prev,
-              [inputKey]: e.target.value,
-            }))
-          }
-        />
-      </div>
-    );
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!createdProductId) {
+    console.error('No product ID available to associate features with.');
+    return;
+  }
+  const payload = [];
+
+  featureSets.forEach(set => {
+    set.featureLists.forEach(feature => {
+      const value = formData[feature.label] || '';
+      payload.push({
+        productId: createdProductId,
+        featureListId: feature.id, 
+        value: value
+      });
+    });
+  });
+
+  console.log('Submitting payload:', payload);
+
+  try {
+    await axios.post(`${BASE_URL}/products`, payload);
+    alert('Features updated successfully!');
+  } catch (error) {
+    console.error('Error submitting features:', error);
+    alert('Failed to update features.');
+  }
+};
+
+
+  const renderInput = (label) => (
+    <div className="col-lg-6 mb-3" key={label}>
+      <label htmlFor={label} className="form-label">{label}</label>
+      <input
+        type="text"
+        id={label}
+        name={label}
+        className="form-control"
+        value={formData[label] || ''}
+        onChange={handleChange}
+        placeholder={`Enter ${label}`}
+      />
+    </div>
+  );
 
   return (
     <div className="container-fluid">
@@ -118,50 +92,25 @@ const ProductFeatures = () => {
         <div className="col-lg-12">
           <div className="card">
             <div className="card-header py-3">
-              <h5 className="text-dark mb-0">Manage Product Features</h5>
+              <h5 className="text-dark mb-0">Product Features</h5>
             </div>
             <div className="card-block">
-              {loading ? (
-                <p>Loading...</p>
-              ) : error ? (
-                <p className="text-danger">{error}</p>
-              ) : products.length === 0 ? (
-                <p>No product data found.</p>
-              ) : (
-                <form onSubmit={handleSubmit} className="app-form mt-3">
-                  <div className="row">
-                    {products.map((product) => (
-                      <div key={product.id} className="col-lg-12 mb-4">
-                        <h6 className="text-primary mb-3">
-                          {product.title} (SKU: {product.sku})
-                        </h6>
-                        {product.featureSets.length === 0 ? (
-                          <p className="text-muted">No feature sets found for this product.</p>
-                        ) : (
-                          product.featureSets.map((set) => (
-                            <div key={set.id} className="mb-4 border p-3 rounded shadow-sm">
-                              <h6 className="sub-heading mb-3">{set.title}</h6>
-                              <div className="row">
-                                {set.featureLists?.map((feature) =>
-                                  renderInput(feature.label, product.id, feature.id)
-                                )}
-                              </div>
-                            </div>
-                          ))
-                        )}
+              <form onSubmit={handleSubmit} className="app-form">
+                <div className="row">
+                  {featureSets.map((set) => (
+                    <div className="col-lg-6" key={set.id}>
+                      <h6 className="sub-heading mb-3">{set.title}</h6>
+                      <div className="row">
+                        {set.featureLists.map((feature) => renderInput(feature.label))}
                       </div>
-                    ))}
-                    <div className="col-lg-12 text-center my-4">
-                      <button type="submit" className="btn btn-primary py-2 px-5 me-2">
-                        Update Features
-                      </button>
-                      <button type="reset" className="btn btn-secondary py-2 px-5">
-                        Reset
-                      </button>
                     </div>
+                  ))}
+                  <div className="col-lg-12 text-center my-4">
+                    <button type="submit" className="btn btn-primary py-2 px-5 me-2">Update Features</button>
+                    <button type="reset" className="btn btn-secondary py-2 px-5">Reset</button>
                   </div>
-                </form>
-              )}
+                </div>
+              </form>
             </div>
           </div>
         </div>

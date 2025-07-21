@@ -1,192 +1,100 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import BASE_URL from '../../config/config';
-import '../../css/admin/style.css';
-import '../../css/admin/icofont.css';
 
-const ProductFilters = () => {
-  const [products, setProducts] = useState([]);
+const ProductFilters = ({ createdProductId }) => {
+  console.log('createdProductId', createdProductId);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [filterSets, setFilterSets] = useState([]);
   const [filterValues, setFilterValues] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
-  const handleChange = (productId, filterSetId, value) => {
-    const key = `${productId}-${filterSetId}`;
-    setFilterValues((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
+
+  useEffect(() => {
+    if (createdProductId) {
+      axios.get(`${BASE_URL}/products/${createdProductId}`)
+        .then((res) => {
+          const product = res.data;
+          const filterType = product.category?.filterType;
+          const sets = filterType?.filterSets || [];
+          const initialValues = {};
+          sets.forEach((set) => {
+            set.filterLists.forEach((filter) => {
+              initialValues[filter.label] = '';
+            });
+          });
+
+          setFilterSets(sets);
+          setFilterValues(initialValues);
+        })
+        .catch((err) => {
+          console.error('Failed to fetch product filter data:', err);
+        });
+    }
+  }, [createdProductId]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFilterValues((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    const dataToSend = [];
-
-    products.forEach((product) => {
-      product.filterSets.forEach((set) => {
-        const key = `${product.id}-${set.id}`;
-        const value = filterValues[key];
-        if (value) {
-          dataToSend.push({
-            productId: product.id,
-            filterSetId: set.id,
-            value,
-          });
-        }
-      });
-    });
-
-    try {
-      const token = localStorage.getItem('token');
-      await axios.post(`${BASE_URL}/product-filters`, dataToSend, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      alert('Filters updated successfully!');
-    } catch (err) {
-      console.error('Error submitting filters:', err);
-      alert('Failed to update filters.');
-    }
+    console.log('Submitted Filters:', filterValues);
+    // axios.post('/api/filters/update', { createdProductId, filters: filterValues });
   };
 
   const handleReset = () => {
-    setFilterValues({});
+    const resetValues = {};
+    Object.keys(filterValues).forEach((key) => (resetValues[key] = ''));
+    setFilterValues(resetValues);
   };
 
-  useEffect(() => {
-    const fetchProductsAndFilters = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const productRes = await axios.get(`${BASE_URL}/products`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const productList = productRes.data;
-
-        const enrichedProducts = await Promise.all(
-          productList.map(async (product) => {
-            const categoryId = product?.category?.id;
-            let filterSets = [];
-
-            if (categoryId) {
-              try {
-                const categoryRes = await axios.get(`${BASE_URL}/categories/${categoryId}`, {
-                  headers: { Authorization: `Bearer ${token}` },
-                });
-                filterSets = categoryRes?.data?.filterType?.filterSets || [];
-              } catch (err) {
-                console.error(`Failed to fetch filters for category ${categoryId}`, err);
-              }
-            }
-
-            // Fetch saved filter values for this product
-            let savedFilters = [];
-            try {
-              const savedFilterRes = await axios.get(`${BASE_URL}/product-filters/${product.id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-              });
-              savedFilters = savedFilterRes.data || [];
-            } catch (err) {
-              console.warn(`No saved filters for product ${product.id}`, err);
-            }
-
-            // Pre-fill filterValues
-            const allValues = {};
-            savedFilters.forEach(({ filterListId, value }) => {
-              const key = `${product.id}-${filterListId}`;
-              allValues[key] = value;
-            });
-
-            // Batch update state only once
-            setFilterValues((prev) => ({
-              ...prev,
-              ...allValues,
-            }));
-
-            return { ...product, filterSets };
-          })
-        );
-
-        setProducts(enrichedProducts);
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        setError('Failed to load product filters.');
-        setLoading(false);
-      }
-    };
-
-    fetchProductsAndFilters();
-  }, []);
+  const renderDropdown = (label) => (
+    <div className="row mb-3 justify-content-center" key={label}>
+      <div className="col-lg-3 col-md-3">
+        <label htmlFor={label} className="form-label">{label}</label>
+      </div>
+      <div className="col-lg-3">
+        <select
+          id={label}
+          name={label}
+          className="form-control"
+          value={filterValues[label] || ''}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Choose {label}</option>
+          {/* Replace this with real options via API or constants */}
+          {['Option 1', 'Option 2', 'Option 3'].map((opt) => (
+            <option key={opt} value={opt.toLowerCase()}>{opt}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
 
   return (
     <div className="container-fluid">
       <div className="row">
         <div className="col-lg-12">
           <div className="card">
-            <div className="card-header py-3">
-              <h5 className="text-dark mb-0">Manage Product Filters</h5>
-            </div>
-            <div className="card-block">
-              {loading ? (
-                <p>Loading...</p>
-              ) : error ? (
-                <p className="text-danger">{error}</p>
-              ) : (
-                <form className="app-form mt-3" onSubmit={handleSubmit} onReset={handleReset}>
-                  {products.map((product) => (
-                    <div key={product.id} className="mb-4 border-bottom pb-4">
-                      {product.filterSets.map((set) => {
-                        const inputKey = `${product.id}-${set.id}`;
-                        const options = set.filterLists?.map((fl) => fl.label) || [];
-
-                        return (
-                          <div key={set.id} className="row mb-3 justify-content-center">
-                            <div className="col-lg-3 col-md-3">
-                              <label htmlFor={inputKey} className="form-label">
-                                {set.title}
-                              </label>
-                            </div>
-                            <div className="col-lg-3">
-                              <select
-                                id={inputKey}
-                                name={inputKey}
-                                className="form-control"
-                                value={filterValues[inputKey] || ''}
-                                onChange={(e) =>
-                                  handleChange(product.id, set.id, e.target.value)
-                                }
-                                required
-                              >
-                                <option value="">Choose {set.title}</option>
-                                {options.map((opt, idx) => (
-                                  <option key={idx} value={opt}>
-                                    {opt}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))}
-
-                  <div className="row">
-                    <div className="col-lg-12 text-center my-4">
-                      <button type="submit" className="btn btn-primary py-2 px-5 me-2">
-                        Update Filters
-                      </button>
-                      <button type="reset" className="btn btn-secondary py-2 px-5">
-                        Reset
-                      </button>
-                    </div>
+            <div className="card-block py-3">
+              <form className="app-form mt-3" onSubmit={handleSubmit} onReset={handleReset}>
+                {filterSets.map((set) => (
+                  <div key={set.id}>
+                    <h6 className="sub-heading mb-3">{set.title}</h6>
+                    {set.filterLists.map((filter) => renderDropdown(filter.label))}
                   </div>
-                </form>
-              )}
+                ))}
+
+                <div className="row">
+                  <div className="col-lg-12 text-center">
+                    <button type="submit" className="btn btn-primary py-2 px-5 me-2">Update Filters</button>
+                    <button type="reset" className="btn btn-reset py-2 px-5">Reset</button>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
