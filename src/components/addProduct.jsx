@@ -179,7 +179,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
       });
       const productId = response.data?.id;
       console.log('Product created successfully:', response.data);
-      toast.success('Product created successfully!');
+      // toast.success('Product created successfully!');
       const variantPayloads = variants
         .filter(v => v.sku && v.stock && v.mrp && v.sellingPrice)
         .map(variant => ({
@@ -484,101 +484,103 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                   {/* <ProductVariants/> */}
                   <div className="col-lg-12 mb-3">
                     <h6 className="sub-heading pt-4">Other Variants</h6>
-                    <table className="table">
-                      <thead>
-                        <tr>
-                          <th>SKU <span className="text-danger">*</span></th>
-                          <th>Stock <span className="text-danger">*</span></th>
-                          <th>MRP <span className="text-danger">*</span></th>
-                          <th>Selling Price <span className="text-danger">*</span></th>
-                          <th>Size</th>
-                          <th>Color</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {variants.map((variant, index) => (
-                          <tr key={index}>
-                            <td>
-                              <input
-                                type="text"
-                                className="form-control"
-                                value={variant.sku}
-                                onChange={(e) => handleChange(index, 'sku', e.target.value)}
-                                placeholder="SKU"
-                              />
-                            </td>
-                            <td>
-                              <input
-                                type="text"
-                                className="form-control"
-                                value={variant.stock}
-                                onChange={(e) => handleChange(index, 'stock', e.target.value)}
-                                placeholder="Stock"
-                              />
-                            </td>
-                            <td>
-                              <input
-                                type="text"
-                                className="form-control"
-                                value={variant.mrp}
-                                onChange={(e) => handleChange(index, 'mrp', e.target.value)}
-                                placeholder="MRP"
-                              />
-                            </td>
-                            <td>
-                              <input
-                                type="text"
-                                className="form-control"
-                                value={variant.sellingPrice}
-                                onChange={(e) => handleChange(index, 'sellingPrice', e.target.value)}
-                                placeholder="Selling Price"
-                              />
-                            </td>
-                            <td>
-                              <select
-                                className="form-control"
-                                value={variant.sizeId}
-                                onChange={(e) => handleChange(index, 'sizeId', e.target.value)}
-                              >
-                                <option value="">-- Choose Size --</option>
-                                {sizes.map((size) => (
-                                  <option key={size.id} value={size.id}>
-                                    {size.title}
-                                  </option>
-                                ))}
-                              </select>
-                            </td>
-                            <td>
-                              <select
-                                className="form-control"
-                                value={variant.colorId}
-                                onChange={(e) => handleChange(index, 'colorId', e.target.value)}
-                              >
-                                <option value="">-- Choose Color --</option>
-                                {colors.map((color) => (
-                                  <option key={color.id} value={color.id}>
-                                    {color.label}
-                                  </option>
-                                ))}
-                              </select>
-                            </td>
-
-                            <td>
-                              {index === variants.length - 1 ? (
-                                <button type="button" className="btn btn-light-success icon-btn b-r-4" onClick={addRow}>
-                                  +
-                                </button>
-                              ) : (
-                                <button type="button" className="btn btn-danger icon-btn b-r-4" onClick={() => removeRow(index)}>
-                                  -
-                                </button>
-                              )}
-                            </td>
+                    <div className="table-responsive">
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            <th>SKU <span className="text-danger">*</span></th>
+                            <th>Stock <span className="text-danger">*</span></th>
+                            <th>MRP <span className="text-danger">*</span></th>
+                            <th>Selling Price <span className="text-danger">*</span></th>
+                            <th>Size</th>
+                            <th>Color</th>
+                            <th>Action</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {variants.map((variant, index) => (
+                            <tr key={index}>
+                              <td>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  value={variant.sku}
+                                  onChange={(e) => handleChange(index, 'sku', e.target.value)}
+                                  placeholder="SKU"
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  value={variant.stock}
+                                  onChange={(e) => handleChange(index, 'stock', e.target.value)}
+                                  placeholder="Stock"
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  value={variant.mrp}
+                                  onChange={(e) => handleChange(index, 'mrp', e.target.value)}
+                                  placeholder="MRP"
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  value={variant.sellingPrice}
+                                  onChange={(e) => handleChange(index, 'sellingPrice', e.target.value)}
+                                  placeholder="Selling Price"
+                                />
+                              </td>
+                              <td>
+                                <select
+                                  className="form-control"
+                                  value={variant.sizeId}
+                                  onChange={(e) => handleChange(index, 'sizeId', e.target.value)}
+                                >
+                                  <option value="">-- Choose Size --</option>
+                                  {sizes.map((size) => (
+                                    <option key={size.id} value={size.id}>
+                                      {size.title}
+                                    </option>
+                                  ))}
+                                </select>
+                              </td>
+                              <td>
+                                <select
+                                  className="form-control"
+                                  value={variant.colorId}
+                                  onChange={(e) => handleChange(index, 'colorId', e.target.value)}
+                                >
+                                  <option value="">-- Choose Color --</option>
+                                  {colors.map((color) => (
+                                    <option key={color.id} value={color.id}>
+                                      {color.label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </td>
+
+                              <td>
+                                {index === variants.length - 1 ? (
+                                  <button type="button" className="btn btn-light-success icon-btn b-r-4" onClick={addRow}>
+                                    +
+                                  </button>
+                                ) : (
+                                  <button type="button" className="btn btn-danger icon-btn b-r-4" onClick={() => removeRow(index)}>
+                                    -
+                                  </button>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
 
                   <div className="col-lg-12 text-center my-4">

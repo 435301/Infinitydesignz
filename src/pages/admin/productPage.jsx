@@ -43,7 +43,7 @@ const ProductPage = ({ createdProductId, selectedFeatureType }) => {
                 <div className="card">
                   <div className="card-header py-3 d-flex justify-content-between align-items-center">
                     <h5 className="text-dark mb-0">Products</h5>
-                    <button type="submit" className="btn btn-primary py-1">Submit</button>
+                    {/* <button type="submit" className="btn btn-primary py-1">Submit</button> */}
                   </div>
 
                   <div className="card-block">
