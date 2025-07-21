@@ -40,9 +40,11 @@ const [createdProductIdState, setCreatedProductId] = useState(null);
             <div className="row">
               <div className="col-lg-12">
                 <div className="card">
-                  <div className="card-header py-3">
-                    <h5 className="text-dark mb-0">Product Management</h5>
+                  <div className="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h5 className="text-dark mb-0">Products</h5>
+                    <button type="submit" className="btn btn-primary py-1">Submit</button>
                   </div>
+
                   <div className="card-block">
                     <Tabs
                       id="product-tabs"

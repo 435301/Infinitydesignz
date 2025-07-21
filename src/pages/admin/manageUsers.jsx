@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import { FaEdit, FaTrash } from 'react-icons/fa';
@@ -6,6 +6,8 @@ import '../../css/admin/style.css';
 import '../../css/admin/icofont.css'; // Keep only if still using any icons from here
 
 const ManageUsers = () => {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
   const users = [
     {
       id: 1,
@@ -39,6 +41,9 @@ const ManageUsers = () => {
   const handleEdit = (id) => {
     console.log('Edit user with ID:', id);
   };
+  const handleToggleSidebar = (collapsed) => {
+    setIsSidebarCollapsed(collapsed);
+  };
 
   const handleDelete = (id) => {
     console.log('Delete user with ID:', id);
@@ -47,12 +52,14 @@ const ManageUsers = () => {
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
-        <HeaderAdmin />
+        <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
         <aside className="main-sidebar hidden-print">
-          <Sidebar />
+          <Sidebar isCollapsed={isSidebarCollapsed} />
         </aside>
 
-        <div className="content-wrapper p-4">
+        <div className="content-wrapper mb-4" style={{ marginLeft: isSidebarCollapsed ? '60px' : '272px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease', }}>
+        
+        
           <div className="main-header mt-0">
             <h4>Users</h4>
             <ol className="breadcrumb breadcrumb-title breadcrumb-arrow">

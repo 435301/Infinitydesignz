@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import { FaEye } from 'react-icons/fa';
@@ -6,6 +6,8 @@ import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 
 const ManageOrders = () => {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
   const orders = [
     {
       orderNo: '#1001',
@@ -22,6 +24,9 @@ const ManageOrders = () => {
       mobile: '9876543211',
     },
   ];
+  const handleToggleSidebar = (collapsed) => {
+    setIsSidebarCollapsed(collapsed);
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -32,12 +37,13 @@ const ManageOrders = () => {
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
-        <HeaderAdmin />
+        <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
         <aside className="main-sidebar hidden-print">
-          <Sidebar />
+          <Sidebar isCollapsed={isSidebarCollapsed} />
         </aside>
 
-        <div className="content-wrapper p-4">
+        <div className="content-wrapper mb-4" style={{ marginLeft: isSidebarCollapsed ? '60px' : '272px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease', }}>
+
           <div className="main-header mt-0">
             <h4>Orders</h4>
             <ol className="breadcrumb breadcrumb-title breadcrumb-arrow">

@@ -673,7 +673,7 @@ header .wrapper {
   left: 0;
   padding-top: 70px;
   min-height: 100vh;
-  width: 270px;
+  width: 277px !important;
   z-index: 810;
   overflow-y: auto !important;
   /* Ensure scrolling is enabled */
@@ -730,6 +730,10 @@ header .wrapper {
 }
 
 @media (max-width: 767px) {
+  .main-sidebar {
+    width: 250px !important;
+  }
+
   .main-sidebar {
     padding-top: 100px;
     -webkit-transform: translate(-230px, 0);

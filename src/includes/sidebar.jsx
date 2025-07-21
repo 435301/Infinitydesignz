@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
@@ -13,7 +14,7 @@ import {
   BsTag,
 } from 'react-icons/bs';
 
-const Sidebar = ({ isCollapsed }) => {
+const Sidebar = ({ isCollapsed, onClose }) => {
   const location = useLocation();
   const currentPath = location.pathname;
   const [openMenus, setOpenMenus] = useState({});
@@ -40,8 +41,7 @@ const Sidebar = ({ isCollapsed }) => {
     orders: ['/admin/orders'],
     offers: ['/admin/offers', '/create-coupon'],
     sliders: ['/admin/sliders', '/admin/manage-sliders'],
-    // coupons: ['/admin/add-coupon', '/admin/manage-coupons'],
-    others: ['/admin/contact', '/admin/keywords', 'admin/subscriberslist'],
+    others: ['/admin/contact', '/admin/keywords', '/admin/subscriberslist'],
     promotions: [
       '/admin/home-screen-promotion-category',
       '/admin/home-screen-create-promotion',
@@ -80,7 +80,7 @@ const Sidebar = ({ isCollapsed }) => {
     const style = document.createElement('style');
     style.innerHTML = `
       .sidebar-scrollbar::-webkit-scrollbar {
-        width: 8px;
+        width: 2px;
       }
       .sidebar-scrollbar::-webkit-scrollbar-track {
         background: #0da79e;
@@ -94,10 +94,28 @@ const Sidebar = ({ isCollapsed }) => {
         scrollbar-width: thin;
         scrollbar-color: #0da79e #0da79e;
       }
+      @media (max-width: 767px) {
+        aside.main-sidebar {
+          transform: ${isCollapsed ? 'translate(-250px, 0)' : 'translate(0, 0)'};
+          transition: transform 0.3s ease;
+          width: 250px;
+          padding-top: 70px;
+        }
+        .content-wrapper {
+          margin-left: 0 !important;
+        }
+      }
+      @media (min-width: 768px) {
+        aside.main-sidebar {
+          transform: translate(0, 0) !important;
+          width: ${isCollapsed ? '60px !important' : '275px'};
+          transition: width 0.3s ease;
+        }
+      }
     `;
     document.head.appendChild(style);
     return () => document.head.removeChild(style);
-  }, []);
+  }, [isCollapsed]);
 
   const toggleMenu = (menu) => {
     setOpenMenus((prev) => {
@@ -119,6 +137,7 @@ const Sidebar = ({ isCollapsed }) => {
       to={to}
       className={({ isActive }) => (isActive ? 'active' : '')}
       style={navLinkStyle(isCollapsed)}
+      onClick={() => window.innerWidth <= 767 && onClose()}
     >
       <BsDot style={iconDotStyle} />
       <span>{label}</span>
@@ -126,262 +145,242 @@ const Sidebar = ({ isCollapsed }) => {
   );
 
   return (
-    <aside className="sidebar-scrollbar" style={asideStyle(isCollapsed)}>
-      <section style={{ height: '100%' }}>
-        <ul className="sidebar-menu mb-4" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-          {/* Dashboard */}
-          <li>
-            <NavLink
-              to="/admin/dashboard"
-              className={({ isActive }) => (isActive ? 'active' : '')}
-              style={navLinkStyle(isCollapsed)}
-            >
-              <BsBriefcase style={mainIconStyle(isCollapsed)} />
-              <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Dashboard</span>
-            </NavLink>
-          </li>
-
-          {/* Master Data */}
-          <li>
-            <div onClick={() => toggleMenu('masterData')} style={navLinkStyle(isCollapsed, true)}>
-              <BsBook style={mainIconStyle(isCollapsed)} />
-              <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Master Data</span>
-              {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
-            </div>
-            {isActiveMenu('masterData') && !isCollapsed && (
-              <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                {renderNavLink('/admin/create-brand', 'Brand')}
-                {renderNavLink('/admin/create-size', 'Sizes')}
-                {renderNavLink('/admin/colors', 'Colors')}
-                <li>
-                  <div onClick={() => toggleMenu('productFeatures')} style={subLinkStyle(true)}>
-                    <BsDot style={iconDotStyle} />
-                    <span>Product Features</span>
-                    <BsChevronDown style={{ marginLeft: 'auto' }} />
-                  </div>
-                  {isActiveMenu('productFeatures') && (
-                    <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                      {renderNavLink('/admin/feature-type', 'Feature Type')}
-                      {renderNavLink('/admin/feature-set', 'Feature Set')}
-                      {renderNavLink('/admin/feature-list', 'Feature List')}
-                    </ul>
-                  )}
-                </li>
-                <li>
-                  <div onClick={() => toggleMenu('productFilters')} style={subLinkStyle(true)}>
-                    <BsDot style={iconDotStyle} />
-                    <span>Product Filters</span>
-                    <BsChevronDown style={{ marginLeft: 'auto' }} />
-                  </div>
-                  {isActiveMenu('productFilters') && (
-                    <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                      {renderNavLink('/admin/filter-type', 'Filter Type')}
-                      {renderNavLink('/admin/filter-set', 'Filter Set')}
-                      {renderNavLink('/admin/filter-list', 'Filter List')}
-                    </ul>
-                  )}
-                </li>
-              </ul>
-            )}
-          </li>
-
-          {/* Categories */}
-          <li>
-            <div onClick={() => toggleMenu('categories')} style={navLinkStyle(isCollapsed, true)}>
-              <BsFolder style={mainIconStyle(isCollapsed)} />
-              <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Categories</span>
-              {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
-            </div>
-            {isActiveMenu('categories') && !isCollapsed && (
-              <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                {renderNavLink('/admin/manage-category', 'Categories')}
-                {renderNavLink('/admin/manage-subcategory', 'Sub-categories')}
-                {renderNavLink('/admin/list-subcategory', 'List Sub Categories')}
-              </ul>
-            )}
-          </li>
-
-          {/* Products */}
-          <li>
-            <div onClick={() => toggleMenu('products')} style={navLinkStyle(isCollapsed, true)}>
-              <BsBasket style={mainIconStyle(isCollapsed)} />
-              <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Products</span>
-              {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
-            </div>
-            {isActiveMenu('products') && !isCollapsed && (
-              <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                {renderNavLink('/admin/product', 'Add Product')}
-                {renderNavLink('/admin/manage-product', 'Manage Product')}
-                {renderNavLink('/admin/bulk-upload', 'Bulk Upload')}
-
-              </ul>
-            )}
-          </li>
-
-          {/* Users */}
-          <li>
-            <div onClick={() => toggleMenu('users')} style={navLinkStyle(isCollapsed, true)}>
-              <BsPerson style={mainIconStyle(isCollapsed)} />
-              <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Users</span>
-              {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
-            </div>
-            {isActiveMenu('users') && !isCollapsed && (
-              <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                {renderNavLink('/admin/manage-users', 'Manage Users')}
-              </ul>
-            )}
-          </li>
-
-          {/* Orders */}
-          <li>
-            <div onClick={() => toggleMenu('orders')} style={navLinkStyle(isCollapsed, true)}>
-              <BsCartCheck style={mainIconStyle(isCollapsed)} />
-              <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Orders</span>
-              {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
-            </div>
-            {isActiveMenu('orders') && !isCollapsed && (
-              <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                {renderNavLink('/admin/orders', 'View Orders')}
-              </ul>
-            )}
-          </li>
-
-          {/* Offers */}
-          <li>
-            <NavLink
-              to="/admin/offers"
-              className={({ isActive }) => (isActive ? 'active' : '')}
-              style={navLinkStyle(isCollapsed)}
-            >
-              <BsListUl style={mainIconStyle(isCollapsed)} />
-              <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Offers</span>
-            </NavLink>
-          </li>
-
-          {/* Coupons */}
-          {/* <li>
-            <div onClick={() => toggleMenu('coupons')} style={navLinkStyle(isCollapsed, true)}>
-              <BsBriefcase style={mainIconStyle(isCollapsed)} />
-              <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Coupons</span>
-              {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
-            </div>
-            {isActiveMenu('coupons') && !isCollapsed && (
-              <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                {renderNavLink('/admin/add-coupon', 'Add Coupon')}
-                {renderNavLink('/admin/manage-coupons', 'Manage Coupons')}
-              </ul>
-            )}
-          </li> */}
-
-          {/* Promotions */}
-          <li>
-            <div onClick={() => toggleMenu('promotions')} style={navLinkStyle(isCollapsed, true)}>
-              <BsTag style={mainIconStyle(isCollapsed)} />
-              <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Promotions</span>
-              {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
-            </div>
-            {isActiveMenu('promotions') && !isCollapsed && (
-              <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                <li>
-                  <div onClick={() => toggleMenu('webPromotion')} style={subLinkStyle(true)}>
-                    <BsDot style={iconDotStyle} />
-                    <span>Web Promotion</span>
-                    <BsChevronDown style={{ marginLeft: 'auto' }} />
-                  </div>
-                  {isActiveMenu('webPromotion') && (
-                    <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                      {renderNavLink('/admin/home-screen-promotion-category', 'Promotion Category')}
-                      {renderNavLink('/admin/home-screen-create-promotion', 'Promotion')}
-                    </ul>
-                  )}
-                </li>
-                <li>
-                  <div onClick={() => toggleMenu('appPromotion')} style={subLinkStyle(true)}>
-                    <BsDot style={iconDotStyle} />
-                    <span>App Promotion</span>
-                    <BsChevronDown style={{ marginLeft: 'auto' }} />
-                  </div>
-                  {isActiveMenu('appPromotion') && (
-                    <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                      {renderNavLink('/admin/menu-promotion-category', 'Promotion Category')}
-                      {renderNavLink('/admin/menu-create-promotion', 'Create Promotion')}
-                    </ul>
-                  )}
-                </li>
-                <li>
-                  <div onClick={() => toggleMenu('appHomePromotions')} style={subLinkStyle(true)}>
-                    <BsDot style={iconDotStyle} />
-                    <span>App Home Promotions</span>
-                    <BsChevronDown style={{ marginLeft: 'auto' }} />
-                  </div>
-                  {isActiveMenu('appHomePromotions') && (
-                    <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                      {renderNavLink('/admin/sub-menu-promotion-category', 'Promotion Category')}
-                      {renderNavLink('/admin/sub-menu-create-promotion', 'Create Promotion')}
-                    </ul>
-                  )}
-                </li>
-              </ul>
-            )}
-          </li>
-
-          {/* Sliders */}
-          <li>
-            <NavLink
-              to="/admin/sliders"
-              className={({ isActive }) => (isActive ? 'active' : '')}
-              style={navLinkStyle(isCollapsed)}
-            >
-              <BsListUl style={mainIconStyle(isCollapsed)} />
-              <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Sliders</span>
-            </NavLink>
-          </li>
-
-          {/* Others */}
-          <li>
-            <div onClick={() => toggleMenu('others')} style={navLinkStyle(isCollapsed, true)}>
-              <BsBriefcase style={mainIconStyle(isCollapsed)} />
-              <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Others</span>
-              {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
-            </div>
-            {isActiveMenu('others') && !isCollapsed && (
-              <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
-                {renderNavLink('/admin/subscriberslist', 'subscriberslist')}
-
-                {renderNavLink('/admin/contact', 'Contact')}
-                {renderNavLink('/admin/keywords', 'Keywords')}
-              </ul>
-            )}
-          </li>
-
-          {/* Change Password */}
-          <li>
-            <NavLink
-              to="/admin/change-password"
-              className={({ isActive }) => (isActive ? 'active' : '')}
-              style={navLinkStyle(isCollapsed)}
-            >
-              <BsListUl style={mainIconStyle(isCollapsed)} />
-              <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Change Password</span>
-            </NavLink>
-          </li>
-        </ul>
-      </section>
-    </aside>
+    <>
+      {window.innerWidth <= 767 && !isCollapsed && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 899,
+          }}
+          onClick={onClose}
+        />
+      )}
+      <aside className="main-sidebar sidebar-scrollbar" style={asideStyle()}>
+        <section style={{ height: '100%' }}>
+          <ul className="sidebar-menu mb-4" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            <li>
+              <NavLink
+                to="/admin/dashboard"
+                className={({ isActive }) => (isActive ? 'active' : '')}
+                style={navLinkStyle(isCollapsed)}
+                onClick={() => window.innerWidth <= 767 && onClose()}
+              >
+                <BsBriefcase style={mainIconStyle(isCollapsed)} />
+                <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Dashboard</span>
+              </NavLink>
+            </li>
+            <li>
+              <div onClick={() => toggleMenu('masterData')} style={navLinkStyle(isCollapsed, true)}>
+                <BsBook style={mainIconStyle(isCollapsed)} />
+                <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Master Data</span>
+                {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
+              </div>
+              {isActiveMenu('masterData') && !isCollapsed && (
+                <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
+                  {renderNavLink('/admin/create-brand', 'Brand')}
+                  {renderNavLink('/admin/create-size', 'Sizes')}
+                  {renderNavLink('/admin/colors', 'Colors')}
+                  <li>
+                    <div onClick={() => toggleMenu('productFeatures')} style={subLinkStyle(true)}>
+                      <BsDot style={iconDotStyle} />
+                      <span>Product Features</span>
+                      <BsChevronDown style={{ marginLeft: 'auto' }} />
+                    </div>
+                    {isActiveMenu('productFeatures') && (
+                      <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
+                        {renderNavLink('/admin/feature-type', 'Feature Type')}
+                        {renderNavLink('/admin/feature-set', 'Feature Set')}
+                        {renderNavLink('/admin/feature-list', 'Feature List')}
+                      </ul>
+                    )}
+                  </li>
+                  <li>
+                    <div onClick={() => toggleMenu('productFilters')} style={subLinkStyle(true)}>
+                      <BsDot style={iconDotStyle} />
+                      <span>Product Filters</span>
+                      <BsChevronDown style={{ marginLeft: 'auto' }} />
+                    </div>
+                    {isActiveMenu('productFilters') && (
+                      <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
+                        {renderNavLink('/admin/filter-type', 'Filter Type')}
+                        {renderNavLink('/admin/filter-set', 'Filter Set')}
+                        {renderNavLink('/admin/filter-list', 'Filter List')}
+                      </ul>
+                    )}
+                  </li>
+                </ul>
+              )}
+            </li>
+            <li>
+              <div onClick={() => toggleMenu('categories')} style={navLinkStyle(isCollapsed, true)}>
+                <BsFolder style={mainIconStyle(isCollapsed)} />
+                <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Categories</span>
+                {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
+              </div>
+              {isActiveMenu('categories') && !isCollapsed && (
+                <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
+                  {renderNavLink('/admin/manage-category', 'Categories')}
+                  {renderNavLink('/admin/manage-subcategory', 'Sub-categories')}
+                  {renderNavLink('/admin/list-subcategory', 'List Sub Categories')}
+                </ul>
+              )}
+            </li>
+            <li>
+              <div onClick={() => toggleMenu('products')} style={navLinkStyle(isCollapsed, true)}>
+                <BsBasket style={mainIconStyle(isCollapsed)} />
+                <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Products</span>
+                {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
+              </div>
+              {isActiveMenu('products') && !isCollapsed && (
+                <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
+                  {renderNavLink('/admin/product', 'Add Product')}
+                  {renderNavLink('/admin/manage-product', 'Manage Product')}
+                  {renderNavLink('/admin/bulk-upload', 'Bulk Upload')}
+                </ul>
+              )}
+            </li>
+            <li>
+              <div onClick={() => toggleMenu('users')} style={navLinkStyle(isCollapsed, true)}>
+                <BsPerson style={mainIconStyle(isCollapsed)} />
+                <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Users</span>
+                {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
+              </div>
+              {isActiveMenu('users') && !isCollapsed && (
+                <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
+                  {renderNavLink('/admin/manage-users', 'Manage Users')}
+                </ul>
+              )}
+            </li>
+            <li>
+              <div onClick={() => toggleMenu('orders')} style={navLinkStyle(isCollapsed, true)}>
+                <BsCartCheck style={mainIconStyle(isCollapsed)} />
+                <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Orders</span>
+                {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
+              </div>
+              {isActiveMenu('orders') && !isCollapsed && (
+                <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
+                  {renderNavLink('/admin/orders', 'View Orders')}
+                </ul>
+              )}
+            </li>
+            <li>
+              <NavLink
+                to="/admin/offers"
+                className={({ isActive }) => (isActive ? 'active' : '')}
+                style={navLinkStyle(isCollapsed)}
+                onClick={() => window.innerWidth <= 767 && onClose()}
+              >
+                <BsListUl style={mainIconStyle(isCollapsed)} />
+                <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Offers</span>
+              </NavLink>
+            </li>
+            <li>
+              <div onClick={() => toggleMenu('promotions')} style={navLinkStyle(isCollapsed, true)}>
+                <BsTag style={mainIconStyle(isCollapsed)} />
+                <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Promotions</span>
+                {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
+              </div>
+              {isActiveMenu('promotions') && !isCollapsed && (
+                <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
+                  <li>
+                    <div onClick={() => toggleMenu('webPromotion')} style={subLinkStyle(true)}>
+                      <BsDot style={iconDotStyle} />
+                      <span>Web Promotion</span>
+                      <BsChevronDown style={{ marginLeft: 'auto' }} />
+                    </div>
+                    {isActiveMenu('webPromotion') && (
+                      <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
+                        {renderNavLink('/admin/home-screen-promotion-category', 'Promotion Category')}
+                        {renderNavLink('/admin/home-screen-create-promotion', 'Promotion')}
+                      </ul>
+                    )}
+                  </li>
+                  <li>
+                    <div onClick={() => toggleMenu('appPromotion')} style={subLinkStyle(true)}>
+                      <BsDot style={iconDotStyle} />
+                      <span>App Promotion</span>
+                      <BsChevronDown style={{ marginLeft: 'auto' }} />
+                    </div>
+                    {isActiveMenu('appPromotion') && (
+                      <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
+                        {renderNavLink('/admin/menu-promotion-category', 'Promotion Category')}
+                        {renderNavLink('/admin/menu-create-promotion', 'Create Promotion')}
+                      </ul>
+                    )}
+                  </li>
+                  <li>
+                    <div onClick={() => toggleMenu('appHomePromotions')} style={subLinkStyle(true)}>
+                      <BsDot style={iconDotStyle} />
+                      <span>App Home Promotions</span>
+                      <BsChevronDown style={{ marginLeft: 'auto' }} />
+                    </div>
+                    {isActiveMenu('appHomePromotions') && (
+                      <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
+                        {renderNavLink('/admin/sub-menu-promotion-category', 'Promotion Category')}
+                        {renderNavLink('/admin/sub-menu-create-promotion', 'Create Promotion')}
+                      </ul>
+                    )}
+                  </li>
+                </ul>
+              )}
+            </li>
+            <li>
+              <NavLink
+                to="/admin/sliders"
+                className={({ isActive }) => (isActive ? 'active' : '')}
+                style={navLinkStyle(isCollapsed)}
+                onClick={() => window.innerWidth <= 767 && onClose()}
+              >
+                <BsListUl style={mainIconStyle(isCollapsed)} />
+                <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Sliders</span>
+              </NavLink>
+            </li>
+            <li>
+              <div onClick={() => toggleMenu('others')} style={navLinkStyle(isCollapsed, true)}>
+                <BsBriefcase style={mainIconStyle(isCollapsed)} />
+                <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Others</span>
+                {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
+              </div>
+              {isActiveMenu('others') && !isCollapsed && (
+                <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
+                  {renderNavLink('/admin/subscriberslist', 'Subscribers List')}
+                  {renderNavLink('/admin/contact', 'Contact')}
+                  {renderNavLink('/admin/keywords', 'Keywords')}
+                </ul>
+              )}
+            </li>
+            <li>
+              <NavLink
+                to="/admin/change-password"
+                className={({ isActive }) => (isActive ? 'active' : '')}
+                style={navLinkStyle(isCollapsed)}
+                onClick={() => window.innerWidth <= 767 && onClose()}
+              >
+                <BsListUl style={mainIconStyle(isCollapsed)} />
+                <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Change Password</span>
+              </NavLink>
+            </li>
+          </ul>
+        </section>
+      </aside>
+    </>
   );
 };
 
 // Styles
-const asideStyle = (isCollapsed) => ({
-  width: isCollapsed ? '60px' : '275px',
+const asideStyle = () => ({
   color: '#fff',
   height: '100vh',
   position: 'fixed',
-  paddingTop: '20px',
+  paddingTop: '70px',
   paddingBottom: '20px',
   background: 'rgb(13 167 158)',
   overflowY: 'auto',
-  transition: 'width 0.3s ease',
   zIndex: 900,
   left: 0,
 });

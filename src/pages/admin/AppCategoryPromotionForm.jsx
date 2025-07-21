@@ -1,19 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 
 function AppCategoryPromotionForm() {
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+    const handleToggleSidebar = (collapsed) => {
+        setIsSidebarCollapsed(collapsed);
+    };
     return (
         <div className="sidebar-mini fixed">
             <div className="wrapper">
-                <HeaderAdmin />
+                <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
                 <aside className="main-sidebar hidden-print">
-                    <Sidebar />
+                    <Sidebar isCollapsed={isSidebarCollapsed} />
                 </aside>
 
-                <div className="content-wrapper p-4 pt-2">
+                <div className="content-wrapper mb-4" style={{ marginLeft: isSidebarCollapsed ? '60px' : '272px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease', }}>
+
                     <div className="container-fluid">
                         <div className="row py-4">
                             <div className="col-lg-12">

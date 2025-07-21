@@ -6,6 +6,8 @@ import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 
 const HomePromotionCategory = () => {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState({ title: '', displayCount: '' });
 
@@ -47,7 +49,9 @@ const HomePromotionCategory = () => {
       status: 'Inactive',
     },
   ];
-
+  const handleToggleSidebar = (collapsed) => {
+    setIsSidebarCollapsed(collapsed);
+  };
   const handleEditClick = (promotion) => {
     setEditData({ title: promotion.title, displayCount: promotion.displayCount });
     setShowModal(true);
@@ -67,11 +71,13 @@ const HomePromotionCategory = () => {
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
-        <HeaderAdmin />
+        <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
         <aside className="main-sidebar hidden-print">
-          <Sidebar />
+          <Sidebar isCollapsed={isSidebarCollapsed} />
         </aside>
-        <div className="content-wrapper p-4">
+
+        <div className="content-wrapper mb-4" style={{ marginLeft: isSidebarCollapsed ? '60px' : '272px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease', }}>
+
           <div className="main-header" style={{ marginTop: '0px' }}>
             <h4>Home Promotion Category</h4>
           </div>
@@ -163,11 +169,10 @@ const HomePromotionCategory = () => {
                                 <td>{promotion.priority}</td>
                                 <td>
                                   <span
-                                    className={`badge ${
-                                      promotion.status === 'Active'
+                                    className={`badge ${promotion.status === 'Active'
                                         ? 'text-light-primary'
                                         : 'text-light-danger'
-                                    }`}
+                                      }`}
                                     style={{
                                       backgroundColor:
                                         promotion.status === 'Active' ? '#d4f7f2' : '#f8d7da',
