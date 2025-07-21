@@ -18,7 +18,7 @@ import axios from 'axios';
 import BASE_URL from '../config/config';
 
 
-const AddProduct = ({ onClose ,onProductCreated  }) => {
+const AddProduct = ({ onClose ,onProductCreated}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -34,6 +34,7 @@ const AddProduct = ({ onClose ,onProductCreated  }) => {
   const [selectedSubMenu, setSelectedSubMenu] = useState('');
   const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
   const [errors, setErrors] = useState({});
+  const [createdProductId, setCreatedProductId] = useState(null);
 
   const initialFormState = {
     sku: '',
@@ -74,6 +75,8 @@ console.log('featureTypeName', featureTypeName)
 
 const selectedFeatureTypeId = listSubMenuOptions.find(option => option.id === parseInt(selectedListSubMenu))?.featureTypeId || null;
   console.log('selectedFeatureTypeId', selectedFeatureTypeId);
+  const featureType = listSubMenuOptions.find(option => option.id === parseInt(selectedListSubMenu))?.featureType || null;
+  console.log('selectedFeatureTypeId', featureType);
 
 
   useEffect(() => {
@@ -153,7 +156,7 @@ const selectedFeatureTypeId = listSubMenuOptions.find(option => option.id === pa
       // listSubCategoryId: parseInt(selectedListSubMenu),
       status: formData.status === 'enable',
        featureTypeId: selectedFeatureTypeId,
-       featureTypeName:featureTypeName,
+       featureType:featureType,
       productDetails: {
         model: formData.model,
         weight: parseFloat(formData.weight),
@@ -193,10 +196,17 @@ const selectedFeatureTypeId = listSubMenuOptions.find(option => option.id === pa
       setSelectedMenu('');
       setSelectedSubMenu('');
       setSelectedListSubMenu('');
+       setCreatedProductId(response.data.id)
       setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
        const createdProductId = response.data.id; 
-       if (onProductCreated) {
-  onProductCreated(response.data.id); // Or whatever field contains the product ID
+if (onProductCreated) {
+  onProductCreated({
+    id: response.data.id,
+    // featureTypeId: selectedFeatureTypeId,
+    // featureTypeName: featureTypeName,
+     featureTypeId: selectedFeatureTypeId,
+       featureType:featureType,
+  });
 }
        console.log('createdProductId', createdProductId)
      

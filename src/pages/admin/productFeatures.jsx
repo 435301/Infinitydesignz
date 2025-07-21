@@ -1,87 +1,53 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import '../../css/admin/style.css';
+import '../../css/admin/icofont.css';
 import BASE_URL from '../../config/config';
 
-const ProductFeatures = ({ createdProductId }) => {
-  console.log('createdProductId', createdProductId);
-  const [featureSets, setFeatureSets] = useState([]);
-  const [formData, setFormData] = useState({});
-  
+const ProductFeatures = ({ createdProductId, featureTypeId, featureType }) => {
+  const [formValues, setFormValues] = useState({});
 
-  useEffect(() => {
-    if (createdProductId) {
-      axios.get(`${BASE_URL}/products/${createdProductId}`)
-        .then((res) => {
-          const product = res.data;
-          console.log('res',res.data.features)
-          const sets = product.category?.featureType?.featureSets || [];
-          setFeatureSets(sets);
-          const initialForm = {};
-          sets.forEach((set) => {
-            set.featureLists.forEach((feature) => {
-              initialForm[feature.label] = ''; 
-            });
-          });
-
-          setFormData(initialForm);
-        })
-        .catch((err) => {
-          console.error('Error fetching product features:', err);
-        });
-    }
-  }, [createdProductId]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
+  const handleChange = (featureListId, value) => {
+    setFormValues(prev => ({
       ...prev,
-      [name]: value,
+      [featureListId]: value
     }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!createdProductId) {
-    console.error('No product ID available to associate features with.');
-    return;
-  }
-  const payload = [];
+    const payloadArray = Object.entries(formValues).map(([featureListId, value]) => ({
+      productId: createdProductId,
+      featureListId: parseInt(featureListId),
+      value
+    }));
 
-  featureSets.forEach(set => {
-    set.featureLists.forEach(feature => {
-      const value = formData[feature.label] || '';
-      payload.push({
-        productId: createdProductId,
-        featureListId: feature.id, 
-        value: value
-      });
-    });
-  });
+    console.log('Submitting payload:', payloadArray);
 
-  console.log('Submitting payload:', payload);
+    try {
+      for (let payload of payloadArray) {
+        await axios.post(`${BASE_URL}/products`, payload);
+      }
 
-  try {
-    await axios.post(`${BASE_URL}/products`, payload);
-    alert('Features updated successfully!');
-  } catch (error) {
-    console.error('Error submitting features:', error);
-    alert('Failed to update features.');
-  }
-};
+      alert('Features submitted successfully!');
+    } catch (error) {
+      console.error('Submission failed:', error);
+      alert('Failed to submit features.');
+    }
+  };
 
-
-  const renderInput = (label) => (
-    <div className="col-lg-6 mb-3" key={label}>
-      <label htmlFor={label} className="form-label">{label}</label>
+  const renderInput = (label, featureListId) => (
+    <div className="col-lg-6 mb-3" key={featureListId}>
+      <label htmlFor={`feature-${featureListId}`} className="form-label">{label}</label>
       <input
         type="text"
-        id={label}
-        name={label}
+        id={`feature-${featureListId}`}
+        name={`feature-${featureListId}`}
         className="form-control"
-        value={formData[label] || ''}
-        onChange={handleChange}
         placeholder={`Enter ${label}`}
+        value={formValues[featureListId] || ''}
+        onChange={(e) => handleChange(featureListId, e.target.value)}
       />
     </div>
   );
@@ -94,24 +60,29 @@ const handleSubmit = async (e) => {
             <div className="card-header py-3">
               <h5 className="text-dark mb-0">Product Features</h5>
             </div>
+
             <div className="card-block">
               <form onSubmit={handleSubmit} className="app-form">
                 <div className="row">
-                  {featureSets.map((set) => (
-                    <div className="col-lg-6" key={set.id}>
+                  {(featureType?.featureSets || []).map((set) => (
+                    <div className="col-lg-6 mb-4" key={set.id}>
                       <h6 className="sub-heading mb-3">{set.title}</h6>
                       <div className="row">
-                        {set.featureLists.map((feature) => renderInput(feature.label))}
+                        {(set.featureLists || []).map((feature) =>
+                          renderInput(feature.label, feature.id)
+                        )}
                       </div>
                     </div>
                   ))}
-                  <div className="col-lg-12 text-center my-4">
-                    <button type="submit" className="btn btn-primary py-2 px-5 me-2">Update Features</button>
-                    <button type="reset" className="btn btn-secondary py-2 px-5">Reset</button>
-                  </div>
+                </div>
+
+                <div className="col-lg-12 text-center my-4">
+                  <button type="submit" className="btn btn-primary py-2 px-5 me-2">Update Features</button>
+                  <button type="reset" className="btn btn-secondary py-2 px-5">Reset</button>
                 </div>
               </form>
             </div>
+
           </div>
         </div>
       </div>

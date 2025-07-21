@@ -9,11 +9,11 @@ import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 
-const ProductPage = ({createdProductId}) => {
+const ProductPage = ({ createdProductId, selectedFeatureType }) => {
   const [activeTab, setActiveTab] = useState('add');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-const [createdProductIdState, setCreatedProductId] = useState(null);
-
+  const [createdProductIdState, setCreatedProductId] = useState(null);
+  const [createdProductInfo, setCreatedProductInfo] = useState(null);
 
 
   const handleToggleSidebar = (collapsed) => {
@@ -53,7 +53,10 @@ const [createdProductIdState, setCreatedProductId] = useState(null);
                       className="mb-3"
                     >
                       <Tab eventKey="add" title="Add Product">
-                       <AddProduct onProductCreated={setCreatedProductId} />
+                        <AddProduct onProductCreated={(productInfo) => {
+                          setCreatedProductId(productInfo.id);
+                          setCreatedProductInfo(productInfo);
+                        }} />
                       </Tab>
                       <Tab eventKey="images" title="Product Images">
                         <AddProductImages />
@@ -62,7 +65,22 @@ const [createdProductIdState, setCreatedProductId] = useState(null);
                         <ProductFilters createdProductId={createdProductIdState} />
                       </Tab>
                       <Tab eventKey="features" title="Product Features">
-                        <ProductFeatures createdProductId={createdProductIdState} />
+                        {/* <ProductFeatures createdProductId={createdProductIdState} /> */}
+                        {/* {createdProductInfo && (
+                          <ProductFeatures
+                            createdProductId={createdProductInfo.id}
+                            featureTypeId={createdProductInfo.featureTypeId}
+                            featureTypeName={createdProductInfo.featureTypeName}
+                          />
+
+                        )} */}
+                        {createdProductInfo && (
+                          <ProductFeatures
+                            createdProductId={createdProductInfo.id}
+                            featureTypeId={createdProductInfo.featureTypeId}
+                            featureType={createdProductInfo.featureType}
+                          />
+                        )}
                       </Tab>
                     </Tabs>
                   </div>
