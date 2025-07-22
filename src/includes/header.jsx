@@ -89,7 +89,7 @@ export default function Header() {
                       <h3>{child.title}</h3>
                       {subChildren.length > 0 ? (
                         subChildren.map((sub) => (
-                          <Link key={sub.id} to={`/shop?category=${sub.id}`} className="dropdown-item">
+                          <Link to={`/shop?listSubCategoryId=${sub.id}`} className="dropdown-item">
                             {sub.title}
                           </Link>
                         ))

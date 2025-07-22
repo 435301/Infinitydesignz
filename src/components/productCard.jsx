@@ -1,51 +1,85 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import '../css/user/userstyle.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
-import '../css/user/bootstrap-icons.css'; // Use relative path inside src
-import '../css/user/bootstrap.min.css';   // Same here
+import BASE_URL from "../config/config";
 
 const ProductCard = ({ product }) => {
-  // Optional: default values if props are missing
   const {
-    discount = '',
-    icon = '',
-    image = '',
-    title = 'No Title',
-    price = '₹0',
-    mrp = '₹0',
-    rating = [],
-    reviews = '0 reviews'
+    title = "No Title",
+    sellingPrice = 0,
+    mrp = 0
   } = product || {};
+
+
+  const images = [];
+
+  // Main product image
+  if (product?.images?.main?.url) {
+    images.push(`${BASE_URL}/uploads/products/${product.images.main.url}`);
+  }
+
+  // Additional product images
+  if (product?.images?.additional?.length) {
+    product.images.additional.forEach(img => {
+      if (img?.url) {
+        images.push(`${BASE_URL}/uploads/products/${img.url}`);
+      }
+    });
+  }
+
+  // Variant images (main and additional)
+  if (product?.images?.variants) {
+    Object.values(product.images.variants).forEach(variantImg => {
+      if (variantImg.main?.url) {
+        images.push(`${BASE_URL}/uploads/products/${variantImg.main.url}`);
+      }
+
+      if (Array.isArray(variantImg.additional)) {
+        variantImg.additional.forEach(addImg => {
+          if (addImg?.url) {
+            images.push(`${BASE_URL}/uploads/products/${addImg.url}`);
+          }
+        });
+      }
+    });
+  }
+
+  const fallback = "/placeholder.png";
+  const firstImage = images[0] || fallback;
+
+  let discountPercent = null;
+  if (mrp > sellingPrice && mrp !== 0) {
+    discountPercent = Math.round(((mrp - sellingPrice) / mrp) * 100);
+  }
+
 
   return (
     <div className="col-lg-3 col-6 p-2">
       <Link to="/product-details" className="text_decoration">
         <div className="card h-100 position-relative">
-          {discount && <div className="discount-badge">{discount}</div>}
-          {icon && (
-            <div className="wishlist-icon">
-              <img src={icon} alt="Wishlist" />
-            </div>
-          )}
-          <img src={image} className="card-img-top" alt="Product" />
+           {discountPercent && (
+              <div className="discount-badge position-absolute top-0 start-0 bg-danger text-white px-2 py-1 rounded">
+                {discountPercent}% OFF
+              </div>
+            )}
+          <img src={firstImage} className="card-img-top" alt={product.title || "Product"} />
+
           <div className="card-body">
-            <h6 className="card-title">{title}</h6>
+            <h6 className="card-title">{product.title}</h6>
             <p className="card-text">
-              <strong>{price}</strong> <del>MRP {mrp}</del>
+              <strong>₹{product.sellingPrice}</strong>{" "}
+              <del>MRP ₹{product.mrp}</del>
             </p>
-            <div className="rating d-flex align-items-center mb-2">
-              {Array.isArray(rating) &&
-                rating.map((star, i) => (
-                  <img key={i} src={star} className="me-2" alt="Rating" />
-                ))}
-              <span>{reviews}</span>
+           
+            <div className="d-flex flex-wrap mt-2">
+              {images.slice(0, 4).map((url, i) => (
+                <img
+                  key={i}
+                  src={url}
+                  alt={`thumb-${i}`}
+                  style={{ width: "40px", height: "40px", objectFit: "cover", marginRight: "5px", borderRadius: "4px" }}
+                />
+              ))}
             </div>
-            <p className="emi-text">
-              36-Month Warranty Available<br />
-              EMI starting from ₹1,825/month<br />
-              Express Shipping in 1 day
-            </p>
           </div>
         </div>
       </Link>
