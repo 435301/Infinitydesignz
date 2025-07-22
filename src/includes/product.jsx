@@ -41,7 +41,7 @@ const navDropdowns = [
 ];
 
 export default function NavDropdowns() {
-  return (
+  return (F
     <>
       {navDropdowns.map((item, idx) => (
         <div key={idx} className="nav-item dropdown">
