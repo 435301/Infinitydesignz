@@ -21,6 +21,7 @@ const ManageProducts = () => {
     const dispatch = useDispatch();
     const { products = [] } = useSelector((state) => state.products);
     console.log('products', products)
+
     const navigate = useNavigate();
 
 
@@ -220,9 +221,15 @@ const ManageProducts = () => {
                                                                     onChange={() => handleRowCheckboxChange(product.id)}
                                                                 /></td>
                                                                 <td>
-                                                                    {product.mainCategory?.mainImage ? (
-                                                                        <img src={`${BASE_URL}/uploads/categories/${product.mainCategory.mainImage}`} alt={product.title} style={{ width: '50px' }} />
-                                                                    ) : '-'}
+                                                                    {product.images?.main?.url ? (
+                                                                        <img
+                                                                            src={`${BASE_URL}/uploads/products/${product.images.main.url}`}
+                                                                            alt={product.title}
+                                                                            style={{ width: '50px', height: 'auto' }}
+                                                                        />
+                                                                    ) : (
+                                                                        '-'
+                                                                    )}
                                                                 </td>
                                                                 <td>{product.sku}</td>
                                                                 <td><a href="#">{product.title}</a></td>
@@ -258,7 +265,7 @@ const ManageProducts = () => {
                                                                     </button>
                                                                     <button
                                                                         className="btn btn-light icon-btn"
-                                                                        onClick={()=>{
+                                                                        onClick={() => {
                                                                             setShowViewModal(true);
                                                                             setViewProduct(product);
                                                                         }}
