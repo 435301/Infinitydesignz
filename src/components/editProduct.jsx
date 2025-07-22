@@ -123,7 +123,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                 sellingPrice: v.sellingPrice,
                 sizeId: v.sizeId,
                 colorId: v.colorId,
-                id: v.id 
+                id: v.id
             }));
             setVariants(vs.length ? vs : [{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
         }
@@ -229,7 +229,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                 }));
 
             if (variantPayloads.length) {
-               await dispatch(editVariants({ ...variantPayloads, productId: id }));
+                await dispatch(editVariants({ ...variantPayloads, productId: id }));
             }
             console.log('Variants payloads', variantPayloads);
 
@@ -298,432 +298,451 @@ const EditProduct = ({ onClose, onProductCreated }) => {
     };
 
     return (
-        <div className="container-fluid">
-            <div className="row">
-                <div className="col-lg-12">
-                    <div className="card">
-                        <div className="card-header py-3">
-                            <h5 className="text-dark mb-0">Edit Product</h5>
-                        </div>
-                        <div className="card-block">
-                            <form onSubmit={handleSubmit} className="app-form">
-                                <div className="row">
-                                    <div className="col-lg-12">
-                                        <h6 className="sub-heading">Category Details</h6>
-                                        <div className="row">
-                                            <div className="col-lg-4 mb-3">
-                                                <label className="form-label">
-                                                    Menu<span className="text-danger">*</span>
-                                                </label>
-                                                <select
-                                                    className={`form-control ${errors.selectedMenu ? 'is-invalid' : ''}`}
-                                                    value={selectedMenu}
-                                                    onChange={(e) => {
-                                                        setSelectedMenu(e.target.value);
-                                                        setSelectedSubMenu('');
-                                                        setSelectedListSubMenu('');
-                                                        if (errors.selectedMenu) {
-                                                            setErrors({ ...errors, selectedMenu: '' });
-                                                        }
-                                                    }}
-                                                >
-                                                    <option value="">--Choose Menu--</option>
-                                                    {menuOptions.map((menu) => (
-                                                        <option key={menu.id} value={menu.id}>
-                                                            {menu.title}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                                {errors.selectedMenu && (
-                                                    <div className="invalid-feedback">{errors.selectedMenu}</div>
-                                                )}
-                                            </div>
-                                            <div className="col-lg-4 mb-3">
-                                                <label className="form-label">
-                                                    Sub Menu<span className="text-danger">*</span>
-                                                </label>
-                                                <select
-                                                    className={`form-control ${errors.selectedSubMenu ? 'is-invalid' : ''}`}
-                                                    value={selectedSubMenu}
-                                                    onChange={(e) => {
-                                                        setSelectedSubMenu(e.target.value);
-                                                        setSelectedListSubMenu('');
-                                                        if (errors.selectedSubMenu) {
-                                                            setErrors({ ...errors, selectedSubMenu: '' });
-                                                        }
-                                                    }}
-                                                >
-                                                    <option value="">--Choose Sub Menu--</option>
-                                                    {subMenuOptions.map((sub) => (
-                                                        <option key={sub.id} value={sub.id}>
-                                                            {sub.title}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                                {errors.selectedSubMenu && (
-                                                    <div className="invalid-feedback">{errors.selectedSubMenu}</div>
-                                                )}
-                                            </div>
-                                            <div className="col-lg-4 mb-3">
-                                                <label className="form-label">
-                                                    List Sub Menu<span className="text-danger">*</span>
-                                                </label>
-                                                <select
-                                                    className={`form-control ${errors.selectedListSubMenu ? 'is-invalid' : ''}`}
-                                                    value={selectedListSubMenu}
-                                                    onChange={(e) => {
-                                                        setSelectedListSubMenu(e.target.value);
-                                                        if (errors.selectedListSubMenu) {
-                                                            setErrors({ ...errors, selectedListSubMenu: '' });
-                                                        }
-                                                    }}
-                                                >
-                                                    <option value="">--Choose List Sub Menu--</option>
-                                                    {listSubMenuOptions.map((list) => (
-                                                        <option key={list.id} value={list.id}>
-                                                            {list.title}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                                {errors.selectedListSubMenu && (
-                                                    <div className="invalid-feedback">{errors.selectedListSubMenu}</div>
-                                                )}
-                                            </div>
-                                        </div>
+        <div className="sidebar-mini fixed">
+            <div className="wrapper">
+                <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
+                <aside className="main-sidebar hidden-print">
+                    <Sidebar isCollapsed={isSidebarCollapsed} />
+                </aside>
+                <div
+                    className="content-wrapper mb-4"
+                    style={{
+                        marginLeft: isSidebarCollapsed ? '60px' : '272px',
+                        padding: '20px',
+                        flex: 1,
+                        transition: 'margin-left 0.3s ease',
+                    }}
+                >
+                    {/* <div className="main-header" style={{ marginTop: '0px' }}>
+                        <h4>Brands</h4>
+                    </div> */}
+                    <div className="container-fluid">
+                        <div className="row">
+                            <div className="col-lg-12">
+                                <div className="card">
+                                    <div className="card-header py-3">
+                                        <h5 className="text-dark mb-0">Edit Product</h5>
                                     </div>
-
-                                    <div className="col-lg-12 section-divider"></div>
-
-                                    <div className="col-lg-12">
-                                        <h6 className="sub-heading">Product Details</h6>
-                                        <div className="row">
-                                            {[
-                                                { id: 'sku', label: 'SKU Code', required: true },
-                                                { id: 'title', label: 'Title', required: true },
-                                                { id: 'weight', label: 'Weight (gms)', required: true },
-                                                { id: 'model', label: 'Model', required: true },
-                                                { id: 'sla', label: 'SLA (Delivery Days)', required: true },
-                                                { id: 'deliveryCharges', label: 'Delivery Charges', required: true },
-                                            ].map((field, idx) => (
-                                                <div className="col-lg-4 mb-3" key={idx}>
-                                                    <label htmlFor={field.id} className="form-label">
-                                                        {field.label} {field.required && <span className="text-danger">*</span>}
-                                                    </label>
-                                                    <input
-                                                        id={field.id}
-                                                        className={`form-control ${errors[field.id] ? 'is-invalid' : ''}`}
-                                                        placeholder={field.label}
-                                                        type="text"
-                                                        value={formData[field.id]}
-                                                        onChange={(e) => {
-                                                            setFormData({ ...formData, [field.id]: e.target.value });
-                                                            if (errors[field.id]) {
-                                                                setErrors({ ...errors, [field.id]: '' });
-                                                            }
-                                                        }}
-                                                    />
-                                                    {errors[field.id] && (
-                                                        <div className="invalid-feedback">{errors[field.id]}</div>
-                                                    )}
-                                                </div>
-                                            ))}
-                                            <div className="col-lg-12 mb-3">
-                                                <label className={`form-label ${errors.description ? 'is-invalid' : ''}`}>
-                                                    Description<span className="text-danger">*</span>
-                                                </label>
-                                                <CKEditor
-                                                    key={formData.description}
-                                                    editor={ClassicEditor}
-                                                    data={formData.description}
-                                                    onChange={(event, editor) => {
-                                                        const data = editor.getData();
-                                                        setFormData((prev) => ({ ...prev, description: data }));
-                                                        if (errors.description) {
-                                                            setErrors((prev) => ({ ...prev, description: '' }));
-                                                        }
-                                                    }}
-                                                />
-
-                                                {errors.description && (
-                                                    <div className="invalid-feedback">{errors.description}</div>
-                                                )}
-                                            </div>
-
-
-                                            <div className="col-lg-6 mb-3">
-                                                <label className="form-label">
-                                                    Product Status<span className="text-danger">*</span>
-                                                </label>
-                                                <select
-                                                    className={`form-control ${errors.status ? 'is-invalid' : ''}`}
-                                                    value={formData.status}
-                                                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                                                >
-                                                    <option value="enable">Enable</option>
-                                                    <option value="disable">Disable</option>
-                                                </select>
-                                                {errors.status && (
-                                                    <div className="invalid-feedback">{errors.status}</div>
-                                                )}
-                                            </div>
-
-                                            <div className="col-lg-6 mb-3">
-                                                <label className="form-label">
-                                                    Search Keywords<span className="text-danger">*</span>
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    className={`form-control ${errors.searchKeywords ? 'is-invalid' : ''}`}
-                                                    placeholder="Comma separated keywords"
-                                                    value={formData.searchKeywords}
-                                                    onChange={(e) => {
-                                                        setFormData({ ...formData, searchKeywords: e.target.value });
-                                                        if (errors.searchKeywords) {
-                                                            setErrors({ ...errors, searchKeywords: '' });
-                                                        }
-                                                    }}
-                                                />
-                                                {errors.searchKeywords && (
-                                                    <div className="invalid-feedback">{errors.searchKeywords}</div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="col-lg-12 section-divider"></div>
-
-                                    <div className="col-lg-12">
-                                        <h6 className="sub-heading">Price & Color/Size Details</h6>
-                                        <div className="row">
-                                            {['stock', 'mrp', 'sellingPrice', 'height', 'width', 'length'].map((field, idx) => (
-                                                <div className="col-lg-3 mb-3" key={idx}>
-                                                    <label className="form-label">
-                                                        {field.charAt(0).toUpperCase() + field.slice(1)}
-                                                        <span className="text-danger">*</span>
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className={`form-control ${errors[field] ? 'is-invalid' : ''}`}
-                                                        placeholder={field}
-                                                        value={formData[field]}
-                                                        onChange={(e) => {
-                                                            setFormData({ ...formData, [field]: e.target.value });
-                                                            if (errors[field]) {
-                                                                setErrors({ ...errors, [field]: '' });
-                                                            }
-                                                        }}
-                                                    />
-                                                    {errors[field] && (
-                                                        <div className="invalid-feedback">{errors[field]}</div>
-                                                    )}
-                                                </div>
-                                            ))}
-                                            <div className="col-lg-3 mb-3">
-                                                <label className="form-label">
-                                                    Brand<span className="text-danger">*</span>
-                                                </label>
-                                                <select
-                                                    className={`form-control ${errors.brandId ? 'is-invalid' : ''}`}
-                                                    value={formData.brandId}
-                                                    onChange={(e) => {
-                                                        setFormData({ ...formData, brandId: e.target.value });
-                                                        if (errors.brandId) {
-                                                            setErrors({ ...errors, brandId: '' });
-                                                        }
-                                                    }}
-                                                >
-                                                    <option value="">--Choose Brand--</option>
-                                                    {brands.map((s) => (
-                                                        <option key={s.id} value={s.id}>
-                                                            {s.name}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                                {errors.brandId && (
-                                                    <div className="invalid-feedback">{errors.brandId}</div>
-                                                )}
-                                            </div>
-
-                                            <div className="col-lg-3 mb-3">
-                                                <label className="form-label">
-                                                    Size<span className="text-danger">*</span>
-                                                </label>
-                                                <select
-                                                    className={`form-control ${errors.sizeId ? 'is-invalid' : ''}`}
-                                                    value={formData.sizeId}
-                                                    onChange={(e) => {
-                                                        setFormData({ ...formData, sizeId: e.target.value });
-                                                        if (errors.sizeId) {
-                                                            setErrors({ ...errors, sizeId: '' });
-                                                        }
-                                                    }}
-                                                >
-                                                    <option value="">--Choose Size--</option>
-                                                    {sizes.map((s) => (
-                                                        <option key={s.id} value={s.id}>
-                                                            {s.title}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                                {errors.sizeId && (
-                                                    <div className="invalid-feedback">{errors.sizeId}</div>
-                                                )}
-                                            </div>
-
-                                            <div className="col-lg-3 mb-3">
-                                                <label className="form-label">
-                                                    Color<span className="text-danger">*</span>
-                                                </label>
-                                                <select
-                                                    className={`form-control ${errors.colorId ? 'is-invalid' : ''}`}
-                                                    value={formData.colorId}
-                                                    onChange={(e) => {
-                                                        setFormData({ ...formData, colorId: e.target.value });
-                                                        if (errors.colorId) {
-                                                            setErrors({ ...errors, colorId: '' });
-                                                        }
-                                                    }}
-                                                >
-                                                    <option value="">--Choose Color--</option>
-                                                    {colors.map((s) => (
-                                                        <option key={s.id} value={s.id}>
-                                                            {s.label}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                                {errors.colorId && (
-                                                    <div className="invalid-feedback">{errors.colorId}</div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="col-lg-12 mb-3">
-                                        <h6 className="sub-heading pt-4">Other Variants</h6>
-                                        <table className="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>SKU <span className="text-danger">*</span></th>
-                                                    <th>Stock <span className="text-danger">*</span></th>
-                                                    <th>MRP <span className="text-danger">*</span></th>
-                                                    <th>Selling Price <span className="text-danger">*</span></th>
-                                                    <th>Size</th>
-                                                    <th>Color</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {variants.map((variant, index) => (
-                                                    <tr key={index}>
-                                                        <td>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                value={variant.sku}
-                                                                onChange={(e) => handleChange(index, 'sku', e.target.value)}
-                                                                placeholder="SKU"
-                                                            />
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                value={variant.stock}
-                                                                onChange={(e) => handleChange(index, 'stock', e.target.value)}
-                                                                placeholder="Stock"
-                                                            />
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                value={variant.mrp}
-                                                                onChange={(e) => handleChange(index, 'mrp', e.target.value)}
-                                                                placeholder="MRP"
-                                                            />
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                value={variant.sellingPrice}
-                                                                onChange={(e) => handleChange(index, 'sellingPrice', e.target.value)}
-                                                                placeholder="Selling Price"
-                                                            />
-                                                        </td>
-                                                        <td>
+                                    <div className="card-block">
+                                        <form onSubmit={handleSubmit} className="app-form">
+                                            <div className="row">
+                                                <div className="col-lg-12">
+                                                    <h6 className="sub-heading">Category Details</h6>
+                                                    <div className="row">
+                                                        <div className="col-lg-4 mb-3">
+                                                            <label className="form-label">
+                                                                Menu<span className="text-danger">*</span>
+                                                            </label>
                                                             <select
-                                                                className="form-control"
-                                                                value={variant.sizeId}
-                                                                onChange={(e) => handleChange(index, 'sizeId', e.target.value)}
+                                                                className={`form-control ${errors.selectedMenu ? 'is-invalid' : ''}`}
+                                                                value={selectedMenu}
+                                                                onChange={(e) => {
+                                                                    setSelectedMenu(e.target.value);
+                                                                    setSelectedSubMenu('');
+                                                                    setSelectedListSubMenu('');
+                                                                    if (errors.selectedMenu) {
+                                                                        setErrors({ ...errors, selectedMenu: '' });
+                                                                    }
+                                                                }}
                                                             >
-                                                                <option value="">-- Choose Size --</option>
-                                                                {sizes.map((size) => (
-                                                                    <option key={size.id} value={size.id}>
-                                                                        {size.title}
+                                                                <option value="">--Choose Menu--</option>
+                                                                {menuOptions.map((menu) => (
+                                                                    <option key={menu.id} value={menu.id}>
+                                                                        {menu.title}
                                                                     </option>
                                                                 ))}
                                                             </select>
-                                                        </td>
-                                                        <td>
-                                                            <select
-                                                                className="form-control"
-                                                                value={variant.colorId}
-                                                                onChange={(e) => handleChange(index, 'colorId', e.target.value)}
-                                                            >
-                                                                <option value="">-- Choose Color --</option>
-                                                                {colors.map((color) => (
-                                                                    <option key={color.id} value={color.id}>
-                                                                        {color.label}
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-                                                        </td>
-
-                                                        <td>
-                                                            {index === variants.length - 1 ? (
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn-light-success icon-btn b-r-4"
-                                                                    onClick={addRow}
-                                                                >
-                                                                    <BsPlus />
-                                                                </button>
-                                                            ) : (
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn-danger icon-btn b-r-4"
-                                                                    onClick={() => removeRow(index)}
-                                                                >
-                                                                    -
-                                                                </button>
+                                                            {errors.selectedMenu && (
+                                                                <div className="invalid-feedback">{errors.selectedMenu}</div>
                                                             )}
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                        </div>
+                                                        <div className="col-lg-4 mb-3">
+                                                            <label className="form-label">
+                                                                Sub Menu<span className="text-danger">*</span>
+                                                            </label>
+                                                            <select
+                                                                className={`form-control ${errors.selectedSubMenu ? 'is-invalid' : ''}`}
+                                                                value={selectedSubMenu}
+                                                                onChange={(e) => {
+                                                                    setSelectedSubMenu(e.target.value);
+                                                                    setSelectedListSubMenu('');
+                                                                    if (errors.selectedSubMenu) {
+                                                                        setErrors({ ...errors, selectedSubMenu: '' });
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <option value="">--Choose Sub Menu--</option>
+                                                                {subMenuOptions.map((sub) => (
+                                                                    <option key={sub.id} value={sub.id}>
+                                                                        {sub.title}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                            {errors.selectedSubMenu && (
+                                                                <div className="invalid-feedback">{errors.selectedSubMenu}</div>
+                                                            )}
+                                                        </div>
+                                                        <div className="col-lg-4 mb-3">
+                                                            <label className="form-label">
+                                                                List Sub Menu<span className="text-danger">*</span>
+                                                            </label>
+                                                            <select
+                                                                className={`form-control ${errors.selectedListSubMenu ? 'is-invalid' : ''}`}
+                                                                value={selectedListSubMenu}
+                                                                onChange={(e) => {
+                                                                    setSelectedListSubMenu(e.target.value);
+                                                                    if (errors.selectedListSubMenu) {
+                                                                        setErrors({ ...errors, selectedListSubMenu: '' });
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <option value="">--Choose List Sub Menu--</option>
+                                                                {listSubMenuOptions.map((list) => (
+                                                                    <option key={list.id} value={list.id}>
+                                                                        {list.title}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                            {errors.selectedListSubMenu && (
+                                                                <div className="invalid-feedback">{errors.selectedListSubMenu}</div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                                    <div className="col-lg-12 text-center my-4">
-                                        <button type="submit" className="btn btn-primary py-2 px-5 me-2">
-                                            Save
-                                        </button>
-                                        <button
-                                            type="reset"
-                                            className="btn btn-secondary py-2 px-5"
-                                            onClick={handleReset}
-                                        >
-                                            Reset
-                                        </button>
+                                                <div className="col-lg-12 section-divider"></div>
+
+                                                <div className="col-lg-12">
+                                                    <h6 className="sub-heading">Product Details</h6>
+                                                    <div className="row">
+                                                        {[
+                                                            { id: 'sku', label: 'SKU Code', required: true },
+                                                            { id: 'title', label: 'Title', required: true },
+                                                            { id: 'weight', label: 'Weight (gms)', required: true },
+                                                            { id: 'model', label: 'Model', required: true },
+                                                            { id: 'sla', label: 'SLA (Delivery Days)', required: true },
+                                                            { id: 'deliveryCharges', label: 'Delivery Charges', required: true },
+                                                        ].map((field, idx) => (
+                                                            <div className="col-lg-4 mb-3" key={idx}>
+                                                                <label htmlFor={field.id} className="form-label">
+                                                                    {field.label} {field.required && <span className="text-danger">*</span>}
+                                                                </label>
+                                                                <input
+                                                                    id={field.id}
+                                                                    className={`form-control ${errors[field.id] ? 'is-invalid' : ''}`}
+                                                                    placeholder={field.label}
+                                                                    type="text"
+                                                                    value={formData[field.id]}
+                                                                    onChange={(e) => {
+                                                                        setFormData({ ...formData, [field.id]: e.target.value });
+                                                                        if (errors[field.id]) {
+                                                                            setErrors({ ...errors, [field.id]: '' });
+                                                                        }
+                                                                    }}
+                                                                />
+                                                                {errors[field.id] && (
+                                                                    <div className="invalid-feedback">{errors[field.id]}</div>
+                                                                )}
+                                                            </div>
+                                                        ))}
+                                                        <div className="col-lg-12 mb-3">
+                                                            <label className={`form-label ${errors.description ? 'is-invalid' : ''}`}>
+                                                                Description<span className="text-danger">*</span>
+                                                            </label>
+                                                            <CKEditor
+                                                                key={formData.description}
+                                                                editor={ClassicEditor}
+                                                                data={formData.description}
+                                                                onChange={(event, editor) => {
+                                                                    const data = editor.getData();
+                                                                    setFormData((prev) => ({ ...prev, description: data }));
+                                                                    if (errors.description) {
+                                                                        setErrors((prev) => ({ ...prev, description: '' }));
+                                                                    }
+                                                                }}
+                                                            />
+
+                                                            {errors.description && (
+                                                                <div className="invalid-feedback">{errors.description}</div>
+                                                            )}
+                                                        </div>
+
+
+                                                        <div className="col-lg-6 mb-3">
+                                                            <label className="form-label">
+                                                                Product Status<span className="text-danger">*</span>
+                                                            </label>
+                                                            <select
+                                                                className={`form-control ${errors.status ? 'is-invalid' : ''}`}
+                                                                value={formData.status}
+                                                                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                                                            >
+                                                                <option value="enable">Enable</option>
+                                                                <option value="disable">Disable</option>
+                                                            </select>
+                                                            {errors.status && (
+                                                                <div className="invalid-feedback">{errors.status}</div>
+                                                            )}
+                                                        </div>
+
+                                                        <div className="col-lg-6 mb-3">
+                                                            <label className="form-label">
+                                                                Search Keywords<span className="text-danger">*</span>
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                className={`form-control ${errors.searchKeywords ? 'is-invalid' : ''}`}
+                                                                placeholder="Comma separated keywords"
+                                                                value={formData.searchKeywords}
+                                                                onChange={(e) => {
+                                                                    setFormData({ ...formData, searchKeywords: e.target.value });
+                                                                    if (errors.searchKeywords) {
+                                                                        setErrors({ ...errors, searchKeywords: '' });
+                                                                    }
+                                                                }}
+                                                            />
+                                                            {errors.searchKeywords && (
+                                                                <div className="invalid-feedback">{errors.searchKeywords}</div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="col-lg-12 section-divider"></div>
+
+                                                <div className="col-lg-12">
+                                                    <h6 className="sub-heading">Price & Color/Size Details</h6>
+                                                    <div className="row">
+                                                        {['stock', 'mrp', 'sellingPrice', 'height', 'width', 'length'].map((field, idx) => (
+                                                            <div className="col-lg-3 mb-3" key={idx}>
+                                                                <label className="form-label">
+                                                                    {field.charAt(0).toUpperCase() + field.slice(1)}
+                                                                    <span className="text-danger">*</span>
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    className={`form-control ${errors[field] ? 'is-invalid' : ''}`}
+                                                                    placeholder={field}
+                                                                    value={formData[field]}
+                                                                    onChange={(e) => {
+                                                                        setFormData({ ...formData, [field]: e.target.value });
+                                                                        if (errors[field]) {
+                                                                            setErrors({ ...errors, [field]: '' });
+                                                                        }
+                                                                    }}
+                                                                />
+                                                                {errors[field] && (
+                                                                    <div className="invalid-feedback">{errors[field]}</div>
+                                                                )}
+                                                            </div>
+                                                        ))}
+                                                        <div className="col-lg-3 mb-3">
+                                                            <label className="form-label">
+                                                                Brand<span className="text-danger">*</span>
+                                                            </label>
+                                                            <select
+                                                                className={`form-control ${errors.brandId ? 'is-invalid' : ''}`}
+                                                                value={formData.brandId}
+                                                                onChange={(e) => {
+                                                                    setFormData({ ...formData, brandId: e.target.value });
+                                                                    if (errors.brandId) {
+                                                                        setErrors({ ...errors, brandId: '' });
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <option value="">--Choose Brand--</option>
+                                                                {brands.map((s) => (
+                                                                    <option key={s.id} value={s.id}>
+                                                                        {s.name}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                            {errors.brandId && (
+                                                                <div className="invalid-feedback">{errors.brandId}</div>
+                                                            )}
+                                                        </div>
+
+                                                        <div className="col-lg-3 mb-3">
+                                                            <label className="form-label">
+                                                                Size<span className="text-danger">*</span>
+                                                            </label>
+                                                            <select
+                                                                className={`form-control ${errors.sizeId ? 'is-invalid' : ''}`}
+                                                                value={formData.sizeId}
+                                                                onChange={(e) => {
+                                                                    setFormData({ ...formData, sizeId: e.target.value });
+                                                                    if (errors.sizeId) {
+                                                                        setErrors({ ...errors, sizeId: '' });
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <option value="">--Choose Size--</option>
+                                                                {sizes.map((s) => (
+                                                                    <option key={s.id} value={s.id}>
+                                                                        {s.title}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                            {errors.sizeId && (
+                                                                <div className="invalid-feedback">{errors.sizeId}</div>
+                                                            )}
+                                                        </div>
+
+                                                        <div className="col-lg-3 mb-3">
+                                                            <label className="form-label">
+                                                                Color<span className="text-danger">*</span>
+                                                            </label>
+                                                            <select
+                                                                className={`form-control ${errors.colorId ? 'is-invalid' : ''}`}
+                                                                value={formData.colorId}
+                                                                onChange={(e) => {
+                                                                    setFormData({ ...formData, colorId: e.target.value });
+                                                                    if (errors.colorId) {
+                                                                        setErrors({ ...errors, colorId: '' });
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <option value="">--Choose Color--</option>
+                                                                {colors.map((s) => (
+                                                                    <option key={s.id} value={s.id}>
+                                                                        {s.label}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                            {errors.colorId && (
+                                                                <div className="invalid-feedback">{errors.colorId}</div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="col-lg-12 mb-3">
+                                                    <h6 className="sub-heading pt-4">Other Variants</h6>
+                                                    <table className="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>SKU <span className="text-danger">*</span></th>
+                                                                <th>Stock <span className="text-danger">*</span></th>
+                                                                <th>MRP <span className="text-danger">*</span></th>
+                                                                <th>Selling Price <span className="text-danger">*</span></th>
+                                                                <th>Size</th>
+                                                                <th>Color</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {variants.map((variant, index) => (
+                                                                <tr key={index}>
+                                                                    <td>
+                                                                        <input
+                                                                            type="text"
+                                                                            className="form-control"
+                                                                            value={variant.sku}
+                                                                            onChange={(e) => handleChange(index, 'sku', e.target.value)}
+                                                                            placeholder="SKU"
+                                                                        />
+                                                                    </td>
+                                                                    <td>
+                                                                        <input
+                                                                            type="text"
+                                                                            className="form-control"
+                                                                            value={variant.stock}
+                                                                            onChange={(e) => handleChange(index, 'stock', e.target.value)}
+                                                                            placeholder="Stock"
+                                                                        />
+                                                                    </td>
+                                                                    <td>
+                                                                        <input
+                                                                            type="text"
+                                                                            className="form-control"
+                                                                            value={variant.mrp}
+                                                                            onChange={(e) => handleChange(index, 'mrp', e.target.value)}
+                                                                            placeholder="MRP"
+                                                                        />
+                                                                    </td>
+                                                                    <td>
+                                                                        <input
+                                                                            type="text"
+                                                                            className="form-control"
+                                                                            value={variant.sellingPrice}
+                                                                            onChange={(e) => handleChange(index, 'sellingPrice', e.target.value)}
+                                                                            placeholder="Selling Price"
+                                                                        />
+                                                                    </td>
+                                                                    <td>
+                                                                        <select
+                                                                            className="form-control"
+                                                                            value={variant.sizeId}
+                                                                            onChange={(e) => handleChange(index, 'sizeId', e.target.value)}
+                                                                        >
+                                                                            <option value="">-- Choose Size --</option>
+                                                                            {sizes.map((size) => (
+                                                                                <option key={size.id} value={size.id}>
+                                                                                    {size.title}
+                                                                                </option>
+                                                                            ))}
+                                                                        </select>
+                                                                    </td>
+                                                                    <td>
+                                                                        <select
+                                                                            className="form-control"
+                                                                            value={variant.colorId}
+                                                                            onChange={(e) => handleChange(index, 'colorId', e.target.value)}
+                                                                        >
+                                                                            <option value="">-- Choose Color --</option>
+                                                                            {colors.map((color) => (
+                                                                                <option key={color.id} value={color.id}>
+                                                                                    {color.label}
+                                                                                </option>
+                                                                            ))}
+                                                                        </select>
+                                                                    </td>
+
+                                                                    <td>
+                                                                        {index === variants.length - 1 ? (
+                                                                            <button
+                                                                                type="button"
+                                                                                className="btn btn-light-success icon-btn b-r-4"
+                                                                                onClick={addRow}
+                                                                            >
+                                                                                <BsPlus />
+                                                                            </button>
+                                                                        ) : (
+                                                                            <button
+                                                                                type="button"
+                                                                                className="btn btn-danger icon-btn b-r-4"
+                                                                                onClick={() => removeRow(index)}
+                                                                            >
+                                                                                -
+                                                                            </button>
+                                                                        )}
+                                                                    </td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                                <div className="col-lg-12 text-center my-4">
+                                                    <button type="submit" className="btn btn-primary py-2 px-5 me-2">
+                                                        Save
+                                                    </button>
+                                                    <button
+                                                        type="reset"
+                                                        className="btn btn-secondary py-2 px-5"
+                                                        onClick={handleReset}
+                                                    >
+                                                        Reset
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
+                </div></div></div>
     );
 };
 
