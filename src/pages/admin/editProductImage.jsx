@@ -3,10 +3,19 @@ import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 import axios from 'axios';
 import BASE_URL from '../../config/config';
+import { useParams } from 'react-router-dom';
+import { fetchProductById } from '../../redux/actions/productAction';
+import { useDispatch } from 'react-redux';
 
 const EditProductImages = ({ product }) => {
-  const createdProductId = product?.id;
-  console.log('Created Product ID:', createdProductId);
+     const { id } = useParams();
+     const dispatch = useDispatch();
+    useEffect(() => {
+        if (id) {
+            dispatch(fetchProductById(id));
+        }
+    }, [id, dispatch]);
+    console.log('id',id)
   const variants = product?.variants || [];
   console.log('Product Variants:', variants);
 
@@ -109,7 +118,7 @@ const EditProductImages = ({ product }) => {
 
     try {
       const response = await axios.post(
-        `${BASE_URL}/images/${createdProductId}`,
+        `${BASE_URL}/images/${id}`,
         formData,
         {
           headers: { 'Content-Type': 'multipart/form-data' },

@@ -150,7 +150,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
       sizeId: parseInt(formData.sizeId),
       colorId: parseInt(formData.colorId),
       brandId: parseInt(formData.brandId),
-      categoryId: parseInt(selectedMenu),
+      categoryId: parseInt(selectedListSubMenu),
       status: formData.status === 'enable',
       featureTypeId: selectedFeatureTypeId,
       featureType: featureType,

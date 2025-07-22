@@ -115,7 +115,7 @@ function App() {
           <Route path='/admin/filter-set' element={<ManageFilterSet />}></Route>
           <Route path='/admin/filter-list' element={<ManageFilterList />}></Route>
           <Route path='/admin/add-product' element={<AddProduct />}></Route>
-          <Route path='/admin/edit-product/:id' element={<EditProduct />}></Route>
+          {/* <Route path='/admin/edit-product/:id' element={<EditProduct />}></Route> */}
           <Route path='/admin/product-image' element={<AddProductImages />}></Route>
           <Route path='/admin/product-filter' element={<ProductFilters />}></Route>
           <Route path='/admin/manage-product' element={<ManageProducts />}></Route>
@@ -145,7 +145,7 @@ function App() {
           <Route path='/admin/contact' element={<ManageContact />}></Route>
           <Route path='/admin/keywords' element={<SearchKeywordsList />}></Route>
           <Route path='/admin/product' element={<ProductPage />}></Route>
-          <Route path='/admin/edit-product' element={<EditProductPage />}></Route>
+          <Route path='/admin/edit-product/:id' element={<EditProductPage />}></Route>
           <Route path='/admin/edit-product-features' element={<EditProductFeatures />}></Route>
           <Route path='/admin/edit-product-filters' element={<EditProductFilters />}></Route>
           <Route path='/admin/edit-product-images' element={<EditProductImages />}></Route>

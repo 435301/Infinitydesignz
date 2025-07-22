@@ -5,56 +5,46 @@ import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts } from '../../redux/actions/productAction';
+import { fetchProductById, fetchProducts } from '../../redux/actions/productAction';
 import EditProductFeatures from './editProductFeatures';
 import EditProductFilters from './editProductFilters';
 import EditProductImages from './editProductImage';
 import EditProduct from '../../components/editProduct';
+import { useParams } from 'react-router-dom';
 
-const EditProductPage = ({ createdProductId, selectedFeatureType }) => {
+const EditProductPage = () => {
+  const { id } = useParams();
   const dispatch = useDispatch();
-  const [activeTab, setActiveTab] = useState('add');
+
+  const [activeTab, setActiveTab] = useState('edit');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [createdProductIdState, setCreatedProductId] = useState(null);
-  const [createdProductInfo, setCreatedProductInfo] = useState(null);
+
+  const { productById: createdProductInfo } = useSelector((state) => state.products); 
   const { products = [] } = useSelector((state) => state.products);
 
-
   useEffect(() => {
-    dispatch(fetchProducts())
-  }, [dispatch]);
+    if (id) {
+      dispatch(fetchProductById(id));
+    }
+  }, [id, dispatch]);
 
-  const handleToggleSidebar = (collapsed) => {
-    setIsSidebarCollapsed(collapsed);
-  };
-
-  const selectedProduct = products.find(p => p.id === createdProductInfo?.id);
- console.log('Selected Product:', selectedProduct);
+  const selectedProduct = products.find(p => p.id === createdProductInfo?.id) || createdProductInfo;
 
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
-
-        <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
+        <HeaderAdmin onToggleSidebar={setIsSidebarCollapsed} />
         <aside className="main-sidebar hidden-print">
           <Sidebar isCollapsed={isSidebarCollapsed} />
         </aside>
-        <div
-          className="content-wrapper py-3"
-          style={{
-            marginLeft: isSidebarCollapsed ? '60px' : '272px',
-            padding: '20px',
-            flex: 1,
-            transition: 'margin-left 0.3s ease',
-          }}
-        >
+
+        <div className="content-wrapper py-3" style={{ marginLeft: isSidebarCollapsed ? '60px' : '272px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease' }}>
           <div className="container-fluid">
             <div className="row">
               <div className="col-lg-12">
                 <div className="card">
                   <div className="card-header py-3 d-flex justify-content-between align-items-center">
-                    <h5 className="text-dark mb-0">Products</h5>
-                    {/* <button type="submit" className="btn btn-primary py-1">Submit</button> */}
+                    <h5 className="text-dark mb-0">Edit Product</h5>
                   </div>
 
                   <div className="card-block">
@@ -64,31 +54,28 @@ const EditProductPage = ({ createdProductId, selectedFeatureType }) => {
                       onSelect={(k) => setActiveTab(k)}
                       className="mb-3"
                     >
-                      <Tab eventKey="add" title="Add Product">
-                        <EditProduct onProductCreated={(productInfo) => {
-                          setCreatedProductId(productInfo.id);
-                          setCreatedProductInfo(productInfo);
-                        }} />
+                      <Tab eventKey="edit" title="Edit Product">
+                        <EditProduct
+                          product={createdProductInfo}
+                          
+                        />
                       </Tab>
-                      <Tab eventKey="images" title="Product Images" disabled={!createdProductInfo}>
-                        {createdProductInfo && (
+                      <Tab eventKey="images" title="Product Images" >
                           <EditProductImages
-                            createdProductId={createdProductInfo.id}
                             product={selectedProduct}
                           />
-                        )}
+                        {/* )} */}
                       </Tab>
-                      <Tab eventKey="filters" title="Product Filters" disabled={!createdProductInfo}>
-                        {createdProductInfo && (
+                      <Tab eventKey="filters" title="Product Filters" >
+                        {/* {createdProductInfo && ( */}
                           <EditProductFilters
-                            createdProductId={createdProductInfo.id}
-                            filterTypeId={createdProductInfo.filterTypeId}
-                            filterType={createdProductInfo.filterType}
+                            // createdProductId={createdProductInfo.id}
+                            // filterTypeId={createdProductInfo.filterTypeId}
+                            // filterType={createdProductInfo.filterType}
                           />
-                        )}
+                        {/* )} */}
                       </Tab>
                       <Tab eventKey="features" title="Product Features" disabled={!createdProductInfo}>
-
                         {createdProductInfo && (
                           <EditProductFeatures
                             createdProductId={createdProductInfo.id}
@@ -104,7 +91,7 @@ const EditProductPage = ({ createdProductId, selectedFeatureType }) => {
             </div>
           </div>
         </div>
-      </div>
+      </div>  
     </div>
   );
 };

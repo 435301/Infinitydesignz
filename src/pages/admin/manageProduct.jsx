@@ -265,7 +265,7 @@ const ManageProducts = () => {
                                                                     </button>
                                                                     <button
                                                                         className="btn btn-light icon-btn"
-                                                                       onClick={handleEdit}
+                                                                    //    onClick={handleEdit}
 
                                                                     >
                                                                         <BsEye style={{ fontSize: '18px', color: '#212529' }} />
