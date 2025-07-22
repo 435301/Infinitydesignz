@@ -284,7 +284,6 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         updatedVariants[index][field] = value;
         setVariants(updatedVariants);
     };
-
     const addRow = () => {
         setVariants([
             ...variants,

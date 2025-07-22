@@ -6,11 +6,22 @@ import '../../css/admin/icofont.css';
 import axios from 'axios';
 import BASE_URL from '../../config/config';
 import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { fetchProductById } from '../../redux/actions/productAction';
 
-const EditProductFilters = ({ createdProductId, filterTypeId, filterType }) => {
+const EditProductFilters = ({ createdProductId, filterTypeId, filterType,createdProductInfo }) => {
+    console.log('createdProductInfo', createdProductInfo);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [filters, setFilters] = useState({});
-
+     const { id } = useParams();
+     const dispatch = useDispatch();
+    useEffect(() => {
+        if (id) {
+            dispatch(fetchProductById(id));
+        }
+    }, [id, dispatch]);
+    console.log('id',id)
 
   const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
   useEffect(() => {
