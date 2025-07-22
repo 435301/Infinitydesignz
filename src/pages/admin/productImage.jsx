@@ -4,9 +4,11 @@ import '../../css/admin/icofont.css';
 import axios from 'axios';
 import BASE_URL from '../../config/config';
 
-const AddProductImages = ({ product }) => {
-  const createdProductId = product?.id;
-  console.log('Created Product ID:', createdProductId);
+const AddProductImages = ({ product,createdProductId }) => {
+  // const createdProductId = product?.id;
+  const finalProductId = createdProductId || product?.id;
+
+  console.log('Created Product ID:', finalProductId);
   const variants = product?.variants || [];
   console.log('Product Variants:', variants);
 
@@ -109,7 +111,7 @@ const AddProductImages = ({ product }) => {
 
     try {
       const response = await axios.post(
-        `${BASE_URL}/images/${createdProductId}`,
+        `${BASE_URL}/images/${finalProductId}`,
         formData,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
