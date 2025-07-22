@@ -1,0 +1,62 @@
+.filter-sidebar {
+  font-family: Arial, sans-serif;
+}
+
+.filter-group {
+  border-left: 2px solid orange;
+  padding-left: 10px;
+  margin-bottom: 15px;
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #5a6770;
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 5px 0;
+  border-bottom: 1px solid orange;
+}
+
+.toggle-icon {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.filter-options {
+  margin-top: 10px;
+  padding-left: 5px;
+}
+
+.filter-option {
+  margin-bottom: 8px;
+}
+
+.color-options {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.color-swatch {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.size-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.badge-size {
+  background-color: #eee;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+}
