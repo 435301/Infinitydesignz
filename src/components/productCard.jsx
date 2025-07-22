@@ -53,7 +53,7 @@ const ProductCard = ({ product }) => {
 
 
   return (
-    <div className="col-lg-3 col-6 p-2">
+    <div className="col-lg-4 col-6 p-2">
       <Link to="/product-details" className="text_decoration">
         <div className="card h-100 position-relative">
            {discountPercent && (
