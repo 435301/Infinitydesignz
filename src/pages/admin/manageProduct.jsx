@@ -265,10 +265,7 @@ const ManageProducts = () => {
                                                                     </button>
                                                                     <button
                                                                         className="btn btn-light icon-btn"
-                                                                        onClick={() => {
-                                                                            setShowViewModal(true);
-                                                                            setViewProduct(product);
-                                                                        }}
+                                                                       onClick={handleEdit}
 
                                                                     >
                                                                         <BsEye style={{ fontSize: '18px', color: '#212529' }} />

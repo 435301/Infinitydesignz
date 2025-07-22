@@ -65,6 +65,10 @@ import ManageContact from './pages/admin/ManageContact.jsx'
 import SearchKeywordsList from './pages/admin/SearchKeywordsList'
 import ProductCard from './components/productCard.jsx';
 import ProductPage from './pages/admin/productPage.jsx';
+import EditProductPage from './pages/admin/editproductPage.jsx';
+import EditProductFeatures from './pages/admin/editProductFeatures.jsx';
+import EditProductFilters from './pages/admin/editProductFilters.jsx';
+import EditProductImages from './pages/admin/editProductImage.jsx';
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
     <div className="content">{children}</div>
@@ -141,7 +145,10 @@ function App() {
           <Route path='/admin/contact' element={<ManageContact />}></Route>
           <Route path='/admin/keywords' element={<SearchKeywordsList />}></Route>
           <Route path='/admin/product' element={<ProductPage />}></Route>
-
+          <Route path='/admin/edit-product' element={<EditProductPage />}></Route>
+          <Route path='/admin/edit-product-features' element={<EditProductFeatures />}></Route>
+          <Route path='/admin/edit-product-filters' element={<EditProductFilters />}></Route>
+          <Route path='/admin/edit-product-images' element={<EditProductImages />}></Route>
 
         </Routes>
         <Routes>
