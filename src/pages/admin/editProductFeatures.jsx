@@ -1,89 +1,130 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import BASE_URL from '../../config/config';
+import { fetchProductById } from '../../redux/actions/productAction';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
-import BASE_URL from '../../config/config';
 import { toast } from 'react-toastify';
 
-const EditProductFeatures = ({ createdProductId, featureTypeId, featureType }) => {
+const EditProductFeatures = () => {
+  const { id } = useParams(); // Product ID from URL
+  const dispatch = useDispatch();
+
+  const { product } = useSelector((state) => state.products || {});
+  const featureSets = product?.category?.featureType?.featureSets || [];
+
   const [formValues, setFormValues] = useState({});
 
-  const handleChange = (featureListId, value) => {
-    setFormValues(prev => ({
-      ...prev,
-      [featureListId]: value
-    }));
+  // Fetch product details on load
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchProductById(id));
+    }
+  }, [id, dispatch]);
+
+  // Fetch saved features from API
+  useEffect(() => {
+    const fetchSavedFeatures = async () => {
+      if (!id || featureSets.length === 0) return;
+
+      try {
+        const response = await axios.get(`${BASE_URL}/product-features/${id}`);
+        const savedFeatures = Array.isArray(response.data)
+          ? response.data
+          : response.data.data || [];
+
+        const filled = {};
+        savedFeatures.forEach((item) => {
+          filled[item.featureListId] = item.value;
+        });
+
+        setFormValues(filled);
+      } catch (error) {
+        console.error('Error fetching product features:', error);
+      }
+    };
+
+    fetchSavedFeatures();
+  }, [id, featureSets]);
+
+  const handleChange = (e, featureListId) => {
+    const { value } = e.target;
+    setFormValues((prev) => ({ ...prev, [featureListId]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payloadArray = Object.entries(formValues).map(([featureListId, value]) => ({
-      productId: createdProductId,
-      featureListId: parseInt(featureListId),
-      value
+    const payload = Object.entries(formValues).map(([featureListId, value]) => ({
+      featureListId: Number(featureListId),
+      value,
+      productId: Number(id),
     }));
 
-    console.log('Submitting payload:', payloadArray);
-
     try {
-      for (let payload of payloadArray) {
-        await axios.post(`${BASE_URL}/product-features`, payload);
-      }
-      toast.success('Features submitted successfully!');
+      const token = localStorage.getItem('token');
+      await axios.post(`${BASE_URL}/product-features/${id}`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      toast.success('Product features saved successfully!');
     } catch (error) {
-      console.error('Submission failed:', error);
-      toast.error('Failed to submit features.');
+      console.error('Error saving product features:', error);
+      toast.error('Failed to save product features.');
     }
   };
 
-  const renderInput = (label, featureListId) => (
-    <div className="col-lg-6 mb-3" key={featureListId}>
-      <label htmlFor={`feature-${featureListId}`} className="form-label">{label}</label>
-      <input
-        type="text"
-        id={`feature-${featureListId}`}
-        name={`feature-${featureListId}`}
-        className="form-control"
-        placeholder={`Enter ${label}`}
-        value={formValues[featureListId] || ''}
-        onChange={(e) => handleChange(featureListId, e.target.value)}
-      />
-    </div>
-  );
-
   return (
-    <div className="container-fluid">
-      <div className="row">
-        <div className="col-lg-12">
-          <div className="card">
-            <div className="card-header py-3">
-              <h5 className="text-dark mb-0">Product Features</h5>
+    <div className="container mt-4">
+      <div className="card">
+        <div className="card-body">
+          <form onSubmit={handleSubmit}>
+            {featureSets.map((set) => (
+              <div key={set.id}>
+                <h6 className="mb-3 text-dark">{set.title}</h6>
+                {(set.featureLists || []).map((feature) => (
+                <div
+  className="mb-3"
+  key={feature.id}
+  style={{
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '15px',
+  }}
+>
+  <label
+    className="form-label"
+    style={{
+      minWidth: '120px',
+      marginRight: '10px',
+      marginBottom: 0, // Prevent label from taking extra height
+    }}
+  >
+    {feature.label}
+  </label>
+  <input
+    type="text"
+    className="form-control"
+    style={{ flex: 1 }}
+    value={formValues[feature.id] || ''}
+    onChange={(e) => handleChange(e, feature.id)}
+  />
+</div>
+
+                ))}
+              </div>
+            ))}
+
+            <div className="text-center mt-4">
+              <button type="submit" className="btn btn-primary px-4">
+                Save Features
+              </button>
             </div>
-
-            <div className="card-block">
-              <form onSubmit={handleSubmit} className="app-form">
-                <div className="row">
-                  {(featureType?.featureSets || []).map((set) => (
-                    <div className="col-lg-6 mb-4" key={set.id}>
-                      <h6 className="sub-heading mb-3">{set.title}</h6>
-                      <div className="row">
-                        {(set.featureLists || []).map((feature) =>
-                          renderInput(feature.label, feature.id)
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="col-lg-12 text-center my-4">
-                  <button type="submit" className="btn btn-primary py-2 px-5 me-2">Update Features</button>
-                  <button type="reset" className="btn btn-secondary py-2 px-5">Reset</button>
-                </div>
-              </form>
-            </div>
-
-          </div>
+          </form>
         </div>
       </div>
     </div>
