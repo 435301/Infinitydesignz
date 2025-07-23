@@ -13,6 +13,8 @@ import variantsReducer from './variantReducer';
 import featureListsReducer from './featureListReducer';
 import filterSetReducer from './filterSetReducer';
 import filterListsReducer from './filterListReducer';
+import priceReducer from './priceReducer';
+import couponReducer from './couponReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -30,6 +32,8 @@ const rootReducer = combineReducers({
   filterLists:filterListsReducer,
   productFeatures:productReducer,
   productFilters:productReducer,
+  prices:priceReducer,
+  coupons:couponReducer,
 });
 
 export default rootReducer;
