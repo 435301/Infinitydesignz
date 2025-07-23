@@ -128,7 +128,7 @@ function App() {
           <Route path='/admin/manage-sliders' element={<ManageSliders />}></Route>
           <Route path='/admin/change-password' element={<ChangePassword />}></Route>
           <Route path='/admin/offers' element={<OffersList />}></Route>
-          <Route path='/admin/create-cupon' element={<CreateCoupon />}></Route>
+          <Route path='/admin/create-coupon' element={<CreateCoupon />}></Route>
           <Route path='/admin/home-screen-promotion-category' element={<HomePromotionCategory />}></Route>
           <Route path='/admin/add-home-promotions-category' element={<HomeScreenCreatePromotion />}></Route>
           <Route path='/admin/home-screen-create-promotion' element={<HomeScreenPromotions />}></Route>

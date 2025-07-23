@@ -5,37 +5,102 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { bulkUpdateCouponStatus, deleteCoupon, fetchCoupon } from '../../redux/actions/couponAction';
+import PaginationComponent from '../../includes/pagination';
+import { BsArrowClockwise, BsEye, BsPencilSquare } from 'react-icons/bs';
+import CreateCouponModal from './CreateCoupon';
+import { toast } from 'react-toastify';
+import EditCouponModal from '../../components/editCoupon';
+import { TiTrash } from 'react-icons/ti';
+import DeleteModal from '../../modals/deleteModal';
+import ViewCouponModal from '../../modals/viewCouponModal';
 
 const OffersList = () => {
+  const dispatch = useDispatch();
+  const { coupons = [] } = useSelector((state) => state.coupons);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showCouponModal, setShowCouponModal] = useState(false);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedEditCoupon, setSelectedEditCoupon] = useState(null);
+  const [couponToDelete, setCouponToDelete] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const[viewCouponModal, setViewCouponModal] = useState(false);
+  const[selectedViewCoupon, setSelectedViewCoupon] = useState(null);
 
-  const coupons = [
-    {
-      id: 1,
-      type: 'Flat',
-      code: 'FLAT50',
-      unit: '₹',
-      value: '50',
-      fromDate: '2025-07-01',
-      toDate: '2025-07-15',
-      minPurchase: '₹300',
-      status: 'Active',
-    },
-    {
-      id: 2,
-      type: 'Percentage',
-      code: 'SAVE10',
-      unit: '%',
-      value: '10%',
-      fromDate: '2025-07-01',
-      toDate: '2025-07-20',
-      minPurchase: '₹500',
-      status: 'Inactive',
-    },
-  ];
+  useEffect(() => {
+    dispatch(fetchCoupon())
+  }, [dispatch]);
+
+  const filteredCoupons = coupons.filter((coupon) => {
+    const search = (searchTerm || '').toLowerCase();
+    const matchesSearch =
+      coupon.type.toLowerCase().includes(search) ||
+      coupon.code.toLowerCase().includes(search) ||
+      coupon.priceType.toLowerCase().includes(search) ||
+      coupon.value.toString().toLowerCase().includes(search) ||
+      coupon.minOrderAmount.toString().toLowerCase().includes(search);
+    const matchesStatus = statusFilter
+      ? (statusFilter === 'active' ? coupon.isActive === true : coupon.isActive === false)
+      : true;
+    return matchesSearch && matchesStatus;
+  });
+
+  const rowsPerPage = 10;
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredCoupons.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(filteredCoupons.length / rowsPerPage);
+
+
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) setCurrentPage(pageNumber);
+  };
+
+  const handleBulkStatusUpdate = async (newStatus) => {
+    if (selectedRows.length === 0) {
+      toast.warning("Please select at least one coupon type.");
+      return;
+    }
+    await dispatch(bulkUpdateCouponStatus(selectedRows, newStatus));
+    setSelectedRows([]);
+  };
+
+  const handleRowCheckboxChange = (id) => {
+    setSelectedRows((prev) =>
+      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedRows([]);
+    } else {
+      setSelectedRows(currentRows.map((coupon) => coupon.id));
+    }
+    setSelectAll(!selectAll);
+  };
+
+  const handleDeleteClick = (id) => {
+    setCouponToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleDelete = async () => {
+    await dispatch(deleteCoupon(couponToDelete));
+    setShowDeleteModal(false);
+    setCouponToDelete(null);
+  }
+
 
   return (
     <div className="sidebar-mini fixed">
@@ -64,26 +129,31 @@ const OffersList = () => {
                     <div className="row">
                       <div className="col-md-3">
                         <div className="input-group">
-                          <input type="text" className="form-control" placeholder="Search By" />
+                          <input type="text" className="form-control" placeholder="Search By coupon type, code ,price.." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                         </div>
                       </div>
                       <div className="col-md-3">
-                        <select className="form-control">
+                        <select className="form-control" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
                           <option value="">- Select Status -</option>
                           <option value="active">Active</option>
                           <option value="inactive">In Active</option>
                         </select>
                       </div>
                       <div className="col-md-2">
-                        <button className="btn btn-danger me-2">
-                          <Search />
-                        </button>
-                        <button className="btn btn-success">
-                          <ArrowRepeat />
+
+                        <button className="btn btn-success" onClick={() => {
+                          setSearchTerm('');
+                          setStatusFilter('');
+                          setCurrentPage(1);
+                        }}>
+                          <BsArrowClockwise />
                         </button>
                       </div>
                       <div className="col-md-4 text-end">
-                        <a href="/admin/create-cupon" className="btn btn-primary">Create New</a>
+                        <button className="btn btn-primary" onClick={() => setShowCouponModal(true)}>
+                          + Create New Coupon
+                        </button>
+
                       </div>
                     </div>
                   </div>
@@ -99,8 +169,21 @@ const OffersList = () => {
                         <h5></h5>
                       </div>
                       <div className="col-md-6 text-end pt">
-                        <button className="btn btn-success me-2">Active</button>
-                        <button className="btn btn-default">In Active</button>
+                        <button
+                          className="btn btn-success me-2"
+                          disabled={selectedRows.length === 0}
+                          onClick={() => handleBulkStatusUpdate(true)}
+                        >
+                          Active
+                        </button>
+                        <button
+                          className="btn btn-danger"
+                          disabled={selectedRows.length === 0}
+                          onClick={() => handleBulkStatusUpdate(false)}
+                        >
+                          Inactive
+                        </button>
+
                       </div>
                     </div>
                     <div className="row">
@@ -108,7 +191,11 @@ const OffersList = () => {
                         <table className="table-lg table-striped align-middle mb-0 table table-hover">
                           <thead>
                             <tr>
-                              <th><input type="checkbox" /></th>
+                              <th> <input
+                                type="checkbox"
+                                checked={selectedRows.length === currentRows.length && currentRows.length > 0}
+                                onChange={handleSelectAll}
+                              /></th>
 
                               <th>Sl No</th> {/* New Sl No column */}
                               <th>Coupon Type</th>
@@ -123,54 +210,90 @@ const OffersList = () => {
                             </tr>
                           </thead>
                           <tbody>
-                            {coupons.map((coupon, index) => (
+                            {currentRows.map((coupon, index) => (
                               <tr key={coupon.id}>
-                                <td><input type="checkbox" className="row-checkbox" /></td>
+                                <td> <input
+                                  type="checkbox"
+                                  checked={selectedRows.includes(coupon.id)}
+                                  onChange={() => handleRowCheckboxChange(coupon.id)}
+                                /></td>
 
-                                <td>{index + 1}</td> {/* Serial number based on index */}
+                                <td>{index + 1}</td>
                                 <td>{coupon.type}</td>
                                 <td>{coupon.code}</td>
-                                <td>{coupon.unit}</td>
+                                <td>{coupon.priceType}</td>
                                 <td>{coupon.value}</td>
-                                <td>{coupon.fromDate}</td>
-                                <td>{coupon.toDate}</td>
-                                <td>{coupon.minPurchase}</td>
+                                <td>{new Date(coupon.fromDate).toLocaleDateString('en-GB', {
+                                  day: '2-digit',
+                                  month: 'short',
+                                  year: 'numeric'
+                                })}</td>
+
+                                <td>{new Date(coupon.toDate).toLocaleDateString('en-GB', {
+                                  day: '2-digit',
+                                  month: 'short',
+                                  year: 'numeric'
+                                })}</td>
+                                <td>{coupon.minOrderAmount}</td>
                                 <td>
-                                  <span className={`badge ${coupon.status === 'Active' ? 'text-light-primary' : 'text-light-danger'}`}>
-                                    {coupon.status}
+                                  <span className={`badge ${coupon.isActive ? 'text-light-primary' : 'text-light-danger'}`}>
+                                    {coupon.isActive ? 'Active' : 'Inactive'}
                                   </span>
                                 </td>
                                 <td>
-                                  <button type="button" className="btn btn-light-success icon-btn b-r-4 me-2">
-                                    <PencilSquare className="text-success" />
+                                  <button type="button" className="btn btn-light-success icon-btn b-r-4 me-2" onClick={() => {
+                                    setEditModalVisible(true)
+                                    setSelectedEditCoupon(coupon);
+                                  }}>
+                                    <BsPencilSquare className="text-success" />
                                   </button>
-                                  <button type="button" className="btn btn-light-danger icon-btn b-r-4 delete-btn">
-                                    <Trash className="text-danger" />
+                                  <button type="button" className="btn btn-light-success icon-btn b-r-4 me-2" onClick={() => {
+                                    setViewCouponModal(true)
+                                    setSelectedViewCoupon(coupon);
+                                  }}>
+                                    <BsEye className="text-success" />
+                                  </button>
+                                  <button type="button" className="btn btn-light-danger icon-btn b-r-4 delete-btn" onClick={() => {
+                                    handleDeleteClick(coupon.id);
+                                    setShowDeleteModal(true);
+                                  }}>
+                                    <TiTrash className="text-danger" />
                                   </button>
                                 </td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
-                        <nav aria-label="Page navigation example">
-                          <ul className="pagination justify-content-end mt-3">
-                            <li className="page-item disabled">
-                              <a className="page-link" href="#" tabIndex="-1" aria-disabled="true">Previous</a>
-                            </li>
-                            <li className="page-item"><a className="page-link" href="#">1</a></li>
-                            <li className="page-item"><a className="page-link" href="#">2</a></li>
-                            <li className="page-item"><a className="page-link" href="#">3</a></li>
-                            <li className="page-item">
-                              <a className="page-link" href="#">Next</a>
-                            </li>
-                          </ul>
-                        </nav>
+
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+            {showCouponModal && <CreateCouponModal show={showCouponModal} onHide={() => setShowCouponModal(false)}
+            />}
+            {editModalVisible && <EditCouponModal show={editModalVisible} onHide={() => setEditModalVisible(false)} coupon={selectedEditCoupon} />}
+            {showDeleteModal && (
+              <DeleteModal
+                show={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={handleDelete}
+                message="Are you sure you want to delete this size?"
+              />
+            )}
+            {viewCouponModal && (
+              <ViewCouponModal
+                show={viewCouponModal}
+                onHide={() => setViewCouponModal(false)}
+                coupon={selectedViewCoupon}
+              />
+            )}
           </div>
         </div>
       </div>

@@ -1,21 +1,24 @@
-import React, { useState } from 'react';
-import { Search, ArrowRepeat, PencilSquare, Trash } from 'react-bootstrap-icons';
+import React, { useEffect, useState } from 'react';
+import { Modal, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import HeaderAdmin from '../../includes/headerAdmin';
-import Sidebar from '../../includes/sidebar';
-import '../../css/admin/style.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { addCoupon } from '../../redux/actions/couponAction';
+import { fetchBrands } from '../../redux/actions/brandAction';
+import { fetchCategories } from '../../redux/actions/categoryAction';
 
-const CreateCoupon = () => {
-  const [couponType, setCouponType] = useState('listsubmenu');
+const CreateCouponModal = ({ show, onHide }) => {
+  const dispatch = useDispatch();
+  const { categories = [] } = useSelector((state) => state.categories || {});
+  const { brands = [] } = useSelector((state) => state.brands);
+  const [couponType, setCouponType] = useState('list_submenu');
+  const [selectedMenu, setSelectedMenu] = useState('');
+  const [selectedSubMenu, setSelectedSubMenu] = useState('');
+  const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
+  const [errors, setErrors] = useState({});
 
-  const handleCouponTypeChange = (e) => {
-    setCouponType(e.target.value);
-  };
-
-  // Sample data for select options (replace with API data if needed)
-  const menuOptions = ['--Choose Menu--'];
-  const submenuOptions = ['--Choose Sub Menu--'];
-  const listSubmenuOptions = ['--Choose List Sub Menu--'];
+  const menuOptions = categories.filter((cat) => cat.parentId === null);
+  const subMenuOptions = categories.filter((cat) => cat.parentId === parseInt(selectedMenu));
+  const listSubMenuOptions = categories.filter((cat) => cat.parentId === parseInt(selectedSubMenu));
   const priceOptions = [
     { value: '', label: 'Select Price' },
     { value: '<100', label: 'Upto 100' },
@@ -26,572 +29,342 @@ const CreateCoupon = () => {
     { value: '>10000', label: 'Above 10000' },
   ];
 
-  return (
-    <div className="sidebar-mini fixed">
-      <div className="wrapper">
-        <HeaderAdmin />
-        <aside className="main-sidebar hidden-print">
-          <Sidebar />
-        </aside>
-        <div className="content-wrapper p-4">
-          <div className="container-fluid">
-            <div className="row py-4">
-              <div className="col-lg-12">
-                <div className="card">
-                  <div className="card-header py-3 d-flex justify-content-between align-items-center">
-                    <h5 className="text-dark mb-0">Select Coupon Type</h5>
-                    <a href="/admin/offers" className="btn btn-primary btn-sm">Manage</a>
-                  </div>
-                  <div className="card-block">
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        console.log('Form submitted:', e.target.elements);
-                      }}
-                    >
-                      <div className="form-group">
-                        <div className="form-check form-check-inline">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="coupon_type"
-                            value="listsubmenu"
-                            checked={couponType === 'listsubmenu'}
-                            onChange={handleCouponTypeChange}
-                          />
-                          <label className="form-check-label">List Submenu</label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="coupon_type"
-                            value="brand"
-                            checked={couponType === 'brand'}
-                            onChange={handleCouponTypeChange}
-                          />
-                          <label className="form-check-label">Brand</label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="coupon_type"
-                            value="url"
-                            checked={couponType === 'url'}
-                            onChange={handleCouponTypeChange}
-                          />
-                          <label className="form-check-label">URL</label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="coupon_type"
-                            value="price"
-                            checked={couponType === 'price'}
-                            onChange={handleCouponTypeChange}
-                          />
-                          <label className="form-check-label">Price</label>
-                        </div>
-                      </div>
+  useEffect(()=>{
+    dispatch(fetchBrands());
+    dispatch(fetchCategories())
+  },[dispatch])
 
-                      {/* List Submenu Tab */}
-                      <div className={`coupon-tab ${couponType !== 'listsubmenu' ? 'd-none' : ''}`}>
-                        <div className="container mt-4">
-                          <div className="row">
-                            <div className="col-lg-12">
-                              <h6 className="mb-4 text-info">Select List Submenu</h6>
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="menu">
-                                Menu <span className="text-danger">*</span>
-                              </label>
-                              <select className="form-control" id="menu" name="menu">
-                                {menuOptions.map((option, index) => (
-                                  <option key={index}>{option}</option>
-                                ))}
-                              </select>
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="submenu">
-                                Sub Menu <span className="text-danger">*</span>
-                              </label>
-                              <select className="form-control" id="submenu" name="submenu">
-                                {submenuOptions.map((option, index) => (
-                                  <option key={index}>{option}</option>
-                                ))}
-                              </select>
-                              <a href="#" className="float-end mt-1" style={{ fontSize: '10px' }}>
-                                Create Sub Menu
-                              </a>
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="listsubmenu">
-                                List Sub Menu <span className="text-danger">*</span>
-                              </label>
-                              <select
-                                className="form-control"
-                                id="listsubmenu"
-                                name="listsubmenu[]"
-                                multiple
-                                size="4"
-                              >
-                                {listSubmenuOptions.map((option, index) => (
-                                  <option key={index}>{option}</option>
-                                ))}
-                              </select>
-                              <a href="#" className="mt-1 d-block text-end" style={{ fontSize: '10px' }}>
-                                Create List Sub Menu
-                              </a>
-                            </div>
-                          </div>
-                          <hr />
-                          <h6 className="mb-4 text-info">Coupon Related Details Section</h6>
-                          <div className="row">
-                            <div className="form-group col-md-4">
-                              <label htmlFor="coupon_code">
-                                Coupon Code <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="coupon_code"
-                                name="coupon_code"
-                                placeholder="Enter coupon code"
-                              />
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="price_type">
-                                Price/Percentage <span className="text-danger">*</span>
-                              </label>
-                              <select className="form-control" id="price_type" name="price_type">
-                                <option>--Choose--</option>
-                              </select>
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="value">
-                                Value <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="value"
-                                name="value"
-                              />
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="from_date">
-                                From Date <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="date"
-                                className="form-control"
-                                id="from_date"
-                                name="from_date"
-                                defaultValue="2025-07-12"
-                              />
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="to_date">
-                                To Date <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="date"
-                                className="form-control"
-                                id="to_date"
-                                name="to_date"
-                                defaultValue="2025-07-12"
-                              />
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="min_price">
-                                Min Order Price <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="min_price"
-                                name="min_price"
-                                placeholder="Enter minimum price of purchase"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = e.target;
 
-                      {/* Brand Tab */}
-                      <div className={`coupon-tab ${couponType !== 'brand' ? 'd-none' : ''}`}>
-                        <div className="container mt-4">
-                          <div className="row">
-                            <div className="col-lg-12">
-                              <h6 className="mb-4 text-info">Select Brand</h6>
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="menu">
-                                Menu <span className="text-danger">*</span>
-                              </label>
-                              <select className="form-control" id="menu" name="menu">
-                                {menuOptions.map((option, index) => (
-                                  <option key={index}>{option}</option>
-                                ))}
-                              </select>
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="submenu">
-                                Sub Menu <span className="text-danger">*</span>
-                              </label>
-                              <select className="form-control" id="submenu" name="submenu">
-                                {submenuOptions.map((option, index) => (
-                                  <option key={index}>{option}</option>
-                                ))}
-                              </select>
-                              <a href="#" className="float-end mt-1" style={{ fontSize: '10px' }}>
-                                Create Sub Menu
-                              </a>
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="listsubmenu">
-                                List Sub Menu <span className="text-danger">*</span>
-                              </label>
-                              <select
-                                className="form-control"
-                                id="listsubmenu"
-                                name="listsubmenu[]"
-                                multiple
-                                size="4"
-                              >
-                                {listSubmenuOptions.map((option, index) => (
-                                  <option key={index}>{option}</option>
-                                ))}
-                              </select>
-                              <a href="#" className="mt-1 d-block text-end" style={{ fontSize: '10px' }}>
-                                Create List Sub Menu
-                              </a>
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="brand">
-                                Brand <span className="text-danger">*</span>
-                              </label>
-                              <select
-                                className="form-control"
-                                id="brand"
-                                name="brand[]"
-                                multiple
-                                size="4"
-                              >
-                                {listSubmenuOptions.map((option, index) => (
-                                  <option key={index}>{option}</option>
-                                ))}
-                              </select>
-                              <a href="#" className="mt-1 d-block text-end" style={{ fontSize: '10px' }}>
-                                Create Brand
-                              </a>
-                            </div>
-                          </div>
-                          <hr />
-                          <h6 className="mb-4 text-info">Coupon Related Details Section</h6>
-                          <div className="row">
-                            <div className="form-group col-md-4">
-                              <label htmlFor="coupon_code">
-                                Coupon Code <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="coupon_code"
-                                name="coupon_code"
-                                placeholder="Enter coupon code"
-                              />
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="price_type">
-                                Price/Percentage <span className="text-danger">*</span>
-                              </label>
-                              <select className="form-control" id="price_type" name="price_type">
-                                <option>--Choose--</option>
-                              </select>
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="value">
-                                Value <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="value"
-                                name="value"
-                              />
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="from_date">
-                                From Date <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="date"
-                                className="form-control"
-                                id="from_date"
-                                name="from_date"
-                                defaultValue="2025-07-12"
-                              />
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="to_date">
-                                To Date <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="date"
-                                className="form-control"
-                                id="to_date"
-                                name="to_date"
-                                defaultValue="2025-07-12"
-                              />
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="min_price">
-                                Min Order Price <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="min_price"
-                                name="min_price"
-                                placeholder="Enter minimum price of purchase"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+    const payload = {
+      code: form.coupon_code?.value || '',
+      type: couponType.toUpperCase(),
+      priceType: form.price_type?.value.toUpperCase() || '',
+      value: parseFloat(form.value?.value) || 0,
+      minOrderAmount: parseFloat(form.min_price?.value) || 0,
+      fromDate: new Date(form.from_date?.value).toISOString(),
+      toDate: new Date(form.to_date?.value).toISOString(),
+    };
 
-                      {/* URL Tab */}
-                      <div className={`coupon-tab ${couponType !== 'url' ? 'd-none' : ''}`}>
-                        <div className="container mt-4">
-                          <div className="row">
-                            <div className="col-lg-12">
-                              <h6 className="mb-4 text-info">Select URL</h6>
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="url">
-                                URL <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="url"
-                                name="url"
-                                placeholder="Enter URL"
-                              />
-                            </div>
-                          </div>
-                          <hr />
-                          <h6 className="mb-4 text-info">Coupon Related Details Section</h6>
-                          <div className="row">
-                            <div className="form-group col-md-4">
-                              <label htmlFor="coupon_code">
-                                Coupon Code <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="coupon_code"
-                                name="coupon_code"
-                                placeholder="Enter coupon code"
-                              />
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="price_type">
-                                Price/Percentage <span className="text-danger">*</span>
-                              </label>
-                              <select className="form-control" id="price_type" name="price_type">
-                                <option>--Choose--</option>
-                              </select>
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="value">
-                                Value <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="value"
-                                name="value"
-                              />
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="from_date">
-                                From Date <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="date"
-                                className="form-control"
-                                id="from_date"
-                                name="from_date"
-                                defaultValue="2025-07-12"
-                              />
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="to_date">
-                                To Date <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="date"
-                                className="form-control"
-                                id="to_date"
-                                name="to_date"
-                                defaultValue="2025-07-12"
-                              />
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="min_price">
-                                Min Order Price <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="min_price"
-                                name="min_price"
-                                placeholder="Enter minimum price of purchase"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+    if (couponType === 'list_submenu' || couponType === 'brand') {
+      payload.menuId = parseInt(selectedMenu);
+      payload.subMenuId = parseInt(selectedSubMenu);
+      payload.listSubMenuId = parseInt(selectedListSubMenu);
+    }
 
-                      {/* Price Tab */}
-                      <div className={`coupon-tab ${couponType !== 'price' ? 'd-none' : ''}`}>
-                        <div className="container mt-4">
-                          <div className="row">
-                            <div className="col-lg-12">
-                              <h6 className="mb-4 text-info">Select Price</h6>
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="price_type">
-                                Choose Price <span className="text-danger">*</span>
-                              </label>
-                              <select className="form-control" id="price_type" name="price_type">
-                                {priceOptions.map((option) => (
-                                  <option key={option.value} value={option.value}>
-                                    {option.label}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                          </div>
-                          <hr />
-                          <h6 className="mb-4 text-info">Coupon Related Details Section</h6>
-                          <div className="row">
-                            <div className="form-group col-md-4">
-                              <label htmlFor="coupon_code">
-                                Coupon Code <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="coupon_code"
-                                name="coupon_code"
-                                placeholder="Enter coupon code"
-                              />
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="price_type">
-                                Price/Percentage <span className="text-danger">*</span>
-                              </label>
-                              <select className="form-control" id="price_type" name="price_type">
-                                <option>--Choose--</option>
-                              </select>
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="value">
-                                Value <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="value"
-                                name="value"
-                              />
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="from_date">
-                                From Date <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="date"
-                                className="form-control"
-                                id="from_date"
-                                name="from_date"
-                                defaultValue="2025-07-12"
-                              />
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="to_date">
-                                To Date <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="date"
-                                className="form-control"
-                                id="to_date"
-                                name="to_date"
-                                defaultValue="2025-07-12"
-                              />
-                            </div>
-                            <div className="form-group col-md-4">
-                              <label htmlFor="min_price">
-                                Min Order Price <span className="text-danger">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="min_price"
-                                name="min_price"
-                                placeholder="Enter minimum price of purchase"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+    if (couponType === 'brand') {
+      const selectedBrands = Array.from(form["brand[]"]?.selectedOptions || []).map(
+        (opt) => parseInt(opt.value)
+      );
+      if (selectedBrands.length) {
+        payload.brandId = selectedBrands[0];
+      }
+    }
 
-                      {/* Seller Tab (Placeholder) */}
-                      <div className={`coupon-tab ${couponType !== 'seller' ? 'd-none' : ''}`}>
-                        Seller Fields...
-                      </div>
+    if (couponType === 'url') {
+      payload.url = form.url?.value || '';
+    }
 
-                      <div className="form-group text-center mt-4">
-                        <button type="reset" className="btn btn-danger me-2">
-                          Reset
-                        </button>
-                        <button type="submit" className="btn btn-success">
-                          Submit
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+    if (couponType === 'price') {
+      payload.priceRange = form.price_selection?.value || '';
+    }
+
+    dispatch(addCoupon(payload));
+    onHide();
+  };
+
+  const renderCouponDetailsSection = () => (
+    <>
+      <hr />
+      <h6 className="mb-3 text-info">Coupon Related Details Section</h6>
+      <div className="row">
+        <div className="form-group col-md-4">
+          <label>Coupon Code <span className="text-danger">*</span></label>
+          <input type="text" className="form-control" name="coupon_code" />
+        </div>
+        <div className="form-group col-md-4">
+          <label>Price/Percentage <span className="text-danger">*</span></label>
+          <select className="form-control" name="price_type">
+            <option>--Choose--</option>
+            <option >Fixed</option>
+            {/* <option value="percentage">Percentage</option> */}
+          </select>
+        </div>
+        <div className="form-group col-md-4">
+          <label>Value <span className="text-danger">*</span></label>
+          <input type="text" className="form-control" name="value" />
+        </div>
+        <div className="form-group col-md-4">
+          <label>From Date <span className="text-danger">*</span></label>
+          <input type="date" className="form-control" name="from_date" defaultValue="2025-07-12" />
+        </div>
+        <div className="form-group col-md-4">
+          <label>To Date <span className="text-danger">*</span></label>
+          <input type="date" className="form-control" name="to_date" defaultValue="2025-07-12" />
+        </div>
+        <div className="form-group col-md-4">
+          <label>Min Order Price <span className="text-danger">*</span></label>
+          <input type="text" className="form-control" name="min_price" placeholder="Enter minimum price of purchase" />
         </div>
       </div>
-    </div>
+    </>
+  );
+
+  return (
+    <Modal show={show} onHide={onHide} size="xl" backdrop="static" centered scrollable>
+      <Modal.Header closeButton>
+        <Modal.Title>Create Coupon</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label className="fw-bold mb-2">Select Coupon Type</label>
+            {['list_submenu', 'brand', 'url', 'price'].map((type) => (
+              <div key={type} className="form-check form-check-inline">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="coupon_type"
+                  value={type}
+                  checked={couponType === type}
+                  onChange={(e) => setCouponType(e.target.value)}
+                />
+                <label className="form-check-label text-capitalize">{type}</label>
+              </div>
+            ))}
+          </div>
+
+          {/* List Submenu */}
+          {couponType === 'list_submenu' && (
+            <>
+              <h6 className="mb-3 text-info">Select List Submenu</h6>
+              <div className="row">
+
+                <div className="col-lg-4 mb-3">
+                  <label className="form-label">
+                    Menu<span className="text-danger">*</span>
+                  </label>
+                  <select
+                    className={`form-control ${errors.selectedMenu ? 'is-invalid' : ''}`}
+                    value={selectedMenu}
+                    onChange={(e) => {
+                      setSelectedMenu(e.target.value);
+                      setSelectedSubMenu('');
+                      setSelectedListSubMenu('');
+                      if (errors.selectedMenu) {
+                        setErrors({ ...errors, selectedMenu: '' });
+                      }
+                    }}
+                  >
+                    <option value="">--Choose Menu--</option>
+                    {menuOptions.map((menu) => (
+                      <option key={menu.id} value={menu.id}>
+                        {menu.title}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.selectedMenu && (
+                    <div className="invalid-feedback">{errors.selectedMenu}</div>
+                  )}
+                </div>
+                <div className="col-lg-4 mb-3">
+                  <label className="form-label">
+                    Sub Menu<span className="text-danger">*</span>
+                  </label>
+                  <select
+                    className={`form-control ${errors.selectedSubMenu ? 'is-invalid' : ''}`}
+                    value={selectedSubMenu}
+                    onChange={(e) => {
+                      setSelectedSubMenu(e.target.value);
+                      setSelectedListSubMenu('');
+                      if (errors.selectedSubMenu) {
+                        setErrors({ ...errors, selectedSubMenu: '' });
+                      }
+                    }}
+                  >
+                    <option value="">--Choose Sub Menu--</option>
+                    {subMenuOptions.map((sub) => (
+                      <option key={sub.id} value={sub.id}>
+                        {sub.title}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.selectedSubMenu && (
+                    <div className="invalid-feedback">{errors.selectedSubMenu}</div>
+                  )}
+                </div>
+                <div className="col-lg-4 mb-3">
+                  <label className="form-label">
+                    List Sub Menu<span className="text-danger">*</span>
+                  </label>
+                  <select
+                    className={`form-control ${errors.selectedListSubMenu ? 'is-invalid' : ''}`}
+                    value={selectedListSubMenu}
+                    onChange={(e) => {
+                      setSelectedListSubMenu(e.target.value);
+                      if (errors.selectedListSubMenu) {
+                        setErrors({ ...errors, selectedListSubMenu: '' });
+                      }
+                    }}
+                  >
+                    <option value="">--Choose List Sub Menu--</option>
+                    {listSubMenuOptions.map((list) => (
+                      <option key={list.id} value={list.id}>
+                        {list.title}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.selectedListSubMenu && (
+                    <div className="invalid-feedback">{errors.selectedListSubMenu}</div>
+                  )}
+                </div>
+              </div>
+              {renderCouponDetailsSection()}
+            </>
+          )}
+
+          {/* Brand */}
+          {couponType === 'brand' && (
+            <>
+              <h6 className="mb-3 text-info">Select Brand</h6>
+              <div className="row">
+                 <div className="col-lg-4 mb-3">
+                  <label className="form-label">
+                    Menu<span className="text-danger">*</span>
+                  </label>
+                  <select
+                    className={`form-control ${errors.selectedMenu ? 'is-invalid' : ''}`}
+                    value={selectedMenu}
+                    onChange={(e) => {
+                      setSelectedMenu(e.target.value);
+                      setSelectedSubMenu('');
+                      setSelectedListSubMenu('');
+                      if (errors.selectedMenu) {
+                        setErrors({ ...errors, selectedMenu: '' });
+                      }
+                    }}
+                  >
+                    <option value="">--Choose Menu--</option>
+                    {menuOptions.map((menu) => (
+                      <option key={menu.id} value={menu.id}>
+                        {menu.title}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.selectedMenu && (
+                    <div className="invalid-feedback">{errors.selectedMenu}</div>
+                  )}
+                </div>
+                <div className="col-lg-4 mb-3">
+                  <label className="form-label">
+                    Sub Menu<span className="text-danger">*</span>
+                  </label>
+                  <select
+                    className={`form-control ${errors.selectedSubMenu ? 'is-invalid' : ''}`}
+                    value={selectedSubMenu}
+                    onChange={(e) => {
+                      setSelectedSubMenu(e.target.value);
+                      setSelectedListSubMenu('');
+                      if (errors.selectedSubMenu) {
+                        setErrors({ ...errors, selectedSubMenu: '' });
+                      }
+                    }}
+                  >
+                    <option value="">--Choose Sub Menu--</option>
+                    {subMenuOptions.map((sub) => (
+                      <option key={sub.id} value={sub.id}>
+                        {sub.title}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.selectedSubMenu && (
+                    <div className="invalid-feedback">{errors.selectedSubMenu}</div>
+                  )}
+                </div>
+                <div className="col-lg-4 mb-3">
+                  <label className="form-label">
+                    List Sub Menu<span className="text-danger">*</span>
+                  </label>
+                  <select
+                    className={`form-control ${errors.selectedListSubMenu ? 'is-invalid' : ''}`}
+                    value={selectedListSubMenu}
+                    onChange={(e) => {
+                      setSelectedListSubMenu(e.target.value);
+                      if (errors.selectedListSubMenu) {
+                        setErrors({ ...errors, selectedListSubMenu: '' });
+                      }
+                    }}
+                  >
+                    <option value="">--Choose List Sub Menu--</option>
+                    {listSubMenuOptions.map((list) => (
+                      <option key={list.id} value={list.id}>
+                        {list.title}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.selectedListSubMenu && (
+                    <div className="invalid-feedback">{errors.selectedListSubMenu}</div>
+                  )}
+                </div>
+                <div className="form-group col-md-4">
+                  <label>Brand</label>
+                  <select className="form-control" name="brand[]" >
+                    <option value="">--Choose Brand--</option>
+                    {brands.map((brand) => (
+                      <option key={brand.id} value={brand.id}>{brand.name}</option>
+                    ))}
+
+                  </select>
+                </div>
+              </div>
+              {renderCouponDetailsSection()}
+            </>
+          )}
+
+          {/* URL */}
+          {couponType === 'url' && (
+            <>
+              <h6 className="mb-3 text-info">Select URL</h6>
+              <div className="row">
+                <div className="form-group col-md-4">
+                  <label>URL</label>
+                  <input type="text" className="form-control" name="url" placeholder="Enter URL" />
+                </div>
+              </div>
+              {renderCouponDetailsSection()}
+            </>
+          )}
+
+          {/* Price */}
+          {couponType === 'price' && (
+            <>
+              <h6 className="mb-3 text-info">Select Price</h6>
+              <div className="row">
+                <div className="form-group col-md-4">
+                  <label>Choose Price</label>
+                  <select className="form-control" name="price_selection">
+                    {priceOptions.map((option) => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              {renderCouponDetailsSection()}
+            </>
+          )}
+
+
+
+          <div className="text-center mt-4">
+            <Button variant="secondary" onClick={onHide} className="me-2">Cancel</Button>
+            <Button type="submit" variant="success">Submit</Button>
+          </div>
+        </form>
+      </Modal.Body>
+    </Modal>
   );
 };
 
-export default CreateCoupon;
-
-// Inline styles from the original HTML
-const styles = `
-  .coupon-tab {
-    margin-top: 15px;
-    padding: 7px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  .form-check-label {
-    padding-left: 0;
-    margin-bottom: 0;
-    cursor: pointer;
-  }
-  .d-none {
-    display: none !important;
-  }
-`;
+export default CreateCouponModal;
