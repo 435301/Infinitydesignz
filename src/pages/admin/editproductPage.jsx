@@ -69,9 +69,12 @@ const EditProductPage = () => {
                       <Tab eventKey="filters" title="Product Filters" >
                           <EditProductFilters/>
                       </Tab>
-                      <Tab eventKey="features" title="Product Features" disabled={!createdProductInfo}>
+                      <Tab eventKey="features" title="Product Features">
+                       
                           <EditProductFeatures
+                            
                           />
+                        
                       </Tab>
                     </Tabs>
                   </div>

@@ -1,117 +1,124 @@
-import React, { useState, useEffect } from 'react';
-import HeaderAdmin from '../../includes/headerAdmin';
-import Sidebar from '../../includes/sidebar';
-import '../../css/admin/style.css';
-import '../../css/admin/icofont.css';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import BASE_URL from '../../config/config';
-import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchProductById } from '../../redux/actions/productAction';
 
-const EditProductFilters = ({ createdProductId, filterTypeId, filterType,createdProductInfo }) => {
-    console.log('createdProductInfo', createdProductInfo);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [filters, setFilters] = useState({});
-     const { id } = useParams();
-     const dispatch = useDispatch();
-    useEffect(() => {
-        if (id) {
-            dispatch(fetchProductById(id));
-        }
-    }, [id, dispatch]);
-    console.log('id',id)
+import '../../css/admin/style.css';
+import '../../css/admin/icofont.css';
+import { toast } from 'react-toastify';
 
-  const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
+const EditProductFilters = () => {
+  const { id } = useParams();
+  const dispatch = useDispatch();
+
+  const { product } = useSelector((state) => state.products || {});
+  const filterSets = product?.category?.filterType?.filterSets || [];
+
+  const [formValues, setFormValues] = useState({});
+
+  // Fetch product details
   useEffect(() => {
-    if (filterType?.filterSets) {
-      const initialState = {};
-      filterType.filterSets.forEach(set => {
-        initialState[set.id] = '';
-      });
-      setFilters(initialState);
-    }
-  }, [filterType]);
+    if (id) dispatch(fetchProductById(id));
+  }, [id, dispatch]);
+
+  // Fetch saved filters
+  useEffect(() => {
+    const fetchSavedFilters = async () => {
+      if (!id || filterSets.length === 0) return;
+
+      try {
+        const response = await axios.get(`${BASE_URL}/product-filters/${id}`);
+        const savedFilters = Array.isArray(response.data)
+          ? response.data
+          : response.data.data || [];
+
+        const filled = {};
+        savedFilters.forEach((item) => {
+          filled[item.filterListId] = item.label;
+        });
+
+        setFormValues(filled);
+      } catch (error) {
+        console.error('Error fetching filters:', error);
+      }
+    };
+
+    fetchSavedFilters();
+  }, [id, filterSets]);
 
   const handleChange = (e, filterListId) => {
-    setFilters({ ...filters, [filterListId]: e.target.value });
+    const { value } = e.target;
+    setFormValues((prev) => ({ ...prev, [filterListId]: value }));
   };
-
-
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payloadArray = Object.entries(filters).map(([filterListId]) => ({
-      productId: createdProductId,
-      filterListId: parseInt(filterListId),
+    const payload = Object.entries(formValues).map(([filterListId, label]) => ({
+      filterListId: Number(filterListId),
+      label,
+      productId: Number(id),
     }));
 
-    console.log('Submitting payload:', payloadArray);
-
     try {
-      for (let payload of payloadArray) {
-        await axios.post(`${BASE_URL}/product-filters`, payload);
-      }
-      toast.success('Filters submitted successfully!');
+      const token = localStorage.getItem('token');
+      await axios.post(`${BASE_URL}/product-filters/${id}`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      toast.success('Product filters saved successfully!');
     } catch (error) {
-      console.error('Submission failed:', error);
-      toast.error('Failed to submit filters.');
+      console.error('Error saving product filters:', error);
+      toast.error('Failed to save product filters.');
     }
   };
 
-
-  const handleReset = () => {
-    if (filterType?.filterSets) {
-      const resetState = {};
-      filterType.filterSets.forEach(set => {
-        resetState[set.id] = '';
-      });
-      setFilters(resetState);
-    }
+  const handleSetChange = (e, setId) => {
+    const { value } = e.target;
+    setFormValues((prev) => ({
+      ...prev,
+      [setId]: value,
+    }));
   };
 
   return (
-    <div className="container-fluid">
-      <div className="row">
-        <div className="col-lg-12">
-          <div className="card">
-            <div className="card-block py-3">
-              <form className="app-form mt-3" onSubmit={handleSubmit} onReset={handleReset}>
-                {filterType?.filterSets?.map((filterSet, idx) => (
-                  <div className="row mb-3 justify-content-center" key={idx}>
-                    <div className="col-lg-3 col-md-3">
-                      <label htmlFor={`filter-${filterSet.id}`} className="form-label">{filterSet.title}</label>
-                    </div>
-                    <div className="col-lg-3">
-                      <select
-                        id={`filter-${filterSet.id}`}
-                        name={`filter-${filterSet.id}`}
-                        className="form-control"
-                        value={filters[filterSet.id] || ''}
-                        onChange={(e) => handleChange(e, filterSet.id)}
-                        required
-                      >
-                        <option value="">Choose {filterSet.title}</option>
-                        {filterSet.filterLists?.map((list) => (
-                          <option key={list.id} value={list.label}>{list.label}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                ))}
-
-                <div className="row">
-                  <div className="col-lg-12 text-center">
-                    <button type="submit" className="btn btn-primary py-2 px-5 me-2">Update Filters</button>
-                    <button type="reset" className="btn btn-reset py-2 px-5">Reset</button>
-                  </div>
+    <div className="container mt-4">
+      <div className="card">
+        <div className="card-body">
+          <form onSubmit={handleSubmit}>
+            {filterSets.map((set) => (
+              <div key={set.id} className="mb-4">
+                <h6 className="mb-3 text-dark">{set.title}</h6>
+                <div className="mb-3">
+                  <select
+                    className="form-control"
+                    value={formValues[set.id] || ''}
+                    onChange={(e) => handleSetChange(e, set.id)}
+                  >
+                  
+                    {(set.filterLists || []).map((filter) => (
+                      <option key={filter.id} value={filter.id}>
+                        {filter.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-              </form>
+              </div>
+            ))}
+
+
+            <div className="text-center mt-4">
+              <button type="submit" className="btn btn-primary px-4">
+                Save Filters
+              </button>
             </div>
-          </div>
+          </form>
+
+
         </div>
       </div>
     </div>
