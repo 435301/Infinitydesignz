@@ -120,7 +120,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
             setVariants(
                 Array.isArray(p.variants) && p.variants.length
                     ? p.variants.map(v => ({
-                         id: v.id,
+                        id: v.id,
                         sku: v.sku || '',
                         stock: v.stock?.toString() || '',
                         mrp: v.mrp?.toString() || '',
@@ -147,7 +147,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         if (!formData.stock) newErrors.stock = 'Stock is required';
         if (!formData.mrp) newErrors.mrp = 'MRP is required';
         if (!formData.sellingPrice) newErrors.sellingPrice = 'Selling Price is required';
-        if (!formData.brandId) newErrors.brandId = 'Brand is required';
+        // if (!formData.brandId) newErrors.brandId = 'Brand is required';
         if (!formData.sizeId) newErrors.sizeId = 'Size is required';
         if (!formData.colorId) newErrors.colorId = 'Color is required';
         if (formData.stock && isNaN(formData.stock)) newErrors.stock = 'Stock must be a number';
@@ -163,11 +163,11 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         // if (!formData.height) newErrors.height = 'Height is required';
         // if (!formData.width) newErrors.width = 'Width is required';
         // if (!formData.length) newErrors.length = 'Length is required';
-        if (!formData.weight) newErrors.weight = 'Weight is required';
+        // if (!formData.weight) newErrors.weight = 'Weight is required';
         else if (isNaN(formData.weight)) newErrors.weight = 'Weight must be a number';
         if (!formData.sla) newErrors.sla = 'SLA is required';
         else if (isNaN(formData.sla)) newErrors.sla = 'SLA must be a number';
-        if (!formData.deliveryCharges) newErrors.deliveryCharges = 'Delivery Charges are required';
+        // if (!formData.deliveryCharges) newErrors.deliveryCharges = 'Delivery Charges are required';
         else if (isNaN(formData.deliveryCharges))
             newErrors.deliveryCharges = 'Delivery Charges must be a number';
 
@@ -425,10 +425,10 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                             {[
                                                 { id: 'sku', label: 'SKU Code', required: true },
                                                 { id: 'title', label: 'Title', required: true },
-                                                { id: 'weight', label: 'Weight (gms)', required: true },
+                                                { id: 'weight', label: 'Weight (gms)', required: false },
                                                 { id: 'model', label: 'Model', required: true },
                                                 { id: 'sla', label: 'SLA (Delivery Days)', required: true },
-                                                { id: 'deliveryCharges', label: 'Delivery Charges', required: true },
+                                                { id: 'deliveryCharges', label: 'Delivery Charges', required: false },
                                             ].map((field, idx) => (
                                                 <div className="col-lg-4 mb-3" key={idx}>
                                                     <label htmlFor={field.id} className="form-label">
@@ -520,32 +520,34 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                     <div className="col-lg-12">
                                         <h6 className="sub-heading">Price & Color/Size Details</h6>
                                         <div className="row">
-                                            {['stock', 'mrp', 'sellingPrice', 'height', 'width', 'length'].map((field, idx) => (
-                                                <div className="col-lg-3 mb-3" key={idx}>
-                                                    <label className="form-label">
-                                                        {field.charAt(0).toUpperCase() + field.slice(1)}
-                                                        <span className="text-danger">*</span>
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className={`form-control ${errors[field] ? 'is-invalid' : ''}`}
-                                                        placeholder={field}
-                                                        value={formData[field]}
-                                                        onChange={(e) => {
-                                                            setFormData({ ...formData, [field]: e.target.value });
-                                                            if (errors[field]) {
-                                                                setErrors({ ...errors, [field]: '' });
-                                                            }
-                                                        }}
-                                                    />
-                                                    {errors[field] && (
-                                                        <div className="invalid-feedback">{errors[field]}</div>
-                                                    )}
-                                                </div>
-                                            ))}
+                                            {['stock', 'mrp', 'sellingPrice', 'height', 'width', 'length'].map((field, idx) => {
+                                                const isRequired = ['stock', 'mrp', 'sellingPrice'].includes(field);
+
+                                                return (
+                                                    <div className="col-lg-3 mb-3" key={idx}>
+                                                        <label className="form-label">
+                                                            {field.charAt(0).toUpperCase() + field.slice(1)}
+                                                            {isRequired && <span className="text-danger">*</span>}
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            className={`form-control ${errors[field] ? 'is-invalid' : ''}`}
+                                                            placeholder={field}
+                                                            value={formData[field]}
+                                                            onChange={(e) => {
+                                                                setFormData({ ...formData, [field]: e.target.value });
+                                                                if (errors[field]) {
+                                                                    setErrors({ ...errors, [field]: '' });
+                                                                }
+                                                            }}
+                                                        />
+                                                        {errors[field] && <div className="invalid-feedback">{errors[field]}</div>}
+                                                    </div>
+                                                );
+                                            })}
                                             <div className="col-lg-3 mb-3">
                                                 <label className="form-label">
-                                                    Brand<span className="text-danger">*</span>
+                                                    Brand
                                                 </label>
                                                 <select
                                                     className={`form-control ${errors.brandId ? 'is-invalid' : ''}`}

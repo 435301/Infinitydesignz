@@ -56,15 +56,22 @@ const EditProductFilters = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payload = Object.entries(formValues).map(([filterListId, label]) => ({
-      filterListId: Number(filterListId),
-      label,
-      productId: Number(id),
-    }));
+    // const payload = Object.entries(formValues).map(([filterListId, label]) => ({
+    //   filterListId: Number(filterListId),
+    //   label,
+     
+    // }));
+
+     const payload = Object.entries(formValues)
+      .filter(([_, value]) => value) 
+      .map(([filterSetId, filterListId]) => ({
+         productId: Number(id),
+        filterListId: parseInt(filterListId),
+      }));
 
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`${BASE_URL}/product-filters/${id}`, payload, {
+      await axios.post(`${BASE_URL}/product-filters`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
