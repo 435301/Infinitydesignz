@@ -118,7 +118,7 @@ const AddFeatureListModal = ({ show, onClose }) => {
                                 )}
                             </div>
 
-           
+
                             {formFields.map((field, index) => (
                                 <div className="mb-3 d-flex align-items-center gap-2" key={index}>
                                     <input
@@ -152,16 +152,16 @@ const AddFeatureListModal = ({ show, onClose }) => {
                                 </div>
                             ))}
 
-                            <div className="form-check form-switch mt-3">
+                            <div className="form-check mt-3">
                                 <input
                                     className="form-check-input"
                                     type="checkbox"
+                                    id="statusCheckbox"
                                     checked={status}
                                     onChange={() => setStatus(!status)}
-                                    id="statusSwitch"
                                 />
-                                <label className="form-check-label" htmlFor="statusSwitch">
-                                    Status: {status ? 'Active' : 'Inactive'}
+                                <label className="form-check-label" htmlFor="statusCheckbox">
+                                    {status ? 'Active' : 'Inactive'}
                                 </label>
                             </div>
 

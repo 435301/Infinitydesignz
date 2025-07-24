@@ -12,8 +12,8 @@ const AddFeatureSetModal = ({ show, onClose }) => {
     const [featureTypesInput, setFeatureTypesInput] = useState([{ title: '', priority: '' }]);
     const [selectedFeatureTypeId, setSelectedFeatureTypeId] = useState('');
     const [errors, setErrors] = useState({});
-        const [status, setStatus] = useState(true);
-    
+    const [status, setStatus] = useState(true);
+
 
     useEffect(() => {
         dispatch(fetchFeatureTypes());
@@ -84,7 +84,7 @@ const AddFeatureSetModal = ({ show, onClose }) => {
                     title: item.title,
                     featureTypeId: Number(selectedFeatureTypeId),
                     priority: Number(item.priority),
-                                        status: status,
+                    status: status,
 
                 }
                 console.log('Payload being sent:', payload);
@@ -179,18 +179,19 @@ const AddFeatureSetModal = ({ show, onClose }) => {
                                     </div>
                                 </div>
                             ))}
-                            <div className="form-check form-switch mt-3">
+                            <div className="form-check mt-3">
                                 <input
                                     className="form-check-input"
                                     type="checkbox"
+                                    id="statusCheckbox"
                                     checked={status}
                                     onChange={() => setStatus(!status)}
-                                    id="statusSwitch"
                                 />
-                                <label className="form-check-label" htmlFor="statusSwitch">
-                                    Status: {status ? 'Active' : 'Inactive'}
+                                <label className="form-check-label" htmlFor="statusCheckbox">
+                                    {status ? 'Active' : 'Inactive'}
                                 </label>
                             </div>
+
 
 
                             {errors.general && (

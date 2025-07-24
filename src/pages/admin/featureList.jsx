@@ -137,7 +137,7 @@ const ManageFeatureList = () => {
 
           <div className="container-fluid manage">
             {/* Top Filters */}
-            <div className="card mb-3">
+            <div className="card mb-2">
               <div className="card-block manage-btn p-3">
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
@@ -211,7 +211,7 @@ const ManageFeatureList = () => {
                           </div>
                           <div className="d-flex gap-2">
                             <button
-                              className="btn btn-sm"
+                              className="btn btn-sm btn-outline-primary"
                               title="View"
                               onClick={() => {
                                 setViewFeatureList(feature);

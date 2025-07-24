@@ -90,6 +90,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
     useEffect(() => {
         if (product) {
             const p = product;
+            console.log('p:', p);
             const listSubCategory = categories.find(cat => cat.id === p.listSubCategoryId || p.categoryId);
             const subCategory = categories.find(cat => cat.id === listSubCategory?.parentId);
             const menuCategory = categories.find(cat => cat.id === subCategory?.parentId);
@@ -116,16 +117,19 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                 colorId: p.colorId,
                 brandId: p.brandId,
             });
-            const vs = p.variants.map(v => ({
-                sku: v.sku,
-                stock: v.stock,
-                mrp: v.mrp,
-                sellingPrice: v.sellingPrice,
-                sizeId: v.sizeId,
-                colorId: v.colorId,
-                id: v.id 
-            }));
-            setVariants(vs.length ? vs : [{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
+            setVariants(
+                Array.isArray(p.variants) && p.variants.length
+                    ? p.variants.map(v => ({
+                         id: v.id,
+                        sku: v.sku || '',
+                        stock: v.stock?.toString() || '',
+                        mrp: v.mrp?.toString() || '',
+                        sellingPrice: v.sellingPrice?.toString() || '',
+                        sizeId: v.sizeId?.toString() || '',
+                        colorId: v.colorId?.toString() || ''
+                    }))
+                    : [{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]
+            );
         }
     }, [product]);
 
@@ -150,15 +154,15 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         if (formData.mrp && isNaN(formData.mrp)) newErrors.mrp = 'MRP must be a number';
         if (formData.sellingPrice && isNaN(formData.sellingPrice))
             newErrors.sellingPrice = 'Selling Price must be a number';
-        if (formData.height && isNaN(formData.height)) newErrors.height = 'Height must be a number';
-        if (formData.width && isNaN(formData.width)) newErrors.width = 'Width must be a number';
-        if (formData.length && isNaN(formData.length)) newErrors.length = 'Length must be a number';
+        // if (formData.height && isNaN(formData.height)) newErrors.height = 'Height must be a number';
+        // if (formData.width && isNaN(formData.width)) newErrors.width = 'Width must be a number';
+        // if (formData.length && isNaN(formData.length)) newErrors.length = 'Length must be a number';
         if (!formData.description.trim()) newErrors.description = 'Description is required';
         if (!formData.status) newErrors.status = 'Product status is required';
         if (!formData.searchKeywords.trim()) newErrors.searchKeywords = 'Search Keywords are required';
-        if (!formData.height) newErrors.height = 'Height is required';
-        if (!formData.width) newErrors.width = 'Width is required';
-        if (!formData.length) newErrors.length = 'Length is required';
+        // if (!formData.height) newErrors.height = 'Height is required';
+        // if (!formData.width) newErrors.width = 'Width is required';
+        // if (!formData.length) newErrors.length = 'Length is required';
         if (!formData.weight) newErrors.weight = 'Weight is required';
         else if (isNaN(formData.weight)) newErrors.weight = 'Weight must be a number';
         if (!formData.sla) newErrors.sla = 'SLA is required';
@@ -176,6 +180,8 @@ const EditProduct = ({ onClose, onProductCreated }) => {
 
         setErrors({});
         if (!validate()) return;
+
+
 
         const payload = {
             id: id,
@@ -215,23 +221,43 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                 },
             });
             const productId = response.data?.id;
+            console.log('productId', productId)
             console.log('Product created successfully:', response.data);
-            const variantPayloads = variants
-                .filter((v) => v.sku && v.stock && v.mrp && v.sellingPrice)
-                .map((variant) => ({
-                    ...variant,
-                    productId,
-                    stock: parseInt(variant.stock),
-                    mrp: parseFloat(variant.mrp),
-                    sellingPrice: parseFloat(variant.sellingPrice),
-                    sizeId: variant.sizeId ? parseInt(variant.sizeId) : null,
-                    colorId: variant.colorId ? parseInt(variant.colorId) : null,
+            const cleanedVariants = variants
+                .filter(v => v.sku && v.stock && v.mrp && v.sellingPrice)
+                .map(v => ({
+                    ...v,
+                    sku: v.sku,
+                    stock: parseInt(v.stock),
+                    mrp: parseFloat(v.mrp),
+                    sellingPrice: parseFloat(v.sellingPrice),
+                    sizeId: v.sizeId ? parseInt(v.sizeId) : null,
+                    colorId: v.colorId ? parseInt(v.colorId) : null,
                 }));
 
-            if (variantPayloads.length) {
-               await dispatch(editVariants({ ...variantPayloads, productId: id }));
+            for (const variant of cleanedVariants) {
+                if (!variant.id) {
+                    console.warn("Variant is missing ID:", variant);
+                    continue;
+                }
+
+                const { id, ...variantPayload } = variant;
+
+                try {
+                    await axios.put(`${BASE_URL}/variants/${id}`, { ...variantPayload, productId }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                    console.log("Variant updated:", variant);
+                } catch (err) {
+                    console.error("Failed to update variant:", variant, err);
+                }
             }
-            console.log('Variants payloads', variantPayloads);
+
+
+
 
             // Reset all form data
             setFormData(initialFormState);

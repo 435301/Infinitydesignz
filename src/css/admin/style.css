@@ -164,21 +164,21 @@ body {
 
 .pt .btn {
   font-size: 14px;
-  padding: 7px;
+  padding: 5px 20px !important;
+  
+}
 
-  f.table {
+/* f.table {
     width: 100%;
     max-width: 100%;
     margin-bottom: 1rem;
-  }
+  } */
 
-  table {
-    border-collapse: collapse;
-    background-color: transparent;
-  }
-
-  ont-weight: 400;
+table {
+  border-collapse: collapse;
+  background-color: transparent;
 }
+
 
 p {
   margin-top: 0;
@@ -290,7 +290,7 @@ header .wrapper {
 
 .card-block .btn {
   font-size: 14px;
-  padding: 6px 15px;
+  padding: 9px 15px;
 }
 
 .content-wrapper {
@@ -1636,7 +1636,7 @@ select.form-control:not([size]):not([multiple]) {
 }
 
 .main-header {
-  padding: 36px 0 20px 13px;
+  padding: 8px 0 10px 13px;
   margin-top: 0px;
   display: flex;
   align-content: stretch;
@@ -1821,8 +1821,7 @@ select.form-control:not([size]):not([multiple]) {
   }
 
   .manage-btn .form-control {
-    margin-bottom: 12px;
-    margin-top: 12px;
+    margin-bottom: 9px;
   }
 
   .manage .col-md-1 {

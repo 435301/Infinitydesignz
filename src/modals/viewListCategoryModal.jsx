@@ -28,13 +28,13 @@ const ViewListSubCategoryModal = ({ show, onClose, subCategory }) => {
           </div>
           <div className="col-md-6">
             <strong>Status:</strong>{' '}
-            <span className={`badge text-light-${subCategory.status ? 'primary' : 'danger'}`}>
+            <span className={` text-${subCategory.status ? 'primary' : 'danger'}`}>
               {subCategory.status ? 'Active' : 'Inactive'}
             </span>
           </div>
         </div>
 
-        <div className="row mb-3 text-center">
+        <div className="row mb-3 ">
           <div className="col-md-4">
             <strong>App Icon:</strong><br />
             {subCategory?.appIcon ? (

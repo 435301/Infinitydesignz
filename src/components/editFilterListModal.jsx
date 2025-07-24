@@ -164,16 +164,18 @@ const EditFilterListModal = ({ show, onClose, filterList }) => {
                                 </div>
                             ))}
 
-                            <div className="form-check form-switch mt-3">
+                            <div className="form-check mt-3">
                                 <input
                                     className="form-check-input"
                                     type="checkbox"
                                     checked={status}
                                     onChange={() => setStatus(!status)}
-                                    id="statusSwitch"
+                                    id="statusCheckbox"
                                 />
-                                <label className="form-check-label" htmlFor="statusSwitch">
-                                    Status: {status ? 'Active' : 'Inactive'}
+                                <label className="form-check-label" htmlFor="statusCheckbox">
+                                    <span className={status ? 'text-success' : 'text-danger'}>
+                                        {status ? 'Active' : 'Inactive'}
+                                    </span>
                                 </label>
                             </div>
 

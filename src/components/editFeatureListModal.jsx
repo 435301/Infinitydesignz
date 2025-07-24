@@ -70,7 +70,7 @@ const EditFeatureListModal = ({ show, onClose, featureList }) => {
         try {
             for (let field of formFields) {
                 await dispatch(editFeatureList({
-                    id:featureList.id,
+                    id: featureList.id,
                     label: field.label,
                     priority: Number(field.priority),
                     status: status,
@@ -167,18 +167,19 @@ const EditFeatureListModal = ({ show, onClose, featureList }) => {
                                 </div>
                             ))}
 
-                            <div className="form-check form-switch mt-3">
+                            <div className="form-check mt-3">
                                 <input
                                     className="form-check-input"
                                     type="checkbox"
                                     checked={status}
                                     onChange={() => setStatus(!status)}
-                                    id="statusSwitch"
+                                    id="statusCheckbox"
                                 />
-                                <label className="form-check-label" htmlFor="statusSwitch">
-                                    Status: {status ? 'Active' : 'Inactive'}
+                                <label className="form-check-label" htmlFor="statusCheckbox">
+                                    {status ? 'Active' : 'Inactive'}
                                 </label>
                             </div>
+
 
                             {errors.general && (
                                 <div className="text-danger text-center mt-2">{errors.general}</div>

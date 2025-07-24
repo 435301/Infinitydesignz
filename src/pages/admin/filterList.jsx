@@ -132,7 +132,7 @@ const ManageFilterList = () => {
 
           <div className="container-fluid manage">
             {/* Search and Filters */}
-            <div className="card mb-3">
+            <div className="card mb-2">
               <div className="card-block manage-btn">
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
@@ -215,7 +215,7 @@ const ManageFilterList = () => {
                             </div>
                             <div className="d-flex gap-2">
                               <button
-                                className="btn btn-sm"
+                                className="btn btn-sm btn-outline-primary"
                                 title="View"
                                 onClick={() => {
                                   setViewFilterList(filter);

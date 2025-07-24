@@ -10,17 +10,23 @@ const ViewColorModal = ({ show, onClose, color }) => {
         <Modal.Title>View Color</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="mb-3">
-           <p><strong>Title:</strong> {color.label}</p>
-          <p className="form-control-plaintext"></p>
+        <div className="mb-2 row">
+          <label className="col-sm-3 col-form-label fw-bold">Title:</label>
+          <div className="col-sm-9">
+            <p className="form-control-plaintext mb-0">{color.label || 'N/A'}</p>
+          </div>
         </div>
-        <div className="mb-3">
-          <label className="form-label fw-bold">Status:</label>
-          <p className={`badge ${color.status ? 'bg-success' : 'bg-danger'}`}>
-            {color.status ? 'Active' : 'Inactive'}
-          </p>
+
+        <div className="mb-2 row align-items-center">
+          <label className="col-sm-3 col-form-label fw-bold">Status:</label>
+          <div className="col-sm-9">
+            <span className={` ${color.status ? 'text-success' : 'text-danger'}`}>
+              {color.status ? 'Active' : 'Inactive'}
+            </span>
+          </div>
         </div>
       </Modal.Body>
+
       <Modal.Footer>
         <Button variant="danger" onClick={onClose}>
           Close

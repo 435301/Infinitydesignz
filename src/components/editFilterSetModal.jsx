@@ -4,7 +4,7 @@ import { BsPlusCircle, BsDashCircle } from 'react-icons/bs';
 import { fetchFilterTypes } from '../redux/actions/filterTypeAction';
 import { addFilterSet, editFilterSet } from '../redux/actions/filterSetAction';
 
-const EditFilterSetModal = ({ show, onClose,filterSet }) => {
+const EditFilterSetModal = ({ show, onClose, filterSet }) => {
     const dispatch = useDispatch();
     const { filterTypes = [] } = useSelector((state) => state.filterTypes || {});
     const [filterTypesInput, setFilterTypesInput] = useState([{ title: '', priority: '' }]);
@@ -18,24 +18,24 @@ const EditFilterSetModal = ({ show, onClose,filterSet }) => {
     }, [dispatch]);
 
     useEffect(() => {
-            if (filterSet) {
-                const initialInput = [{
-                    title: filterSet?.title || '',
-                    priority: filterSet?.priority || ''
-                }];
-    
-                if (Array.isArray(initialInput)) {
-                    setFilterTypesInput(initialInput);
-                } else {
-                    setFilterTypesInput([{ title: filterSet?.title || '', priority: filterSet?.priority || '' }]);  
-                }
-    
-                setSelectedFilterTypeId(
-                    filterSet?.filterType?.id?.toString() || ''
-                );
-                setStatus(filterSet.status ?? true);
+        if (filterSet) {
+            const initialInput = [{
+                title: filterSet?.title || '',
+                priority: filterSet?.priority || ''
+            }];
+
+            if (Array.isArray(initialInput)) {
+                setFilterTypesInput(initialInput);
+            } else {
+                setFilterTypesInput([{ title: filterSet?.title || '', priority: filterSet?.priority || '' }]);
             }
-        }, [filterSet, show]);
+
+            setSelectedFilterTypeId(
+                filterSet?.filterType?.id?.toString() || ''
+            );
+            setStatus(filterSet.status ?? true);
+        }
+    }, [filterSet, show]);
 
     const validate = () => {
         const newErrors = {};
@@ -198,18 +198,21 @@ const EditFilterSetModal = ({ show, onClose,filterSet }) => {
                                     </div>
                                 </div>
                             ))}
-                            <div className="form-check form-switch mt-3">
+                            <div className="form-check mt-3">
                                 <input
                                     className="form-check-input"
                                     type="checkbox"
+                                    id="statusCheckbox"
                                     checked={status}
                                     onChange={() => setStatus(!status)}
-                                    id="statusSwitch"
                                 />
-                                <label className="form-check-label" htmlFor="statusSwitch">
-                                    Status: {status ? 'Active' : 'Inactive'}
+                                <label className="form-check-label" htmlFor="statusCheckbox">
+                                    <span className={status ? 'text-success' : 'text-danger'}>
+                                        {status ? 'Active' : 'Inactive'}
+                                    </span>
                                 </label>
                             </div>
+
 
 
                             {errors.general && (

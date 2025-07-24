@@ -11,28 +11,44 @@ const ViewFeatureSetModal = ({ show, onClose, featureSet }) => {
             <h5 className="modal-title">View Feature Set</h5>
             <button type="button" className="btn-close" onClick={onClose}></button>
           </div>
+
           <div className="modal-body">
-            <div className="mb-3">
-              <label className="form-label">Title:</label>
-              <div>{featureSet.title || 'N/A'}</div>
+            <div className="mb-3 row">
+              <label className="col-sm-4 col-form-label fw-bold">Title:</label>
+              <div className="col-sm-8">
+                <p className="form-control-plaintext mb-0">{featureSet.title || 'N/A'}</p>
+              </div>
             </div>
-            <div className="mb-3">
-              <label className="form-label">Priority:</label>
-              <div>{featureSet.priority ?? 'N/A'}</div>
+
+            <div className="mb-3 row">
+              <label className="col-sm-4 col-form-label fw-bold">Priority:</label>
+              <div className="col-sm-8">
+                <p className="form-control-plaintext mb-0">{featureSet.priority ?? 'N/A'}</p>
+              </div>
             </div>
-            <div className="mb-3">
-              <label className="form-label">Feature Type:</label>
-              <div>{featureSet.featureType?.name || 'N/A'}</div>
+
+            <div className="mb-3 row">
+              <label className="col-sm-4 col-form-label fw-bold">Feature Type:</label>
+              <div className="col-sm-8">
+                <p className="form-control-plaintext mb-0">{featureSet.featureType?.name || 'N/A'}</p>
+              </div>
             </div>
-            <div className="mb-3">
-              <label className="form-label">Status:</label>
-              <div>{featureSet.status ? 'Active' : 'Inactive'}</div>
+
+            <div className="mb-2 row align-items-center">
+              <label className="col-sm-4 col-form-label fw-bold">Status:</label>
+              <div className="col-sm-8">
+                <span className={` ${featureSet.status ? 'text-success' : 'text-danger'}`}>
+                  {featureSet.status ? 'Active' : 'Inactive'}
+                </span>
+              </div>
             </div>
           </div>
+
           <div className="modal-footer">
-            <button className="btn btn-secondary px-4" onClick={onClose}>Close</button>
+            <button className="btn btn-danger px-4" onClick={onClose}>Close</button>
           </div>
         </div>
+
       </div>
     </div>
   );

@@ -107,7 +107,7 @@ const ManageColors = () => {
             <h4>Colors</h4>
           </div>
           <div className="container-fluid manage">
-            <div className="card mb-3">
+            <div className="card mb-2">
               <div className="card-block manage-btn">
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
