@@ -12,17 +12,17 @@ const ViewFilterSetModal = ({ show, onClose, filterSet }) => {
             <button type="button" className="btn-close" onClick={onClose}></button>
           </div>
           <div className="modal-body">
-            <div className="row mb-3">
+            <div className="row mb-2">
               <div className="col-4 fw-semibold text-dark">Title:</div>
               <div className="col-8">{filterSet.title || 'N/A'}</div>
             </div>
 
-            <div className="row mb-3">
+            <div className="row mb-2">
               <div className="col-4 fw-semibold text-dark">Priority:</div>
               <div className="col-8">{filterSet.priority ?? 'N/A'}</div>
             </div>
 
-            <div className="row mb-3">
+            <div className="row mb-2">
               <div className="col-4 fw-semibold text-dark">Feature Type:</div>
               <div className="col-8">{filterSet.filterType?.name || 'N/A'}</div>
             </div>

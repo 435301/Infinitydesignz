@@ -139,7 +139,7 @@ const ManageFilterSet = () => {
             {/* Header & Actions */}
             <div className="card">
               <div className="card-block">
-                <div className="row mb-3"></div>
+                <div className="row mb-2"></div>
                 <div>
                   {Object.entries(groupedFilterSets).map(([filterTypeName, items]) => (
                     <div key={filterTypeName} className="mb-4">

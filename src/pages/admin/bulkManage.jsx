@@ -53,11 +53,11 @@ const BulkUpload = () => {
 
             <div className="card">
               <div className="card-block">
-                <div className="row mb-3">
+                <div className="row mb-2">
                   <div className="col-lg-6">
                     <h5>Manage Bulk Uploads</h5>
                   </div>
-                  <div className="col-md-6 text-end">
+                  <div className="col-md-6 text-end pt">
                     <button className="btn btn-success">Active</button>
                     <button className="btn btn-default">Inactive</button>
                     <button className="btn btn-danger">Delete</button>

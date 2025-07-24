@@ -2044,7 +2044,7 @@ select.form-control:not([size]):not([multiple]) {
 }
 
 .multiple-image-preview .image-preview {
-  display: none;
+  display: block;
 }
 
 .remove-image {

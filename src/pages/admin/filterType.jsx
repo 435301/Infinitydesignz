@@ -127,7 +127,7 @@ const ManageFilterType = () => {
                         {/* Table */}
                         <div className="card">
                             <div className="card-block">
-                                <div className="row mb-3">
+                                <div className="row mb-2">
 
                                 </div>
 

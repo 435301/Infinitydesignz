@@ -149,7 +149,7 @@ const ManageFeatureSet = () => {
             {/* Feature Set List */}
             <div className="card">
               <div className="card-block">
-                <div className="row mb-3">
+                <div className="row mb-2">
                   {Object.entries(groupedFeatureSets).map(
                     ([featureTypeName, items]) => (
                       <div key={featureTypeName} className="mb-4">

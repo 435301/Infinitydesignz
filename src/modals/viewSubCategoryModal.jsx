@@ -15,7 +15,7 @@ const ViewSubCategoryModal = ({ show, onClose, subCategory }) => {
         <Modal.Title>View Sub Category</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="row mb-3">
+        <div className="row mb-2">
           <div className="col-md-6 mb-1 d-flex">
             <strong>Title:</strong> <div>{subCategory.title || 'N/A'}</div>
           </div>
@@ -24,7 +24,7 @@ const ViewSubCategoryModal = ({ show, onClose, subCategory }) => {
           </div>
         </div>
 
-        <div className="row mb-3">
+        <div className="row mb-2">
           <div className="col-md-6 mb-1 d-flex">
             <strong>SEO Title:</strong> <div>{subCategory.seoTitle || 'N/A'}</div>
           </div>
@@ -33,7 +33,7 @@ const ViewSubCategoryModal = ({ show, onClose, subCategory }) => {
           </div>
         </div>
 
-        <div className="row mb-3">
+        <div className="row mb-2">
           <div className="col-md-6 mb-1 d-flex">
             <strong>SEO Keywords:</strong> <div>{subCategory.seoKeywords || 'N/A'}</div>
           </div>
@@ -47,7 +47,7 @@ const ViewSubCategoryModal = ({ show, onClose, subCategory }) => {
           </div>
         </div>
 
-        <div className="row mb-3">
+        <div className="row mb-2">
           <div className="col-md-4 ">
             <p><strong>App Icon:</strong></p>
             {subCategory?.appIcon ? (

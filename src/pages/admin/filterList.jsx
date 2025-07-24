@@ -175,12 +175,12 @@ const ManageFilterList = () => {
             {/* Filter List Items */}
             <div className="card">
               <div className="card-block">
-                <div className="row mb-3"></div>
+                <div className="row mb-2"></div>
 
                 <div>
                   {Object.entries(groupedFilters).map(([groupTitle, filters], index) => (
                     <div key={index} className="mb-4">
-                      <div className="row mb-3">
+                      <div className="row mb-2">
                         <div>
                           <div className="feature-set-header p-2" style={{ backgroundColor: '#d9edf7' }}>
                             <h3>{groupTitle}</h3>

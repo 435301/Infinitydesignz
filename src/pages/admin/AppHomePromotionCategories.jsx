@@ -38,7 +38,7 @@ const AppHomePromotionCategories = () => {
                     </div>
 
                     <div className="container-fluid manage">
-                        <div className="row mb-3">
+                        <div className="row mb-2">
                             <div className="col-md-12">
                                 <div className="card">
                                     <div className="card-block manage-btn">
@@ -77,8 +77,8 @@ const AppHomePromotionCategories = () => {
                             <div className="col-sm-12">
                                 <div className="card">
                                     <div className="card-block">
-                                        <div className="row mb-3">
-                                            <div className="col-md-12 text-end">
+                                        <div className="row mb-2">
+                                            <div className="col-md-12 text-end pt">
                                                 <button className="btn btn-success me-2">Active</button>
                                                 <button className="btn btn-secondary me-2">In Active</button>
                                                 <button className="btn btn-danger">Update Priority</button>

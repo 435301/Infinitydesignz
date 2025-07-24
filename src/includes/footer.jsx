@@ -143,7 +143,7 @@ export default function Footer() {
           <div className="col-md-6 text-start">
             <p>Copyright 2025 © infinitydesignz. All rights reserved.</p>
           </div>
-          <div className="col-md-6 text-end">
+          <div className="col-md-6 text-end pt">
             <Link to="/privacy_policy" className="text-decoration-none mx-2">Privacy Policy</Link>
             <span>|</span>
             <Link to="/termsandconditions" className="text-decoration-none mx-2">Terms and Conditions</Link>

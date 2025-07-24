@@ -21,7 +21,7 @@ function ManageContact() {
                     </div>
 
                     <div className="container-fluid manage">
-                        <div className="row mb-3">
+                        <div className="row mb-2">
                             <div className="col-md-12">
                                 <div className="card">
                                     <div className="card-block manage-btn">
@@ -54,7 +54,7 @@ function ManageContact() {
                             <div className="col-sm-12">
                                 <div className="card">
                                     <div className="card-block">
-                                        <div className="row mb-3">
+                                        <div className="row mb-2">
                                             <div className="col-lg-6">
                                                 <h5>Manage Contact</h5>
                                             </div>

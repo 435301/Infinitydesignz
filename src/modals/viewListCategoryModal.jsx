@@ -14,7 +14,7 @@ const ViewListSubCategoryModal = ({ show, onClose, subCategory }) => {
         <Modal.Title>View List Sub Category</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="row mb-3">
+        <div className="row mb-2">
           <div className="col-md-6">
             <strong>Title:</strong> {subCategory.title}
           </div>
@@ -22,7 +22,7 @@ const ViewListSubCategoryModal = ({ show, onClose, subCategory }) => {
             <strong>Sub Category:</strong> {subCategory.subCategory || 'N/A'}
           </div>
         </div>
-        <div className="row mb-3">
+        <div className="row mb-2">
           <div className="col-md-6">
             <strong>Main Category:</strong> {subCategory.category || 'N/A'}
           </div>
@@ -34,7 +34,7 @@ const ViewListSubCategoryModal = ({ show, onClose, subCategory }) => {
           </div>
         </div>
 
-        <div className="row mb-3 ">
+        <div className="row mb-2 ">
           <div className="col-md-4">
             <strong>App Icon:</strong><br />
             {subCategory?.appIcon ? (

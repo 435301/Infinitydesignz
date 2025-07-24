@@ -70,7 +70,7 @@ const ProductFilters = ({ createdProductId, filterTypeId, filterType }) => {
             <div className="card-block py-3">
               <form className="app-form mt-3" onSubmit={handleSubmit} onReset={handleReset}>
                 {filterType?.filterSets?.map((filterSet, idx) => (
-                  <div className="row mb-3 justify-content-center" key={idx}>
+                  <div className="row mb-2 justify-content-center" key={idx}>
                     <div className="col-lg-3 col-md-3">
                       <label htmlFor={`filter-${filterSet.id}`} className="form-label">{filterSet.title}</label>
                     </div>

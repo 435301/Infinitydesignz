@@ -152,15 +152,15 @@ const ManageFeatureType = () => {
             {/* Table */}
             <div className="card">
               <div className="card-block">
-                <div className="row mb-3">
-                  <div className="col-md-12 text-end pt">
+                {/* <div className="row mb-2">
+                  <div className="col-md-12 text-end pt pt">
                      <button className="btn btn-success me-1" disabled={selectedRows.length === 0}
                       onClick={() => handleBulkStatusUpdate(true)}>Active</button>
                     <button className="btn btn-danger" disabled={selectedRows.length === 0}
                       onClick={() => handleBulkStatusUpdate(false)}>In Active</button>
 
                   </div>
-                </div>
+                </div> */}
 
                 <div className="table-responsive">
                   <table className="table table-striped table-hover table-lg align-middle mb-0">

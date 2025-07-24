@@ -175,7 +175,7 @@ const ManageFeatureList = () => {
               <div className="card-block p-3">
                 {Object.entries(groupedFeatures).map(([groupTitle, features], index) => (
                   <div key={index} className="mb-4">
-                    <div className="row mb-3">
+                    <div className="row mb-2">
                       <div className="feature-set-header">
                         <h3>
                           {groupTitle} <span className="badge ">{features.length}</span>

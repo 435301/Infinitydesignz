@@ -12,22 +12,22 @@ const ViewFeatureListModal = ({ show, onClose, featureList }) => {
             <button type="button" className="btn-close" onClick={onClose}></button>
           </div>
           <div className="modal-body">
-            <div className="row mb-3">
+            <div className="row mb-2">
               <div className="col-sm-4 fw-semibold text-dark">Title:</div>
               <div className="col-sm-8">{featureList.label || 'N/A'}</div>
             </div>
 
-            <div className="row mb-3">
+            <div className="row mb-2">
               <div className="col-sm-4 fw-semibold text-dark">Priority:</div>
               <div className="col-sm-8">{featureList.priority ?? 'N/A'}</div>
             </div>
 
-            <div className="row mb-3">
+            <div className="row mb-2">
               <div className="col-sm-4 fw-semibold text-dark">Feature Type:</div>
               <div className="col-sm-8">{featureList.featureTypeName || 'N/A'}</div>
             </div>
 
-            <div className="row mb-3">
+            <div className="row mb-2">
               <div className="col-sm-4 fw-semibold text-dark">Feature Set:</div>
               <div className="col-sm-8">{featureList?.featureSet?.title || 'N/A'}</div>
             </div>

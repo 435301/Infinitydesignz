@@ -151,8 +151,8 @@ const ManageColors = () => {
             </div>
             <div className="card">
               <div className="card-block">
-                <div className="row mb-3">
-                  <div className="col-md-12 text-end pt">
+                <div className="row mb-2">
+                  <div className="col-md-12 text-end pt pt">
                     <button
                       className="btn btn-success me-2"
                       disabled={selectedRows.length === 0}

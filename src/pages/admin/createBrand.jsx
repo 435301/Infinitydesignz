@@ -178,11 +178,11 @@ const ManageBrands = () => {
             {/* Brands Table Section */}
             <div className="card">
               <div className="card-block">
-                <div className="row mb-3">
+                <div className="row mb-2">
                   <div className="col-lg-6">
                     <h5>Brands</h5>
                   </div>
-                  <div className="col-md-6 text-end">
+                  <div className="col-md-6 text-end pt">
                     <button
                       className="btn btn-success me-1"
                       disabled={selectedRows.length === 0}

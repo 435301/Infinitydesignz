@@ -72,11 +72,11 @@ const ManageUsers = () => {
               <div className="col-sm-12">
                 <div className="card">
                   <div className="card-block">
-                    <div className="row mb-3">
+                    <div className="row mb-2">
                       <div className="col-lg-6">
                         <h5>Manage Users</h5>
                       </div>
-                      <div className="col-md-6 text-end">
+                      <div className="col-md-6 text-end pt">
                         <button className="btn btn-success me-2">Active</button>
                         <button className="btn btn-secondary me-2">Inactive</button>
                         <button className="btn btn-danger">Delete</button>
