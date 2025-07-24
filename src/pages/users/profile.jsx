@@ -98,7 +98,7 @@ export default function ProfilePage() {
                   <h4>Related Products</h4>
                   {/* Simulate Carousel */}
                   {[1].map((item, index) => (
-                    <div className="card mb-3" key={index}>
+                    <div className="card mb-2" key={index}>
                       <div className="discount-badge">22% off</div>
                       <div className="wishlist-icon"><img src={Icon} alt="Wishlist" /></div>
                       <img src={Img3} className="card-img-top" alt="Sofa" />

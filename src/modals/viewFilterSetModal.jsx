@@ -12,25 +12,33 @@ const ViewFilterSetModal = ({ show, onClose, filterSet }) => {
             <button type="button" className="btn-close" onClick={onClose}></button>
           </div>
           <div className="modal-body">
-            <div className="mb-3">
-              <label className="form-label">Title:</label>
-              <div>{filterSet.title || 'N/A'}</div>
+            <div className="row mb-3">
+              <div className="col-4 fw-semibold text-dark">Title:</div>
+              <div className="col-8">{filterSet.title || 'N/A'}</div>
             </div>
-            <div className="mb-3">
-              <label className="form-label">Priority:</label>
-              <div>{filterSet.priority ?? 'N/A'}</div>
+
+            <div className="row mb-3">
+              <div className="col-4 fw-semibold text-dark">Priority:</div>
+              <div className="col-8">{filterSet.priority ?? 'N/A'}</div>
             </div>
-            <div className="mb-3">
-              <label className="form-label">Feature Type:</label>
-              <div>{filterSet.filterType?.name || 'N/A'}</div>
+
+            <div className="row mb-3">
+              <div className="col-4 fw-semibold text-dark">Feature Type:</div>
+              <div className="col-8">{filterSet.filterType?.name || 'N/A'}</div>
             </div>
-            <div className="mb-3">
-              <label className="form-label">Status:</label>
-              <div>{filterSet.status ? 'Active' : 'Inactive'}</div>
+
+            <div className="row mb-2">
+              <div className="col-4 fw-semibold text-dark">Status:</div>
+              <div className="col-8">
+                <span className={filterSet.status ? 'text-success' : 'text-danger'}>
+                  {filterSet.status ? 'Active' : 'Inactive'}
+                </span>
+              </div>
             </div>
           </div>
+
           <div className="modal-footer">
-            <button className="btn btn-secondary px-4" onClick={onClose}>Close</button>
+            <button className="btn btn-danger px-4" onClick={onClose}>Close</button>
           </div>
         </div>
       </div>

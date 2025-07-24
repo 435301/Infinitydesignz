@@ -178,18 +178,20 @@ const AddFilterSetModal = ({ show, onClose }) => {
                                     </div>
                                 </div>
                             ))}
-                            <div className="form-check form-switch mt-3">
-                                <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    checked={status}
-                                    onChange={() => setStatus(!status)}
-                                    id="statusSwitch"
-                                />
-                                <label className="form-check-label" htmlFor="statusSwitch">
-                                    Status: {status ? 'Active' : 'Inactive'}
-                                </label>
-                            </div>
+                           <div className="form-check mt-3">
+  <input
+    className="form-check-input"
+    type="checkbox"
+    id="statusCheckbox"
+    checked={status}
+    onChange={() => setStatus(!status)}
+  />
+  <label className="form-check-label" htmlFor="statusCheckbox">
+     <span className={status ? 'text-success' : 'text-danger'}>
+      {status ? 'Active' : 'Inactive'}
+    </span>
+  </label>
+</div>
 
 
                             {errors.general && (

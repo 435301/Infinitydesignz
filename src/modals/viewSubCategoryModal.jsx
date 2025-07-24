@@ -16,77 +16,71 @@ const ViewSubCategoryModal = ({ show, onClose, subCategory }) => {
       </Modal.Header>
       <Modal.Body>
         <div className="row mb-3">
-          <div className="col-md-6">
-            <strong>Title:</strong> {subCategory.title}
+          <div className="col-md-6 mb-1 d-flex">
+            <strong>Title:</strong> <div>{subCategory.title || 'N/A'}</div>
           </div>
-          <div className="col-md-6">
-            <strong>Parent Category:</strong> {subCategory.category || 'N/A'}
-          </div>
-        </div>
-
-        <div className="row mb-2">
-          <div className="col-md-6">
-            <strong>SEO Title:</strong> {subCategory.seoTitle || 'N/A'}
-          </div>
-          <div className="col-md-6">
-            <strong>SEO Description:</strong> {subCategory.seoDescription || 'N/A'}
+          <div className="col-md-6 mb-1 d-flex">
+            <strong>Parent Category:</strong> <div>{subCategory.category || 'N/A'}</div>
           </div>
         </div>
 
-        <div className="row mb-2">
-          <div className="col-md-6">
-            <strong>SEO Keywords:</strong> {subCategory.seoKeywords || 'N/A'}
+        <div className="row mb-3">
+          <div className="col-md-6 mb-1 d-flex">
+            <strong>SEO Title:</strong> <div>{subCategory.seoTitle || 'N/A'}</div>
           </div>
-          <div className="col-md-6">
-            <strong>Status:</strong>{' '}
-            <span className={`badge text-light-${subCategory.status ? 'primary' : 'danger'}`}>
-              {subCategory.status ? 'Active' : 'Inactive'}
-            </span>
+          <div className="col-md-6 mb-1 d-flex">
+            <strong>SEO Description:</strong> <div>{subCategory.seoDescription || 'N/A'}</div>
           </div>
-          <div className="row mb-3">
-            <div className="d-flex gap-3 flex-wrap">
-              <div>
-                <p><strong>App Icon:</strong></p>
-                {subCategory?.appIcon ? (
-                  <img src={`${BASE_URL}${subCategory.appIcon}`} alt="App Icon" width="200" height='200' />
+        </div>
 
-                ) : (
-                  <span>N/A</span>
-                )}
-              </div>
-              <div>
-                <p><strong>Web Image:</strong></p>
-                {subCategory?.webImage ? (
-                  <img src={`${BASE_URL}${subCategory.webImage}`} alt="Web Icon" width="200" height='200' />
-
-                ) : (
-                  <span>N/A</span>
-
-                )}
-              </div>
-              <div>
-                <p><strong>Main Image:</strong></p>
-                {subCategory?.mainImage ? (
-                  <img src={`${BASE_URL}${subCategory.mainImage}`} alt="Main" width="200" height='200' />
-
-                ) : (
-                  <span>N/A</span>
-
-                )}
-              </div>
+        <div className="row mb-3">
+          <div className="col-md-6 mb-1 d-flex">
+            <strong>SEO Keywords:</strong> <div>{subCategory.seoKeywords || 'N/A'}</div>
+          </div>
+          <div className="col-md-6 mb-1 d-flex">
+            <strong>Status:</strong>
+            <div>
+              <span className={` text-${subCategory.status ? 'success' : 'danger'}`}>
+                {subCategory.status ? 'Active' : 'Inactive'}
+              </span>
             </div>
-
-
           </div>
+        </div>
 
+        <div className="row mb-3">
+          <div className="col-md-4 ">
+            <p><strong>App Icon:</strong></p>
+            {subCategory?.appIcon ? (
+              <img src={`${BASE_URL}${subCategory.appIcon}`} alt="App Icon" className="img-fluid rounded shadow-sm" />
+            ) : (
+              <span>N/A</span>
+            )}
+          </div>
+          <div className="col-md-4 ">
+            <p><strong>Web Image:</strong></p>
+            {subCategory?.webImage ? (
+              <img src={`${BASE_URL}${subCategory.webImage}`} alt="Web Image" className="img-fluid rounded shadow-sm" />
+            ) : (
+              <span>N/A</span>
+            )}
+          </div>
+          <div className="col-md-4 ">
+            <p><strong>Main Image:</strong></p>
+            {subCategory?.mainImage ? (
+              <img src={`${BASE_URL}${subCategory.mainImage}`} alt="Main Image" className="img-fluid rounded shadow-sm" />
+            ) : (
+              <span>N/A</span>
+            )}
+          </div>
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>
+        <Button variant="danger" onClick={onClose}>
           Close
         </Button>
       </Modal.Footer>
     </Modal>
+
   );
 };
 

@@ -12,49 +12,69 @@ const ViewCategoryModal = ({ show, onClose, category }) => {
   return (
     <Modal show={show} onHide={onClose} size="lg" centered>
       <Modal.Header closeButton>
-        <Modal.Title>Category Details</Modal.Title>
+        <Modal.Title className="fw-semibold">Category Details</Modal.Title>
       </Modal.Header>
+
       <Modal.Body>
-        <p><strong>Title:</strong> {category.title}</p>
-        <p><strong>Status:</strong>{' '}
-          <span className={`badge text-light-${category.status ? 'primary' : 'danger'}`}>
-            {category.status ? 'Active' : 'Inactive'}
-          </span></p>
-        <div className="d-flex gap-3 flex-wrap">
-          <div>
-            <p><strong>App Icon:</strong></p>
+        <div className="mb-3">
+          <p className="mb-1"><strong>Title:</strong> {category.title}</p>
+          <p className="mb-1">
+            <strong>Status:</strong>{' '}
+            <span className={` text-${category.status ? 'success' : 'danger'}`}>
+              {category.status ? 'Active' : 'Inactive'}
+            </span>
+          </p>
+        </div>
+
+        <div className="row g-4">
+          <div className="col-md-4 ">
+            <p className="fw-medium">App Icon</p>
             {category?.appIcon ? (
-              <img src={`${BASE_URL}${category.appIcon}`} alt="App Icon" width="200" />
+              <img
+                src={`${BASE_URL}${category.appIcon}`}
+                alt="App Icon"
+                className="img-fluid rounded shadow"
+              />
             ) : (
-              <span>N/A</span>
+              <span className="text-muted">N/A</span>
             )}
           </div>
-          <div>
-            <p><strong>Web Image:</strong></p>
-            {category?.webImage?(
-            <img src={`${BASE_URL}${category.webImage}`} alt="Web Icon" width="200" />
 
-            ):(
-              <span>N/A</span>
-            )
-            }
-          </div>
-          <div>
-             <p><strong>Main Image:</strong></p>
-            {category?.mainImage?(
-            <img src={`${BASE_URL}${category.mainImage}`} alt="Main" width="200" />
-
-            ):(
-              <span>N/A</span>
+          <div className="col-md-4 text-center">
+            <p className="fw-medium">Web Image</p>
+            {category?.webImage ? (
+              <img
+                src={`${BASE_URL}${category.webImage}`}
+                alt="Web Image"
+                className="img-fluid rounded shadow"
+              />
+            ) : (
+              <span className="text-muted">N/A</span>
             )}
-           
+          </div>
+
+          <div className="col-md-4 text-center">
+            <p className="fw-medium">Main Image</p>
+            {category?.mainImage ? (
+              <img
+                src={`${BASE_URL}${category.mainImage}`}
+                alt="Main Image"
+                className="img-fluid rounded shadow"
+              />
+            ) : (
+              <span className="text-muted">N/A</span>
+            )}
           </div>
         </div>
       </Modal.Body>
+
       <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>Close</Button>
+        <Button variant="danger" onClick={onClose}>
+          Close
+        </Button>
       </Modal.Footer>
     </Modal>
+
   );
 };
 

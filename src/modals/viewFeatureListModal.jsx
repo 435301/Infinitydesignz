@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ViewFeatureListModal = ({ show, onClose, featureList}) => {
+const ViewFeatureListModal = ({ show, onClose, featureList }) => {
   if (!show || !featureList) return null;
 
   return (
@@ -12,29 +12,38 @@ const ViewFeatureListModal = ({ show, onClose, featureList}) => {
             <button type="button" className="btn-close" onClick={onClose}></button>
           </div>
           <div className="modal-body">
-            <div className="mb-3">
-              <label className="form-label">Title:</label>
-              <div>{featureList.label || 'N/A'}</div>
+            <div className="row mb-3">
+              <div className="col-sm-4 fw-semibold text-dark">Title:</div>
+              <div className="col-sm-8">{featureList.label || 'N/A'}</div>
             </div>
-            <div className="mb-3">
-              <label className="form-label">Priority:</label>
-              <div>{featureList.priority ?? 'N/A'}</div>
+
+            <div className="row mb-3">
+              <div className="col-sm-4 fw-semibold text-dark">Priority:</div>
+              <div className="col-sm-8">{featureList.priority ?? 'N/A'}</div>
             </div>
-            <div className="mb-3">
-              <label className="form-label">Feature Type:</label>
-              <div>{featureList.featureTypeName || 'N/A'}</div>
+
+            <div className="row mb-3">
+              <div className="col-sm-4 fw-semibold text-dark">Feature Type:</div>
+              <div className="col-sm-8">{featureList.featureTypeName || 'N/A'}</div>
             </div>
-            <div className="mb-3">
-              <label className="form-label">Feature Set:</label>
-              <div>{featureList?.featureSet?.title || 'N/A'}</div>
+
+            <div className="row mb-3">
+              <div className="col-sm-4 fw-semibold text-dark">Feature Set:</div>
+              <div className="col-sm-8">{featureList?.featureSet?.title || 'N/A'}</div>
             </div>
-            <div className="mb-3">
-              <label className="form-label">Status:</label>
-              <div>{featureList.status ? 'Active' : 'Inactive'}</div>
+
+            <div className="row mb-2 align-items-center">
+              <div className="col-sm-4 fw-semibold text-dark">Status:</div>
+              <div className="col-sm-8">
+                <span className={` ${featureList.status ? 'text-success' : 'text-danger'}`}>
+                  {featureList.status ? 'Active' : 'Inactive'}
+                </span>
+              </div>
             </div>
           </div>
+
           <div className="modal-footer">
-            <button className="btn btn-secondary px-4" onClick={onClose}>Close</button>
+            <button className="btn btn-danger px-4" onClick={onClose}>Close</button>
           </div>
         </div>
       </div>

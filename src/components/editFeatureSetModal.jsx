@@ -220,18 +220,19 @@ const EditFeatureSetModal = ({ show, onClose, featureSet }) => {
                                 </div>
                             ))}
 
-                            <div className="form-check form-switch mt-3">
+                            <div className="form-check mt-3">
                                 <input
                                     className="form-check-input"
                                     type="checkbox"
+                                    id="statusCheckbox"
                                     checked={status}
                                     onChange={() => setStatus(!status)}
-                                    id="statusSwitch"
                                 />
-                                <label className="form-check-label" htmlFor="statusSwitch">
-                                    Status: {status ? 'Active' : 'Inactive'}
+                                <label className="form-check-label" htmlFor="statusCheckbox">
+                                   {status ? 'Active' : 'Inactive'}
                                 </label>
                             </div>
+
 
                             {errors.general && (
                                 <div className="text-danger text-center mt-2">{errors.general}</div>
