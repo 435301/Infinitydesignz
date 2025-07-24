@@ -67,13 +67,7 @@ const EditProductPage = () => {
                         {/* )} */}
                       </Tab>
                       <Tab eventKey="filters" title="Product Filters" >
-                        {/* {createdProductInfo && ( */}
-                          <EditProductFilters
-                            // createdProductId={createdProductInfo.id}
-                            // filterTypeId={createdProductInfo.filterTypeId}
-                            // filterType={createdProductInfo.filterType}
-                          />
-                        {/* )} */}
+                          <EditProductFilters/>
                       </Tab>
                       <Tab eventKey="features" title="Product Features">
                        

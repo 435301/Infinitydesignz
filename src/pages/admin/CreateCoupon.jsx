@@ -29,10 +29,10 @@ const CreateCouponModal = ({ show, onHide }) => {
     { value: '>10000', label: 'Above 10000' },
   ];
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(fetchBrands());
     dispatch(fetchCategories())
-  },[dispatch])
+  }, [dispatch])
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -68,8 +68,19 @@ const CreateCouponModal = ({ show, onHide }) => {
     }
 
     if (couponType === 'price') {
-      payload.priceRange = form.price_selection?.value || '';
+      const selectedRange = form.price_selection?.value || '';
+      const priceRangeIdMap = {
+        '<100': 1,
+        '100-500': 2,
+        '500-1000': 3,
+        '1000-5000': 4,
+        '5000-10000': 5,
+        '>10000': 6,
+      };
+      // payload.priceRange = selectedRange;
+      payload.priceRangeId = priceRangeIdMap[selectedRange] || null;
     }
+
 
     dispatch(addCoupon(payload));
     onHide();
@@ -88,8 +99,8 @@ const CreateCouponModal = ({ show, onHide }) => {
           <label>Price/Percentage <span className="text-danger">*</span></label>
           <select className="form-control" name="price_type">
             <option>--Choose--</option>
-            <option >Fixed</option>
-            {/* <option value="percentage">Percentage</option> */}
+            <option value='fixed'>Price</option>
+            <option value="percentage">Percentage</option>
           </select>
         </div>
         <div className="form-group col-md-4">
@@ -230,7 +241,7 @@ const CreateCouponModal = ({ show, onHide }) => {
             <>
               <h6 className="mb-3 text-info">Select Brand</h6>
               <div className="row">
-                 <div className="col-lg-4 mb-3">
+                <div className="col-lg-4 mb-3">
                   <label className="form-label">
                     Menu<span className="text-danger">*</span>
                   </label>
