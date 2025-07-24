@@ -57,15 +57,18 @@ const EditProductFeatures = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payload = Object.entries(formValues).map(([featureListId, value]) => ({
-      featureListId: Number(featureListId),
-      value,
+
+     const payload = Object.entries(formValues)
+    .filter(([, value]) => value?.trim() !== '')
+    .map(([featureListId, value]) => ({
       productId: Number(id),
+      featureListId: parseInt(featureListId),
+      value: value.trim()
     }));
 
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`${BASE_URL}/product-features/${id}`, payload, {
+      await axios.post(`${BASE_URL}/product-features`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',

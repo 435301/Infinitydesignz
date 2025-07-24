@@ -11,8 +11,8 @@ const ProductFilters = ({ createdProductId, filterTypeId, filterType }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [filters, setFilters] = useState({});
 
-
   const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
+
   useEffect(() => {
     if (filterType?.filterSets) {
       const initialState = {};
@@ -23,34 +23,30 @@ const ProductFilters = ({ createdProductId, filterTypeId, filterType }) => {
     }
   }, [filterType]);
 
-  const handleChange = (e, filterListId) => {
-    setFilters({ ...filters, [filterListId]: e.target.value });
+  const handleChange = (e, filterSetId) => {
+    setFilters({ ...filters, [filterSetId]: e.target.value });
   };
-
-
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payloadArray = Object.entries(filters).map(([filterListId]) => ({
-      productId: createdProductId,
-      filterListId: parseInt(filterListId),
-    }));
+    const payloadArray = Object.entries(filters)
+      .filter(([_, value]) => value) 
+      .map(([filterSetId, filterListId]) => ({
+        productId: createdProductId,
+        filterListId: parseInt(filterListId),
+      }));
 
     console.log('Submitting payload:', payloadArray);
 
     try {
-      for (let payload of payloadArray) {
-        await axios.post(`${BASE_URL}/product-filters`, payload);
-      }
+      await axios.post(`${BASE_URL}/product-filters`, payloadArray); 
       toast.success('Filters submitted successfully!');
     } catch (error) {
       console.error('Submission failed:', error);
       toast.error('Failed to submit filters.');
     }
   };
-
 
   const handleReset = () => {
     if (filterType?.filterSets) {
@@ -85,7 +81,7 @@ const ProductFilters = ({ createdProductId, filterTypeId, filterType }) => {
                       >
                         <option value="">Choose {filterSet.title}</option>
                         {filterSet.filterLists?.map((list) => (
-                          <option key={list.id} value={list.label}>{list.label}</option>
+                          <option key={list.id} value={list.id}>{list.label}</option>
                         ))}
                       </select>
                     </div>

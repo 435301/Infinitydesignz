@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { addVariants } from '../redux/actions/variantsAction';
 import axios from 'axios';
 import BASE_URL from '../config/config';
+import { toast } from 'react-toastify';
 
 const AddProduct = ({ onClose, onProductCreated }) => {
   const dispatch = useDispatch();
@@ -41,7 +42,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     weight: '',
     model: '',
     sla: '',
-    deliveryCharges: '',
+    deliveryCharges: 0,
     description: '',
     status: 'enable',
     searchKeywords: '',
@@ -102,7 +103,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     if (!formData.stock) newErrors.stock = 'Stock is required';
     if (!formData.mrp) newErrors.mrp = 'MRP is required';
     if (!formData.sellingPrice) newErrors.sellingPrice = 'Selling Price is required';
-    if (!formData.brandId) newErrors.brandId = 'Brand is required';
+    // if (!formData.brandId) newErrors.brandId = 'Brand is required';
     if (!formData.sizeId) newErrors.sizeId = 'Size is required';
     if (!formData.colorId) newErrors.colorId = 'Color is required';
     if (formData.stock && isNaN(formData.stock)) newErrors.stock = 'Stock must be a number';
@@ -115,17 +116,26 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     if (!formData.description.trim()) newErrors.description = 'Description is required';
     if (!formData.status) newErrors.status = 'Product status is required';
     if (!formData.searchKeywords.trim()) newErrors.searchKeywords = 'Search Keywords are required';
-    if (!formData.height) newErrors.height = 'Height is required';
-    if (!formData.width) newErrors.width = 'Width is required';
-    if (!formData.length) newErrors.length = 'Length is required';
-    if (!formData.weight) newErrors.weight = 'Weight is required';
+    // if (!formData.height) newErrors.height = 'Height is required';
+    // if (!formData.width) newErrors.width = 'Width is required';
+    // if (!formData.length) newErrors.length = 'Length is required';
+    // if (!formData.weight) newErrors.weight = 'Weight is required';
     else if (isNaN(formData.weight)) newErrors.weight = 'Weight must be a number';
     if (!formData.sla) newErrors.sla = 'SLA is required';
     else if (isNaN(formData.sla)) newErrors.sla = 'SLA must be a number';
-    if (!formData.deliveryCharges) newErrors.deliveryCharges = 'Delivery Charges are required';
+    // if (!formData.deliveryCharges) newErrors.deliveryCharges = 'Delivery Charges are required';
     else if (isNaN(formData.deliveryCharges))
       newErrors.deliveryCharges = 'Delivery Charges must be a number';
+    let tempErrors = {};
 
+    ['stock', 'mrp', 'sellingPrice'].forEach((field) => {
+      if (!formData[field]) {
+        tempErrors[field] = `${field} is required`;
+      }
+    });
+
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -160,7 +170,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
         model: formData.model,
         weight: parseFloat(formData.weight),
         sla: parseInt(formData.sla),
-        deliveryCharges: parseFloat(formData.deliveryCharges),
+       deliveryCharges: formData.deliveryCharges
       },
     };
     console.log('Submitting Product:', payload);
@@ -174,6 +184,8 @@ const AddProduct = ({ onClose, onProductCreated }) => {
       });
       const productId = response.data?.id;
       console.log('Product created successfully:', response.data);
+      toast.success('Product Created Successfully');
+      navigate('/admin/product')
       const variantPayloads = variants
         .filter((v) => v.sku && v.stock && v.mrp && v.sellingPrice)
         .map((variant) => ({
@@ -267,7 +279,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
               <form onSubmit={handleSubmit} className="app-form">
                 <div className="row">
                   <div className="col-lg-12">
-                    <h6 className="sub-heading">Category Details</h6>
+                    <h6 className="sub-heading">Category Details<span className="text-danger">*</span></h6>
                     <div className="row">
                       <div className="col-lg-4 mb-3">
                         <label className="form-label">
@@ -353,12 +365,12 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                   <div className="col-lg-12 section-divider"></div>
 
                   <div className="col-lg-12">
-                    <h6 className="sub-heading">Product Details</h6>
+                    <h6 className="sub-heading">Product Details<span className="text-danger">*</span></h6>
                     <div className="row">
                       {[
                         { id: 'sku', label: 'SKU Code', required: true },
                         { id: 'title', label: 'Title', required: true },
-                        { id: 'weight', label: 'Weight (gms)', required: true },
+                        { id: 'weight', label: 'Weight (gms)', required: false },
                         { id: 'model', label: 'Model', required: true },
                         { id: 'sla', label: 'SLA (Delivery Days)', required: true },
                         { id: 'deliveryCharges', label: 'Delivery Charges', required: true },
@@ -390,7 +402,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                           Description<span className="text-danger">*</span>
                         </label>
                         <CKEditor
-                          key={formData.description}
+                          // key={formData.description}
                           editor={ClassicEditor}
                           data={formData.description}
                           onChange={(event, editor) => {
@@ -417,8 +429,8 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                           value={formData.status}
                           onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                         >
-                          <option value="enable">Enable</option>
-                          <option value="disable">Disable</option>
+                          <option value="enable">Active</option>
+                          <option value="disable">In Active</option>
                         </select>
                         {errors.status && (
                           <div className="invalid-feedback">{errors.status}</div>
@@ -451,34 +463,37 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                   <div className="col-lg-12 section-divider"></div>
 
                   <div className="col-lg-12">
-                    <h6 className="sub-heading">Price & Color/Size Details</h6>
+                    <h6 className="sub-heading">Price & Color/Size Details<span className="text-danger">*</span></h6>
                     <div className="row">
-                      {['stock', 'mrp', 'sellingPrice', 'height', 'width', 'length'].map((field, idx) => (
-                        <div className="col-lg-3 mb-3" key={idx}>
-                          <label className="form-label">
-                            {field.charAt(0).toUpperCase() + field.slice(1)}
-                            <span className="text-danger">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            className={`form-control ${errors[field] ? 'is-invalid' : ''}`}
-                            placeholder={field}
-                            value={formData[field]}
-                            onChange={(e) => {
-                              setFormData({ ...formData, [field]: e.target.value });
-                              if (errors[field]) {
-                                setErrors({ ...errors, [field]: '' });
-                              }
-                            }}
-                          />
-                          {errors[field] && (
-                            <div className="invalid-feedback">{errors[field]}</div>
-                          )}
-                        </div>
-                      ))}
+                      {['stock', 'mrp', 'sellingPrice', 'height', 'width', 'length'].map((field, idx) => {
+                        const isRequired = ['stock', 'mrp', 'sellingPrice'].includes(field);
+
+                        return (
+                          <div className="col-lg-3 mb-3" key={idx}>
+                            <label className="form-label">
+                              {field.charAt(0).toUpperCase() + field.slice(1)}
+                              {isRequired && <span className="text-danger">*</span>}
+                            </label>
+                            <input
+                              type="text"
+                              className={`form-control ${errors[field] ? 'is-invalid' : ''}`}
+                              placeholder={field}
+                              value={formData[field]}
+                              onChange={(e) => {
+                                setFormData({ ...formData, [field]: e.target.value });
+                                if (errors[field]) {
+                                  setErrors({ ...errors, [field]: '' });
+                                }
+                              }}
+                            />
+                            {errors[field] && <div className="invalid-feedback">{errors[field]}</div>}
+                          </div>
+                        );
+                      })}
+
                       <div className="col-lg-3 mb-3">
                         <label className="form-label">
-                          Brand<span className="text-danger">*</span>
+                          Brand
                         </label>
                         <select
                           className={`form-control ${errors.brandId ? 'is-invalid' : ''}`}
@@ -565,9 +580,9 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                           <th>Stock <span className="text-danger">*</span></th>
                           <th>MRP <span className="text-danger">*</span></th>
                           <th>Selling Price <span className="text-danger">*</span></th>
-                          <th>Size</th>
-                          <th>Color</th>
-                          <th>Action</th>
+                          <th>Size<span className="text-danger">*</span></th>
+                          <th>Color<span className="text-danger">*</span></th>
+                          <th>Action<span className="text-danger">*</span></th>
                         </tr>
                       </thead>
                       <tbody>

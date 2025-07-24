@@ -15,27 +15,34 @@ const ProductFeatures = ({ createdProductId, featureTypeId, featureType }) => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const payloadArray = Object.entries(formValues).map(([featureListId, value]) => ({
+  const payloadArray = Object.entries(formValues)
+    .filter(([, value]) => value?.trim() !== '')
+    .map(([featureListId, value]) => ({
       productId: createdProductId,
       featureListId: parseInt(featureListId),
-      value
+      value: value.trim()
     }));
 
-    console.log('Submitting payload:', payloadArray);
+  if (payloadArray.length === 0) {
+    toast.warning('Please fill at least one feature value.');
+    return;
+  }
 
-    try {
-      for (let payload of payloadArray) {
-        await axios.post(`${BASE_URL}/product-features`, payload);
-      }
-      toast.success('Features submitted successfully!');
-    } catch (error) {
-      console.error('Submission failed:', error);
-      toast.error('Failed to submit features.');
-    }
-  };
+  console.log('Submitting payload array:', payloadArray);
+
+  try {
+    // ✅ Single POST with array payload
+    await axios.post(`${BASE_URL}/product-features`, payloadArray);
+    toast.success('Features submitted successfully!');
+  } catch (error) {
+    console.error('Submission failed:', error);
+    toast.error('Failed to submit features.');
+  }
+};
+
 
   const renderInput = (label, featureListId) => (
     <div className="col-lg-6 mb-3" key={featureListId}>
@@ -78,7 +85,13 @@ const ProductFeatures = ({ createdProductId, featureTypeId, featureType }) => {
 
                 <div className="col-lg-12 text-center my-4">
                   <button type="submit" className="btn btn-primary py-2 px-5 me-2">Update Features</button>
-                  <button type="reset" className="btn btn-secondary py-2 px-5">Reset</button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary py-2 px-5"
+                    onClick={() => setFormValues({})}
+                  >
+                    Reset
+                  </button>
                 </div>
               </form>
             </div>

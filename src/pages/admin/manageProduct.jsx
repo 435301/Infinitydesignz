@@ -208,6 +208,7 @@ const ManageProducts = () => {
                                                             <th>Colour</th>
                                                             <th>Stock</th>
                                                             <th>Product Status</th>
+                                                            <th>Variants</th>
                                                             <th>Created Date</th>
                                                             <th>Action</th>
                                                         </tr>

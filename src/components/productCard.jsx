@@ -70,16 +70,7 @@ const ProductCard = ({ product }) => {
               <del>MRP ₹{product.mrp}</del>
             </p>
            
-            <div className="d-flex flex-wrap mt-2">
-              {images.slice(0, 4).map((url, i) => (
-                <img
-                  key={i}
-                  src={url}
-                  alt={`thumb-${i}`}
-                  style={{ width: "40px", height: "40px", objectFit: "cover", marginRight: "5px", borderRadius: "4px" }}
-                />
-              ))}
-            </div>
+           
           </div>
         </div>
       </Link>

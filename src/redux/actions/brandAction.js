@@ -47,14 +47,16 @@ export const addBrands = (formData) => async (dispatch) => {
   dispatch({ type: 'ADD_BRAND_REQUEST' });
   try {
     const token = localStorage.getItem('token');
-    await axios.post(`${BASE_URL}/brands`, formData, {
+    const response = await axios.post(`${BASE_URL}/brands`, formData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log('res',response.data.message)
     dispatch({ type: 'ADD_BRAND_SUCCESS' });
-     toast.success(`Brand created succefully`);
+     const successMessage = response?.data?.message || 'Brand created successfully';
+    toast.success(successMessage);
     dispatch(fetchBrands());
   } catch (error) {
     dispatch({
