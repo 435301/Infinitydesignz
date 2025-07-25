@@ -60,6 +60,7 @@ export const addVariants = (variants) => async (dispatch) => {
     );
 
     dispatch({ type: 'ADD_VARIANTS_SUCCESS', payload: responses.map(res => res.data) });
+    return responses.data;
   } catch (error) {
     dispatch({
       type: 'ADD_VARIANTS_FAILURE',

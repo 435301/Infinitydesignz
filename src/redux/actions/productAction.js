@@ -33,6 +33,7 @@ export const EDIT_PRODUCT_FILTERS_REQUEST = 'EDIT_PRODUCT_FILTERS_REQUEST';
 export const EDIT_PRODUCT_FILTERS_SUCCESS = 'EDIT_PRODUCT_FILTERS_SUCCESS';
 export const EDIT_PRODUCT_FILTERS_FAILURE = 'EDIT_PRODUCT_FILTERS_FAILURE';
 export const DELETE_PRODUCT_FILTERS_SUCCESS = 'DELETE_PRODUCT_FILTERS_SUCCESS';
+export const FETCH_VARIANT_IMAGE_SUCCESS ='FETCH_VARIANT_IMAGE_SUCCESS';
 
 export const fetchProducts = () => {
 
@@ -356,5 +357,17 @@ export const deleteProductFilter = (id) => async (dispatch) => {
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Failed to delete product filter.');
     console.error(error);
+  }
+};
+
+export const fetchVariantImagesById = (id) => async (dispatch) => {
+  const token = localStorage.getItem('token');
+  try {
+    const res = await axios.get(`${BASE_URL}/images/variant/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    dispatch({ type: FETCH_VARIANT_IMAGE_SUCCESS, payload: res.data });
+  } catch (err) {
+    toast.error("Failed to fetch variant images.");
   }
 };

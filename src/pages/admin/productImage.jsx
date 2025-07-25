@@ -3,14 +3,36 @@ import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 import axios from 'axios';
 import BASE_URL from '../../config/config';
+import { toast } from 'react-toastify';
 
-const AddProductImages = ({ product,createdProductId }) => {
+const AddProductImages = ({ product, createdProductId, createdVariantIds }) => {
+  console.log('createdVariantIds', createdVariantIds)
   // const createdProductId = product?.id;
   const finalProductId = createdProductId || product?.id;
 
   console.log('Created Product ID:', finalProductId);
-  const variants = product?.variants || [];
-  console.log('Product Variants:', variants);
+  const [variants, setVariants] = useState([]);
+
+
+  useEffect(() => {
+    const fetchVariantDetails = async () => {
+      if (createdVariantIds && createdVariantIds.length) {
+        try {
+          const token = localStorage.getItem('token');
+          const response = await axios.get(`${BASE_URL}/variants`, {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { ids: createdVariantIds.join(',') }, // adjust to your backend API style
+          });
+          setVariants(response.data);
+        } catch (err) {
+          console.error('Failed to fetch variant details:', err);
+        }
+      }
+    };
+
+    fetchVariantDetails();
+  }, [createdVariantIds]);
+
 
   const [singlePreviews, setSinglePreviews] = useState({});
   const [multiplePreviews, setMultiplePreviews] = useState({});
@@ -98,7 +120,6 @@ const AddProductImages = ({ product,createdProductId }) => {
     variants.forEach((variant) => {
       const singleKey = `variant_${variant.id}_Single`;
       const multipleKey = `variant_${variant.id}_Multiple`;
-
       if (filesMap[singleKey]) {
         formData.append(`variant_${variant.id}_main`, filesMap[singleKey]);
       }
@@ -116,13 +137,13 @@ const AddProductImages = ({ product,createdProductId }) => {
         {
           headers: { 'Content-Type': 'multipart/form-data' },
         }
-      );
-      alert('Images uploaded successfully!');
+      );;
+      toast.success('Images uploaded successfully!')
       console.log(response.data);
       handleReset();
     } catch (error) {
       console.error('Upload failed:', error);
-      alert('Image upload failed.');
+      toast.error('Image upload failed')
     }
   };
 
@@ -258,6 +279,7 @@ const AddProductImages = ({ product,createdProductId }) => {
                     </div>
                   );
                 })}
+
 
                 {/* Submit / Reset Buttons */}
                 <div className="row">

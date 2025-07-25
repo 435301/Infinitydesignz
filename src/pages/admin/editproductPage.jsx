@@ -10,7 +10,7 @@ import EditProductFeatures from './editProductFeatures';
 import EditProductFilters from './editProductFilters';
 import EditProductImages from './editProductImage';
 import EditProduct from '../../components/editProduct';
-import { useParams } from 'react-router-dom';
+import { useParams,useLocation } from 'react-router-dom';
 
 const EditProductPage = () => {
   const { id } = useParams();

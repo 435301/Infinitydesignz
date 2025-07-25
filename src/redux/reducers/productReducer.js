@@ -29,7 +29,8 @@ import {
   EDIT_PRODUCT_FILTERS_REQUEST,
   EDIT_PRODUCT_FILTERS_SUCCESS,
   EDIT_PRODUCT_FILTERS_FAILURE,
-  DELETE_PRODUCT_FILTERS_SUCCESS
+  DELETE_PRODUCT_FILTERS_SUCCESS,
+  FETCH_VARIANT_IMAGE_SUCCESS
 } from '../actions/productAction';
 
 const initialState = {
@@ -125,6 +126,11 @@ const productReducer = (state = initialState, action) => {
       return {
         ...state,
         productFilters: state.productFilters.filter((item) => item.id !== action.payload),
+      };
+       case FETCH_VARIANT_IMAGE_SUCCESS:
+      return {
+        ...state,
+        product: action.payload,
       };
 
 

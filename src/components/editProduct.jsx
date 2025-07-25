@@ -12,7 +12,7 @@ import { fetchColors } from '../redux/actions/colorAction';
 import { fetchSizes } from '../redux/actions/sizeAction';
 import { addProducts, fetchProductById } from '../redux/actions/productAction';
 import { fetchBrands } from '../redux/actions/brandAction';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams,useLocation } from 'react-router-dom';
 import { addVariants, editVariants } from '../redux/actions/variantsAction';
 import axios from 'axios';
 import BASE_URL from '../config/config';
@@ -26,6 +26,13 @@ const EditProduct = ({ onClose, onProductCreated }) => {
             dispatch(fetchProductById(id));
         }
     }, [id, dispatch]);
+        const location = useLocation();
+      const variantIds = location.state?.variantIds || [];
+
+         useEffect(() => {
+          console.log('Editing Product ID:', id);
+          console.log('Variant IDs:', variantIds);
+        }, [id, variantIds]);
 
     const { categories = [] } = useSelector((state) => state.categories || {});
     const { sizes = [] } = useSelector((state) => state.sizes || {});
@@ -40,7 +47,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
     const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
     const [errors, setErrors] = useState({});
     const [createdProductId, setCreatedProductId] = useState(null);
-
+  const [createdVariantIds,setCreatedVariantIds] = useState('');
     const initialFormState = {
         sku: '',
         title: '',
@@ -234,7 +241,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                     sizeId: v.sizeId ? parseInt(v.sizeId) : null,
                     colorId: v.colorId ? parseInt(v.colorId) : null,
                 }));
-
+const updatedVariantIds = [];
             for (const variant of cleanedVariants) {
                 if (!variant.id) {
                     console.warn("Variant is missing ID:", variant);
@@ -250,6 +257,8 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                             'Content-Type': 'application/json',
                         },
                     });
+                     updatedVariantIds.push(id);
+                     
                     console.log("Variant updated:", variant);
                 } catch (err) {
                     console.error("Failed to update variant:", variant, err);

@@ -200,12 +200,18 @@ const AddProduct = ({ onClose, onProductCreated }) => {
 
         let createdVariants = [];
 
-      if (variantPayloads.length) {
-        createdVariants = await dispatch(addVariants(variantPayloads)); // Must return data with IDs
-      }
+      // if (variantPayloads.length) {
+      //   createdVariants = await dispatch(addVariants(variantPayloads)); 
+      // }
+      const createdVariantsResponse = await axios.get(`${BASE_URL}/variants`, variantPayloads, {
+  headers: { Authorization: `Bearer ${token}` },
+});
+const createdVariantIds = createdVariantsResponse.data?.map((v) => v.id).filter(Boolean);
 
-      const createdVariantIds = createdVariants?.map((v) => v.id).filter(Boolean);
+
+      // const createdVariantIds = createdVariants?.map((v) => v.id).filter(Boolean);
       console.log('Variants payloads', variantPayloads);
+      console.log('createdVariantIds',createdVariantIds)
   
 
       // Reset all form data

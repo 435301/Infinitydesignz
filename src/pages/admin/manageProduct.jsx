@@ -20,8 +20,7 @@ import ViewProductModal from '../../modals/viewProductModal';
 const ManageProducts = () => {
     const dispatch = useDispatch();
     const { products = [] } = useSelector((state) => state.products);
-    console.log('products', products)
-
+ console.log( products.variants?.map(v => v.id),'variantIds')
     const navigate = useNavigate();
 
 
@@ -100,9 +99,18 @@ const ManageProducts = () => {
         setShowDeleteModal(true);
     }
 
-    const handleEdit = (id) => {
-        navigate(`/admin/edit-product/${id}`);
-    }
+    // const handleEdit = (id) => {
+    //     navigate(`/admin/edit-product/${id}`);
+    // }
+
+    const handleEdit = (id, variantIds) => {
+    navigate(`/admin/edit-product/${id}`, {
+        state: { variantIds }
+       
+    });
+    
+};
+
 
     const handleBulkStatusUpdate = async (newStatus) => {
         if (selectedRows.length === 0) {
@@ -264,7 +272,9 @@ const ManageProducts = () => {
                                                                         className="btn btn-light icon-btn"
                                                                         style={{ marginRight: '5px' }}
                                                                         title="Edit"
-                                                                        onClick={() => handleEdit(product.id)}
+                                                                        // onClick={() => handleEdit(product.id)}
+                                                                        onClick={() => handleEdit(product.id, product.variants?.map(v => v.id))}
+
                                                                     >
                                                                         <BsPencilSquare style={{ fontSize: '18px', color: '#28a745' }} />
                                                                     </button>
