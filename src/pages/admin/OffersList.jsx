@@ -168,7 +168,7 @@ const OffersList = () => {
                       <div className="col-lg-6">
                         <h5></h5>
                       </div>
-                      <div className="col-md-6 text-end pt pt">
+                      <div className="col-md-6 text-end pt pt pt">
                         <button
                           className="btn btn-success me-2"
                           disabled={selectedRows.length === 0}

@@ -80,7 +80,7 @@ const ManageOrders = () => {
             <div className="card">
               <div className="card-block">
                 <div className="row mb-2">
-                  <div className="col-md-12 text-end pt">
+                  <div className="col-md-12 text-end pt pt">
                     <button className="btn btn-success me-2">Active</button>
                     <button className="btn btn-secondary me-2">Inactive</button>
                     <button className="btn btn-danger me-2">Delete</button>

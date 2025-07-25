@@ -59,7 +59,7 @@ const ManageCoupons = () => {
 
                     <div className="container-fluid manage">
                         <div className="row mb-2">
-                            <div className="col-md-12 text-end pt">
+                            <div className="col-md-12 text-end pt pt">
                                 <a href="/add-coupon" className="btn btn-primary">+ Add New</a>
                             </div>
                         </div>
@@ -72,7 +72,7 @@ const ManageCoupons = () => {
                                             <div className="col-lg-6">
                                                 <h5>Manage Coupons</h5>
                                             </div>
-                                            <div className="col-md-6 text-end pt">
+                                            <div className="col-md-6 text-end pt pt">
                                                 <button className="btn btn-success me-2">Active</button>
                                                 <button className="btn btn-secondary me-2">Inactive</button>
                                                 <button className="btn btn-danger me-2">Delete</button>

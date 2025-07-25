@@ -204,7 +204,7 @@ const ListSubCategory = () => {
                 <div className="card-block">
                   <div className="row mb-2">
                     <div className="col-lg-6"></div>
-                    <div className="col-md-6 text-end pt pt">
+                    <div className="col-md-6 text-end pt pt pt">
                       <button
                         className="btn btn-success me-2"
                         disabled={selectedRows.length === 0}

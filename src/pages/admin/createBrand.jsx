@@ -182,7 +182,7 @@ const ManageBrands = () => {
                   <div className="col-lg-6">
                     <h5>Brands</h5>
                   </div>
-                  <div className="col-md-6 text-end pt">
+                  <div className="col-md-6 text-end pt pt">
                     <button
                       className="btn btn-success me-1"
                       disabled={selectedRows.length === 0}
