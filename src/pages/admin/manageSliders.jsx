@@ -59,7 +59,7 @@ const ManageSliders = () => {
 
           <div className="container-fluid manage px-3">
             <div className="row mb-2">
-              <div className="col-md-12 text-end pt">
+              <div className="col-md-12 text-end pt pt">
                 <a href="/admin/add-slider" className="btn btn-primary py-1">
                   + Add New
                 </a>
@@ -72,7 +72,7 @@ const ManageSliders = () => {
                   <div className="col-lg-6">
                     <h5>Manage Sliders</h5>
                   </div>
-                  <div className="col-md-6 text-end pt">
+                  <div className="col-md-6 text-end pt pt">
                     <button className="btn btn-success me-2">Active</button>
                     <button className="btn btn-secondary me-2">Inactive</button>
                     <button className="btn btn-danger me-2">Delete</button>
