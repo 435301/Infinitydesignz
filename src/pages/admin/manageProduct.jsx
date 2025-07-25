@@ -252,7 +252,11 @@ const ManageProducts = () => {
                                                                         {product.status ? 'Active' : 'In-Active'}
                                                                     </span>
                                                                 </td>
-
+                                                                <td>
+                                                                    {product.variants?.length > 0
+                                                                        ? `${product.variants.length} ${product.variants.length > 1 ? 's' : ''}`
+                                                                        : '-'}
+                                                                </td>
                                                                 <td>{new Date(product.created_at).toLocaleString()}</td>
                                                                 <td>
                                                                     <button
