@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState  } from 'react';
 import { Tabs, Tab } from 'react-bootstrap';
 import ProductFilters from './productFilter';
 import ProductFeatures from './productFeatures';
@@ -17,24 +17,27 @@ const ProductPage = ({ createdProductId, selectedFeatureType }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [createdProductIdState, setCreatedProductId] = useState(null);
   const [createdProductInfo, setCreatedProductInfo] = useState(null);
-  const { products = [] } = useSelector((state) => state.products);
+  const [createdVariantIds, setCreatedVariantIds] = useState([]);
+  console.log('createdVariantIds',createdVariantIds)
 
+ const {products=[]} = useSelector((state) => state.products);
 
-  useEffect(() => {
-    dispatch(fetchProducts())
-  }, [dispatch]);
+ 
+ useEffect(()=>{
+  dispatch(fetchProducts())
+ },[dispatch]);
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
 
   const selectedProduct = products.find(p => p.id === createdProductInfo?.id);
- console.log('Selected Product:', selectedProduct);
+
 
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
-
+        
         <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
         <aside className="main-sidebar hidden-print">
           <Sidebar isCollapsed={isSidebarCollapsed} />
@@ -68,18 +71,19 @@ const ProductPage = ({ createdProductId, selectedFeatureType }) => {
                         <AddProduct onProductCreated={(productInfo) => {
                           setCreatedProductId(productInfo.id);
                           setCreatedProductInfo(productInfo);
+                            setCreatedVariantIds(productInfo.variantIds || []);
                         }} />
                       </Tab>
                       <Tab eventKey="images" title="Product Images" disabled={!createdProductInfo}>
                         {createdProductInfo && (
                           <AddProductImages
                             createdProductId={createdProductInfo.id}
-                            product={selectedProduct}
+                             createdVariantIds={createdVariantIds}
                           />
                         )}
                       </Tab>
-                      <Tab eventKey="filters" title="Product Filters" disabled={!createdProductInfo}>
-                        {createdProductInfo && (
+                      <Tab eventKey="filters" title="Product Filters"  disabled={!createdProductInfo}>
+                       {createdProductInfo && (
                           <ProductFilters
                             createdProductId={createdProductInfo.id}
                             filterTypeId={createdProductInfo.filterTypeId}
@@ -87,8 +91,8 @@ const ProductPage = ({ createdProductId, selectedFeatureType }) => {
                           />
                         )}
                       </Tab>
-                      <Tab eventKey="features" title="Product Features" disabled={!createdProductInfo}>
-
+                      <Tab eventKey="features" title="Product Features"  disabled={!createdProductInfo}>
+                       
                         {createdProductInfo && (
                           <ProductFeatures
                             createdProductId={createdProductInfo.id}

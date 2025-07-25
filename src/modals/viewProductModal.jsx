@@ -20,7 +20,7 @@ const ViewProductModal = ({ show, onClose, product }) => {
   } = product;
 
   return (
-    <Modal show={show} onHide={onClose} size="lg" centered>
+    <Modal show={show} onHide={onClose} size="xl" centered>
       <Modal.Header closeButton>
         <Modal.Title>View Product Details</Modal.Title>
       </Modal.Header>
@@ -101,6 +101,48 @@ const ViewProductModal = ({ show, onClose, product }) => {
                   <th>Created Date</th>
                   <td>{new Date(created_at).toLocaleString()}</td>
                 </tr>
+                  <th>Variants</th>
+                  <td> {product?.variants?.length > 0 ? (
+                    <table className="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>SKU</th>
+                          <th>Stock</th>
+                          <th>Size</th>
+                          <th>Color</th>
+                          <th>MRP</th>
+                          <th>Selling Price</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {product.variants.map((variant) => (
+                          <tr key={variant.id}>
+                            <td>{variant.sku}</td>
+                            <td>{variant.stock}</td>
+                            <td>{variant.size?.title || '-'}</td>
+                            <td>
+                              {variant.color ? (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                  <div style={{
+                                    width: '15px',
+                                    height: '15px',
+                                    backgroundColor: variant.color.hex_code,
+                                    border: '1px solid #ccc'
+                                  }}></div>
+                                  <span>{variant.color.label}</span>
+                                </div>
+                              ) : '-'}
+                            </td>
+                            <td>{variant.mrp}</td>
+                            <td>{variant.sellingPrice}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <p>No variants available.</p>
+                  )}</td>
+                
               </tbody>
             </table>
           </div>

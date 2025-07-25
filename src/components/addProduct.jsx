@@ -170,7 +170,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
         model: formData.model,
         weight: parseFloat(formData.weight),
         sla: parseInt(formData.sla),
-       deliveryCharges: formData.deliveryCharges
+        deliveryCharges: formData.deliveryCharges
       },
     };
     console.log('Submitting Product:', payload);
@@ -198,10 +198,15 @@ const AddProduct = ({ onClose, onProductCreated }) => {
           colorId: variant.colorId ? parseInt(variant.colorId) : null,
         }));
 
+        let createdVariants = [];
+
       if (variantPayloads.length) {
-        await dispatch(addVariants(variantPayloads));
+        createdVariants = await dispatch(addVariants(variantPayloads)); // Must return data with IDs
       }
+
+      const createdVariantIds = createdVariants?.map((v) => v.id).filter(Boolean);
       console.log('Variants payloads', variantPayloads);
+  
 
       // Reset all form data
       setFormData(initialFormState);
@@ -221,8 +226,10 @@ const AddProduct = ({ onClose, onProductCreated }) => {
           featureType: featureType,
           filterTypeId: selectedFilterTypeId,
           filterType: filterType,
+            variantIds: createdVariantIds || [],
         });
       }
+
       // Only close if it's a modal, otherwise stay on the same page
       if (onClose) {
         onClose(); // Close the modal if provided
@@ -373,7 +380,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                         { id: 'weight', label: 'Weight (gms)', required: false },
                         { id: 'model', label: 'Model', required: true },
                         { id: 'sla', label: 'SLA (Delivery Days)', required: true },
-                        { id: 'deliveryCharges', label: 'Delivery Charges', required: true },
+                        { id: 'deliveryCharges', label: 'Delivery Charges', required: false },
                       ].map((field, idx) => (
                         <div className="col-lg-4 mb-3" key={idx}>
                           <label htmlFor={field.id} className="form-label">
