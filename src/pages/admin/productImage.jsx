@@ -5,7 +5,7 @@ import axios from 'axios';
 import BASE_URL from '../../config/config';
 import { toast } from 'react-toastify';
 
-const AddProductImages = ({ product, createdProductId, createdVariantIds }) => {
+const AddProductImages = ({ product, createdProductId, createdVariantIds,variantIds }) => {
   console.log('createdVariantIds', createdVariantIds)
   // const createdProductId = product?.id;
   const finalProductId = createdProductId || product?.id;
@@ -14,24 +14,29 @@ const AddProductImages = ({ product, createdProductId, createdVariantIds }) => {
   const [variants, setVariants] = useState([]);
 
 
-  useEffect(() => {
-    const fetchVariantDetails = async () => {
-      if (createdVariantIds && createdVariantIds.length) {
-        try {
-          const token = localStorage.getItem('token');
-          const response = await axios.get(`${BASE_URL}/variants`, {
-            headers: { Authorization: `Bearer ${token}` },
-            params: { ids: createdVariantIds.join(',') }, // adjust to your backend API style
-          });
-          setVariants(response.data);
-        } catch (err) {
-          console.error('Failed to fetch variant details:', err);
-        }
-      }
-    };
+useEffect(() => {
+  const fetchVariantDetails = async () => {
+    if (createdVariantIds && createdVariantIds.length) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${BASE_URL}/variants`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-    fetchVariantDetails();
-  }, [createdVariantIds]);
+        // ✅ Filter only the created ones
+        const filtered = response.data.filter(variant =>
+          createdVariantIds.includes(variant.id)
+        );
+
+        setVariants(filtered);
+      } catch (err) {
+        console.error('Failed to fetch variant details:', err);
+      }
+    }
+  };
+
+  fetchVariantDetails();
+}, [createdVariantIds]);
 
 
   const [singlePreviews, setSinglePreviews] = useState({});

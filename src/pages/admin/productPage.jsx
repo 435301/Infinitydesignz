@@ -18,8 +18,7 @@ const ProductPage = ({ createdProductId, selectedFeatureType }) => {
   const [createdProductIdState, setCreatedProductId] = useState(null);
   const [createdProductInfo, setCreatedProductInfo] = useState(null);
   const [createdVariantIds, setCreatedVariantIds] = useState([]);
-  console.log('createdVariantIds',createdVariantIds)
-
+console.log('createdVariantIds',createdVariantIds)
  const {products=[]} = useSelector((state) => state.products);
 
  
@@ -72,6 +71,7 @@ const ProductPage = ({ createdProductId, selectedFeatureType }) => {
                           setCreatedProductId(productInfo.id);
                           setCreatedProductInfo(productInfo);
                             setCreatedVariantIds(productInfo.variantIds || []);
+                            setActiveTab('images');
                         }} />
                       </Tab>
                       <Tab eventKey="images" title="Product Images" disabled={!createdProductInfo}>

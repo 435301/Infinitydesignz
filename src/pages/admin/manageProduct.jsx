@@ -20,8 +20,10 @@ import ViewProductModal from '../../modals/viewProductModal';
 const ManageProducts = () => {
     const dispatch = useDispatch();
     const { products = [] } = useSelector((state) => state.products);
- console.log( products.variants?.map(v => v.id),'variantIds')
+    console.log('products', products)
+    console.log(products.variants?.map(v => v.id), 'variantIds')
     const navigate = useNavigate();
+
 
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -40,24 +42,27 @@ const ManageProducts = () => {
     }, [dispatch])
 
 
-
-    const filteredProducts = products.filter((product) => {
+    const filteredProducts = (products?.data || []).filter((product) => {
         const search = searchTerm.toLowerCase();
-        const matchesSearch = product?.title?.toLowerCase().includes(search) ||
+
+        const matchesSearch =
+            product?.title?.toLowerCase().includes(search) ||
             product?.sku?.toLowerCase().includes(search) ||
-            product?.mainCategory?.title?.toLowerCase().includes(search) ||
-            product?.subCategory?.title?.toLowerCase().includes(search) ||
-            product?.listSubCategory?.title?.toLowerCase().includes(search) ||
+            product?.mainCategoryTitle?.toLowerCase().includes(search) ||
+            product?.subCategoryTitle?.toLowerCase().includes(search) ||
+            product?.listSubCategoryTitle?.toLowerCase().includes(search) ||
             product?.size?.title?.toLowerCase().includes(search) ||
             product?.color?.label?.toLowerCase().includes(search);
 
-
         const matchesStatus = statusFilter
-            ? (statusFilter === 'active' ? product.status === true : product.status === false)
+            ? statusFilter === 'active'
+                ? product.status === true
+                : product.status === false
             : true;
-        return matchesSearch && matchesStatus;
 
+        return matchesSearch && matchesStatus;
     });
+
 
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 10;
@@ -104,12 +109,12 @@ const ManageProducts = () => {
     // }
 
     const handleEdit = (id, variantIds) => {
-    navigate(`/admin/edit-product/${id}`, {
-        state: { variantIds }
-       
-    });
-    
-};
+        navigate(`/admin/edit-product/${id}`, {
+            state: { variantIds }
+
+        });
+
+    };
 
 
     const handleBulkStatusUpdate = async (newStatus) => {

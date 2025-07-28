@@ -48,6 +48,8 @@ const EditProduct = ({ onClose, onProductCreated }) => {
     const [errors, setErrors] = useState({});
     const [createdProductId, setCreatedProductId] = useState(null);
   const [createdVariantIds,setCreatedVariantIds] = useState('');
+  const [updatedVariantIds, setUpdatedVariantIds] = useState([]);
+
     const initialFormState = {
         sku: '',
         title: '',
@@ -241,28 +243,30 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                     sizeId: v.sizeId ? parseInt(v.sizeId) : null,
                     colorId: v.colorId ? parseInt(v.colorId) : null,
                 }));
-const updatedVariantIds = [];
-            for (const variant of cleanedVariants) {
-                if (!variant.id) {
-                    console.warn("Variant is missing ID:", variant);
-                    continue;
-                }
+    const updatedVariantIds = [];
+                for (const variant of cleanedVariants) {
+                    if (!variant.id) {
+                        console.warn("Variant is missing ID:", variant);
+                        continue;
+                    }
 
-                const { id, ...variantPayload } = variant;
+                    const { id, ...variantPayload } = variant;
 
-                try {
-                    await axios.put(`${BASE_URL}/variants/${id}`, { ...variantPayload, productId }, {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                        },
-                    });
-                     updatedVariantIds.push(id);
-                     
-                    console.log("Variant updated:", variant);
-                } catch (err) {
-                    console.error("Failed to update variant:", variant, err);
-                }
+                    try {
+                        await axios.put(`${BASE_URL}/variants/${id}`, { ...variantPayload, productId }, {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                                'Content-Type': 'application/json',
+                            },
+                        });
+                        updatedVariantIds.push(id);
+                        setUpdatedVariantIds(updatedVariantIds); // ✅ lift to parent
+
+                        
+                        console.log("Variant updated:", variant);
+                    } catch (err) {
+                        console.error("Failed to update variant:", variant, err);
+                    }
             }
 
 

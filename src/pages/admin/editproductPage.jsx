@@ -21,6 +21,8 @@ const EditProductPage = () => {
 
   const { productById: createdProductInfo } = useSelector((state) => state.products); 
   const { products = [] } = useSelector((state) => state.products);
+  const [updatedVariantIds, setUpdatedVariantIds] = useState([]);
+
 
   useEffect(() => {
     if (id) {
@@ -57,12 +59,15 @@ const EditProductPage = () => {
                       <Tab eventKey="edit" title="Edit Product">
                         <EditProduct
                           product={createdProductInfo}
+                          // updatedVariantIds={updatedVariantIds}
+                            setUpdatedVariantIds={setUpdatedVariantIds}
                           
                         />
                       </Tab>
                       <Tab eventKey="images" title="Product Images" >
                           <EditProductImages
                             product={selectedProduct}
+                              updatedVariantIds={updatedVariantIds}
                           />
                         {/* )} */}
                       </Tab>

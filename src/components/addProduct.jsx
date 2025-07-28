@@ -35,7 +35,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
   const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
   const [errors, setErrors] = useState({});
   const [createdProductId, setCreatedProductId] = useState(null);
-
+  const [createdVariantIds,setCreatedVariantIds] = useState('');
   const initialFormState = {
     sku: '',
     title: '',
@@ -200,20 +200,22 @@ const AddProduct = ({ onClose, onProductCreated }) => {
 
         let createdVariants = [];
 
-      // if (variantPayloads.length) {
-      //   createdVariants = await dispatch(addVariants(variantPayloads)); 
-      // }
-      const createdVariantsResponse = await axios.get(`${BASE_URL}/variants`, variantPayloads, {
-  headers: { Authorization: `Bearer ${token}` },
-});
-const createdVariantIds = createdVariantsResponse.data?.map((v) => v.id).filter(Boolean);
+      if (variantPayloads.length) {
+        createdVariants = await dispatch(addVariants(variantPayloads)); 
+      }
+    //    if (variantPayloads.length) {
+    //   const variantResponse = await axios.post(`${BASE_URL}/variants`, variantPayloads, {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //       'Content-Type': 'application/json',
+    //     },
+    //   });
 
+    //   createdVariants = variantResponse.data || [];
+    // }
 
-      // const createdVariantIds = createdVariants?.map((v) => v.id).filter(Boolean);
-      console.log('Variants payloads', variantPayloads);
-      console.log('createdVariantIds',createdVariantIds)
-  
-
+    const createdVariantIds = createdVariants.map((v) => v.id).filter(Boolean);
+    console.log('createdVariantIds', createdVariantIds);
       // Reset all form data
       setFormData(initialFormState);
       setDescription('');
@@ -223,6 +225,10 @@ const createdVariantIds = createdVariantsResponse.data?.map((v) => v.id).filter(
       setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
 
       setCreatedProductId(response.data.id);
+      // 3. Pass product and variant IDs to state
+    setCreatedProductId(productId);
+    setCreatedVariantIds(createdVariantIds);
+
 
       // Notify parent component
       if (onProductCreated) {

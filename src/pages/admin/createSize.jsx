@@ -37,13 +37,14 @@ const ManageSizes = () => {
     dispatch(fetchSizes());
   }, [dispatch]);
 
-  const filteredSizes = sizes.filter((size) => {
+  const filteredSizes = (sizes?.list || []).filter((size) => {
     const matchesSearch = size.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter
       ? (statusFilter === 'active' ? size.status === true : size.status === false)
       : true;
     return matchesSearch && matchesStatus;
   });
+
 
   const rowsPerPage = 10;
   const indexOfLastRow = currentPage * rowsPerPage;
@@ -69,14 +70,14 @@ const ManageSizes = () => {
 
   };
 
- const handleBulkStatusUpdate = async (newStatus) => {
-     if (selectedRows.length === 0) {
-       toast.warning("Please select at least one size.");
-       return;
-     }
-     await dispatch(bulkUpdateSizeStatus(selectedRows, newStatus));
-     setSelectedRows([]);
-   };
+  const handleBulkStatusUpdate = async (newStatus) => {
+    if (selectedRows.length === 0) {
+      toast.warning("Please select at least one size.");
+      return;
+    }
+    await dispatch(bulkUpdateSizeStatus(selectedRows, newStatus));
+    setSelectedRows([]);
+  };
 
   const handleRowCheckboxChange = (id) => {
     setSelectedRows((prev) =>

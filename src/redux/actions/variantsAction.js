@@ -49,7 +49,7 @@ export const addVariants = (variants) => async (dispatch) => {
     const token = localStorage.getItem('token');
 
     const responses = await Promise.all(
-      variants.map(variant => 
+      variants.map(variant =>
         axios.post(`${BASE_URL}/variants`, variant, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -59,8 +59,10 @@ export const addVariants = (variants) => async (dispatch) => {
       )
     );
 
-    dispatch({ type: 'ADD_VARIANTS_SUCCESS', payload: responses.map(res => res.data) });
-    return responses.data;
+    const createdVariants = responses.map(res => res.data); // ✅ extract .data from each response
+
+    dispatch({ type: 'ADD_VARIANTS_SUCCESS', payload: createdVariants });
+    return createdVariants; // ✅ return actual data array
   } catch (error) {
     dispatch({
       type: 'ADD_VARIANTS_FAILURE',
@@ -68,6 +70,7 @@ export const addVariants = (variants) => async (dispatch) => {
     });
   }
 };
+
 
 export const editVariants = (variants) => async (dispatch) => {
   dispatch({ type: 'EDIT_VARIANTS__REQUEST' });
