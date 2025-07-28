@@ -35,7 +35,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
   const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
   const [errors, setErrors] = useState({});
   const [createdProductId, setCreatedProductId] = useState(null);
-  const [createdVariantIds,setCreatedVariantIds] = useState('');
+  const [createdVariantIds, setCreatedVariantIds] = useState('');
   const initialFormState = {
     sku: '',
     title: '',
@@ -198,24 +198,24 @@ const AddProduct = ({ onClose, onProductCreated }) => {
           colorId: variant.colorId ? parseInt(variant.colorId) : null,
         }));
 
-        let createdVariants = [];
+      let createdVariants = [];
 
       if (variantPayloads.length) {
-        createdVariants = await dispatch(addVariants(variantPayloads)); 
+        createdVariants = await dispatch(addVariants(variantPayloads));
       }
-    //    if (variantPayloads.length) {
-    //   const variantResponse = await axios.post(`${BASE_URL}/variants`, variantPayloads, {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //       'Content-Type': 'application/json',
-    //     },
-    //   });
+      //    if (variantPayloads.length) {
+      //   const variantResponse = await axios.post(`${BASE_URL}/variants`, variantPayloads, {
+      //     headers: {
+      //       Authorization: `Bearer ${token}`,
+      //       'Content-Type': 'application/json',
+      //     },
+      //   });
 
-    //   createdVariants = variantResponse.data || [];
-    // }
+      //   createdVariants = variantResponse.data || [];
+      // }
 
-    const createdVariantIds = createdVariants.map((v) => v.id).filter(Boolean);
-    console.log('createdVariantIds', createdVariantIds);
+      const createdVariantIds = createdVariants.map((v) => v.id).filter(Boolean);
+      console.log('createdVariantIds', createdVariantIds);
       // Reset all form data
       setFormData(initialFormState);
       setDescription('');
@@ -226,8 +226,8 @@ const AddProduct = ({ onClose, onProductCreated }) => {
 
       setCreatedProductId(response.data.id);
       // 3. Pass product and variant IDs to state
-    setCreatedProductId(productId);
-    setCreatedVariantIds(createdVariantIds);
+      setCreatedProductId(productId);
+      setCreatedVariantIds(createdVariantIds);
 
 
       // Notify parent component
@@ -238,7 +238,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
           featureType: featureType,
           filterTypeId: selectedFilterTypeId,
           filterType: filterType,
-            variantIds: createdVariantIds || [],
+          variantIds: createdVariantIds || [],
         });
       }
 
