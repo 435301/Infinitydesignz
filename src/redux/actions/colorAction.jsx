@@ -45,7 +45,7 @@ export const addColors = (formData) => async (dispatch) => {
   dispatch({ type: 'ADD_COLORS_REQUEST' });
   try {
     const token = localStorage.getItem('token');
-    await axios.post(`${BASE_URL}/colors`, formData, {
+   const response =  await axios.post(`${BASE_URL}/colors`, formData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -53,7 +53,8 @@ export const addColors = (formData) => async (dispatch) => {
     });
 
     dispatch({ type: 'ADD_COLOR_SUCCESS' });
-    toast.success('Color created successfully')
+    const successMessage = response?.message || 'Color created successfully'
+    toast.success(successMessage);
     dispatch(fetchColors());
   } catch (error) {
     dispatch({
@@ -69,7 +70,7 @@ export const editColors = (payload) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
     const { id, ...updateData } = payload;
-    await axios.patch(`${BASE_URL}/colors/${id}`, updateData, {
+    const response = await axios.patch(`${BASE_URL}/colors/${id}`, updateData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -77,7 +78,8 @@ export const editColors = (payload) => async (dispatch) => {
     });
 
     dispatch({ type: 'EDIT_COLORS_SUCCESS' });
-    toast.success('Color updated successfully')
+    const successMessage = response?.message || 'Color updated successfully';
+    toast.success(successMessage);
     dispatch(fetchColors());
   } catch (error) {
     dispatch({
@@ -92,14 +94,15 @@ export const deleteColor = (id) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
 
-    await axios.delete(`${BASE_URL}/colors/${id}`, {
+    const response = await axios.delete(`${BASE_URL}/colors/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
     dispatch(fetchColors(id));
-    toast.success('Color deleted successfully!');
+  const successMessage = response?.message || 'Color deleted successfully';
+    toast.success(successMessage);
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Failed to delete color.');
     console.error(error);
@@ -110,7 +113,7 @@ export const bulkUpdateColorStatus = (ids,status) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
 
-    await axios.patch(
+   const response =  await axios.patch(
       `${BASE_URL}/common/bulk-update-status`,
       {
         entity: 'colors', 

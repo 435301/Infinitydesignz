@@ -33,7 +33,8 @@ export const fetchSizes = () => {
 
       console.log('response', response)
       dispatch({ type: FETCH_SIZE_SUCCESS, payload: response.data });
-      //  toast.dismiss(loadingToastId);
+      const successMessage = response?.message || 'Size created successfully';
+    toast.success(successMessage);
     } catch (error) {
       toast.dismiss();
       toast.error(error?.response?.data?.message || 'Failed to fetch sizes');
@@ -50,14 +51,15 @@ export const addSizes = (formData) => async (dispatch) => {
   dispatch({ type: 'ADD_SIZES_REQUEST' });
   try {
     const token = localStorage.getItem('token');
-    await axios.post(`${BASE_URL}/size-uom`, formData, {
+    const response = await axios.post(`${BASE_URL}/size-uom`, formData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
     dispatch({ type: 'ADD_SIZES_SUCCESS' });
-    toast.success('Size created successfully')
+    const successMessage = response?.message || 'Size created successfully';
+    toast.success(successMessage);
     dispatch(fetchSizes());
   } catch (error) {
     dispatch({
@@ -75,7 +77,7 @@ export const editSizes = (payload) => async (dispatch) => {
     const token = localStorage.getItem('token');
     const { id, ...updateData } = payload; // extract id
 
-    await axios.patch(`${BASE_URL}/size-uom/${id}`, updateData, {
+   const response =  await axios.patch(`${BASE_URL}/size-uom/${id}`, updateData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -83,7 +85,8 @@ export const editSizes = (payload) => async (dispatch) => {
     });
 
     dispatch({ type: 'EDIT_SIZES_SUCCESS' });
-    toast.success('Size updated successfully')
+    const successMessage = response?.message || 'Size updated successfully'
+    toast.success(successMessage)
     dispatch(fetchSizes());
   } catch (error) {
     dispatch({
@@ -96,13 +99,14 @@ export const editSizes = (payload) => async (dispatch) => {
 export const deleteSize = (id) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
-    await axios.delete(`${BASE_URL}/size-uom/${id}`, {
+    const response = await axios.delete(`${BASE_URL}/size-uom/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
     dispatch({ type: 'DELETE_SIZE_SUCCESS', payload: id });
-    toast.success('Size deleted successfully');
+    const successMessage = response?.message || 'Size deleted successfully'
+    toast.success(successMessage);
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Failed to delete size');
   }

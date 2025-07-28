@@ -55,7 +55,7 @@ export const addBrands = (formData) => async (dispatch) => {
     });
     console.log('res',response.data.message)
     dispatch({ type: 'ADD_BRAND_SUCCESS' });
-     const successMessage = response?.data?.message || 'Brand created successfully';
+     const successMessage = response?.message || 'Brand created successfully';
     toast.success(successMessage);
     dispatch(fetchBrands());
   } catch (error) {
@@ -74,7 +74,7 @@ export const editBrands = (payload) => async (dispatch) => {
     const token = localStorage.getItem('token');
     const { id, ...updateData } = payload; 
 
-    await axios.put(`${BASE_URL}/brands/${id}`, updateData, {
+   const response=  await axios.put(`${BASE_URL}/brands/${id}`, updateData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -82,7 +82,8 @@ export const editBrands = (payload) => async (dispatch) => {
     });
 
     dispatch({ type: 'EDIT_BRAND_SUCCESS' });
-    toast.success('Brand updated Successfully')
+    const successMessage = response?.message || 'Brand edited successfully';
+    toast.success(successMessage);
     dispatch(fetchBrands());
   } catch (error) {
     dispatch({
@@ -97,14 +98,15 @@ export const deleteBrand = (id) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
 
-    await axios.delete(`${BASE_URL}/brands/${id}`, {
+   const response =  await axios.delete(`${BASE_URL}/brands/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
     dispatch(fetchBrands(id));
-    toast.success('Brand deleted successfully!');
+    const deleteMessage = response?.message || 'Brand deleted successfully!'
+    toast.success(deleteMessage)
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Failed to delete brand.');
     console.error(error);
