@@ -65,14 +65,15 @@ export const addCategory = (formData) => async (dispatch) => {
     const token = localStorage.getItem('token');
     console.log('tokenadd', token)
 
-    await axios.post(`${BASE_URL}/categories`, formData, {
+   const response =  await axios.post(`${BASE_URL}/categories`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${token}`,
       },
     });
     dispatch({ type: 'ADD_CATEGORY_SUCCESS' });
-         toast.success('Category created successfully')
+    const successMessage = response?.message || 'Category created successfully'
+     toast.success(successMessage);
     dispatch(fetchCategories());
   } catch (error) {
     dispatch({
@@ -87,7 +88,7 @@ export const addSubCategory = (formData) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
 
-    await axios.post(`${BASE_URL}/categories`, formData, {
+    const response = await axios.post(`${BASE_URL}/categories`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${token}`,
@@ -95,7 +96,8 @@ export const addSubCategory = (formData) => async (dispatch) => {
     });
 
     dispatch({ type: 'ADD_SUBCATEGORY_SUCCESS' });
-         toast.success('Subcategory created successfully')
+     const successMessage = response?.message || 'Subcategory created successfully'
+         toast.success(successMessage)
     dispatch(fetchCategories());
   } catch (error) {
     dispatch({
@@ -111,7 +113,7 @@ export const listSubCategory = (formData) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
 
-    await axios.post(`${BASE_URL}/categories`, formData, {
+   const response =  await axios.post(`${BASE_URL}/categories`, formData, {
       headers: {
         // 'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${token}`,
@@ -119,6 +121,8 @@ export const listSubCategory = (formData) => async (dispatch) => {
     });
 
     dispatch({ type: 'LIST_SUBCATEGORY_SUCCESS' });
+    const successMessage = response?.message || 'List SubCategory Created Sucessfully'
+    toast.success(successMessage);
     dispatch(fetchCategories());
   } catch (error) {
     dispatch({
@@ -132,7 +136,7 @@ export const editCategory = (id, formData) => async (dispatch) => {
   dispatch({ type: 'EDIT_CATEGORY_REQUEST' });
   try {
     const token = localStorage.getItem('token');
-    await axios.patch(`${BASE_URL}/categories/update/${id}`, formData, {
+    const response = await axios.patch(`${BASE_URL}/categories/update/${id}`, formData, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'multipart/form-data',
@@ -140,7 +144,8 @@ export const editCategory = (id, formData) => async (dispatch) => {
     });
 
     dispatch({ type: 'EDIT_CATEGORY_SUCCESS' });
-         toast.success('Category updated successfully')
+    const successMessage = response?.message || 'Category updated successfully'
+         toast.success(successMessage)
     dispatch(fetchCategories());
   } catch (error) {
     dispatch({
@@ -169,7 +174,8 @@ export const updateSubCategory = (id, updatedData) => async (dispatch) => {
       headers: { Authorization: `Bearer ${token}` },
     });
     dispatch({ type: EDIT_SUBCATEGORY_SUCCESS, payload: res.data });
-    toast.success("Subcategory updated successfully.");
+    const successMessage = res?.message || "Subcategory updated successfully"
+    toast.success(successMessage);
   } catch (err) {
     toast.error("Failed to update subcategory.");
   }
@@ -182,7 +188,8 @@ export const updateListSubCategory = (id, updatedData) => async (dispatch) => {
       headers: { Authorization: `Bearer ${token}` },
     });
     dispatch({ type: EDIT_LISTSUBCATEGORY_SUCCESS, payload: res.data });
-    toast.success("ListSubcategory updated successfully.");
+    const successMessage = res?.message || "ListSubcategory updated successfully"
+    toast.success(successMessage);
   } catch (err) {
     toast.error("Failed to update subcategory.");
   }
@@ -203,11 +210,12 @@ export const fetchListSubCategoryById = (id) => async (dispatch) => {
 export const deleteCategory = (id) => async (dispatch) => {
   const token = localStorage.getItem('token');
   try {
-    await axios.delete(`${BASE_URL}/categories/${id}`, {
+   const response =  await axios.delete(`${BASE_URL}/categories/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     dispatch(fetchCategories());
-    toast.success("Category deleted successfully.");
+    const successMessage = response?.message || "Category deleted successfully"
+    toast.success(successMessage);
   } catch (err) {
     toast.error("Failed to delete category.");
   }
@@ -216,11 +224,12 @@ export const deleteCategory = (id) => async (dispatch) => {
 export const deleteSubCategory = (id) => async (dispatch) => {
   const token = localStorage.getItem('token');
   try {
-    await axios.delete(`${BASE_URL}/categories/${id}`, {
+   const response =  await axios.delete(`${BASE_URL}/categories/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     dispatch(fetchCategories());
-    toast.success("Subcategory deleted successfully.");
+    const successMessage = response?.message || "Subcategory deleted successfully"
+    toast.success(successMessage);
   } catch (err) {
     toast.error("Failed to delete subcategory.");
   }
@@ -229,11 +238,12 @@ export const deleteSubCategory = (id) => async (dispatch) => {
 export const deleteListSubCategory = (id) => async (dispatch) => {
   const token = localStorage.getItem('token');
   try {
-    await axios.delete(`${BASE_URL}/categories/${id}`, {
+   const response =  await axios.delete(`${BASE_URL}/categories/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     dispatch(fetchCategories());
-    toast.success("ListSubcategory deleted successfully.");
+    const successMessage = response?.message || "ListSubcategory deleted successfully"
+    toast.success(successMessage);
   } catch (err) {
     toast.error("Failed to delete ListSubcategory.");
   }

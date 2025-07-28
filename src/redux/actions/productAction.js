@@ -33,7 +33,7 @@ export const EDIT_PRODUCT_FILTERS_REQUEST = 'EDIT_PRODUCT_FILTERS_REQUEST';
 export const EDIT_PRODUCT_FILTERS_SUCCESS = 'EDIT_PRODUCT_FILTERS_SUCCESS';
 export const EDIT_PRODUCT_FILTERS_FAILURE = 'EDIT_PRODUCT_FILTERS_FAILURE';
 export const DELETE_PRODUCT_FILTERS_SUCCESS = 'DELETE_PRODUCT_FILTERS_SUCCESS';
-export const FETCH_VARIANT_IMAGE_SUCCESS ='FETCH_VARIANT_IMAGE_SUCCESS';
+export const FETCH_VARIANT_IMAGE_SUCCESS = 'FETCH_VARIANT_IMAGE_SUCCESS';
 
 export const fetchProducts = () => {
 
@@ -74,7 +74,8 @@ export const addProducts = (formData) => async (dispatch) => {
       },
     });
     dispatch({ type: 'ADD_PRODUCT_SUCCESS' });
-    toast.success(`Product created succefully`);
+    const successMessage = response?.message || `Product created succefully`
+    toast.success(successMessage);
     dispatch(fetchProducts());
     return response.data;
   } catch (error) {
@@ -101,7 +102,8 @@ export const editProducts = (payload) => async (dispatch) => {
     });
 
     dispatch({ type: 'EDIT_PRODUCT_SUCCESS', payload: response.data });
-    toast.success('product updated Successfully')
+    const successMessage = response?.message || 'product updated Successfully'
+    toast.success(successMessage)
     dispatch(fetchProducts());
     return response.data;
   } catch (error) {
@@ -117,14 +119,15 @@ export const deleteProducts = (id) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
 
-    await axios.delete(`${BASE_URL}/products/${id}`, {
+    const response = await axios.delete(`${BASE_URL}/products/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
     dispatch(fetchProducts(id));
-    toast.success('Product deleted successfully!');
+    const successMessage = response?.message || 'Product deleted successfully!'
+    toast.success(successMessage);
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Failed to delete Product.');
     console.error(error);
@@ -208,7 +211,8 @@ export const addProductFeature = (formData) => async (dispatch) => {
       },
     });
     dispatch({ type: 'ADD_PRODUCT_FEATURES_SUCCESS', payload: response.data });
-    toast.success(` Productr Feature created succefully`);
+    const successMessage = response?.message || ` Product Feature created succefully`
+    toast.success(successMessage);
     dispatch(fetchProductFeatures());
   } catch (error) {
     console.error('Error Response', error?.response?.data)
@@ -227,7 +231,7 @@ export const editProductFeature = (payload) => async (dispatch) => {
     const token = localStorage.getItem('token');
     const { id, ...updateData } = payload;
 
-    await axios.patch(`${BASE_URL}/product-features/${id}`, updateData, {
+    const response = await axios.patch(`${BASE_URL}/product-features/${id}`, updateData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -235,7 +239,8 @@ export const editProductFeature = (payload) => async (dispatch) => {
     });
 
     dispatch({ type: 'EDIT_PRODUCT_FEATURES_SUCCESS' });
-    toast.success('Product Feature updated Successfully')
+    const successMessage = response?.message || 'Product Feature updated Successfully'
+    toast.success(successMessage);
     dispatch(fetchProductFeatures());
   } catch (error) {
     dispatch({
@@ -249,7 +254,7 @@ export const deleteProductFeature = (id) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
 
-    await axios.delete(`${BASE_URL}/product-features/${id}`, {
+    const response = await axios.delete(`${BASE_URL}/product-features/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -257,7 +262,8 @@ export const deleteProductFeature = (id) => async (dispatch) => {
 
     dispatch({ type: 'DELETE_PRODUCT_FEATURE_SUCCESS', payload: id });
     dispatch(fetchProductFeatures(id));
-    toast.success('Product Feature deleted successfully!');
+    const successMessage = response?.message || 'Product Feature deleted successfully!'
+    toast.success(successMessage);
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Failed to delete product feature.');
     console.error(error);
@@ -304,7 +310,8 @@ export const addProductFilter = (formData) => async (dispatch) => {
       },
     });
     dispatch({ type: 'ADD_PRODUCT_FILTERS_SUCCESS`', payload: response.data });
-    toast.success(` Productr Filter created succefully`);
+    const successMessage = response?.message || ` Product Filter created succefully`
+    toast.success(successMessage);
     dispatch(fetchProductFilters());
   } catch (error) {
     console.error('Error Response', error?.response?.data)
@@ -323,7 +330,7 @@ export const editProductFilter = (payload) => async (dispatch) => {
     const token = localStorage.getItem('token');
     const { id, ...updateData } = payload;
 
-    await axios.patch(`${BASE_URL}/product-filters/${id}`, updateData, {
+    const response = await axios.patch(`${BASE_URL}/product-filters/${id}`, updateData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -331,7 +338,8 @@ export const editProductFilter = (payload) => async (dispatch) => {
     });
 
     dispatch({ type: 'EDIT_PRODUCT_FILTERS_SUCCESS' });
-    toast.success('Product Filter updated Successfully')
+    const successMessage = response?.message || 'Product Filter updated Successfully'
+    toast.success(successMessage)
     dispatch(fetchProductFilters());
   } catch (error) {
     dispatch({
@@ -345,7 +353,7 @@ export const deleteProductFilter = (id) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
 
-    await axios.delete(`${BASE_URL}/product-filters/${id}`, {
+   const response =  await axios.delete(`${BASE_URL}/product-filters/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -353,7 +361,8 @@ export const deleteProductFilter = (id) => async (dispatch) => {
 
     dispatch({ type: 'DELETE_PRODUCT_FILTERS_SUCCESS', payload: id });
     dispatch(fetchProductFilters(id));
-    toast.success('Product Filter deleted successfully!');
+    const successMessage = response?.message || 'Product Filter deleted successfully!'
+    toast.success(successMessage);
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Failed to delete product filter.');
     console.error(error);

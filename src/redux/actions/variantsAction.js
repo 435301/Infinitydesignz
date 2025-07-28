@@ -59,10 +59,13 @@ export const addVariants = (variants) => async (dispatch) => {
       )
     );
 
-    const createdVariants = responses.map(res => res.data); // ✅ extract .data from each response
+    const createdVariants = responses.map(res => res.data); 
 
     dispatch({ type: 'ADD_VARIANTS_SUCCESS', payload: createdVariants });
-    return createdVariants; // ✅ return actual data array
+     const successMessage = responses?.message || 'Variants created successfully'
+    toast.success(successMessage);
+    return createdVariants; 
+   
   } catch (error) {
     dispatch({
       type: 'ADD_VARIANTS_FAILURE',
@@ -93,8 +96,8 @@ export const editVariants = (variants) => async (dispatch) => {
       type: 'EDIT_VARIANTS_SUCCESS',
       payload: responses.map((res) => res.data),
     });
-
-    toast.success('Variants updated successfully');
+  const successMessage = responses?.message ||'Variants updated successfully'
+    toast.success(successMessage);
     dispatch(fetchVariants());
     return responses.map(res => res.data);
   } catch (error) {
@@ -111,14 +114,15 @@ export const deleteVariants = (id) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
 
-    await axios.delete(`${BASE_URL}/variants/${id}`, {
+   const response =  await axios.delete(`${BASE_URL}/variants/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
     dispatch(fetchVariants(id));
-    toast.success('Variant deleted successfully!');
+    const successMessage = response?.message || 'Variant deleted successfully!'
+    toast.success(successMessage);
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Failed to delete Variant.');
     console.error(error);
