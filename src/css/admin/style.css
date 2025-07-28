@@ -2122,7 +2122,7 @@ small a {
 }
 
 .image-preview {
-  display: none;
+  display: block;
   /* Hidden by default */
   position: relative;
   width: 118px;

@@ -12,7 +12,7 @@ import { fetchColors } from '../redux/actions/colorAction';
 import { fetchSizes } from '../redux/actions/sizeAction';
 import { addProducts, fetchProductById } from '../redux/actions/productAction';
 import { fetchBrands } from '../redux/actions/brandAction';
-import { useNavigate, useParams,useLocation } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { addVariants, editVariants } from '../redux/actions/variantsAction';
 import axios from 'axios';
 import BASE_URL from '../config/config';
@@ -26,13 +26,13 @@ const EditProduct = ({ onClose, onProductCreated }) => {
             dispatch(fetchProductById(id));
         }
     }, [id, dispatch]);
-        const location = useLocation();
-      const variantIds = location.state?.variantIds || [];
+    const location = useLocation();
+    const variantIds = location.state?.variantIds || [];
 
-         useEffect(() => {
-          console.log('Editing Product ID:', id);
-          console.log('Variant IDs:', variantIds);
-        }, [id, variantIds]);
+    useEffect(() => {
+        console.log('Editing Product ID:', id);
+        console.log('Variant IDs:', variantIds);
+    }, [id, variantIds]);
 
     const { categories = [] } = useSelector((state) => state.categories || {});
     const { sizes = [] } = useSelector((state) => state.sizes || {});
@@ -47,8 +47,8 @@ const EditProduct = ({ onClose, onProductCreated }) => {
     const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
     const [errors, setErrors] = useState({});
     const [createdProductId, setCreatedProductId] = useState(null);
-  const [createdVariantIds,setCreatedVariantIds] = useState('');
-  const [updatedVariantIds, setUpdatedVariantIds] = useState([]);
+    const [createdVariantIds, setCreatedVariantIds] = useState('');
+    const [updatedVariantIds, setUpdatedVariantIds] = useState([]);
 
     const initialFormState = {
         sku: '',
@@ -96,52 +96,85 @@ const EditProduct = ({ onClose, onProductCreated }) => {
 
     const { product } = useSelector(state => state.products);
 
-    useEffect(() => {
-        if (product) {
-            const p = product;
-            console.log('p:', p);
-            const listSubCategory = categories.find(cat => cat.id === p.listSubCategoryId || p.categoryId);
-            const subCategory = categories.find(cat => cat.id === listSubCategory?.parentId);
-            const menuCategory = categories.find(cat => cat.id === subCategory?.parentId);
-            setSelectedListSubMenu(listSubCategory?.id || '');
-            setSelectedSubMenu(subCategory?.id || '');
-            setSelectedMenu(menuCategory?.id || '');
-            setFormData({
-                sku: p.sku,
-                title: p.title,
-                weight: p.productDetails.weight,
-                model: p.productDetails.model,
-                sla: p.productDetails.sla,
-                deliveryCharges: p.productDetails.deliveryCharges,
-                description: p.description,
-                status: p.status ? 'enable' : 'disable',
-                searchKeywords: p.searchKeywords,
-                stock: p.stock,
-                mrp: p.mrp,
-                sellingPrice: p.sellingPrice,
-                height: p.productDetails.height || '',
-                width: p.productDetails.width || '',
-                length: p.productDetails.length || '',
-                sizeId: p.sizeId,
-                colorId: p.colorId,
-                brandId: p.brandId,
-            });
-            setVariants(
-                Array.isArray(p.variants) && p.variants.length
-                    ? p.variants.map(v => ({
-                        id: v.id,
-                        sku: v.sku || '',
-                        stock: v.stock?.toString() || '',
-                        mrp: v.mrp?.toString() || '',
-                        sellingPrice: v.sellingPrice?.toString() || '',
-                        sizeId: v.sizeId?.toString() || '',
-                        colorId: v.colorId?.toString() || ''
-                    }))
-                    : [{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]
-            );
-        }
-    }, [product]);
+ useEffect(() => {
+    if (product && categories.length) {
+        const p = product;
+        console.log('Product:', p);
 
+        // Find the category associated with listSubCategoryId or categoryId
+        const listSubCategory = categories.find(
+            (cat) => cat.id === (p.listSubCategoryId || p.categoryId)
+        );
+
+        let menuId = '';
+        let subMenuId = '';
+        let listSubMenuId = '';
+
+        if (listSubCategory) {
+            listSubMenuId = listSubCategory.id || '';
+
+            // Check if the category has a parent (submenu)
+            const subCategory = listSubCategory.parentId
+                ? categories.find((cat) => cat.id === listSubCategory.parentId)
+                : null;
+
+            if (subCategory) {
+                subMenuId = subCategory.id || '';
+
+                // Check if the submenu has a parent (menu)
+                const menuCategory = subCategory.parentId
+                    ? categories.find((cat) => cat.id === subCategory.parentId)
+                    : null;
+                menuId = menuCategory ? menuCategory.id : subCategory.id; // If no menu, submenu acts as menu
+            } else {
+                // If no parent, the category itself is the top-level menu
+                menuId = listSubCategory.id;
+            }
+        }
+
+        // Set the dropdown states
+        setSelectedMenu(menuId);
+        setSelectedSubMenu(subMenuId);
+        setSelectedListSubMenu(listSubMenuId);
+
+        // Set form data
+        setFormData({
+            sku: p.sku || '',
+            title: p.title || '',
+            weight: p.productDetails?.weight || '',
+            model: p.productDetails?.model || '',
+            sla: p.productDetails?.sla || '',
+            deliveryCharges: p.productDetails?.deliveryCharges || '',
+            description: p.description || '',
+            status: p.status ? 'enable' : 'disable',
+            searchKeywords: p.searchKeywords || '',
+            stock: p.stock || '',
+            mrp: p.mrp || '',
+            sellingPrice: p.sellingPrice || '',
+            height: p.productDetails?.height || '',
+            width: p.productDetails?.width || '',
+            length: p.productDetails?.length || '',
+            sizeId: p.sizeId || '',
+            colorId: p.colorId || '',
+            brandId: p.brandId || '',
+        });
+
+        // Set variants
+        setVariants(
+            Array.isArray(p.variants) && p.variants.length
+                ? p.variants.map((v) => ({
+                      id: v.id,
+                      sku: v.sku || '',
+                      stock: v.stock?.toString() || '',
+                      mrp: v.mrp?.toString() || '',
+                      sellingPrice: v.sellingPrice?.toString() || '',
+                      sizeId: v.sizeId?.toString() || '',
+                      colorId: v.colorId?.toString() || '',
+                  }))
+                : [{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]
+        );
+    }
+}, [product, categories]);
     const handleToggleSidebar = (collapsed) => {
         setIsSidebarCollapsed(collapsed);
     };
@@ -243,30 +276,30 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                     sizeId: v.sizeId ? parseInt(v.sizeId) : null,
                     colorId: v.colorId ? parseInt(v.colorId) : null,
                 }));
-    const updatedVariantIds = [];
-                for (const variant of cleanedVariants) {
-                    if (!variant.id) {
-                        console.warn("Variant is missing ID:", variant);
-                        continue;
-                    }
+            const updatedVariantIds = [];
+            for (const variant of cleanedVariants) {
+                if (!variant.id) {
+                    console.warn("Variant is missing ID:", variant);
+                    continue;
+                }
 
-                    const { id, ...variantPayload } = variant;
+                const { id, ...variantPayload } = variant;
 
-                    try {
-                        await axios.put(`${BASE_URL}/variants/${id}`, { ...variantPayload, productId }, {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                                'Content-Type': 'application/json',
-                            },
-                        });
-                        updatedVariantIds.push(id);
-                        setUpdatedVariantIds(updatedVariantIds); // ✅ lift to parent
+                try {
+                    await axios.put(`${BASE_URL}/variants/${id}`, { ...variantPayload, productId }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                    updatedVariantIds.push(id);
+                    setUpdatedVariantIds(updatedVariantIds); // ✅ lift to parent
 
-                        
-                        console.log("Variant updated:", variant);
-                    } catch (err) {
-                        console.error("Failed to update variant:", variant, err);
-                    }
+
+                    console.log("Variant updated:", variant);
+                } catch (err) {
+                    console.error("Failed to update variant:", variant, err);
+                }
             }
 
 

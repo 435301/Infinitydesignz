@@ -35,7 +35,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
   const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
   const [errors, setErrors] = useState({});
   const [createdProductId, setCreatedProductId] = useState(null);
-  const [createdVariantIds,setCreatedVariantIds] = useState('');
+  const [createdVariantIds, setCreatedVariantIds] = useState('');
   const initialFormState = {
     sku: '',
     title: '',
@@ -140,113 +140,113 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  setErrors({});
-  if (!validate()) return;
+    setErrors({});
+    if (!validate()) return;
 
     const variantPayloads = variants
-    .filter((v) => v.sku && v.stock && v.mrp && v.sellingPrice)
-    .map((variant) => ({
-      sku: variant.sku,
-      stock: parseInt(variant.stock),
-      mrp: parseFloat(variant.mrp),
-      sellingPrice: parseFloat(variant.sellingPrice),
-      sizeId: variant.sizeId ? parseInt(variant.sizeId) : null,
-      colorId: variant.colorId ? parseInt(variant.colorId) : null,
-    }));
+      .filter((v) => v.sku && v.stock && v.mrp && v.sellingPrice)
+      .map((variant) => ({
+        sku: variant.sku,
+        stock: parseInt(variant.stock),
+        mrp: parseFloat(variant.mrp),
+        sellingPrice: parseFloat(variant.sellingPrice),
+        sizeId: variant.sizeId ? parseInt(variant.sizeId) : null,
+        colorId: variant.colorId ? parseInt(variant.colorId) : null,
+      }));
 
-  const payload = {
-    sku: formData.sku,
-    title: formData.title,
-    description: formData.description,
-    searchKeywords: formData.searchKeywords,
-    stock: parseInt(formData.stock),
-    mrp: parseFloat(formData.mrp),
-    sellingPrice: parseFloat(formData.sellingPrice),
-    height: parseFloat(formData.height),
-    width: parseFloat(formData.width),
-    length: parseFloat(formData.length),
-    sizeId: parseInt(formData.sizeId),
-    colorId: parseInt(formData.colorId),
-    brandId: parseInt(formData.brandId),
-    categoryId: parseInt(selectedListSubMenu),
-    status: formData.status === 'enable',
-    featureTypeId: selectedFeatureTypeId,
-    featureType: featureType,
-    filterTypeId: selectedFilterTypeId,
-    filterType: filterType,
-    productDetails: {
-      model: formData.model,
-      weight: parseFloat(formData.weight),
-      sla: parseInt(formData.sla),
-      deliveryCharges: formData.deliveryCharges
-    },
-    variants: variantPayloads,
-  };
-
-  console.log('Submitting Product:', payload);
-
-  try {
-    const token = localStorage.getItem('token');
-
-    // Step 1: Create the product
-    const response = await axios.post(`${BASE_URL}/products`, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+    const payload = {
+      sku: formData.sku,
+      title: formData.title,
+      description: formData.description,
+      searchKeywords: formData.searchKeywords,
+      stock: parseInt(formData.stock),
+      mrp: parseFloat(formData.mrp),
+      sellingPrice: parseFloat(formData.sellingPrice),
+      height: parseFloat(formData.height),
+      width: parseFloat(formData.width),
+      length: parseFloat(formData.length),
+      sizeId: parseInt(formData.sizeId),
+      colorId: parseInt(formData.colorId),
+      brandId: parseInt(formData.brandId),
+      categoryId: parseInt(selectedListSubMenu),
+      status: formData.status === 'enable',
+      featureTypeId: selectedFeatureTypeId,
+      featureType: featureType,
+      filterTypeId: selectedFilterTypeId,
+      filterType: filterType,
+      productDetails: {
+        model: formData.model,
+        weight: parseFloat(formData.weight),
+        sla: parseInt(formData.sla),
+        deliveryCharges: formData.deliveryCharges
       },
-    });
-  console.group('response123',response)
-    const productId = response?.data?.data?.id;
-    toast.success('Product Created Successfully');
-    console.log('Product created with ID:', productId);
-    const productDetailsRes = await axios.get(`${BASE_URL}/products/${productId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      variants: variantPayloads,
+    };
 
-    console.log('productDetailsRes',productDetailsRes)
-    const product = productDetailsRes.data;
-    console.log('product1123',product)
-    const createdVariantIds = (product.variants || []).map(v => v.id).filter(Boolean);
-    console.log('Fetched Variant IDs:', createdVariantIds);
-    setFormData(initialFormState);
-    setDescription('');
-    setSelectedMenu('');
-    setSelectedSubMenu('');
-    setSelectedListSubMenu('');
-    setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
+    console.log('Submitting Product:', payload);
 
-    setCreatedProductId(productId);
-    setCreatedVariantIds(createdVariantIds);
+    try {
+      const token = localStorage.getItem('token');
 
-    if (onProductCreated) {
-      onProductCreated({
-        id: productId,
-        featureTypeId: selectedFeatureTypeId,
-        featureType: featureType,
-        filterTypeId: selectedFilterTypeId,
-        filterType: filterType,
-        variants: product.variants || [],
+      // Step 1: Create the product
+      const response = await axios.post(`${BASE_URL}/products`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      console.group('response123', response)
+      const productId = response?.data?.data?.id;
+      toast.success('Product Created Successfully');
+      console.log('Product created with ID:', productId);
+      const productDetailsRes = await axios.get(`${BASE_URL}/products/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log('productDetailsRes', productDetailsRes)
+      const product = productDetailsRes.data;
+      console.log('product1123', product)
+      const createdVariantIds = (product.variants || []).map(v => v.id).filter(Boolean);
+      console.log('Fetched Variant IDs:', createdVariantIds);
+      setFormData(initialFormState);
+      setDescription('');
+      setSelectedMenu('');
+      setSelectedSubMenu('');
+      setSelectedListSubMenu('');
+      setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
+
+      setCreatedProductId(productId);
+      setCreatedVariantIds(createdVariantIds);
+
+      if (onProductCreated) {
+        onProductCreated({
+          id: productId,
+          featureTypeId: selectedFeatureTypeId,
+          featureType: featureType,
+          filterTypeId: selectedFilterTypeId,
+          filterType: filterType,
+          variants: product.variants || [],
+        });
+      }
+
+      if (onClose) {
+        onClose();
+      }
+
+      // Optional redirect
+      // navigate('/admin/product');
+
+    } catch (err) {
+      setErrors({
+        brand: err?.response?.data?.message || 'Something went wrong.',
       });
     }
-
-    if (onClose) {
-      onClose();
-    }
-
-    // Optional redirect
-    // navigate('/admin/product');
-
-  } catch (err) {
-    setErrors({
-      brand: err?.response?.data?.message || 'Something went wrong.',
-    });
-  }
-};
+  };
 
 
 
@@ -418,9 +418,11 @@ const handleSubmit = async (e) => {
                           Description<span className="text-danger">*</span>
                         </label>
                         <CKEditor
-                          // key={formData.description}
                           editor={ClassicEditor}
                           data={formData.description}
+                          config={{
+                            height: '800px', // set your desired height here
+                          }}
                           onChange={(event, editor) => {
                             const data = editor.getData();
                             setFormData((prev) => ({ ...prev, description: data }));
@@ -429,6 +431,7 @@ const handleSubmit = async (e) => {
                             }
                           }}
                         />
+
 
                         {errors.description && (
                           <div className="invalid-feedback">{errors.description}</div>
@@ -481,7 +484,7 @@ const handleSubmit = async (e) => {
                   <div className="col-lg-12">
                     <h6 className="sub-heading">Price & Color/Size Details<span className="text-danger">*</span></h6>
                     <div className="row">
-                      {['stock', 'mrp', 'sellingPrice', 'height', 'width', 'length'].map((field, idx) => {
+                      {['Stock', 'MRP', 'SellingPrice', 'Height', 'Width', 'Length'].map((field, idx) => {
                         const isRequired = ['stock', 'mrp', 'sellingPrice'].includes(field);
 
                         return (

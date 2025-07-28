@@ -6,10 +6,8 @@ import BASE_URL from '../../config/config';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProductById } from '../../redux/actions/productAction';
-import { toast } from 'react-toastify';
 
-const EditProductImages = ({updatedVariantIds}) => {
-    console.log('updatedVariantIds',updatedVariantIds)
+const EditProductImages = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
     const { product } = useSelector((state) => state.products || {});
@@ -52,34 +50,6 @@ const EditProductImages = ({updatedVariantIds}) => {
             });
         }
     }, [product, variants]);
-
-    useEffect(() => {
-  if (
-    product &&
-    product.variants &&
-    updatedVariantIds.length > 0
-  ) {
-    const filteredVariants = product.variants.filter(v =>
-      updatedVariantIds.includes(v.id)
-    );
-
-    const updatedVariants = filteredVariants.reduce((acc, variant) => {
-      acc[variant.id] = {
-        main_image: variant.images?.main || null,
-        multiple_images: variant.images?.multiple || [],
-      };
-      return acc;
-    }, {});
-
-    setExistingImages(prev => ({
-      ...prev,
-      variants: updatedVariants,
-    }));
-  }
-}, [product, updatedVariantIds]);
-
-
-
 
     const handleSingleImageChange = (e, key) => {
         const file = e.target.files[0];
@@ -234,15 +204,13 @@ const EditProductImages = ({updatedVariantIds}) => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            // alert('Images uploaded successfully!');
-            toast.succes('Images uploaded successfully!')
+            alert('Images uploaded successfully!');
             console.log(response.data);
             handleReset();
             dispatch(fetchProductById(id)); // Refresh product data
         } catch (error) {
             console.error('Upload failed:', error);
-            // alert('Image upload failed.');
-            toast.error('Image upload failed')
+            alert('Image upload failed.');
         }
     };
 

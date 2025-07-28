@@ -5,21 +5,17 @@ import axios from 'axios';
 import BASE_URL from '../../config/config';
 import { toast } from 'react-toastify';
 
-const AddProductImages = ({ product, createdProductId}) => {
-  // console.log('createdVariantIds', createdVariantIds)
-  // const createdProductId = product?.id;
+const AddProductImages = ({ product, createdProductId }) => {
   const finalProductId = createdProductId || product?.id;
 
   console.log('Created Product ID:', finalProductId);
   const [variants, setVariants] = useState([]);
-
 
   useEffect(() => {
     if (product?.variants) {
       setVariants(product.variants);
     }
   }, [product]);
-
 
   const [singlePreviews, setSinglePreviews] = useState({});
   const [multiplePreviews, setMultiplePreviews] = useState({});
@@ -83,10 +79,10 @@ const AddProductImages = ({ product, createdProductId}) => {
     });
   };
 
+  // Modified reset function to clear only filesMap, keeping previews intact
   const handleReset = () => {
-    setSinglePreviews({});
-    setMultiplePreviews({});
-    setFilesMap({});
+    setFilesMap({}); // Clear only the filesMap to allow new uploads
+    // Do not reset singlePreviews or multiplePreviews
   };
 
   const handleSubmit = async (e) => {
@@ -124,13 +120,13 @@ const AddProductImages = ({ product, createdProductId}) => {
         {
           headers: { 'Content-Type': 'multipart/form-data' },
         }
-      );;
-      toast.success('Images uploaded successfully!')
+      );
+      toast.success('Images uploaded successfully!');
       console.log(response.data);
-      handleReset();
+      handleReset(); // Call reset to clear filesMap but keep previews
     } catch (error) {
       console.error('Upload failed:', error);
-      toast.error('Image upload failed')
+      toast.error('Image upload failed');
     }
   };
 
@@ -163,7 +159,7 @@ const AddProductImages = ({ product, createdProductId}) => {
                         onChange={(e) => handleSingleImageChange(e, 'productSingle')}
                       />
                       {singlePreviews['productSingle'] && (
-                        <div className="image-preview" style={{ display: 'block' }}>
+                        <div className="image-preview">
                           <img src={singlePreviews['productSingle']} alt="Preview" />
                           <button
                             type="button"
@@ -224,7 +220,7 @@ const AddProductImages = ({ product, createdProductId}) => {
                             onChange={(e) => handleSingleImageChange(e, singleKey)}
                           />
                           {singlePreviews[singleKey] && (
-                            <div className="image-preview" style={{ display: 'block' }}>
+                            <div className="image-preview">
                               <img src={singlePreviews[singleKey]} alt="Preview" />
                               <button
                                 type="button"
@@ -266,7 +262,6 @@ const AddProductImages = ({ product, createdProductId}) => {
                     </div>
                   );
                 })}
-
 
                 {/* Submit / Reset Buttons */}
                 <div className="row">

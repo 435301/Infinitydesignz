@@ -142,7 +142,7 @@ export const fetchProductById = (id) => async (dispatch) => {
     });
     dispatch({ type: FETCH_PRODUCT_BY_ID_SUCCESS, payload: res.data });
   } catch (err) {
-    toast.error("Failed to fetch subcategory.");
+    // toast.error("Failed to fetch subcategory.");
   }
 };
 

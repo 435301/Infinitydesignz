@@ -31,7 +31,7 @@ const ProductFilters = ({ createdProductId, filterTypeId, filterType }) => {
     e.preventDefault();
 
     const payloadArray = Object.entries(filters)
-      .filter(([_, value]) => value) 
+      .filter(([_, value]) => value)
       .map(([filterSetId, filterListId]) => ({
         productId: createdProductId,
         filterListId: parseInt(filterListId),
@@ -40,7 +40,7 @@ const ProductFilters = ({ createdProductId, filterTypeId, filterType }) => {
     console.log('Submitting payload:', payloadArray);
 
     try {
-      await axios.post(`${BASE_URL}/product-filters`, payloadArray); 
+      await axios.post(`${BASE_URL}/product-filters`, payloadArray);
       toast.success('Filters submitted successfully!');
     } catch (error) {
       console.error('Submission failed:', error);
@@ -63,6 +63,7 @@ const ProductFilters = ({ createdProductId, filterTypeId, filterType }) => {
       <div className="row">
         <div className="col-lg-12">
           <div className="card">
+            <div class="card-header py-3"><h5 class="text-dark mb-0">Product Filters</h5></div>
             <div className="card-block py-3">
               <form className="app-form mt-3" onSubmit={handleSubmit} onReset={handleReset}>
                 {filterType?.filterSets?.map((filterSet, idx) => (
