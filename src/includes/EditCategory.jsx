@@ -73,7 +73,6 @@ const EditCategoryModal = ({ show, setShow, category }) => {
     if (mainImage?.file) formData.append('mainImage', mainImage.file);
 
     dispatch(editCategory(category.id, formData));
-    toast.success('Category updated successfully!');
     setShow(false);
   };
 
