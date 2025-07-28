@@ -5,12 +5,12 @@ import BASE_URL from "../../config/config";
 export const FETCH_SIZE_REQUEST = 'FETCH_SIZE_REQUEST';
 export const FETCH_SIZE_SUCCESS = 'FETCH_SIZE_SUCCESS';
 export const FETCH_SIZE_FAILURE = 'FETCH_SIZE_FAILURE';
-export const ADD_SIZES_REQUEST ='ADD_SIZES_REQUEST';
-export const ADD_SIZES_SUCCESS ='ADD_SIZES_SUCCESS';
-export const ADD_SIZES_FAILURE ='ADD_SIZES_FAILURE';
-export const EDIT_SIZES_REQUEST='EDIT_SIZES_REQUEST';
-export const EDIT_SIZES_SUCCESS='EDIT_SIZES_SUCCESS';
-export const EDIT_SIZES_FAILURE='EDIT_SIZES_FAILURE';
+export const ADD_SIZES_REQUEST = 'ADD_SIZES_REQUEST';
+export const ADD_SIZES_SUCCESS = 'ADD_SIZES_SUCCESS';
+export const ADD_SIZES_FAILURE = 'ADD_SIZES_FAILURE';
+export const EDIT_SIZES_REQUEST = 'EDIT_SIZES_REQUEST';
+export const EDIT_SIZES_SUCCESS = 'EDIT_SIZES_SUCCESS';
+export const EDIT_SIZES_FAILURE = 'EDIT_SIZES_FAILURE';
 export const DELETE_SIZE_SUCCESS = 'DELETE_SIZE_SUCCESS';
 export const BULK_UPDATE_SIZE_SUCCESS = 'BULK_UPDATE_SIZE_SUCCESS';
 
@@ -33,8 +33,8 @@ export const fetchSizes = () => {
 
       console.log('response', response)
       dispatch({ type: FETCH_SIZE_SUCCESS, payload: response.data });
-      const successMessage = response?.message || 'Size created successfully';
-    toast.success(successMessage);
+      //   const successMessage = response?.message || 'Size created successfully';
+      // toast.success(successMessage);
     } catch (error) {
       toast.dismiss();
       toast.error(error?.response?.data?.message || 'Failed to fetch sizes');
@@ -66,7 +66,7 @@ export const addSizes = (formData) => async (dispatch) => {
       type: 'ADD_SIZES_FAILURE',
       payload: error.response?.data?.message || 'Error adding size',
     });
-    throw error; 
+    throw error;
   }
 };
 
@@ -77,7 +77,7 @@ export const editSizes = (payload) => async (dispatch) => {
     const token = localStorage.getItem('token');
     const { id, ...updateData } = payload; // extract id
 
-   const response =  await axios.patch(`${BASE_URL}/size-uom/${id}`, updateData, {
+    const response = await axios.patch(`${BASE_URL}/size-uom/${id}`, updateData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -112,14 +112,14 @@ export const deleteSize = (id) => async (dispatch) => {
   }
 }
 
-export const bulkUpdateSizeStatus = (ids,status) => async (dispatch) => {
+export const bulkUpdateSizeStatus = (ids, status) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
 
     await axios.patch(
       `${BASE_URL}/common/bulk-update-status`,
       {
-        entity: 'size-uom', 
+        entity: 'size-uom',
         ids,
         status
       },
@@ -129,7 +129,7 @@ export const bulkUpdateSizeStatus = (ids,status) => async (dispatch) => {
         },
       }
     );
-    dispatch(fetchSizes()); 
+    dispatch(fetchSizes());
   } catch (error) {
     console.error(error);
     toast.error(error?.response?.data?.message || 'Failed to update size status.');
