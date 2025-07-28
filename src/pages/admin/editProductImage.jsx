@@ -22,6 +22,7 @@ const EditProductImages = () => {
     });
 
     const variants = product?.variants || [];
+    console.log('variants',variants)
 
     // Fetch product data
     useEffect(() => {

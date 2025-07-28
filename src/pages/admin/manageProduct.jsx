@@ -222,7 +222,7 @@ const ManageProducts = () => {
                                                             <th>Stock</th>
                                                             <th>Product Status</th>
                                                             <th>Variants</th>
-                                                            <th>Created Date</th>
+                                                            {/* <th>Created Date</th> */}
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
@@ -270,7 +270,7 @@ const ManageProducts = () => {
                                                                         ? `${product.variants.length} ${product.variants.length > 1 ? 's' : ''}`
                                                                         : '-'}
                                                                 </td>
-                                                                <td>{new Date(product.created_at).toLocaleString()}</td>
+                                                                {/* <td>{new Date(product.created_at).toLocaleString()}</td> */}
                                                                 <td>
                                                                     <button
                                                                         type="button"
