@@ -9,9 +9,10 @@ import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts } from '../../redux/actions/productAction';
+import { fetchProductById, fetchProducts } from '../../redux/actions/productAction';
 
 const ProductPage = ({ createdProductId, selectedFeatureType }) => {
+  
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState('add');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -24,6 +25,7 @@ console.log('createdVariantIds',createdVariantIds)
  
  useEffect(()=>{
   dispatch(fetchProducts())
+  dispatch(fetchProductById());
  },[dispatch]);
 
   const handleToggleSidebar = (collapsed) => {
@@ -70,15 +72,14 @@ console.log('createdVariantIds',createdVariantIds)
                         <AddProduct onProductCreated={(productInfo) => {
                           setCreatedProductId(productInfo.id);
                           setCreatedProductInfo(productInfo);
-                            setCreatedVariantIds(productInfo.variantIds || []);
-                            setActiveTab('images');
+                            // setActiveTab('images');
                         }} />
                       </Tab>
                       <Tab eventKey="images" title="Product Images" disabled={!createdProductInfo}>
                         {createdProductInfo && (
                           <AddProductImages
                             createdProductId={createdProductInfo.id}
-                             createdVariantIds={createdVariantIds}
+                             product={createdProductInfo} 
                           />
                         )}
                       </Tab>
