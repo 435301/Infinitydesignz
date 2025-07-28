@@ -52,16 +52,19 @@ export const addFilterList = (formData) => async (dispatch) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    dispatch({ type: 'ADD_FILTERLIST_SUCCESS' , payload: response.data});
-     toast.success(`Filter List created succefully`);
+
+    dispatch({ type: 'ADD_FILTERLIST_SUCCESS', payload: response.data });
+
+    const successMessage = response?.data?.message || 'Filter List created successfully';
+    toast.success(successMessage);
+
     dispatch(fetchFilterLists());
   } catch (error) {
-    console.error('Error Response', error?.response?.data)
     dispatch({
       type: 'ADD_FILTERLIST_FAILURE',
       payload: error.response?.data?.message || 'Error adding filter list',
     });
-    throw error; 
+    throw error;
   }
 };
 
@@ -70,17 +73,20 @@ export const editFilterList = (payload) => async (dispatch) => {
   dispatch({ type: 'EDIT_FILTERLIST_REQUEST' });
   try {
     const token = localStorage.getItem('token');
-    const { id, ...updateData } = payload; 
+    const { id, ...updateData } = payload;
 
-    await axios.patch(`${BASE_URL}/filter-lists/${id}`, updateData, {
+    const response = await axios.patch(`${BASE_URL}/filter-lists/${id}`, updateData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
 
-    dispatch({ type: 'EDIT_FILTERLIST_FAILURE' });
-    toast.success('Filter list updated Successfully')
+    dispatch({ type: 'EDIT_FILTERLIST_SUCCESS' });
+
+    const successMessage = response?.data?.message || 'Filter List updated successfully';
+    toast.success(successMessage);
+
     dispatch(fetchFilterLists());
   } catch (error) {
     dispatch({
@@ -94,18 +100,20 @@ export const deleteFilterList = (id) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
 
-    await axios.delete(`${BASE_URL}/filter-lists/${id}`, {
+    const response = await axios.delete(`${BASE_URL}/filter-lists/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
     dispatch({ type: 'DELETE_FILTERLIST_SUCCESS', payload: id });
-    dispatch(fetchFilterLists(id));
-    toast.success('Filter List deleted successfully!');
+
+    const successMessage = response?.data?.message || 'Filter List deleted successfully!';
+    toast.success(successMessage);
+
+    dispatch(fetchFilterLists());
   } catch (error) {
-    toast.error(error?.response?.data?.message || 'Failed to delete filter List.');
-    console.error(error);
+    toast.error(error?.response?.data?.message || 'Failed to delete filter list.');
   }
 };
 

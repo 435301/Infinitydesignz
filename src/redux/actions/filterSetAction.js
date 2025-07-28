@@ -43,7 +43,7 @@ export const fetchFilterSets = () => {
 };
 
 export const addFilterSet = (formData) => async (dispatch) => {
-  dispatch({ type: 'ADD_FILTERSET_REQUEST' });
+  dispatch({ type: ADD_FILTERSET_REQUEST });
   try {
     const token = localStorage.getItem('token');
     const response = await axios.post(`${BASE_URL}/filter-sets`, formData, {
@@ -52,17 +52,25 @@ export const addFilterSet = (formData) => async (dispatch) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    dispatch({ type: 'ADD_FILTERSET_SUCCESS' , payload: response.data});
-     toast.success(`Filter Set created succefully`);
-    dispatch(fetchFilterSets());
-    console.log('Sending to API:', formData);
-  } catch (error) {
-    console.error('Error Response', error?.response?.data)
+
+    const { message, data } = response.data; // Assuming this shape from API
+
     dispatch({
-      type: 'ADD_FILTERSET_FAILURE',
-      payload: error.response?.data?.message || 'Error adding filter set',
+      type: ADD_FILTERSET_SUCCESS,
+      payload: data, // only the created object
     });
-    throw error; 
+
+    toast.success(message || 'Filter Set created successfully');
+    dispatch(fetchFilterSets());
+    return data; // Return the created filter set
+  } catch (error) {
+    const errMsg = error?.response?.data?.message || 'Error adding filter set';
+    dispatch({
+      type: ADD_FILTERSET_FAILURE,
+      payload: errMsg,
+    });
+    toast.error(errMsg);
+    throw error;
   }
 };
 
