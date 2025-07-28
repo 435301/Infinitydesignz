@@ -16,8 +16,6 @@ const ManageFilterList = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [selectedItems, setSelectedItems] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedFilterList, setSelectedFilterList] = useState(null);
@@ -28,7 +26,7 @@ const ManageFilterList = () => {
   const [editedPriorities, setEditedPriorities] = useState({});
 
   const dispatch = useDispatch();
-  const { filterLists = [] } = useSelector((state) => state.filterLists);
+  const { filterLists = [] } = useSelector((state) => state.filterLists || {});
   const { filterTypes = [] } = useSelector((state) => state.filterTypes || {});
 
   useEffect(() => {
@@ -47,27 +45,11 @@ const ManageFilterList = () => {
 
   const filteredFilterList = (filterLists || []).filter((filterList) => {
     if (!filterList) return false;
-
     const label = filterList.label?.toLowerCase() || '';
     const filterSetTitle = filterList.filterSet?.title?.toLowerCase() || '';
     const filterTypeName = getFilterTypeName(filterList.filterSet?.filterTypeId).toLowerCase();
-
     const term = searchTerm.toLowerCase();
-
-    return (
-      label.includes(term) ||
-      filterSetTitle.includes(term) ||
-      filterTypeName.includes(term)
-    );
-  }).map((filterList) => {
-    const filterSetTitle = filterList?.filterSet?.title || 'N/A';
-    const filterTypeName = getFilterTypeName(filterList?.filterSet?.filterTypeId);
-
-    return {
-      ...filterList,
-      filterSetTitle,
-      filterTypeName,
-    };
+    return label.includes(term) || filterSetTitle.includes(term) || filterTypeName.includes(term);
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -84,11 +66,12 @@ const ManageFilterList = () => {
   };
 
   const groupedFilters = currentRows.reduce((acc, filter) => {
-    const groupTitle = filter.filterSet?.title || 'Unknown';
-    if (!acc[groupTitle]) {
-      acc[groupTitle] = [];
-    }
-    acc[groupTitle].push(filter);
+    const filterTypeId = filter.filterSet?.filterTypeId;
+    const filterTypeName = getFilterTypeName(filterTypeId);
+    const filterSetTitle = filter.filterSet?.title || 'Unknown';
+    if (!acc[filterTypeName]) acc[filterTypeName] = {};
+    if (!acc[filterTypeName][filterSetTitle]) acc[filterTypeName][filterSetTitle] = [];
+    acc[filterTypeName][filterSetTitle].push(filter);
     return acc;
   }, {});
 
@@ -116,9 +99,8 @@ const ManageFilterList = () => {
         <aside className="main-sidebar hidden-print">
           <Sidebar isCollapsed={isSidebarCollapsed} />
         </aside>
-
         <div
-          className="content-wrapper mb-4"
+          className="content-wrapper"
           style={{
             marginLeft: isSidebarCollapsed ? '60px' : '272px',
             padding: '20px',
@@ -129,11 +111,9 @@ const ManageFilterList = () => {
           <div className="main-header" style={{ marginTop: '0px' }}>
             <h5>Filter List</h5>
           </div>
-
           <div className="container-fluid manage">
-            {/* Search and Filters */}
             <div className="card mb-2">
-              <div className="card-block manage-btn">
+              <div className="card-block manage-btn p-3">
                 <div className="row g-3 align-items-center">
                   <div className="col-md-3">
                     <input
@@ -144,166 +124,145 @@ const ManageFilterList = () => {
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
-                  {/* <div className="col-md-3">
-                    <select
-                      className="form-control"
-                      value={statusFilter}
-                      onChange={(e) => setStatusFilter(e.target.value)}
-                    >
-                      <option value="">- Select Status -</option>
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                    </select>
-                  </div> */}
                   <div className="col-md-2 d-flex gap-2">
-                    <button
-                      className="btn btn-success"
-                      onClick={() => {
-                        setSearchTerm('');
-                      }}
-                    >
+                    <button className="btn btn-success" onClick={() => setSearchTerm('')}>
                       <BsArrowClockwise />
                     </button>
                   </div>
                   <div className="col-md-7 text-end">
-                    <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Create Filter List</button>
+                    <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
+                      + Create Filter List
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Filter List Items */}
             <div className="card">
-              <div className="card-block">
-                <div className="row mb-2"></div>
-
-                <div>
-                  {Object.entries(groupedFilters).map(([groupTitle, filters], index) => (
-                    <div key={index} className="mb-4">
-                      <div className="row mb-2">
-                        <div>
-                          <div className="feature-set-header p-2" style={{ backgroundColor: '#d9edf7' }}>
-                            <h3>{groupTitle}</h3>
-                            <span className="badge">{filters.length}</span>
-                          </div>
-
-                          <h6 className="text-info">{getFilterTypeName(filters[0]?.filterSet?.filterTypeId)}</h6>
-                        </div>
-                      </div>
-
-                      <div className="feature-row d-flex flex-wrap gap-3">
-                        {filters.map((filter) => (
-                          <div
-                            key={filter.id}
-                            className="feature-item d-flex justify-content-between align-items-center"
-                            style={{
-                              backgroundColor: '#2ccfc4',
-                              color: '#fff',
-                              padding: '10px 15px',
-                              borderRadius: '4px',
-                              flex: '0 0 30%',
-                            }}
-                          >
-                            <div>
-                              <input
-                                type="checkbox"
-                                checked={selectedRows.includes(filter.id)}
-                                onChange={() => handleRowCheckboxChange(filter.id)}
-                                className="me-2"
-                              />
-                              {filter.label}
-                            </div>
-                            <div className="d-flex gap-2">
-                              <button
-                                className="btn btn-sm btn-outline-primary"
-                                title="View"
-                                onClick={() => {
-                                  setViewFilterList(filter);
-                                  setViewModalVisible(true);
-                                }}
-                              >
-                                <BsEye />
-                              </button>
-                              <button
-                                className="btn btn-sm btn-outline-primary"
-                                title="Edit"
-                                onClick={() => {
-                                  setSelectedFilterList(filter);
-                                  setShowEditModal(true);
-                                }}
-                              >
-                                <BsPencilSquare />
-                              </button>
-                              <button
-                                className="btn btn-sm btn-outline-danger"
-                                title="Delete"
-                                onClick={() => handleDeleteClick(filter.id)}
-                              >
-                                <BsTrash />
-                              </button>
-                            </div>
-                            {selectedRows.includes(filter.id) ? (
-                              <input
-                                type="number"
-                                value={editedPriorities[filter.id] ?? filter.priority}
-                                onChange={(e) =>
-                                  setEditedPriorities((prev) => ({
-                                    ...prev,
-                                    [filter.id]: e.target.value,
-                                  }))
-                                }
-                                className="form-control"
-                                style={{ width: '50px' }}
-                              />
-                            ) : (
-                              <span className="badge ms-2">{filter.priority}</span>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-
-                      <button
-                        className="btn mt-3 set-priority-btn"
-                        style={{
-                          backgroundColor: '#0da79e',
-                          color: '#fff',
-                          border: 'none',
-                          padding: '10px 20px',
-                          fontSize: '16px',
-                        }}
-                        onClick={async () => {
-                          for (let id of selectedRows) {
-                            if (editedPriorities[id] !== undefined) {
-                              await dispatch(
-                                updateFilterListPriority({
-                                  id,
-                                  priority: parseInt(editedPriorities[id]),
-                                })
-                              );
-                            }
-                          }
-                          dispatch(fetchFilterLists());
-                          setEditedPriorities({});
-                          setSelectedRows([]);
-                        }}
-                      >
-                        Change Priority
-                      </button>
+              <div className="card-block p-3">
+                {Object.entries(groupedFilters).map(([filterTypeName, filterSets]) => (
+                  <div key={filterTypeName} className="mb-5 feature-set-headers">
+                    <div className="feature-set-header p-2" style={{ backgroundColor: 'rgb(217, 237, 247)' }}>
+                      <h3>
+                        {filterTypeName} <span className="badge">{Object.keys(filterSets).length}</span>
+                      </h3>
                     </div>
-                  ))}
-                </div>
+                    {Object.entries(filterSets).map(([filterSetTitle, filters]) => (
+                      <div key={filterSetTitle} className="mb-4">
+                        <h5 className="mt-4">
+                          {filterSetTitle} <span className="badge">{filters.length}</span>
+                        </h5>
+                        <div className="feature-row d-flex flex-wrap gap-3 mt-4">
+                          {filters.map((filter) => (
+                            <div
+                              key={filter.id}
+                              className="feature-item d-flex justify-content-between align-items-center"
+                              style={{
+                                backgroundColor: '#2ccfc4',
+                                color: '#fff',
+                                padding: '10px 15px',
+                                borderRadius: '4px',
+                                flex: '0 0 30%',
+                              }}
+                            >
+                              <div>
+                                <input
+                                  type="checkbox"
+                                  checked={selectedRows.includes(filter.id)}
+                                  onChange={() => handleRowCheckboxChange(filter.id)}
+                                  className="me-2"
+                                />
+                                {filter.label}
+                              </div>
+                              <div className="d-flex gap-2">
+                                <button
+                                  className="btn btn-sm btn-outline-primary"
+                                  title="View"
+                                  onClick={() => {
+                                    setViewFilterList(filter);
+                                    setViewModalVisible(true);
+                                  }}
+                                >
+                                  <BsEye />
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-outline-primary"
+                                  title="Edit"
+                                  onClick={() => {
+                                    setSelectedFilterList(filter);
+                                    setShowEditModal(true);
+                                  }}
+                                >
+                                  <BsPencilSquare />
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-outline-danger"
+                                  title="Delete"
+                                  onClick={() => handleDeleteClick(filter.id)}
+                                >
+                                  <BsTrash />
+                                </button>
+                              </div>
+                              {selectedRows.includes(filter.id) ? (
+                                <input
+                                  type="number"
+                                  value={editedPriorities[filter.id] ?? filter.priority}
+                                  onChange={(e) =>
+                                    setEditedPriorities((prev) => ({
+                                      ...prev,
+                                      [filter.id]: e.target.value,
+                                    }))
+                                  }
+                                  className="form-control"
+                                  style={{ width: '50px' }}
+                                />
+                              ) : (
+                                <span className="badge ms-2">{filter.priority}</span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        <button
+                          className="btn mt-3 set-priority-btn"
+                          style={{
+                            backgroundColor: '#0da79e',
+                            color: '#fff',
+                            border: 'none',
+                            padding: '10px 20px',
+                            fontSize: '16px',
+                          }}
+                          onClick={async () => {
+                            for (let id of selectedRows) {
+                              if (editedPriorities[id] !== undefined) {
+                                await dispatch(
+                                  updateFilterListPriority({
+                                    id,
+                                    priority: parseInt(editedPriorities[id]),
+                                  })
+                                );
+                              }
+                            }
+                            dispatch(fetchFilterLists());
+                            setEditedPriorities({});
+                            setSelectedRows([]);
+                          }}
+                        >
+                          Change Priority
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ))}
               </div>
             </div>
+
             <PaginationComponent
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={handlePageChange}
             />
             {showAddModal && (
-              <AddFilterListModal
-                show={showAddModal}
-                onClose={() => setShowAddModal(false)}
-              />
+              <AddFilterListModal show={showAddModal} onClose={() => setShowAddModal(false)} />
             )}
             {showEditModal && (
               <EditFilterListModal
@@ -317,7 +276,7 @@ const ManageFilterList = () => {
                 show={showDeleteModal}
                 onClose={() => setShowDeleteModal(false)}
                 onConfirm={handleDelete}
-                message="Are you sure you want to delete this category?"
+                message="Are you sure you want to delete this filter?"
               />
             )}
             {viewModalVisible && (
