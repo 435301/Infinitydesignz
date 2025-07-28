@@ -149,7 +149,7 @@ const ManageSizes = () => {
                       </button>
                     </div>
                     <div className="col-md-4 text-end">
-                      <button className="btn btn-primary" style={{ padding: '8px 20px', fontWeight: 600 }} type="button" onClick={() => setShowModal(true)}>
+                      <button className="btn btn-primary" type="button" onClick={() => setShowModal(true)}>
                         + Add New
                       </button>
                     </div>

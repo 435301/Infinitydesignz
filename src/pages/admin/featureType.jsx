@@ -126,7 +126,7 @@ const ManageFeatureType = () => {
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="Search By Feature type"
+                        placeholder="Search By Feature Type"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                       />

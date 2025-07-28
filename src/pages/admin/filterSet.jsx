@@ -111,7 +111,7 @@ const ManageFilterSet = () => {
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="Search By filter type, set"
+                        placeholder="Search By Filter Type, Set"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                       />

@@ -105,7 +105,7 @@ const ManageFilterType = () => {
                                 <div className="row g-3 align-items-center">
                                     <div className="col-md-3">
                                         <div className="input-group">
-                                            <input type="text" className="form-control" placeholder="Search By filter type" />
+                                            <input type="text" className="form-control" placeholder="Search By Filter Type" />
                                         </div>
                                     </div>
 

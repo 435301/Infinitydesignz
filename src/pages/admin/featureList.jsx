@@ -114,11 +114,11 @@ const ManageFeatureList = () => {
             <div className="card mb-2">
               <div className="card-block manage-btn p-3">
                 <div className="row g-3 align-items-center">
-                  <div className="col-md-3">
+                  <div className="col-md-4">
                     <input
                       type="text"
                       className="form-control"
-                      placeholder="Search By feature type, set , list"
+                      placeholder="Search By Feature Type, Set , List"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -128,7 +128,7 @@ const ManageFeatureList = () => {
                       <BsArrowClockwise />
                     </button>
                   </div>
-                  <div className="col-md-7 text-end">
+                  <div className="col-md-6 text-end">
                     <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
                       + Create Feature Set
                     </button>
