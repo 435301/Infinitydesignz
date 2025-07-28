@@ -52,27 +52,30 @@ export const addFeatureList = (formData) => async (dispatch) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    dispatch({ type: 'ADD_FEATURELIST_SUCCESS' , payload: response.data});
-     toast.success(`Feature List created succefully`);
+
+    dispatch({ type: 'ADD_FEATURELIST_SUCCESS', payload: response.data });
+
+    const successMessage = response?.data?.message || 'Feature List created successfully';
+    toast.success(successMessage);
+
     dispatch(fetchFeatureLists());
   } catch (error) {
-    console.error('Error Response', error?.response?.data)
+    console.error('Error Response', error?.response?.data);
     dispatch({
       type: 'ADD_FEATURELIST_FAILURE',
       payload: error.response?.data?.message || 'Error adding feature list',
     });
-    throw error; 
+    throw error;
   }
 };
-
 
 export const editFeatureList = (payload) => async (dispatch) => {
   dispatch({ type: 'EDIT_FEATURELIST_REQUEST' });
   try {
     const token = localStorage.getItem('token');
-    const { id, ...updateData } = payload; 
+    const { id, ...updateData } = payload;
 
-    await axios.patch(`${BASE_URL}/feature-lists/${id}`, updateData, {
+    const response = await axios.patch(`${BASE_URL}/feature-lists/${id}`, updateData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -80,7 +83,10 @@ export const editFeatureList = (payload) => async (dispatch) => {
     });
 
     dispatch({ type: 'EDIT_FEATURELIST_SUCCESS' });
-    toast.success('Feature list updated Successfully')
+
+    const successMessage = response?.data?.message || 'Feature List updated successfully';
+    toast.success(successMessage);
+
     dispatch(fetchFeatureLists());
   } catch (error) {
     dispatch({
@@ -94,20 +100,24 @@ export const deleteFeatureList = (id) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
 
-    await axios.delete(`${BASE_URL}/feature-lists/${id}`, {
+    const response = await axios.delete(`${BASE_URL}/feature-lists/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
     dispatch({ type: 'DELETE_FEATURELIST_SUCCESS', payload: id });
+
+    const successMessage = response?.data?.message || 'Feature List deleted successfully';
+    toast.success(successMessage);
+
     dispatch(fetchFeatureLists(id));
-    toast.success('Feature List deleted successfully!');
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Failed to delete Feature List.');
     console.error(error);
   }
 };
+
 
 export const updateFeatureListPriority = ({ id, priority }) => async (dispatch) => {
   try {
