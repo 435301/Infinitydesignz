@@ -217,124 +217,97 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+   const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        setErrors({});
-        if (!validate()) return;
+    setErrors({});
+    if (!validate()) return;
 
+    const cleanedVariants = variants
+        .filter(v => v.sku && v.stock && v.mrp && v.sellingPrice)
+        .map(v => ({
+            ...v,
+            sku: v.sku,
+            stock: parseInt(v.stock),
+            mrp: parseFloat(v.mrp),
+            sellingPrice: parseFloat(v.sellingPrice),
+            sizeId: v.sizeId ? parseInt(v.sizeId) : null,
+            colorId: v.colorId ? parseInt(v.colorId) : null,
+        }));
 
+    const payload = {
+        id: id,
+        sku: formData.sku,
+        title: formData.title,
+        description: formData.description,
+        searchKeywords: formData.searchKeywords,
+        stock: parseInt(formData.stock),
+        mrp: parseFloat(formData.mrp),
+        sellingPrice: parseFloat(formData.sellingPrice),
+        height: parseFloat(formData.height),
+        width: parseFloat(formData.width),
+        length: parseFloat(formData.length),
+        sizeId: parseInt(formData.sizeId),
+        colorId: parseInt(formData.colorId),
+        brandId: parseInt(formData.brandId),
+        categoryId: parseInt(selectedMenu),
+        status: formData.status === 'enable',
+        featureTypeId: selectedFeatureTypeId,
+        featureType: featureType,
+        filterTypeId: selectedFilterTypeId,
+        filterType: filterType,
+        productDetails: {
+            model: formData.model,
+            weight: parseFloat(formData.weight),
+            sla: parseInt(formData.sla),
+            deliveryCharges: parseFloat(formData.deliveryCharges),
+        },
+        variants: cleanedVariants, 
+    };
 
-        const payload = {
-            id: id,
-            sku: formData.sku,
-            title: formData.title,
-            description: formData.description,
-            searchKeywords: formData.searchKeywords,
-            stock: parseInt(formData.stock),
-            mrp: parseFloat(formData.mrp),
-            sellingPrice: parseFloat(formData.sellingPrice),
-            height: parseFloat(formData.height),
-            width: parseFloat(formData.width),
-            length: parseFloat(formData.length),
-            sizeId: parseInt(formData.sizeId),
-            colorId: parseInt(formData.colorId),
-            brandId: parseInt(formData.brandId),
-            categoryId: parseInt(selectedMenu),
-            status: formData.status === 'enable',
-            featureTypeId: selectedFeatureTypeId,
-            featureType: featureType,
-            filterTypeId: selectedFilterTypeId,
-            filterType: filterType,
-            productDetails: {
-                model: formData.model,
-                weight: parseFloat(formData.weight),
-                sla: parseInt(formData.sla),
-                deliveryCharges: parseFloat(formData.deliveryCharges),
+    console.log('Submitting Product with Variants:', payload);
+
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.put(`${BASE_URL}/products/${id}`, payload, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
             },
-        };
-        console.log('Submitting Product:', payload);
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.put(`${BASE_URL}/products/${id}`, payload, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            const productId = response.data?.id;
-            console.log('productId', productId)
-            console.log('Product created successfully:', response.data);
-            const cleanedVariants = variants
-                .filter(v => v.sku && v.stock && v.mrp && v.sellingPrice)
-                .map(v => ({
-                    ...v,
-                    sku: v.sku,
-                    stock: parseInt(v.stock),
-                    mrp: parseFloat(v.mrp),
-                    sellingPrice: parseFloat(v.sellingPrice),
-                    sizeId: v.sizeId ? parseInt(v.sizeId) : null,
-                    colorId: v.colorId ? parseInt(v.colorId) : null,
-                }));
-            const updatedVariantIds = [];
-            for (const variant of cleanedVariants) {
-                if (!variant.id) {
-                    console.warn("Variant is missing ID:", variant);
-                    continue;
-                }
+        });
 
-                const { id, ...variantPayload } = variant;
+        console.log('Product updated successfully:', response.data);
 
-                try {
-                    await axios.put(`${BASE_URL}/variants/${id}`, { ...variantPayload, productId }, {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                        },
-                    });
-                    updatedVariantIds.push(id);
-                    setUpdatedVariantIds(updatedVariantIds); // ✅ lift to parent
+        // Reset form
+        setFormData(initialFormState);
+        setDescription('');
+        setSelectedMenu('');
+        setSelectedSubMenu('');
+        setSelectedListSubMenu('');
+        setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
 
+        setCreatedProductId(response.data.id);
 
-                    console.log("Variant updated:", variant);
-                } catch (err) {
-                    console.error("Failed to update variant:", variant, err);
-                }
-            }
-
-
-
-
-            // Reset all form data
-            setFormData(initialFormState);
-            setDescription('');
-            setSelectedMenu('');
-            setSelectedSubMenu('');
-            setSelectedListSubMenu('');
-            setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
-
-            setCreatedProductId(response.data.id);
-
-            // Notify parent component
-            if (onProductCreated) {
-                onProductCreated({
-                    id: response.data.id,
-                    featureTypeId: selectedFeatureTypeId,
-                    featureType: featureType,
-                    filterTypeId: selectedFilterTypeId,
-                    filterType: filterType,
-                });
-            }
-            // Only close if it's a modal, otherwise stay on the same page
-            if (onClose) {
-                onClose(); // Close the modal if provided
-            }
-        } catch (err) {
-            setErrors({
-                brand: err?.response?.data?.message || 'Something went wrong.',
+        if (onProductCreated) {
+            onProductCreated({
+                id: response.data.id,
+                featureTypeId: selectedFeatureTypeId,
+                featureType: featureType,
+                filterTypeId: selectedFilterTypeId,
+                filterType: filterType,
             });
         }
-    };
+
+        if (onClose) {
+            onClose();
+        }
+    } catch (err) {
+        setErrors({
+            brand: err?.response?.data?.message || 'Something went wrong.',
+        });
+    }
+};
+
 
     const handleReset = (e) => {
         e.preventDefault();
