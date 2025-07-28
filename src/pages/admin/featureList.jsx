@@ -15,10 +15,8 @@ import ViewFeatureListModal from '../../modals/viewFeatureListModal';
 const ManageFeatureList = () => {
   const dispatch = useDispatch();
   const { featureLists = [] } = useSelector((state) => state.featureLists || {});
-  console.log('featureLists', featureLists);
   const { featureTypes = [] } = useSelector((state) => state.featureTypes || {});
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [selectedItems, setSelectedItems] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,7 +25,7 @@ const ManageFeatureList = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [featureListToDelete, setFeatureListToDelete] = useState(null);
   const [viewModalVisible, setViewModalVisible] = useState(false);
-  const [viewFeatureList, setViewFeatureList] = useState(null); // Fixed typo: setviewFeatureList -> setViewFeatureList
+  const [viewFeatureList, setViewFeatureList] = useState(null);
   const [editedPriorities, setEditedPriorities] = useState({});
 
   useEffect(() => {
@@ -37,12 +35,6 @@ const ManageFeatureList = () => {
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
-  };
-
-  const handleCheckboxChange = (id) => {
-    setSelectedItems((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
   };
 
   const handleRowCheckboxChange = (id) => {
@@ -58,27 +50,11 @@ const ManageFeatureList = () => {
 
   const filteredFeatureList = (featureLists || []).filter((featureList) => {
     if (!featureList) return false;
-
     const label = featureList.label?.toLowerCase() || '';
     const featureSetTitle = featureList.featureSet?.title?.toLowerCase() || '';
     const featureTypeName = getFeatureTypeName(featureList.featureSet?.featureTypeId).toLowerCase();
-
     const term = searchTerm.toLowerCase();
-
-    return (
-      label.includes(term) ||
-      featureSetTitle.includes(term) ||
-      featureTypeName.includes(term)
-    );
-  }).map((featureList) => {
-    const featureSetTitle = featureList?.featureSet?.title || 'N/A';
-    const featureTypeName = getFeatureTypeName(featureList?.featureSet?.featureTypeId);
-
-    return {
-      ...featureList,
-      featureSetTitle,
-      featureTypeName,
-    };
+    return label.includes(term) || featureSetTitle.includes(term) || featureTypeName.includes(term);
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -95,11 +71,12 @@ const ManageFeatureList = () => {
   };
 
   const groupedFeatures = currentRows.reduce((acc, feature) => {
-    const groupTitle = feature.featureSet?.title || 'Unknown';
-    if (!acc[groupTitle]) {
-      acc[groupTitle] = [];
-    }
-    acc[groupTitle].push(feature);
+    const featureTypeId = feature.featureSet?.featureTypeId;
+    const featureTypeName = getFeatureTypeName(featureTypeId);
+    const featureSetTitle = feature.featureSet?.title || 'Unknown';
+    if (!acc[featureTypeName]) acc[featureTypeName] = {};
+    if (!acc[featureTypeName][featureSetTitle]) acc[featureTypeName][featureSetTitle] = [];
+    acc[featureTypeName][featureSetTitle].push(feature);
     return acc;
   }, {});
 
@@ -121,7 +98,6 @@ const ManageFeatureList = () => {
         <aside className="main-sidebar hidden-print">
           <Sidebar isCollapsed={isSidebarCollapsed} />
         </aside>
-
         <div
           className="content-wrapper"
           style={{
@@ -134,9 +110,7 @@ const ManageFeatureList = () => {
           <div className="main-header" style={{ marginTop: '0px' }}>
             <h5>Feature List</h5>
           </div>
-
           <div className="container-fluid manage">
-            {/* Top Filters */}
             <div className="card mb-2">
               <div className="card-block manage-btn p-3">
                 <div className="row g-3 align-items-center">
@@ -149,20 +123,13 @@ const ManageFeatureList = () => {
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
-
                   <div className="col-md-2 d-flex gap-2">
-                    <button
-                      className="btn btn-success"
-                      onClick={() => setSearchTerm('')}
-                    >
+                    <button className="btn btn-success" onClick={() => setSearchTerm('')}>
                       <BsArrowClockwise />
                     </button>
                   </div>
                   <div className="col-md-7 text-end">
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => setShowAddModal(true)}
-                    >
+                    <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
                       + Create Feature Set
                     </button>
                   </div>
@@ -170,130 +137,123 @@ const ManageFeatureList = () => {
               </div>
             </div>
 
-            {/* Feature Group Sections */}
             <div className="card">
               <div className="card-block p-3">
-                {Object.entries(groupedFeatures).map(([groupTitle, features], index) => (
-                  <div key={index} className="mb-4">
-                    <div className="row mb-2">
-                      <div className="feature-set-header">
-                        <h3>
-                          {groupTitle} <span className="badge ">{features.length}</span>
-                        </h3>
-                         </div>
-                        <h6 className="text-info">
-                          {getFeatureTypeName(features[0]?.featureSet?.featureTypeId)}
-                        </h6>
-                     
-                    </div>
-
-                    <div className="feature-row d-flex flex-wrap gap-3">
-                      {features.map((feature) => (
-                        <div
-                          key={feature.id}
-                          className="feature-item d-flex justify-content-between align-items-center"
+                {Object.entries(groupedFeatures).map(([featureTypeName, featureSets]) => (
+                  <div key={featureTypeName} className="mb-5 feature-set-headers">
+                    <div className="feature-set-header p-2" style={{ backgroundColor: 'rgb(217, 237, 247)' }}>
+                      <h3>{featureTypeName} <span className="badge">{Object.keys(featureSets).length}</span></h3>                    </div>
+                    {Object.entries(featureSets).map(([featureSetTitle, features]) => (
+                      <div key={featureSetTitle} className="mb-4">
+                        <h5 className="mt-4">
+                          {featureSetTitle} <span className="badge">{features.length}</span>
+                        </h5>
+                        <div className="feature-row d-flex flex-wrap gap-3 mt-4">
+                          {features.map((feature) => (
+                            <div
+                              key={feature.id}
+                              className="feature-item d-flex justify-content-between align-items-center"
+                              style={{
+                                backgroundColor: '#2ccfc4',
+                                color: '#fff',
+                                padding: '10px 15px',
+                                borderRadius: '4px',
+                                flex: '0 0 30%',
+                              }}
+                            >
+                              <div>
+                                <input
+                                  type="checkbox"
+                                  checked={selectedRows.includes(feature.id)}
+                                  onChange={() => handleRowCheckboxChange(feature.id)}
+                                  className="me-2"
+                                />
+                                {feature.label}
+                              </div>
+                              <div className="d-flex gap-2">
+                                <button
+                                  className="btn btn-sm btn-outline-primary"
+                                  title="View"
+                                  onClick={() => {
+                                    setViewFeatureList(feature);
+                                    setViewModalVisible(true);
+                                  }}
+                                >
+                                  <BsEye />
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-outline-primary"
+                                  title="Edit"
+                                  onClick={() => {
+                                    setSelectedFeatureList(feature);
+                                    setShowEditModal(true);
+                                  }}
+                                >
+                                  <BsPencilSquare />
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-outline-danger"
+                                  title="Delete"
+                                  onClick={() => handleDeleteClick(feature.id)}
+                                >
+                                  <BsTrash />
+                                </button>
+                              </div>
+                              {selectedRows.includes(feature.id) ? (
+                                <input
+                                  type="number"
+                                  value={editedPriorities[feature.id] ?? feature.priority}
+                                  onChange={(e) =>
+                                    setEditedPriorities((prev) => ({
+                                      ...prev,
+                                      [feature.id]: e.target.value,
+                                    }))
+                                  }
+                                  className="form-control"
+                                  style={{ width: '50px' }}
+                                />
+                              ) : (
+                                <span className="badge ms-2">{feature.priority}</span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        <button
+                          className="btn mt-3 set-priority-btn"
                           style={{
-                            backgroundColor: '#2ccfc4',
+                            backgroundColor: '#0da79e',
                             color: '#fff',
-                            padding: '10px 15px',
-                            borderRadius: '4px',
-                            flex: '0 0 30%',
+                            border: 'none',
+                            padding: '10px 20px',
+                            fontSize: '16px',
+                          }}
+                          onClick={async () => {
+                            for (let id of selectedRows) {
+                              if (editedPriorities[id] !== undefined) {
+                                await dispatch(
+                                  updateFeatureListPriority({
+                                    id,
+                                    priority: parseInt(editedPriorities[id]),
+                                  })
+                                );
+                              }
+                            }
+                            dispatch(fetchFeatureLists());
+                            setEditedPriorities({});
+                            setSelectedRows([]);
                           }}
                         >
-                          <div>
-                            <input
-                              type="checkbox"
-                              checked={selectedRows.includes(feature.id)}
-                              onChange={() => handleRowCheckboxChange(feature.id)}
-                              className="me-2"
-                            />
-                            {feature.label}
-                          </div>
-                          <div className="d-flex gap-2">
-                            <button
-                              className="btn btn-sm btn-outline-primary"
-                              title="View"
-                              onClick={() => {
-                                setViewFeatureList(feature);
-                                setViewModalVisible(true);
-                              }}
-                            >
-                              <BsEye />
-                            </button>
-                            <button
-                              className="btn btn-sm btn-outline-primary"
-                              title="Edit"
-                              onClick={() => {
-                                setSelectedFeatureList(feature);
-                                setShowEditModal(true);
-                              }}
-                            >
-                              <BsPencilSquare />
-                            </button>
-                            <button
-                              className="btn btn-sm btn-outline-danger"
-                              title="Delete"
-                              onClick={() => handleDeleteClick(feature.id)}
-                            >
-                              <BsTrash />
-                            </button>
-                          </div>
-                          {selectedRows.includes(feature.id) ? (
-                            <input
-                              type="number"
-                              value={editedPriorities[feature.id] ?? feature.priority}
-                              onChange={(e) =>
-                                setEditedPriorities((prev) => ({
-                                  ...prev,
-                                  [feature.id]: e.target.value,
-                                }))
-                              }
-                              className="form-control"
-                              style={{ width: '50px' }}
-                            />
-                          ) : (
-                            <span className="badge ms-2">{feature.priority}</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-
-                    <button
-                      className="btn mt-3 set-priority-btn"
-                      style={{
-                        backgroundColor: '#0da79e',
-                        color: '#fff',
-                        border: 'none',
-                        padding: '10px 20px',
-                        fontSize: '16px',
-                      }}
-                      onClick={async () => {
-                        for (let id of selectedRows) {
-                          if (editedPriorities[id] !== undefined) {
-                            await dispatch(
-                              updateFeatureListPriority({
-                                id,
-                                priority: parseInt(editedPriorities[id]),
-                              })
-                            );
-                          }
-                        }
-                        dispatch(fetchFeatureLists());
-                        setEditedPriorities({});
-                        setSelectedRows([]);
-                      }}
-                    >
-                      Change Priority
-                    </button>
+                          Change Priority
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 ))}
               </div>
             </div>
+
             {showAddModal && (
-              <AddFeatureListModal
-                show={showAddModal}
-                onClose={() => setShowAddModal(false)}
-              />
+              <AddFeatureListModal show={showAddModal} onClose={() => setShowAddModal(false)} />
             )}
             <PaginationComponent
               currentPage={currentPage}
