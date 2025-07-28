@@ -22,35 +22,34 @@ const EditProductImages = () => {
     });
 
     const variants = product?.variants || [];
-    console.log('variants',variants)
-
-    // Fetch product data
     useEffect(() => {
         if (id) {
             dispatch(fetchProductById(id));
         }
     }, [id, dispatch]);
 
-    // Initialize existing images from product data
-    useEffect(() => {
-        if (product && product.images) {
-            const updatedVariants = variants.reduce((acc, variant) => {
-                return {
-                    ...acc,
-                    [variant.id]: {
-                        main_image: variant.images?.main || null,
-                        multiple_images: variant.images?.multiple || [],
-                    },
-                };
-            }, {});
 
-            setExistingImages({
-                main_image: product.images?.main || null,
-                multiple_images: product.images?.multiple || [],
-                variants: updatedVariants,
-            });
-        }
-    }, [product, variants]);
+   useEffect(() => {
+    if (product && product.images) {
+        const variantImages = {};
+        const variantsData = product.images.variants || {};
+
+        Object.keys(variantsData).forEach((variantId) => {
+            const variant = variantsData[variantId];
+            variantImages[variantId] = {
+                main_image: variant.main || null,
+                multiple_images: variant.additional || [],
+            };
+        });
+
+        setExistingImages({
+            main_image: product.images.main || null,
+            multiple_images: product.images.additional || [],
+            variants: variantImages,
+        });
+    }
+}, [product]);
+
 
     const handleSingleImageChange = (e, key) => {
         const file = e.target.files[0];
@@ -230,7 +229,6 @@ const EditProductImages = () => {
                                 onSubmit={handleSubmit}
                                 onReset={handleReset}
                             >
-                                {/* Main Product Section */}
                                 <div>
                                     <h6 className="sub-heading">Main Product Images</h6>
                                     <div className="row">
@@ -271,8 +269,6 @@ const EditProductImages = () => {
                                                 </div>
                                             )}
                                         </div>
-
-                                        {/* Multiple Main Images */}
                                         <div className="col-lg-8 col-md-6 mb-3">
                                             <label className="form-label">Upload Multiple Product Images</label>
                                             <input
@@ -314,8 +310,6 @@ const EditProductImages = () => {
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* Dynamic Variant Sections */}
                                 {variants.map((variant) => {
                                     const variantLabel = `${variant.size?.title || ''} / ${variant.color?.label || ''}`;
                                     const singleKey = `variant_${variant.id}_Single`;
@@ -366,8 +360,6 @@ const EditProductImages = () => {
                                                         </div>
                                                     )}
                                                 </div>
-
-                                                {/* Multiple Variant Images */}
                                                 <div className="col-lg-8 col-md-6 mb-3">
                                                     <label className="form-label">Upload Multiple Images</label>
                                                     <input
@@ -416,8 +408,6 @@ const EditProductImages = () => {
                                         </div>
                                     );
                                 })}
-
-                                {/* Submit / Reset Buttons */}
                                 <div className="row">
                                     <div className="col-lg-12 text-center my-4">
                                         <button type="submit" className="btn btn-primary py-2 px-5 me-2">
