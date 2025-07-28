@@ -59,7 +59,6 @@ const EditProductPage = () => {
                       <Tab eventKey="edit" title="Edit Product">
                         <EditProduct
                           product={createdProductInfo}
-                          // updatedVariantIds={updatedVariantIds}
                             setUpdatedVariantIds={setUpdatedVariantIds}
                           
                         />
@@ -69,7 +68,6 @@ const EditProductPage = () => {
                             product={selectedProduct}
                               updatedVariantIds={updatedVariantIds}
                           />
-                        {/* )} */}
                       </Tab>
                       <Tab eventKey="filters" title="Product Filters" >
                           <EditProductFilters/>

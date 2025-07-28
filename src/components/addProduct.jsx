@@ -46,12 +46,12 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     description: '',
     status: 'enable',
     searchKeywords: '',
-    stock: '',
-    mrp: '',
-    sellingPrice: '',
-    height: '',
-    width: '',
-    length: '',
+    Stock: '',
+    Mrp: '',
+    SellingPrice: '',
+    Height: '',
+    Width: '',
+    Length: '',
     sizeId: '',
     colorId: '',
     brandId: '',
@@ -100,19 +100,19 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     if (!selectedMenu) newErrors.selectedMenu = 'Menu is required';
     if (!selectedSubMenu) newErrors.selectedSubMenu = 'Sub Menu is required';
     if (!selectedListSubMenu) newErrors.selectedListSubMenu = 'List Sub Menu is required';
-    if (!formData.stock) newErrors.stock = 'Stock is required';
-    if (!formData.mrp) newErrors.mrp = 'MRP is required';
-    if (!formData.sellingPrice) newErrors.sellingPrice = 'Selling Price is required';
+    if (!formData.Stock) newErrors.Stock = 'Stock is required';
+    if (!formData.Mrp) newErrors.Mrp = 'MRP is required';
+    if (!formData.SellingPrice) newErrors.SellingPrice = 'Selling Price is required';
     // if (!formData.brandId) newErrors.brandId = 'Brand is required';
     if (!formData.sizeId) newErrors.sizeId = 'Size is required';
     if (!formData.colorId) newErrors.colorId = 'Color is required';
-    if (formData.stock && isNaN(formData.stock)) newErrors.stock = 'Stock must be a number';
-    if (formData.mrp && isNaN(formData.mrp)) newErrors.mrp = 'MRP must be a number';
-    if (formData.sellingPrice && isNaN(formData.sellingPrice))
-      newErrors.sellingPrice = 'Selling Price must be a number';
-    if (formData.height && isNaN(formData.height)) newErrors.height = 'Height must be a number';
-    if (formData.width && isNaN(formData.width)) newErrors.width = 'Width must be a number';
-    if (formData.length && isNaN(formData.length)) newErrors.length = 'Length must be a number';
+    if (formData.Stock && isNaN(formData.Stock)) newErrors.Stock = 'Stock must be a number';
+    if (formData.Mrp && isNaN(formData.Mrp)) newErrors.Mrp = 'MRP must be a number';
+    if (formData.SellingPrice && isNaN(formData.SellingPrice))
+      newErrors.SellingPrice = 'Selling Price must be a number';
+    if (formData.Height && isNaN(formData.Height)) newErrors.Height = 'Height must be a number';
+    if (formData.Width && isNaN(formData.Width)) newErrors.Width = 'Width must be a number';
+    if (formData.Length && isNaN(formData.Length)) newErrors.Length = 'Length must be a number';
     if (!formData.description.trim()) newErrors.description = 'Description is required';
     if (!formData.status) newErrors.status = 'Product status is required';
     if (!formData.searchKeywords.trim()) newErrors.searchKeywords = 'Search Keywords are required';
@@ -128,7 +128,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
       newErrors.deliveryCharges = 'Delivery Charges must be a number';
     let tempErrors = {};
 
-    ['stock', 'mrp', 'sellingPrice'].forEach((field) => {
+    ['Stock', 'Mrp', 'SellingPrice'].forEach((field) => {
       if (!formData[field]) {
         tempErrors[field] = `${field} is required`;
       }
@@ -162,12 +162,12 @@ const AddProduct = ({ onClose, onProductCreated }) => {
       title: formData.title,
       description: formData.description,
       searchKeywords: formData.searchKeywords,
-      stock: parseInt(formData.stock),
-      mrp: parseFloat(formData.mrp),
-      sellingPrice: parseFloat(formData.sellingPrice),
-      height: parseFloat(formData.height),
-      width: parseFloat(formData.width),
-      length: parseFloat(formData.length),
+      stock: parseInt(formData.Stock),
+      mrp: parseFloat(formData.Mrp),
+      sellingPrice: parseFloat(formData.SellingPrice),
+      height: parseFloat(formData.Height),
+      width: parseFloat(formData.Width),
+      length: parseFloat(formData.Length),
       sizeId: parseInt(formData.sizeId),
       colorId: parseInt(formData.colorId),
       brandId: parseInt(formData.brandId),
@@ -484,8 +484,8 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                   <div className="col-lg-12">
                     <h6 className="sub-heading">Price & Color/Size Details<span className="text-danger">*</span></h6>
                     <div className="row">
-                      {['stock', 'mrp', 'sellingPrice', 'height', 'width', 'length'].map((field, idx) => {
-                        const isRequired = ['stock', 'mrp', 'sellingPrice'].includes(field);
+                      {['Stock', 'Mrp', 'SellingPrice', 'Height', 'Width', 'Length'].map((field, idx) => {
+                        const isRequired = ['Stock', 'Mrp', 'SellingPrice'].includes(field);
 
                         return (
                           <div className="col-lg-3 mb-3" key={idx}>
