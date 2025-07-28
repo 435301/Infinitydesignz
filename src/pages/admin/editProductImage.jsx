@@ -6,6 +6,7 @@ import BASE_URL from '../../config/config';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProductById } from '../../redux/actions/productAction';
+import { toast } from 'react-toastify';
 
 const EditProductImages = () => {
     const { id } = useParams();
@@ -156,10 +157,10 @@ const EditProductImages = () => {
                     },
                 }));
             }
-            alert('Image removed successfully!');
+            toast.success('Image removed successfully!')
         } catch (error) {
             console.error('Error removing image:', error);
-            alert('Failed to remove image.');
+            toast.error('Failed to remove image')
         }
     };
 
@@ -204,13 +205,13 @@ const EditProductImages = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            alert('Images uploaded successfully!');
+            toast.success('Images uploaded successfully!')
             console.log(response.data);
             handleReset();
             dispatch(fetchProductById(id)); // Refresh product data
         } catch (error) {
             console.error('Upload failed:', error);
-            alert('Image upload failed.');
+            toast.error('Image upload failed')
         }
     };
 
