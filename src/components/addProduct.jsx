@@ -35,7 +35,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
   const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
   const [errors, setErrors] = useState({});
   const [createdProductId, setCreatedProductId] = useState(null);
-  const [createdVariantIds, setCreatedVariantIds] = useState('');
+  const [createdVariantIds,setCreatedVariantIds] = useState('');
   const initialFormState = {
     sku: '',
     title: '',
@@ -146,17 +146,6 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     setErrors({});
     if (!validate()) return;
 
-    const variantPayloads = variants
-      .filter((v) => v.sku && v.stock && v.mrp && v.sellingPrice)
-      .map((variant) => ({
-        sku: variant.sku,
-        stock: parseInt(variant.stock),
-        mrp: parseFloat(variant.mrp),
-        sellingPrice: parseFloat(variant.sellingPrice),
-        sizeId: variant.sizeId ? parseInt(variant.sizeId) : null,
-        colorId: variant.colorId ? parseInt(variant.colorId) : null,
-      }));
-
     const payload = {
       sku: formData.sku,
       title: formData.title,
@@ -183,36 +172,51 @@ const AddProduct = ({ onClose, onProductCreated }) => {
         sla: parseInt(formData.sla),
         deliveryCharges: formData.deliveryCharges
       },
-      variants: variantPayloads,
     };
-
     console.log('Submitting Product:', payload);
-
     try {
       const token = localStorage.getItem('token');
-
-      // Step 1: Create the product
       const response = await axios.post(`${BASE_URL}/products`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
-      console.group('response123', response)
-      const productId = response?.data?.data?.id;
+      const productId = response.data?.id;
+      console.log('Product created successfully:', response.data);
       toast.success('Product Created Successfully');
-      console.log('Product created with ID:', productId);
-      const productDetailsRes = await axios.get(`${BASE_URL}/products/${productId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      navigate('/admin/product')
+      const variantPayloads = variants
+        .filter((v) => v.sku && v.stock && v.mrp && v.sellingPrice)
+        .map((variant) => ({
+          ...variant,
+          productId,
+          stock: parseInt(variant.stock),
+          mrp: parseFloat(variant.mrp),
+          sellingPrice: parseFloat(variant.sellingPrice),
+          sizeId: variant.sizeId ? parseInt(variant.sizeId) : null,
+          colorId: variant.colorId ? parseInt(variant.colorId) : null,
+        }));
 
-      console.log('productDetailsRes', productDetailsRes)
-      const product = productDetailsRes.data;
-      console.log('product1123', product)
-      const createdVariantIds = (product.variants || []).map(v => v.id).filter(Boolean);
-      console.log('Fetched Variant IDs:', createdVariantIds);
+        let createdVariants = [];
+
+      if (variantPayloads.length) {
+        createdVariants = await dispatch(addVariants(variantPayloads)); 
+      }
+    //    if (variantPayloads.length) {
+    //   const variantResponse = await axios.post(`${BASE_URL}/variants`, variantPayloads, {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //       'Content-Type': 'application/json',
+    //     },
+    //   });
+
+    //   createdVariants = variantResponse.data || [];
+    // }
+
+    const createdVariantIds = createdVariants.map((v) => v.id).filter(Boolean);
+    console.log('createdVariantIds', createdVariantIds);
+      // Reset all form data
       setFormData(initialFormState);
       setDescription('');
       setSelectedMenu('');
@@ -220,35 +224,34 @@ const AddProduct = ({ onClose, onProductCreated }) => {
       setSelectedListSubMenu('');
       setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
 
-      setCreatedProductId(productId);
-      setCreatedVariantIds(createdVariantIds);
+      setCreatedProductId(response.data.id);
+      // 3. Pass product and variant IDs to state
+    setCreatedProductId(productId);
+    setCreatedVariantIds(createdVariantIds);
 
+
+      // Notify parent component
       if (onProductCreated) {
         onProductCreated({
-          id: productId,
+          id: response.data.id,
           featureTypeId: selectedFeatureTypeId,
           featureType: featureType,
           filterTypeId: selectedFilterTypeId,
           filterType: filterType,
-          variants: product.variants || [],
+            variantIds: createdVariantIds || [],
         });
       }
 
+      // Only close if it's a modal, otherwise stay on the same page
       if (onClose) {
-        onClose();
+        onClose(); // Close the modal if provided
       }
-
-      // Optional redirect
-      // navigate('/admin/product');
-
     } catch (err) {
       setErrors({
         brand: err?.response?.data?.message || 'Something went wrong.',
       });
     }
   };
-
-
 
   const handleReset = (e) => {
     e.preventDefault();
@@ -418,11 +421,9 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                           Description<span className="text-danger">*</span>
                         </label>
                         <CKEditor
+                          // key={formData.description}
                           editor={ClassicEditor}
                           data={formData.description}
-                          config={{
-                            height: '800px', // set your desired height here
-                          }}
                           onChange={(event, editor) => {
                             const data = editor.getData();
                             setFormData((prev) => ({ ...prev, description: data }));
@@ -431,7 +432,6 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                             }
                           }}
                         />
-
 
                         {errors.description && (
                           <div className="invalid-feedback">{errors.description}</div>
@@ -484,7 +484,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                   <div className="col-lg-12">
                     <h6 className="sub-heading">Price & Color/Size Details<span className="text-danger">*</span></h6>
                     <div className="row">
-                      {['Stock', 'MRP', 'SellingPrice', 'Height', 'Width', 'Length'].map((field, idx) => {
+                      {['stock', 'mrp', 'sellingPrice', 'height', 'width', 'length'].map((field, idx) => {
                         const isRequired = ['stock', 'mrp', 'sellingPrice'].includes(field);
 
                         return (
