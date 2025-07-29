@@ -272,6 +272,7 @@ const ListSubCategory = () => {
                                       className="rounded-circle"
                                       width="50"
                                       height="50"
+                                      loading='lazy'
                                     />
                                   ) : (
                                     <span>N/A</span>
@@ -285,6 +286,7 @@ const ListSubCategory = () => {
                                       className="rounded-circle"
                                       width="50"
                                       height="50"
+                                      loading='lazy'
                                     />
                                   ) : (
                                     <span>N/A</span>
@@ -298,6 +300,7 @@ const ListSubCategory = () => {
                                       className="rounded-circle"
                                       width="50"
                                       height="50"
+                                      loading='lazy'
                                     />
                                   ) : (
                                     <span>N/A</span>

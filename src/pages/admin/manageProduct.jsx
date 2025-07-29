@@ -240,6 +240,7 @@ const ManageProducts = () => {
                                                                             src={`${BASE_URL}/uploads/products/${product.images.main.url}`}
                                                                             alt={product.title}
                                                                             style={{ width: '50px', height: 'auto' }}
+                                                                            loading='lazy'
                                                                         />
                                                                     ) : (
                                                                         '-'

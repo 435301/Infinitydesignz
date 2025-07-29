@@ -303,6 +303,7 @@ const ManageSubCategories = () => {
                                       className="rounded-circle"
                                       width="50"
                                       height="50"
+                                      loading='lazy'
                                     />
                                   ) : (
                                     <span>N/A</span>
@@ -317,6 +318,7 @@ const ManageSubCategories = () => {
                                       className="rounded-circle"
                                       width="50"
                                       height="50"
+                                      loading='lazy'
                                     />
                                   ) : (
                                     <span>N/A</span>
@@ -330,6 +332,7 @@ const ManageSubCategories = () => {
                                       className="rounded-circle"
                                       width="50"
                                       height="50"
+                                      loading='lazy'
                                     />
                                   ) : (
                                     <span>N/A</span>
