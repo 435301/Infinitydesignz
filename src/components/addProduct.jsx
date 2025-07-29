@@ -98,6 +98,7 @@ const validate = () => {
 
   if (!formData.sku.trim()) newErrors.sku = 'SKU is required';
   if (!formData.title.trim()) newErrors.title = 'Title is required';
+  if (!formData.model.trim()) newErrors.model = 'Model is required';
   if (!selectedMenu) newErrors.selectedMenu = 'Menu is required';
   if (!selectedSubMenu) newErrors.selectedSubMenu = 'Sub Menu is required';
   if (!selectedListSubMenu) newErrors.selectedListSubMenu = 'List Sub Menu is required';
@@ -114,19 +115,19 @@ const validate = () => {
     newErrors.SellingPrice = 'Selling Price cannot be greater than MRP';
   }
 
-  if (formData.Height && isNaN(formData.Height)) newErrors.Height = 'Height must be a number';
-  if (formData.Width && isNaN(formData.Width)) newErrors.Width = 'Width must be a number';
-  if (formData.Length && isNaN(formData.Length)) newErrors.Length = 'Length must be a number';
+  // if (formData.Height && isNaN(formData.Height)) newErrors.Height = 'Height must be a number';
+  // if (formData.Width && isNaN(formData.Width)) newErrors.Width = 'Width must be a number';
+  // if (formData.Length && isNaN(formData.Length)) newErrors.Length = 'Length must be a number';
 
-  if (!formData.sizeId) newErrors.sizeId = 'Size is required';
-  if (!formData.colorId) newErrors.colorId = 'Color is required';
+  // if (!formData.sizeId) newErrors.sizeId = 'Size is required';
+  // if (!formData.colorId) newErrors.colorId = 'Color is required';
 
   if (!formData.description.trim()) newErrors.description = 'Description is required';
   if (!formData.status) newErrors.status = 'Product status is required';
   if (!formData.searchKeywords.trim()) newErrors.searchKeywords = 'Search Keywords are required';
 
-  if (!formData.weight) newErrors.weight = 'Weight is required';
-  else if (isNaN(formData.weight)) newErrors.weight = 'Weight must be a number';
+  // if (!formData.weight) newErrors.weight = 'Weight is required';
+  // else if (isNaN(formData.weight)) newErrors.weight = 'Weight must be a number';
 
   if (!formData.sla) newErrors.sla = 'SLA is required';
   else if (isNaN(formData.sla)) newErrors.sla = 'SLA must be a number';
@@ -597,7 +598,7 @@ const validate = () => {
 
                       <div className="col-lg-3 mb-3">
                         <label className="form-label">
-                          Size<span className="text-danger">*</span>
+                          Size
                         </label>
                         <select
                           className={`form-control ${errors.sizeId ? 'is-invalid' : ''}`}
@@ -623,7 +624,7 @@ const validate = () => {
 
                       <div className="col-lg-3 mb-3">
                         <label className="form-label">
-                          Color<span className="text-danger">*</span>
+                          Color
                         </label>
                         <select
                           className={`form-control ${errors.colorId ? 'is-invalid' : ''}`}
@@ -658,8 +659,8 @@ const validate = () => {
                           <th>Stock <span className="text-danger">*</span></th>
                           <th>MRP <span className="text-danger">*</span></th>
                           <th>Selling Price <span className="text-danger">*</span></th>
-                          <th>Size<span className="text-danger">*</span></th>
-                          <th>Color<span className="text-danger">*</span></th>
+                          <th>Size</th>
+                          <th>Color</th>
                           <th>Action<span className="text-danger">*</span></th>
                         </tr>
                       </thead>
