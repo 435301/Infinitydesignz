@@ -50,7 +50,7 @@ const ManageProducts = () => {
             product?.mainCategory?.title?.toLowerCase().includes(search) ||
             product?.subCategory?.title?.toLowerCase().includes(search) ||
             product?.listSubCategory?.title?.toLowerCase().includes(search) ||
-            product?.size?.title?.toLowerCase().includes(search) ||
+            product?.size?.title?.includes(search) ||
             product?.color?.label?.toLowerCase().includes(search);
 
 
