@@ -26,6 +26,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
   const { sizes = [] } = useSelector((state) => state.sizes || {});
   const { colors = [] } = useSelector((state) => state.colors || {});
   const { brands = [] } = useSelector((state) => state.brands);
+  console.log('colors', colors);
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [description, setDescription] = useState('');
@@ -61,18 +62,25 @@ const AddProduct = ({ onClose, onProductCreated }) => {
   const menuOptions = categories.filter((cat) => cat.parentId === null);
   const subMenuOptions = categories.filter((cat) => cat.parentId === parseInt(selectedMenu));
   const listSubMenuOptions = categories.filter((cat) => cat.parentId === parseInt(selectedSubMenu));
+  console.log('listSubMenuOptions', listSubMenuOptions);
   const featureTypeId = listSubMenuOptions[0]?.featureTypeId || '';
+  console.log('featureTypeId', featureTypeId);
   const featureTypeName = listSubMenuOptions[0]?.featureType?.name || '';
+  console.log('featureTypeName', featureTypeName);
 
   const selectedFeatureTypeId =
     listSubMenuOptions.find((option) => option.id === parseInt(selectedListSubMenu))?.featureTypeId || null;
+  console.log('selectedFeatureTypeId', selectedFeatureTypeId);
   const featureType =
     listSubMenuOptions.find((option) => option.id === parseInt(selectedListSubMenu))?.featureType || null;
+  console.log('selectedFeatureTypeId', featureType);
 
   const selectedFilterTypeId =
     listSubMenuOptions.find((option) => option.id === parseInt(selectedListSubMenu))?.filterTypeId || null;
+  console.log('selectedFilterTypeId', selectedFilterTypeId);
   const filterType =
     listSubMenuOptions.find((option) => option.id === parseInt(selectedListSubMenu))?.filterType || null;
+  console.log('filterType', filterType);
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -87,8 +95,6 @@ const AddProduct = ({ onClose, onProductCreated }) => {
 
   const validate = () => {
     const newErrors = {};
-
-    // Validate required fields
     if (!formData.sku.trim()) newErrors.sku = 'SKU is required';
     if (!formData.title.trim()) newErrors.title = 'Title is required';
     if (!selectedMenu) newErrors.selectedMenu = 'Menu is required';
@@ -97,45 +103,39 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     if (!formData.Stock) newErrors.Stock = 'Stock is required';
     if (!formData.Mrp) newErrors.Mrp = 'MRP is required';
     if (!formData.SellingPrice) newErrors.SellingPrice = 'Selling Price is required';
+    // if (!formData.brandId) newErrors.brandId = 'Brand is required';
     if (!formData.sizeId) newErrors.sizeId = 'Size is required';
     if (!formData.colorId) newErrors.colorId = 'Color is required';
-    if (!formData.description.trim()) newErrors.description = 'Description is required';
-    if (!formData.status) newErrors.status = 'Product status is required';
-    if (!formData.searchKeywords.trim()) newErrors.searchKeywords = 'Search Keywords are required';
-    if (!formData.sla) newErrors.sla = 'SLA is required';
-
-    // Validate numeric fields and specific formats
     if (formData.Stock && isNaN(formData.Stock)) newErrors.Stock = 'Stock must be a number';
-    else if (formData.Stock && !/^\d{4}$/.test(formData.Stock))
-      newErrors.Stock = 'Stock must be exactly 4 digits';
     if (formData.Mrp && isNaN(formData.Mrp)) newErrors.Mrp = 'MRP must be a number';
     if (formData.SellingPrice && isNaN(formData.SellingPrice))
       newErrors.SellingPrice = 'Selling Price must be a number';
     if (formData.Height && isNaN(formData.Height)) newErrors.Height = 'Height must be a number';
     if (formData.Width && isNaN(formData.Width)) newErrors.Width = 'Width must be a number';
     if (formData.Length && isNaN(formData.Length)) newErrors.Length = 'Length must be a number';
-    if (formData.weight && isNaN(formData.weight)) newErrors.weight = 'Weight must be a number';
-    if (formData.sla && isNaN(formData.sla)) newErrors.sla = 'SLA must be a number';
-    if (formData.deliveryCharges && isNaN(formData.deliveryCharges))
+    if (!formData.description.trim()) newErrors.description = 'Description is required';
+    if (!formData.status) newErrors.status = 'Product status is required';
+    if (!formData.searchKeywords.trim()) newErrors.searchKeywords = 'Search Keywords are required';
+    // if (!formData.height) newErrors.height = 'Height is required';
+    // if (!formData.width) newErrors.width = 'Width is required';
+    // if (!formData.length) newErrors.length = 'Length is required';
+    // if (!formData.weight) newErrors.weight = 'Weight is required';
+    else if (isNaN(formData.weight)) newErrors.weight = 'Weight must be a number';
+    if (!formData.sla) newErrors.sla = 'SLA is required';
+    else if (isNaN(formData.sla)) newErrors.sla = 'SLA must be a number';
+    // if (!formData.deliveryCharges) newErrors.deliveryCharges = 'Delivery Charges are required';
+    else if (isNaN(formData.deliveryCharges))
       newErrors.deliveryCharges = 'Delivery Charges must be a number';
+    let tempErrors = {};
 
-    // Validate variants (including 4-digit stock check)
-    variants.forEach((variant, index) => {
-      if (variant.sku || variant.stock || variant.mrp || variant.sellingPrice || variant.sizeId || variant.colorId) {
-        if (!variant.sku) newErrors[`variant_${index}_sku`] = `SKU is required for variant ${index + 1}`;
-        if (!variant.stock) newErrors[`variant_${index}_stock`] = `Stock is required for variant ${index + 1}`;
-        else if (isNaN(variant.stock))
-          newErrors[`variant_${index}_stock`] = `Stock must be a number for variant ${index + 1}`;
-        else if (!/^\d{4}$/.test(variant.stock))
-          newErrors[`variant_${index}_stock`] = `Stock must be exactly 4 digits for variant ${index + 1}`;
-        if (!variant.mrp) newErrors[`variant_${index}_mrp`] = `MRP is required for variant ${index + 1}`;
-        if (!variant.sellingPrice)
-          newErrors[`variant_${index}_sellingPrice`] = `Selling Price is required for variant ${index + 1}`;
-        if (!variant.sizeId) newErrors[`variant_${index}_sizeId`] = `Size is required for variant ${index + 1}`;
-        if (!variant.colorId) newErrors[`variant_${index}_colorId`] = `Color is required for variant ${index + 1}`;
+    ['Stock', 'Mrp', 'SellingPrice'].forEach((field) => {
+      if (!formData[field]) {
+        tempErrors[field] = `${field} is required`;
       }
     });
 
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -181,10 +181,12 @@ const AddProduct = ({ onClose, onProductCreated }) => {
         model: formData.model,
         weight: parseFloat(formData.weight),
         sla: parseInt(formData.sla),
-        deliveryCharges: formData.deliveryCharges,
+        deliveryCharges: formData.deliveryCharges
       },
       variants: variantPayloads,
     };
+
+    console.log('Submitting Product:', payload);
 
     try {
       const token = localStorage.getItem('token');
@@ -196,16 +198,21 @@ const AddProduct = ({ onClose, onProductCreated }) => {
           'Content-Type': 'application/json',
         },
       });
+      console.group('response123', response)
       const productId = response?.data?.data?.id;
       toast.success('Product Created Successfully');
+      console.log('Product created with ID:', productId);
       const productDetailsRes = await axios.get(`${BASE_URL}/products/${productId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
+      console.log('productDetailsRes', productDetailsRes)
       const product = productDetailsRes.data;
-      const createdVariantIds = (product.variants || []).map((v) => v.id).filter(Boolean);
+      console.log('product1123', product)
+      const createdVariantIds = (product.variants || []).map(v => v.id).filter(Boolean);
+      console.log('Fetched Variant IDs:', createdVariantIds);
       setFormData(initialFormState);
       setDescription('');
       setSelectedMenu('');
@@ -231,12 +238,17 @@ const AddProduct = ({ onClose, onProductCreated }) => {
         onClose();
       }
 
+      // Optional redirect
+      // navigate('/admin/product');
+
     } catch (err) {
       setErrors({
         brand: err?.response?.data?.message || 'Something went wrong.',
       });
     }
   };
+
+
 
   const handleReset = (e) => {
     e.preventDefault();
@@ -253,11 +265,23 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     { sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' },
   ]);
 
+  // const handleChange = (index, field, value) => {
+  //   const updatedVariants = [...variants];
+  //   updatedVariants[index][field] = value;
+  //   setVariants(updatedVariants);
+  // };
+
   const handleChange = (index, field, value) => {
-    const updatedVariants = [...variants];
-    updatedVariants[index][field] = value;
-    setVariants(updatedVariants);
-  };
+  const updatedVariants = [...variants];
+
+  if (field === 'stock') {
+    value = value.replace(/\D/g, '').slice(0, 4);
+  }
+
+  updatedVariants[index][field] = value;
+  setVariants(updatedVariants);
+};
+
 
   const addRow = () => {
     setVariants([
@@ -405,7 +429,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                         <label className={`form-label ${errors.description ? 'is-invalid' : ''}`}>
                           Description<span className="text-danger">*</span>
                         </label>
-                        <div className="custom-ckeditor">
+                        <div className='custom-ckeditor'>
                           <CKEditor
                             editor={ClassicEditor}
                             data={formData.description}
@@ -418,6 +442,9 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                             }}
                           />
                         </div>
+
+
+
                         {errors.description && (
                           <div className="invalid-feedback">{errors.description}</div>
                         )}
@@ -480,17 +507,20 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                             </label>
                             <input
                               type="text"
-                              inputMode="numeric"
-                              pattern="\d{1,4}"
-                              maxLength={4}
                               className={`form-control ${errors[field] ? 'is-invalid' : ''}`}
                               placeholder={field}
                               value={formData[field]}
                               onChange={(e) => {
-                                const val = e.target.value;
-                                if (/^\d{0,4}$/.test(val)) {
-                                  setFormData({ ...formData, [field]: val });
-                                  if (errors[field]) setErrors({ ...errors, [field]: '' });
+                                let value = e.target.value;
+
+                                if (field === 'Stock') {
+                                  value = value.replace(/\D/g, '').slice(0, 4); 
+                                }
+
+                                setFormData({ ...formData, [field]: value });
+
+                                if (errors[field]) {
+                                  setErrors({ ...errors, [field]: '' });
                                 }
                               }}
                             />
@@ -600,61 +630,42 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                             <td>
                               <input
                                 type="text"
-                                className={`form-control ${errors[`variant_${index}_sku`] ? 'is-invalid' : ''}`}
+                                className="form-control"
                                 value={variant.sku}
                                 onChange={(e) => handleChange(index, 'sku', e.target.value)}
                                 placeholder="SKU"
                               />
-                              {errors[`variant_${index}_sku`] && (
-                                <div className="invalid-feedback">{errors[`variant_${index}_sku`]}</div>
-                              )}
                             </td>
                             <td>
                               <input
                                 type="text"
-                                className={`form-control ${errors[`variant_${index}_stock`] ? 'is-invalid' : ''}`}
+                                className="form-control"
                                 value={variant.stock}
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  // Allow empty input or exactly 4 digits
-                                  if (value === '' || /^\d{4}$/.test(value)) {
-                                    handleChange(index, 'stock', value);
-                                  }
-                                }}
+                                onChange={(e) => handleChange(index, 'stock', e.target.value)}
                                 placeholder="Stock"
-                                maxLength={4}
                               />
-                              {errors[`variant_${index}_stock`] && (
-                                <div className="invalid-feedback">{errors[`variant_${index}_stock`]}</div>
-                              )}
                             </td>
                             <td>
                               <input
                                 type="text"
-                                className={`form-control ${errors[`variant_${index}_mrp`] ? 'is-invalid' : ''}`}
+                                className="form-control"
                                 value={variant.mrp}
                                 onChange={(e) => handleChange(index, 'mrp', e.target.value)}
                                 placeholder="MRP"
                               />
-                              {errors[`variant_${index}_mrp`] && (
-                                <div className="invalid-feedback">{errors[`variant_${index}_mrp`]}</div>
-                              )}
                             </td>
                             <td>
                               <input
                                 type="text"
-                                className={`form-control ${errors[`variant_${index}_sellingPrice`] ? 'is-invalid' : ''}`}
+                                className="form-control"
                                 value={variant.sellingPrice}
                                 onChange={(e) => handleChange(index, 'sellingPrice', e.target.value)}
                                 placeholder="Selling Price"
                               />
-                              {errors[`variant_${index}_sellingPrice`] && (
-                                <div className="invalid-feedback">{errors[`variant_${index}_sellingPrice`]}</div>
-                              )}
                             </td>
                             <td>
                               <select
-                                className={`form-control ${errors[`variant_${index}_sizeId`] ? 'is-invalid' : ''}`}
+                                className="form-control"
                                 value={variant.sizeId}
                                 onChange={(e) => handleChange(index, 'sizeId', e.target.value)}
                               >
@@ -665,13 +676,10 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                                   </option>
                                 ))}
                               </select>
-                              {errors[`variant_${index}_sizeId`] && (
-                                <div className="invalid-feedback">{errors[`variant_${index}_sizeId`]}</div>
-                              )}
                             </td>
                             <td>
                               <select
-                                className={`form-control ${errors[`variant_${index}_colorId`] ? 'is-invalid' : ''}`}
+                                className="form-control"
                                 value={variant.colorId}
                                 onChange={(e) => handleChange(index, 'colorId', e.target.value)}
                               >
@@ -682,10 +690,8 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                                   </option>
                                 ))}
                               </select>
-                              {errors[`variant_${index}_colorId`] && (
-                                <div className="invalid-feedback">{errors[`variant_${index}_colorId`]}</div>
-                              )}
                             </td>
+
                             <td>
                               {index === variants.length - 1 ? (
                                 <button

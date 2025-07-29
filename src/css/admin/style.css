@@ -328,6 +328,10 @@ header .wrapper {
   text-align: center;
 }
 
+.custom-ckeditor .ck-editor__editable_inline {
+  min-height: 150px;
+}
+
 @media (max-width: 1024px) {
   .content-wrapper {
     margin-left: 300px;
