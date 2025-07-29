@@ -26,6 +26,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
   const { sizes = [] } = useSelector((state) => state.sizes || {});
   const { colors = [] } = useSelector((state) => state.colors || {});
   const { brands = [] } = useSelector((state) => state.brands);
+  console.log('colors', colors);
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [description, setDescription] = useState('');
@@ -61,18 +62,25 @@ const AddProduct = ({ onClose, onProductCreated }) => {
   const menuOptions = categories.filter((cat) => cat.parentId === null);
   const subMenuOptions = categories.filter((cat) => cat.parentId === parseInt(selectedMenu));
   const listSubMenuOptions = categories.filter((cat) => cat.parentId === parseInt(selectedSubMenu));
+  console.log('listSubMenuOptions', listSubMenuOptions);
   const featureTypeId = listSubMenuOptions[0]?.featureTypeId || '';
+  console.log('featureTypeId', featureTypeId);
   const featureTypeName = listSubMenuOptions[0]?.featureType?.name || '';
+  console.log('featureTypeName', featureTypeName);
 
   const selectedFeatureTypeId =
     listSubMenuOptions.find((option) => option.id === parseInt(selectedListSubMenu))?.featureTypeId || null;
+  console.log('selectedFeatureTypeId', selectedFeatureTypeId);
   const featureType =
     listSubMenuOptions.find((option) => option.id === parseInt(selectedListSubMenu))?.featureType || null;
+  console.log('selectedFeatureTypeId', featureType);
 
   const selectedFilterTypeId =
     listSubMenuOptions.find((option) => option.id === parseInt(selectedListSubMenu))?.filterTypeId || null;
+  console.log('selectedFilterTypeId', selectedFilterTypeId);
   const filterType =
     listSubMenuOptions.find((option) => option.id === parseInt(selectedListSubMenu))?.filterType || null;
+  console.log('filterType', filterType);
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -119,7 +127,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     if (formData.deliveryCharges && isNaN(formData.deliveryCharges))
       newErrors.deliveryCharges = 'Delivery Charges must be a number';
 
-    // Validate variants (including 4-digit stock check)
+    // Optional: Validate variants (including 4-digit stock check)
     variants.forEach((variant, index) => {
       if (variant.sku || variant.stock || variant.mrp || variant.sellingPrice || variant.sizeId || variant.colorId) {
         if (!variant.sku) newErrors[`variant_${index}_sku`] = `SKU is required for variant ${index + 1}`;
@@ -139,7 +147,6 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -181,10 +188,12 @@ const AddProduct = ({ onClose, onProductCreated }) => {
         model: formData.model,
         weight: parseFloat(formData.weight),
         sla: parseInt(formData.sla),
-        deliveryCharges: formData.deliveryCharges,
+        deliveryCharges: formData.deliveryCharges
       },
       variants: variantPayloads,
     };
+
+    console.log('Submitting Product:', payload);
 
     try {
       const token = localStorage.getItem('token');
@@ -196,16 +205,21 @@ const AddProduct = ({ onClose, onProductCreated }) => {
           'Content-Type': 'application/json',
         },
       });
+      console.group('response123', response)
       const productId = response?.data?.data?.id;
       toast.success('Product Created Successfully');
+      console.log('Product created with ID:', productId);
       const productDetailsRes = await axios.get(`${BASE_URL}/products/${productId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
+      console.log('productDetailsRes', productDetailsRes)
       const product = productDetailsRes.data;
-      const createdVariantIds = (product.variants || []).map((v) => v.id).filter(Boolean);
+      console.log('product1123', product)
+      const createdVariantIds = (product.variants || []).map(v => v.id).filter(Boolean);
+      console.log('Fetched Variant IDs:', createdVariantIds);
       setFormData(initialFormState);
       setDescription('');
       setSelectedMenu('');
@@ -231,12 +245,17 @@ const AddProduct = ({ onClose, onProductCreated }) => {
         onClose();
       }
 
+      // Optional redirect
+      // navigate('/admin/product');
+
     } catch (err) {
       setErrors({
         brand: err?.response?.data?.message || 'Something went wrong.',
       });
     }
   };
+
+
 
   const handleReset = (e) => {
     e.preventDefault();
@@ -418,6 +437,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                             }}
                           />
                         </div>
+
                         {errors.description && (
                           <div className="invalid-feedback">{errors.description}</div>
                         )}
@@ -480,17 +500,13 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                             </label>
                             <input
                               type="text"
-                              inputMode="numeric"
-                              pattern="\d{1,4}"
-                              maxLength={4}
                               className={`form-control ${errors[field] ? 'is-invalid' : ''}`}
                               placeholder={field}
                               value={formData[field]}
                               onChange={(e) => {
-                                const val = e.target.value;
-                                if (/^\d{0,4}$/.test(val)) {
-                                  setFormData({ ...formData, [field]: val });
-                                  if (errors[field]) setErrors({ ...errors, [field]: '' });
+                                setFormData({ ...formData, [field]: e.target.value });
+                                if (errors[field]) {
+                                  setErrors({ ...errors, [field]: '' });
                                 }
                               }}
                             />
@@ -498,7 +514,6 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                           </div>
                         );
                       })}
-
 
                       <div className="col-lg-3 mb-3">
                         <label className="form-label">
@@ -600,61 +615,42 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                             <td>
                               <input
                                 type="text"
-                                className={`form-control ${errors[`variant_${index}_sku`] ? 'is-invalid' : ''}`}
+                                className="form-control"
                                 value={variant.sku}
                                 onChange={(e) => handleChange(index, 'sku', e.target.value)}
                                 placeholder="SKU"
                               />
-                              {errors[`variant_${index}_sku`] && (
-                                <div className="invalid-feedback">{errors[`variant_${index}_sku`]}</div>
-                              )}
                             </td>
                             <td>
                               <input
                                 type="text"
-                                className={`form-control ${errors[`variant_${index}_stock`] ? 'is-invalid' : ''}`}
+                                className="form-control"
                                 value={variant.stock}
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  // Allow empty input or exactly 4 digits
-                                  if (value === '' || /^\d{4}$/.test(value)) {
-                                    handleChange(index, 'stock', value);
-                                  }
-                                }}
+                                onChange={(e) => handleChange(index, 'stock', e.target.value)}
                                 placeholder="Stock"
-                                maxLength={4}
                               />
-                              {errors[`variant_${index}_stock`] && (
-                                <div className="invalid-feedback">{errors[`variant_${index}_stock`]}</div>
-                              )}
                             </td>
                             <td>
                               <input
                                 type="text"
-                                className={`form-control ${errors[`variant_${index}_mrp`] ? 'is-invalid' : ''}`}
+                                className="form-control"
                                 value={variant.mrp}
                                 onChange={(e) => handleChange(index, 'mrp', e.target.value)}
                                 placeholder="MRP"
                               />
-                              {errors[`variant_${index}_mrp`] && (
-                                <div className="invalid-feedback">{errors[`variant_${index}_mrp`]}</div>
-                              )}
                             </td>
                             <td>
                               <input
                                 type="text"
-                                className={`form-control ${errors[`variant_${index}_sellingPrice`] ? 'is-invalid' : ''}`}
+                                className="form-control"
                                 value={variant.sellingPrice}
                                 onChange={(e) => handleChange(index, 'sellingPrice', e.target.value)}
                                 placeholder="Selling Price"
                               />
-                              {errors[`variant_${index}_sellingPrice`] && (
-                                <div className="invalid-feedback">{errors[`variant_${index}_sellingPrice`]}</div>
-                              )}
                             </td>
                             <td>
                               <select
-                                className={`form-control ${errors[`variant_${index}_sizeId`] ? 'is-invalid' : ''}`}
+                                className="form-control"
                                 value={variant.sizeId}
                                 onChange={(e) => handleChange(index, 'sizeId', e.target.value)}
                               >
@@ -665,13 +661,10 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                                   </option>
                                 ))}
                               </select>
-                              {errors[`variant_${index}_sizeId`] && (
-                                <div className="invalid-feedback">{errors[`variant_${index}_sizeId`]}</div>
-                              )}
                             </td>
                             <td>
                               <select
-                                className={`form-control ${errors[`variant_${index}_colorId`] ? 'is-invalid' : ''}`}
+                                className="form-control"
                                 value={variant.colorId}
                                 onChange={(e) => handleChange(index, 'colorId', e.target.value)}
                               >
@@ -682,10 +675,8 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                                   </option>
                                 ))}
                               </select>
-                              {errors[`variant_${index}_colorId`] && (
-                                <div className="invalid-feedback">{errors[`variant_${index}_colorId`]}</div>
-                              )}
                             </td>
+
                             <td>
                               {index === variants.length - 1 ? (
                                 <button

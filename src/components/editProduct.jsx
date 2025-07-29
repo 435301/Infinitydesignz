@@ -460,19 +460,20 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                 <label className={`form-label ${errors.description ? 'is-invalid' : ''}`}>
                                                     Description<span className="text-danger">*</span>
                                                 </label>
-                                                <CKEditor
-                                                    key={formData.description}
-                                                    editor={ClassicEditor}
-                                                    data={formData.description}
-                                                    onChange={(event, editor) => {
-                                                        const data = editor.getData();
-                                                        setFormData((prev) => ({ ...prev, description: data }));
-                                                        if (errors.description) {
-                                                            setErrors((prev) => ({ ...prev, description: '' }));
-                                                        }
-                                                    }}
-                                                />
-
+                                                <div className="custom-ckeditor">
+                                                    <CKEditor
+                                                        key={formData.description}
+                                                        editor={ClassicEditor}
+                                                        data={formData.description}
+                                                        onChange={(event, editor) => {
+                                                            const data = editor.getData();
+                                                            setFormData((prev) => ({ ...prev, description: data }));
+                                                            if (errors.description) {
+                                                                setErrors((prev) => ({ ...prev, description: '' }));
+                                                            }
+                                                        }}
+                                                    />
+                                                </div>
                                                 {errors.description && (
                                                     <div className="invalid-feedback">{errors.description}</div>
                                                 )}
