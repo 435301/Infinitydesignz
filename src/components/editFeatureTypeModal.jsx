@@ -68,8 +68,8 @@ const EditFeatureTypeModal = ({ show, onClose, featureType }) => {
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
-                            <button type="submit" className="btn btn-primary">Submit</button>
+                            <button type="button" className="btn btn-danger" onClick={onClose}>Cancel</button>
+                            <button type="submit" className="btn btn-success">Submit</button>
                         </div>
                     </form>
                 </div>

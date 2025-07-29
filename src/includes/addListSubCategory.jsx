@@ -42,20 +42,26 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
         setter(null);
     };
 
-    const validate = () => {
-        const newErrors = {}
+  const validate = () => {
+        const newErrors = {};
         if (!title.trim()) {
             newErrors.title = 'Category Title is required';
         }
         if (!menu) {
-            newErrors.menu = 'Menu has to be selected';
+            newErrors.menu = 'Menu is required';
         }
         if (!subMenu) {
-            newErrors.subMenu = 'SubMenu has to be selected';
+            newErrors.subMenu = 'Sub Category is required';
+        }
+        if (!featureType) {
+            newErrors.featureType = 'Feature Type is required';
+        }
+        if (!filterType) {
+            newErrors.filterType = 'Filter Type is required';
         }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
-    }
+    };
 
     const handleTitleChange = (e) => {
         const value = e.target.value;

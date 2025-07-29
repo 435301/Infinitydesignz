@@ -93,52 +93,51 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     setIsSidebarCollapsed(collapsed);
   };
 
-  const validate = () => {
-    const newErrors = {};
-    if (!formData.sku.trim()) newErrors.sku = 'SKU is required';
-    if (!formData.title.trim()) newErrors.title = 'Title is required';
-    if (!selectedMenu) newErrors.selectedMenu = 'Menu is required';
-    if (!selectedSubMenu) newErrors.selectedSubMenu = 'Sub Menu is required';
-    if (!selectedListSubMenu) newErrors.selectedListSubMenu = 'List Sub Menu is required';
-    if (!formData.Stock) newErrors.Stock = 'Stock is required';
-    if (!formData.Mrp) newErrors.Mrp = 'MRP is required';
-    if (!formData.SellingPrice) newErrors.SellingPrice = 'Selling Price is required';
-    // if (!formData.brandId) newErrors.brandId = 'Brand is required';
-    if (!formData.sizeId) newErrors.sizeId = 'Size is required';
-    if (!formData.colorId) newErrors.colorId = 'Color is required';
-    if (formData.Stock && isNaN(formData.Stock)) newErrors.Stock = 'Stock must be a number';
-    if (formData.Mrp && isNaN(formData.Mrp)) newErrors.Mrp = 'MRP must be a number';
-    if (formData.SellingPrice && isNaN(formData.SellingPrice))
-      newErrors.SellingPrice = 'Selling Price must be a number';
-    if (formData.Height && isNaN(formData.Height)) newErrors.Height = 'Height must be a number';
-    if (formData.Width && isNaN(formData.Width)) newErrors.Width = 'Width must be a number';
-    if (formData.Length && isNaN(formData.Length)) newErrors.Length = 'Length must be a number';
-    if (!formData.description.trim()) newErrors.description = 'Description is required';
-    if (!formData.status) newErrors.status = 'Product status is required';
-    if (!formData.searchKeywords.trim()) newErrors.searchKeywords = 'Search Keywords are required';
-    // if (!formData.height) newErrors.height = 'Height is required';
-    // if (!formData.width) newErrors.width = 'Width is required';
-    // if (!formData.length) newErrors.length = 'Length is required';
-    // if (!formData.weight) newErrors.weight = 'Weight is required';
-    else if (isNaN(formData.weight)) newErrors.weight = 'Weight must be a number';
-    if (!formData.sla) newErrors.sla = 'SLA is required';
-    else if (isNaN(formData.sla)) newErrors.sla = 'SLA must be a number';
-    // if (!formData.deliveryCharges) newErrors.deliveryCharges = 'Delivery Charges are required';
-    else if (isNaN(formData.deliveryCharges))
-      newErrors.deliveryCharges = 'Delivery Charges must be a number';
-    let tempErrors = {};
+const validate = () => {
+  const newErrors = {};
 
-    ['Stock', 'Mrp', 'SellingPrice'].forEach((field) => {
-      if (!formData[field]) {
-        tempErrors[field] = `${field} is required`;
-      }
-    });
+  if (!formData.sku.trim()) newErrors.sku = 'SKU is required';
+  if (!formData.title.trim()) newErrors.title = 'Title is required';
+  if (!selectedMenu) newErrors.selectedMenu = 'Menu is required';
+  if (!selectedSubMenu) newErrors.selectedSubMenu = 'Sub Menu is required';
+  if (!selectedListSubMenu) newErrors.selectedListSubMenu = 'List Sub Menu is required';
 
-    setErrors(tempErrors);
-    return Object.keys(tempErrors).length === 0;
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  if (!formData.Stock) newErrors.Stock = 'Stock is required';
+  else if (isNaN(formData.Stock)) newErrors.Stock = 'Stock must be a number';
+
+  if (!formData.Mrp) newErrors.Mrp = 'MRP is required';
+  else if (isNaN(formData.Mrp)) newErrors.Mrp = 'MRP must be a number';
+
+  if (!formData.SellingPrice) newErrors.SellingPrice = 'Selling Price is required';
+  else if (isNaN(formData.SellingPrice)) newErrors.SellingPrice = 'Selling Price must be a number';
+  else if (parseFloat(formData.SellingPrice) > parseFloat(formData.Mrp)) {
+    newErrors.SellingPrice = 'Selling Price cannot be greater than MRP';
+  }
+
+  if (formData.Height && isNaN(formData.Height)) newErrors.Height = 'Height must be a number';
+  if (formData.Width && isNaN(formData.Width)) newErrors.Width = 'Width must be a number';
+  if (formData.Length && isNaN(formData.Length)) newErrors.Length = 'Length must be a number';
+
+  if (!formData.sizeId) newErrors.sizeId = 'Size is required';
+  if (!formData.colorId) newErrors.colorId = 'Color is required';
+
+  if (!formData.description.trim()) newErrors.description = 'Description is required';
+  if (!formData.status) newErrors.status = 'Product status is required';
+  if (!formData.searchKeywords.trim()) newErrors.searchKeywords = 'Search Keywords are required';
+
+  if (!formData.weight) newErrors.weight = 'Weight is required';
+  else if (isNaN(formData.weight)) newErrors.weight = 'Weight must be a number';
+
+  if (!formData.sla) newErrors.sla = 'SLA is required';
+  else if (isNaN(formData.sla)) newErrors.sla = 'SLA must be a number';
+
+  if (formData.deliveryCharges && isNaN(formData.deliveryCharges))
+    newErrors.deliveryCharges = 'Delivery Charges must be a number';
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

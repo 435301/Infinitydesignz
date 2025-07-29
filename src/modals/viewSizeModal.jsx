@@ -16,7 +16,7 @@ const ViewSizeModal = ({ show, onClose, size }) => {
         </div>
         <div className="mb-3">
           <label className="form-label fw-bold">Status:</label>
-          <p className={`badge ${size.status ? 'bg-success' : 'bg-danger'}`}>
+          <p className={` ${size.status ? 'text-success' : 'text-danger'}`}>
             {size.status ? 'Active' : 'Inactive'}
           </p>
         </div>
