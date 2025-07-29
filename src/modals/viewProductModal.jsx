@@ -98,8 +98,8 @@ const ViewProductModal = ({ show, onClose, product }) => {
                   </td>
                 </tr>
                 <tr>
-                  <th>Created Date</th>
-                  <td>{new Date(created_at).toLocaleString()}</td>
+                  {/* <th>Created Date</th>
+                  <td>{new Date(created_at).toLocaleString()}</td> */}
                 </tr>
                   <th>Variants</th>
                   <td> {product?.variants?.length > 0 ? (
