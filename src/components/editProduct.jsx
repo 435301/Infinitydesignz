@@ -97,72 +97,72 @@ const EditProduct = ({ onClose, onProductCreated }) => {
 
     const { product } = useSelector(state => state.products);
 
-useEffect(() => {
-    if (product && categories.length) {
-        console.log('Product:', product);
-        const listSubCategory = categories.find(
-            (cat) => cat.id === (product.listSubCategoryId || product.categoryId)
-        );
-        let menuId = '';
-        let subMenuId = '';
-        let listSubMenuId = '';
+    useEffect(() => {
+        if (product && categories.length) {
+            console.log('Product:', product);
+            const listSubCategory = categories.find(
+                (cat) => cat.id === (product.listSubCategoryId || product.categoryId)
+            );
+            let menuId = '';
+            let subMenuId = '';
+            let listSubMenuId = '';
 
-        if (listSubCategory) {
-            listSubMenuId = listSubCategory.id || '';
-            const subCategory = listSubCategory.parentId
-                ? categories.find((cat) => cat.id === listSubCategory.parentId)
-                : null;
-            if (subCategory) {
-                subMenuId = subCategory.id || '';
-                const menuCategory = subCategory.parentId
-                    ? categories.find((cat) => cat.id === subCategory.parentId)
+            if (listSubCategory) {
+                listSubMenuId = listSubCategory.id || '';
+                const subCategory = listSubCategory.parentId
+                    ? categories.find((cat) => cat.id === listSubCategory.parentId)
                     : null;
-                menuId = menuCategory ? menuCategory.id : subCategory.id;
-            } else {
-                menuId = listSubCategory.id;
+                if (subCategory) {
+                    subMenuId = subCategory.id || '';
+                    const menuCategory = subCategory.parentId
+                        ? categories.find((cat) => cat.id === subCategory.parentId)
+                        : null;
+                    menuId = menuCategory ? menuCategory.id : subCategory.id;
+                } else {
+                    menuId = listSubCategory.id;
+                }
             }
+
+            console.log('Setting Menu:', menuId, 'SubMenu:', subMenuId, 'ListSubMenu:', listSubMenuId);
+
+            setSelectedMenu(menuId);
+            setSelectedSubMenu(subMenuId);
+            setSelectedListSubMenu(listSubMenuId);
+            setFormData({
+                sku: product.sku || '',
+                title: product.title || '',
+                weight: product.productDetails?.weight || '',
+                model: product.productDetails?.model || '',
+                sla: product.productDetails?.sla || '',
+                deliveryCharges: product.productDetails?.deliveryCharges || '',
+                description: product.description || '',
+                status: product.status ? 'enable' : 'disable',
+                searchKeywords: product.searchKeywords || '',
+                stock: product.stock || '',
+                mrp: product.mrp || '',
+                sellingPrice: product.sellingPrice || '',
+                height: product.productDetails?.height || '',
+                width: product.productDetails?.width || '',
+                length: product.productDetails?.length || '',
+                sizeId: product.sizeId || '',
+                colorId: product.colorId || '',
+                brandId: product.brandId || '',
+            });
+            setVariants(
+                Array.isArray(product.variants) && product.variants.length
+                    ? product.variants.map((v) => ({
+                        id: v.id,
+                        sku: v.sku || '',
+                        stock: v.stock?.toString() || '',
+                        mrp: v.mrp?.toString() || '',
+                        sellingPrice: v.sellingPrice?.toString() || '',
+                        sizeId: v.sizeId?.toString() || '',
+                        colorId: v.colorId?.toString() || '',
+                    }))
+                    : [{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]
+            );
         }
-
-        console.log('Setting Menu:', menuId, 'SubMenu:', subMenuId, 'ListSubMenu:', listSubMenuId);
-
-        setSelectedMenu(menuId);
-        setSelectedSubMenu(subMenuId);
-        setSelectedListSubMenu(listSubMenuId);
-        setFormData({
-            sku: product.sku || '',
-            title: product.title || '',
-            weight: product.productDetails?.weight || '',
-            model: product.productDetails?.model || '',
-            sla: product.productDetails?.sla || '',
-            deliveryCharges: product.productDetails?.deliveryCharges || '',
-            description: product.description || '',
-            status: product.status ? 'enable' : 'disable',
-            searchKeywords: product.searchKeywords || '',
-            stock: product.stock || '',
-            mrp: product.mrp || '',
-            sellingPrice: product.sellingPrice || '',
-            height: product.productDetails?.height || '',
-            width: product.productDetails?.width || '',
-            length: product.productDetails?.length || '',
-            sizeId: product.sizeId || '',
-            colorId: product.colorId || '',
-            brandId: product.brandId || '',
-        });
-        setVariants(
-            Array.isArray(product.variants) && product.variants.length
-                ? product.variants.map((v) => ({
-                      id: v.id,
-                      sku: v.sku || '',
-                      stock: v.stock?.toString() || '',
-                      mrp: v.mrp?.toString() || '',
-                      sellingPrice: v.sellingPrice?.toString() || '',
-                      sizeId: v.sizeId?.toString() || '',
-                      colorId: v.colorId?.toString() || '',
-                  }))
-                : [{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]
-        );
-    }
-}, [product, categories]);
+    }, [product, categories]);
 
     const handleToggleSidebar = (collapsed) => {
         setIsSidebarCollapsed(collapsed);
@@ -197,112 +197,112 @@ useEffect(() => {
         return Object.keys(newErrors).length === 0;
     };
 
-   const handleSubmit = async (e) => {
-    e.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    setErrors({});
-    if (!validate()) return;
+        setErrors({});
+        if (!validate()) return;
 
-    const cleanedVariants = variants
-        .filter((v) => v.sku && v.stock && v.mrp && v.sellingPrice)
-        .map((v) => ({
-            ...v,
-            sku: v.sku,
-            stock: parseInt(v.stock),
-            mrp: parseFloat(v.mrp),
-            sellingPrice: parseFloat(v.sellingPrice),
-            sizeId: v.sizeId ? parseInt(v.sizeId) : null,
-            colorId: v.colorId ? parseInt(v.colorId) : null,
-        }));
+        const cleanedVariants = variants
+            .filter((v) => v.sku && v.stock && v.mrp && v.sellingPrice)
+            .map((v) => ({
+                ...v,
+                sku: v.sku,
+                stock: parseInt(v.stock),
+                mrp: parseFloat(v.mrp),
+                sellingPrice: parseFloat(v.sellingPrice),
+                sizeId: v.sizeId ? parseInt(v.sizeId) : null,
+                colorId: v.colorId ? parseInt(v.colorId) : null,
+            }));
 
-    const payload = {
-        id: id,
-        sku: formData.sku,
-        title: formData.title,
-        description: formData.description,
-        searchKeywords: formData.searchKeywords,
-        stock: parseInt(formData.stock),
-        mrp: parseFloat(formData.mrp),
-        sellingPrice: parseFloat(formData.sellingPrice),
-        height: parseFloat(formData.height),
-        width: parseFloat(formData.width),
-        length: parseFloat(formData.length),
-        sizeId: parseInt(formData.sizeId),
-        colorId: parseInt(formData.colorId),
-        brandId: parseInt(formData.brandId),
-        categoryId: parseInt(selectedListSubMenu || selectedSubMenu || selectedMenu),
-        status: formData.status === 'enable',
-        featureTypeId: selectedFeatureTypeId,
-        featureType: featureType,
-        filterTypeId: selectedFilterTypeId,
-        filterType: filterType,
-        productDetails: {
-            model: formData.model,
-            weight: parseFloat(formData.weight),
-            sla: parseInt(formData.sla),
-            deliveryCharges: parseFloat(formData.deliveryCharges),
-        },
-        variants: cleanedVariants,
-    };
-
-    console.log('Submitting Product with Variants:', payload);
-
-    try {
-        const token = localStorage.getItem('token');
-        const response = await axios.put(`${BASE_URL}/products/${id}`, payload, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
+        const payload = {
+            id: id,
+            sku: formData.sku,
+            title: formData.title,
+            description: formData.description,
+            searchKeywords: formData.searchKeywords,
+            stock: parseInt(formData.stock),
+            mrp: parseFloat(formData.mrp),
+            sellingPrice: parseFloat(formData.sellingPrice),
+            height: parseFloat(formData.height),
+            width: parseFloat(formData.width),
+            length: parseFloat(formData.length),
+            sizeId: parseInt(formData.sizeId),
+            colorId: parseInt(formData.colorId),
+            brandId: parseInt(formData.brandId),
+            categoryId: parseInt(selectedListSubMenu || selectedSubMenu || selectedMenu),
+            status: formData.status === 'enable',
+            featureTypeId: selectedFeatureTypeId,
+            featureType: featureType,
+            filterTypeId: selectedFilterTypeId,
+            filterType: filterType,
+            productDetails: {
+                model: formData.model,
+                weight: parseFloat(formData.weight),
+                sla: parseInt(formData.sla),
+                deliveryCharges: parseFloat(formData.deliveryCharges),
             },
-        });
+            variants: cleanedVariants,
+        };
 
-        console.log('Product updated successfully:', response.data);
-        toast.success('Product updated successfully');
+        console.log('Submitting Product with Variants:', payload);
 
-        // Re-fetch the updated product to ensure state consistency
-        dispatch(fetchProductById(id));
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.put(`${BASE_URL}/products/${id}`, payload, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
 
-        // Update created product ID
-        setCreatedProductId(response.data.id);
+            console.log('Product updated successfully:', response.data);
+            toast.success('Product updated successfully');
 
-        if (onProductCreated) {
-            onProductCreated({
-                id: response.data.id,
-                featureTypeId: selectedFeatureTypeId,
-                featureType: featureType,
-                filterTypeId: selectedFilterTypeId,
-                filterType: filterType,
+            // Re-fetch the updated product to ensure state consistency
+            dispatch(fetchProductById(id));
+
+            // Update created product ID
+            setCreatedProductId(response.data.id);
+
+            if (onProductCreated) {
+                onProductCreated({
+                    id: response.data.id,
+                    featureTypeId: selectedFeatureTypeId,
+                    featureType: featureType,
+                    filterTypeId: selectedFilterTypeId,
+                    filterType: filterType,
+                });
+            }
+
+            if (onClose) {
+                onClose();
+            }
+        } catch (err) {
+            console.error('Error updating product:', err);
+            setErrors({
+                brand: err?.response?.data?.message || 'Something went wrong.',
             });
         }
-
-        if (onClose) {
-            onClose();
-        }
-    } catch (err) {
-        console.error('Error updating product:', err);
-        setErrors({
-            brand: err?.response?.data?.message || 'Something went wrong.',
-        });
-    }
-};
+    };
 
 
- const handleReset = (e) => {
-    e.preventDefault();
-    setFormData(initialFormState);
-    setDescription('');
-    setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
-    // Optionally preserve category selections
-    // setSelectedMenu('');
-    // setSelectedSubMenu('');
-    // setSelectedListSubMenu('');
-};
+    const handleReset = (e) => {
+        e.preventDefault();
+        setFormData(initialFormState);
+        setDescription('');
+        setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
+        // Optionally preserve category selections
+        // setSelectedMenu('');
+        // setSelectedSubMenu('');
+        // setSelectedListSubMenu('');
+    };
 
-useEffect(() => {
-    console.log('Menu Options:', menuOptions);
-    console.log('SubMenu Options:', subMenuOptions);
-    console.log('List SubMenu Options:', listSubMenuOptions);
-}, [menuOptions, subMenuOptions, listSubMenuOptions]);
+    useEffect(() => {
+        console.log('Menu Options:', menuOptions);
+        console.log('SubMenu Options:', subMenuOptions);
+        console.log('List SubMenu Options:', listSubMenuOptions);
+    }, [menuOptions, subMenuOptions, listSubMenuOptions]);
 
     // Variants
     const [variants, setVariants] = useState([
@@ -660,9 +660,17 @@ useEffect(() => {
                                                                 type="text"
                                                                 className="form-control"
                                                                 value={variant.stock}
-                                                                onChange={(e) => handleChange(index, 'stock', e.target.value)}
+                                                                maxLength={4}
+                                                                inputMode="numeric"
+                                                                onChange={(e) => {
+                                                                    const val = e.target.value;
+                                                                    if (/^\d{0,4}$/.test(val)) {
+                                                                        handleChange(index, 'stock', val);
+                                                                    }
+                                                                }}
                                                                 placeholder="Stock"
                                                             />
+
                                                         </td>
                                                         <td>
                                                             <input
