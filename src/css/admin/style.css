@@ -2021,13 +2021,7 @@ select.form-control:not([size]):not([multiple]) {
   position: relative;
 }
 
-.image-preview {
-  display: none;
-  margin-top: 10px;
-  position: relative;
-  width: 100px;
-  height: 100px;
-}
+
 
 .image-preview img {
   width: 100%;
@@ -2120,7 +2114,9 @@ small a {
   min-width: 0;
   /* Prevent overflow */
 }
-
+.tab-content .form-control{
+  text-transform: capitalize;
+}
 .image-preview {
   display: block;
   /* Hidden by default */
