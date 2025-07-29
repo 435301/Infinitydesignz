@@ -272,15 +272,15 @@ const AddProduct = ({ onClose, onProductCreated }) => {
   // };
 
   const handleChange = (index, field, value) => {
-  const updatedVariants = [...variants];
+    const updatedVariants = [...variants];
 
-  if (field === 'stock') {
-    value = value.replace(/\D/g, '').slice(0, 4);
-  }
+    if (field === 'stock') {
+      value = value.replace(/\D/g, '').slice(0, 4);
+    }
 
-  updatedVariants[index][field] = value;
-  setVariants(updatedVariants);
-};
+    updatedVariants[index][field] = value;
+    setVariants(updatedVariants);
+  };
 
 
   const addRow = () => {
@@ -514,13 +514,26 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                                 let value = e.target.value;
 
                                 if (field === 'Stock') {
-                                  value = value.replace(/\D/g, '').slice(0, 4); 
+                                  value = value.replace(/\D/g, '').slice(0, 4);
+                                }
+                                const updatedForm = { ...formData, [field]: value };
+                                if (field === 'SellingPrice') {
+                                  const mrp = parseFloat(updatedForm['Mrp']);
+                                  const selling = parseFloat(value);
+                                  if (!isNaN(mrp) && !isNaN(selling) && selling > mrp) {
+                                    setErrors(prev => ({
+                                      ...prev,
+                                      [field]: 'Selling Price cannot be greater than MRP',
+                                    }));
+                                  } else {
+                                    setErrors(prev => ({ ...prev, [field]: '' }));
+                                  }
                                 }
 
-                                setFormData({ ...formData, [field]: value });
+                                setFormData(updatedForm);
 
-                                if (errors[field]) {
-                                  setErrors({ ...errors, [field]: '' });
+                                if (errors[field] && field !== 'SellingPrice') {
+                                  setErrors(prev => ({ ...prev, [field]: '' }));
                                 }
                               }}
                             />
@@ -528,8 +541,6 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                           </div>
                         );
                       })}
-
-
                       <div className="col-lg-3 mb-3">
                         <label className="form-label">
                           Brand
