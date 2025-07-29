@@ -20,7 +20,9 @@ const EditProductPage = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const { productById: createdProductInfo } = useSelector((state) => state.products); 
+  console.log('createdProductInfo',createdProductInfo)
   const { products = [] } = useSelector((state) => state.products);
+  console.log('products',products)
   const [updatedVariantIds, setUpdatedVariantIds] = useState([]);
 
 
@@ -30,8 +32,9 @@ const EditProductPage = () => {
     }
   }, [id, dispatch]);
 
-  const selectedProduct = products.find(p => p.id === createdProductInfo?.id) || createdProductInfo;
+const selectedProduct = products.find(p => p.id === parseInt(id));
 
+console.log('selectedProduct:', selectedProduct);
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
