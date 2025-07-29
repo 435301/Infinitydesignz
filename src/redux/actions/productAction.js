@@ -79,6 +79,7 @@ export const addProducts = (formData) => async (dispatch) => {
     dispatch(fetchProducts());
     return response.data;
   } catch (error) {
+     toast.error(error?.response?.data?.message || 'Error adding product');
     dispatch({
       type: 'ADD_PRODUCT_FAILURE',
       payload: error.response?.data?.message || 'Error adding product',
@@ -107,6 +108,7 @@ export const editProducts = (payload) => async (dispatch) => {
     dispatch(fetchProducts());
     return response.data;
   } catch (error) {
+     toast.error(error?.response?.data?.message || 'Error editing product');
     dispatch({
       type: 'EDIT_PRODUCT_FAILURE',
       payload: error.response?.data?.message || 'Error editing product',
@@ -142,7 +144,7 @@ export const fetchProductById = (id) => async (dispatch) => {
     });
     dispatch({ type: FETCH_PRODUCT_BY_ID_SUCCESS, payload: res.data });
   } catch (err) {
-    // toast.error("Failed to fetch subcategory.");
+    toast.error("Failed to fetch product");
   }
 };
 
@@ -216,6 +218,7 @@ export const addProductFeature = (formData) => async (dispatch) => {
     dispatch(fetchProductFeatures());
   } catch (error) {
     console.error('Error Response', error?.response?.data)
+     toast.error(error?.response?.data?.message || 'Error adding product feature');
     dispatch({
       type: 'ADD_PRODUCT_FEATURES_FAILURE',
       payload: error.response?.data?.message || 'Error adding product feature ',
@@ -243,6 +246,7 @@ export const editProductFeature = (payload) => async (dispatch) => {
     toast.success(successMessage);
     dispatch(fetchProductFeatures());
   } catch (error) {
+     toast.error(error?.response?.data?.message || 'Error editing product feature');
     dispatch({
       type: 'EDIT_PRODUCT_FEATURES_FAILURE',
       payload: error.response?.data?.message || 'Error editing product feature ',
@@ -315,6 +319,7 @@ export const addProductFilter = (formData) => async (dispatch) => {
     dispatch(fetchProductFilters());
   } catch (error) {
     console.error('Error Response', error?.response?.data)
+     toast.error(error?.response?.data?.message || 'Error adding product filter');
     dispatch({
       type: 'ADD_PRODUCT_FILTERS_FAILURE',
       payload: error.response?.data?.message || 'Error adding product filter ',
@@ -342,6 +347,7 @@ export const editProductFilter = (payload) => async (dispatch) => {
     toast.success(successMessage)
     dispatch(fetchProductFilters());
   } catch (error) {
+     toast.error(error?.response?.data?.message || 'Error editing product filter');
     dispatch({
       type: 'EDIT_PRODUCT_FILTERS_FAILURE',
       payload: error.response?.data?.message || 'Error editing product filter ',

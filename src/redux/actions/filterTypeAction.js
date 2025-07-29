@@ -58,6 +58,7 @@ export const addFilterTypes = (formData) => async (dispatch) => {
 
     dispatch(fetchFilterTypes());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error adding filter type');
     dispatch({
       type: ADD_FILTERTYPE_FAILURE,
       payload: error.response?.data?.message || 'Error adding filter type',
@@ -86,6 +87,7 @@ export const editFilterTypes = (payload) => async (dispatch) => {
 
     dispatch(fetchFilterTypes());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error editing filter type');
     dispatch({
       type: EDIT_FILTERTYPE_FAILURE,
       payload: error.response?.data?.message || 'Error editing filter type',
@@ -133,7 +135,6 @@ export const bulkUpdateFilterTypeStatus = (ids, status) => async (dispatch) => {
 
     const successMessage = response?.data?.message || 'Status updated successfully';
     toast.success(successMessage);
-
     dispatch(fetchFilterTypes());
   } catch (error) {
     console.error(error);

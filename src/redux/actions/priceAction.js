@@ -56,6 +56,7 @@ export const addPrice = (formData) => async (dispatch) => {
     toast.success('Price Range created successfully')
     dispatch(fetchPrice());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error adding prices');
     dispatch({
       type: 'ADD_PRICE_FAILURE',
       payload: error.response?.data?.message || 'Error adding prices',
@@ -80,6 +81,7 @@ export const editPrice = (payload) => async (dispatch) => {
     toast.success('Price Range updated successfully')
     dispatch(fetchPrice());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error editing prices');
     dispatch({
       type: 'EDIT_PRICE_FAILURE',
       payload: error.response?.data?.message || 'Error editing prices',

@@ -33,8 +33,6 @@ export const fetchSizes = () => {
 
       console.log('response', response)
       dispatch({ type: FETCH_SIZE_SUCCESS, payload: response.data });
-      //   const successMessage = response?.message || 'Size created successfully';
-      // toast.success(successMessage);
     } catch (error) {
       toast.dismiss();
       toast.error(error?.response?.data?.message || 'Failed to fetch sizes');
@@ -62,6 +60,7 @@ export const addSizes = (formData) => async (dispatch) => {
     toast.success(successMessage);
     dispatch(fetchSizes());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error adding size');
     dispatch({
       type: 'ADD_SIZES_FAILURE',
       payload: error.response?.data?.message || 'Error adding size',
@@ -89,6 +88,7 @@ export const editSizes = (payload) => async (dispatch) => {
     toast.success(successMessage)
     dispatch(fetchSizes());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error editing size');
     dispatch({
       type: 'EDIT_SIZES_FAILURE',
       payload: error.response?.data?.message || 'Error editing size',

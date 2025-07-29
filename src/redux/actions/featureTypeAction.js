@@ -60,6 +60,7 @@ export const addFeatureTypes = (formData) => async (dispatch) => {
 
     dispatch(fetchFeatureTypes());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error adding feature type');
     dispatch({
       type: ADD_FEATURETYPE_FAILURE,
       payload: error.response?.data?.message || 'Error adding featureType',
@@ -88,6 +89,7 @@ export const editFeatureTypes = (payload) => async (dispatch) => {
 
     dispatch(fetchFeatureTypes());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error editing feature type');
     dispatch({
       type: EDIT_FEATURETYPE_FAILURE,
       payload: error.response?.data?.message || 'Error editing featureType',

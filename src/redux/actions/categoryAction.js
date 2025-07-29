@@ -76,6 +76,7 @@ export const addCategory = (formData) => async (dispatch) => {
      toast.success(successMessage);
     dispatch(fetchCategories());
   } catch (error) {
+     toast.error(error?.response?.data?.message || 'Failed to add category');
     dispatch({
       type: 'ADD_CATEGORY_FAILURE',
       payload: error.message || 'Error adding category',
@@ -100,6 +101,7 @@ export const addSubCategory = (formData) => async (dispatch) => {
          toast.success(successMessage)
     dispatch(fetchCategories());
   } catch (error) {
+     toast.error(error?.response?.data?.message || 'Failed to add subcategory');
     dispatch({
       type: 'ADD_SUBCATEGORY_FAILURE',
       payload: error.response?.data?.message || error.message || 'Error adding subcategory',
@@ -125,6 +127,7 @@ export const listSubCategory = (formData) => async (dispatch) => {
     toast.success(successMessage);
     dispatch(fetchCategories());
   } catch (error) {
+     toast.error(error?.response?.data?.message || 'Failed to add listsubcategory');
     dispatch({
       type: 'LIST_SUBCATEGORY_FAILURE',
       payload: error.response?.data?.message || error.message || 'Error adding listsubcategory',
@@ -148,6 +151,7 @@ export const editCategory = (id, formData) => async (dispatch) => {
          toast.success(successMessage)
     dispatch(fetchCategories());
   } catch (error) {
+     toast.error(error?.response?.data?.message || 'Failed to update category');
     dispatch({
       type: 'EDIT_CATEGORY_FAILURE',
       payload: error?.response?.data?.message || 'Update failed',

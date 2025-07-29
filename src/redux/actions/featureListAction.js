@@ -60,6 +60,7 @@ export const addFeatureList = (formData) => async (dispatch) => {
 
     dispatch(fetchFeatureLists());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error adding feature list');
     console.error('Error Response', error?.response?.data);
     dispatch({
       type: 'ADD_FEATURELIST_FAILURE',
@@ -89,6 +90,7 @@ export const editFeatureList = (payload) => async (dispatch) => {
 
     dispatch(fetchFeatureLists());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error editing feature list');
     dispatch({
       type: 'EDIT_FEATURELIST_FAILURE',
       payload: error.response?.data?.message || 'Error editing feature list',
@@ -131,6 +133,7 @@ export const updateFeatureListPriority = ({ id, priority }) => async (dispatch) 
 
     dispatch(fetchFeatureLists()); 
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Failed to update priority');
     console.error('Failed to update priority', error);
   }
 };

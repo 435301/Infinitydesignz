@@ -60,6 +60,7 @@ export const addFilterList = (formData) => async (dispatch) => {
 
     dispatch(fetchFilterLists());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error adding filter set');
     dispatch({
       type: 'ADD_FILTERLIST_FAILURE',
       payload: error.response?.data?.message || 'Error adding filter list',
@@ -89,6 +90,7 @@ export const editFilterList = (payload) => async (dispatch) => {
 
     dispatch(fetchFilterLists());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error editing filter set');
     dispatch({
       type: 'EDIT_FILTERLIST_FAILURE',
       payload: error.response?.data?.message || 'Error editing filter list',
@@ -129,6 +131,7 @@ export const updateFilterListPriority = ({ id, priority }) => async (dispatch) =
 
     dispatch(fetchFilterLists()); 
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Failed to update priority');
     console.error('Failed to update priority', error);
   }
 };

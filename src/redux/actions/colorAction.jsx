@@ -57,6 +57,7 @@ export const addColors = (formData) => async (dispatch) => {
     toast.success(successMessage);
     dispatch(fetchColors());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error adding colors');
     dispatch({
       type: 'ADD_COLOR_FAILURE',
       payload: error.response?.data?.message || 'Error adding colors',
@@ -82,6 +83,7 @@ export const editColors = (payload) => async (dispatch) => {
     toast.success(successMessage);
     dispatch(fetchColors());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error editing colors');
     dispatch({
       type: 'EDIT_COLORS_FAILURE',
       payload: error.response?.data?.message || 'Error editing colors',
