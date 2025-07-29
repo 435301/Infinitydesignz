@@ -95,38 +95,42 @@ const EditProductFilters = () => {
   return (
     <div className="container mt-4">
       <div className="card">
-        <div className="card-body">
-          <form onSubmit={handleSubmit}>
-            {filterSets.map((set) => (
-              <div key={set.id} className="mb-4">
-                <h6 className="mb-3 text-dark">{set.title}</h6>
-                <div className="mb-3">
-                  <select
-                    className="form-control"
-                    value={formValues[set.id] || ''}
-                    onChange={(e) => handleSetChange(e, set.id)}
-                  >
-                  
-                    {(set.filterLists || []).map((filter) => (
-                      <option key={filter.id} value={filter.id}>
-                        {filter.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            ))}
-
-
-            <div className="text-center mt-4">
-              <button type="submit" className="btn btn-primary px-4">
-                Save Filters
-              </button>
-            </div>
-          </form>
-
-
+       <div className="card-body">
+  {filterSets.length === 0 ? (
+    <div className="text-center text-muted py-5">
+      <p className="mb-0">No filters found for this Product</p>
+    </div>
+  ) : (
+    <form onSubmit={handleSubmit}>
+      {filterSets.map((set) => (
+        <div key={set.id} className="mb-4">
+          <h6 className="mb-3 text-dark">{set.title}</h6>
+          <div className="mb-3">
+            <select
+              className="form-control"
+              value={formValues[set.id] || ''}
+              onChange={(e) => handleSetChange(e, set.id)}
+            >
+              <option value="">-- Select --</option>
+              {(set.filterLists || []).map((filter) => (
+                <option key={filter.id} value={filter.id}>
+                  {filter.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
+      ))}
+
+      <div className="text-center mt-4">
+        <button type="submit" className="btn btn-primary px-4">
+          Save Filters
+        </button>
+      </div>
+    </form>
+  )}
+</div>
+
       </div>
     </div>
   );
