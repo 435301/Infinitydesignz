@@ -249,7 +249,7 @@ const ManageFeatureType = () => {
             <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
             {showAddModal && <AddFeatureTypeModal show={showAddModal} onClose={() => setShowAddModal(false)} />}
             {editModalVisible && <EditFeatureTypeModal show={editModalVisible} onClose={() => setEditModalVisible(false)} featureType={selectedFeatureType} />}
-            {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+            {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this feature type?" />}
             {viewModal && <ViewFeatureTypeModal show={viewModal} onClose={() => setViewModal(false)} featureType={viewFeatureType} />}
           </div>
         </div>

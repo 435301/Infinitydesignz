@@ -155,7 +155,7 @@ const ManageFilterSet = () => {
                         {items.map((item) => (
                           <div
                             key={item.id}
-                            className="feature-item d-flex justify-content-between align-items-center mb-2 p-2 border rounded"
+                            className="feature-item me-3 d-flex justify-content-between align-items-center mb-2 p-2 border rounded"
                           >
                             <div className="d-flex align-items-center">
                               <input
@@ -271,7 +271,7 @@ const ManageFilterSet = () => {
                 show={showDeleteModal}
                 onClose={() => setShowDeleteModal(false)}
                 onConfirm={handleDelete}
-                message="Are you sure you want to delete this category?"
+                message="Are you sure you want to delete this filter set?"
               />
             )}
             {viewModalVisible && (

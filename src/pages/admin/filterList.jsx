@@ -276,7 +276,7 @@ const ManageFilterList = () => {
                 show={showDeleteModal}
                 onClose={() => setShowDeleteModal(false)}
                 onConfirm={handleDelete}
-                message="Are you sure you want to delete this filter?"
+                message="Are you sure you want to delete this filter list?"
               />
             )}
             {viewModalVisible && (

@@ -272,7 +272,7 @@ const ManageFeatureList = () => {
                 show={showDeleteModal}
                 onClose={() => setShowDeleteModal(false)}
                 onConfirm={handleDelete}
-                message="Are you sure you want to delete this category?"
+                message="Are you sure you want to delete this feature list?"
               />
             )}
             {viewModalVisible && (
