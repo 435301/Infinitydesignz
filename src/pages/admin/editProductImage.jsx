@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import '../../css/admin/style.css';
-import '../../css/admin/icofont.css';
 import axios from 'axios';
-import BASE_URL from '../../config/config';
-import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { fetchProductById } from '../../redux/actions/productAction';
 import { toast } from 'react-toastify';
+import BASE_URL from '../../config/config';
 
-const EditProductImages = ({ product, updatedVariantIds }) => {
-    console.log('product',product)
-//   const { id } = useParams();
+const EditProductImages = ({ product }) => {
   const dispatch = useDispatch();
-//   const { product } = useSelector((state) => state.products || {});
+
   const [singlePreviews, setSinglePreviews] = useState({});
   const [multiplePreviews, setMultiplePreviews] = useState({});
   const [filesMap, setFilesMap] = useState({});
@@ -24,12 +19,6 @@ const EditProductImages = ({ product, updatedVariantIds }) => {
   const [isRemoving, setIsRemoving] = useState(false);
 
   const variants = product?.variants || [];
-
-//   useEffect(() => {
-//     if (id) {
-//       dispatch(fetchProductById(id));
-//     }
-//   }, [id, dispatch]);
 
   useEffect(() => {
     if (product?.images) {
@@ -50,137 +39,44 @@ const EditProductImages = ({ product, updatedVariantIds }) => {
         variants: variantImages,
       });
 
-      // 🔁 Clear previews to prevent shifting issues
       setSinglePreviews({});
       setMultiplePreviews({});
       setFilesMap({});
     }
   }, [product]);
 
-
-
   const handleSingleImageChange = (e, key) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setSinglePreviews((prev) => ({ ...prev, [key]: reader.result }));
-        setFilesMap((prev) => ({ ...prev, [key]: file }));
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setSinglePreviews(prev => ({ ...prev, [key]: reader.result }));
+      setFilesMap(prev => ({ ...prev, [key]: file }));
+    };
+    reader.readAsDataURL(file);
   };
 
-  const handleMultipleImageChange = (e, key) => {
+  const handleMultipleImageChange = async (e, key) => {
     const files = Array.from(e.target.files);
-    const previews = [];
-    const selectedFiles = [];
+    const previews = await Promise.all(
+      files.map(file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve({ preview: reader.result, file });
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      }))
+    );
 
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        previews.push(reader.result);
-        selectedFiles.push(file);
-        if (previews.length === files.length) {
-          setMultiplePreviews((prev) => ({ ...prev, [key]: previews }));
-          setFilesMap((prev) => ({ ...prev, [key]: selectedFiles }));
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-  };
+    setMultiplePreviews(prev => ({
+      ...prev,
+      [key]: previews.map(p => p.preview),
+    }));
 
-  const handleRemoveSingle = (key) => {
-    setSinglePreviews((prev) => {
-      const newState = { ...prev };
-      delete newState[key];
-      return newState;
-    });
-    setFilesMap((prev) => {
-      const newState = { ...prev };
-      delete newState[key];
-      return newState;
-    });
-  };
-
-  const handleRemoveMultiple = (key, index) => {
-    setMultiplePreviews((prev) => {
-      const updated = [...(prev[key] || [])];
-      updated.splice(index, 1);
-      return { ...prev, [key]: updated };
-    });
-
-    setFilesMap((prev) => {
-      const updated = [...(prev[key] || [])];
-      updated.splice(index, 1);
-      return { ...prev, [key]: updated };
-    });
-  };
-
-  const handleRemoveExistingImage = async (type, variantId = null, imageId = null) => {
-    if (isRemoving) return;
-    setIsRemoving(true);
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('No authentication token found');
-
-      let url = `${BASE_URL}/images/${product?.id}`;
-      if (type === 'main') url += '/main';
-      else if (type === 'multiple' && imageId) url += `/multiple/${imageId}`;
-      else if (type === 'variant_main' && variantId) url += `/variant/${variantId}/main`;
-      else if (type === 'variant_multiple' && variantId && imageId) url += `/variant/${variantId}/multiple/${imageId}`;
-
-      await axios.delete(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      setExistingImages((prev) => {
-        if (type === 'main') {
-          return { ...prev, main_image: null };
-        } else if (type === 'multiple' && imageId) {
-          return {
-            ...prev,
-            multiple_images: prev.multiple_images.filter((img) => img.id !== imageId),
-          };
-        } else if (type === 'variant_main' && variantId) {
-          return {
-            ...prev,
-            variants: {
-              ...prev.variants,
-              [variantId]: { ...prev.variants[variantId], main_image: null },
-            },
-          };
-        } else if (type === 'variant_multiple' && variantId && imageId) {
-          return {
-            ...prev,
-            variants: {
-              ...prev.variants,
-              [variantId]: {
-                ...prev.variants[variantId],
-                multiple_images: prev.variants[variantId].multiple_images.filter(
-                  (img) => img.id !== imageId
-                ),
-              },
-            },
-          };
-        }
-        return prev;
-      });
-
-      toast.success('Image removed successfully!');
-      dispatch(fetchProductById(product?.id));
-    } catch (error) {
-      console.error('Error removing image:', error.response?.data || error.message);
-      toast.error('Failed to remove image');
-    } finally {
-      setIsRemoving(false);
-    }
-  };
-
-  const handleReset = () => {
-    setSinglePreviews({});
-    setMultiplePreviews({});
-    setFilesMap({});
+    setFilesMap(prev => ({
+      ...prev,
+      [key]: previews.map(p => p.file),
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -193,19 +89,22 @@ const EditProductImages = ({ product, updatedVariantIds }) => {
       hasFiles = true;
     }
     if (filesMap['productMultiple']) {
-      filesMap['productMultiple'].forEach((file) => formData.append('multiple_images', file));
+      filesMap['productMultiple'].forEach(file =>
+        formData.append('multiple_images', file)
+      );
       hasFiles = true;
     }
 
-    variants.forEach((variant) => {
+    variants.forEach(variant => {
       const singleKey = `variant_${variant.id}_Single`;
       const multipleKey = `variant_${variant.id}_Multiple`;
+
       if (filesMap[singleKey]) {
         formData.append(`variant_${variant.id}_main`, filesMap[singleKey]);
         hasFiles = true;
       }
       if (filesMap[multipleKey]) {
-        filesMap[multipleKey].forEach((file) =>
+        filesMap[multipleKey].forEach(file =>
           formData.append(`variant_${variant.id}_multiple`, file)
         );
         hasFiles = true;
@@ -213,243 +112,106 @@ const EditProductImages = ({ product, updatedVariantIds }) => {
     });
 
     if (!hasFiles) {
-      toast.warn('No images selected to upload.');
+      toast.warn('No images selected');
       return;
     }
 
     try {
       const token = localStorage.getItem('token');
-      if (!token) throw new Error('No authentication token found');
-
       await axios.post(`${BASE_URL}/images/${product?.id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },
       });
-      toast.success('Images uploaded successfully!');
-      handleReset();
+      toast.success('Images uploaded successfully');
       dispatch(fetchProductById(product?.id));
-    } catch (error) {
-      console.error('Upload failed:', error.response?.data || error.message);
-      toast.error('Image upload failed');
+    } catch (err) {
+      toast.error('Upload failed');
     }
   };
 
+  const renderPreviewImages = (images = []) => (
+    <div className="row mt-2">
+      {images.map((img, i) => (
+        <div key={i} className="col-3 mb-2">
+          <img src={img} alt="preview" className="img-thumbnail" style={{ height: '100px', objectFit: 'cover' }} />
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderExistingImages = (images = []) => (
+    <div className="row mt-2">
+      {images.map((img, i) => (
+        <div key={i} className="col-3 mb-2">
+          <img
+            src={`${BASE_URL}/Uploads/products/${img.url}`}
+            alt="existing"
+            className="img-thumbnail"
+            style={{ height: '100px', objectFit: 'cover' }}
+          />
+        </div>
+      ))}
+    </div>
+  );
+
   return (
-    <div className="container-fluid">
-      <div className="row">
-        <div className="col-lg-12">
-          <div className="card">
-            <div className="card-header py-3">
-              <h5 className="text-dark mb-0">Edit Product Images</h5>
-            </div>
-            <div className="card-block">
-              <form
-                className="app-form mt-3"
-                encType="multipart/form-data"
-                onSubmit={handleSubmit}
-                onReset={handleReset}
-              >
-                <div>
-                  <h6 className="sub-heading">Main Product Images</h6>
-                  <div className="row">
-                    <div className="col-lg-4 col-md-6 mb-3">
-                      <label className="form-label">Main Product Image</label>
-                      <input
-                        type="file"
-                        className="form-control"
-                        accept="image/*"
-                        onChange={(e) => handleSingleImageChange(e, 'productSingle')}
-                      />
-                      {singlePreviews['productSingle'] ? (
-                        <div className="image-preview">
-                          <img src={singlePreviews['productSingle']} alt="Preview" />
-                          <button
-                            type="button"
-                            className="remove-image"
-                            onClick={() => handleRemoveSingle('productSingle')}
-                            disabled={isRemoving}
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ) : existingImages.main_image?.url ? (
-                        <div className="image-preview">
-                          <img
-                            src={`${BASE_URL}/Uploads/products/${existingImages.main_image.url}`}
-                            alt="Existing Main"
-                          />
-                          <button
-                            type="button"
-                            className="remove-image"
-                            onClick={() => handleRemoveExistingImage('main')}
-                            disabled={isRemoving}
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ) : null}
-                    </div>
-
-                    <div className="col-lg-8 col-md-6 mb-3">
-                      <label className="form-label">Upload Multiple Product Images</label>
-                      <input
-                        type="file"
-                        className="form-control"
-                        accept="image/*"
-                        multiple
-                        onChange={(e) => handleMultipleImageChange(e, 'productMultiple')}
-                      />
-                      <div className="multiple-image-preview">
-                        {(multiplePreviews['productMultiple'] || []).map((img, i) => (
-                          <div className="image-preview" key={`new-${i}`}>
-                            <img src={img} alt="Preview" />
-                            <button
-                              type="button"
-                              className="remove-image"
-                              onClick={() => handleRemoveMultiple('productMultiple', i)}
-                              disabled={isRemoving}
-                            >
-                              ×
-                            </button>
-                          </div>
-                        ))}
-                        {(existingImages.multiple_images || []).map((img, i) => (
-                          <div className="image-preview" key={`existing-${img.id || img.url || i}`}>
-                            <img
-                              src={`${BASE_URL}/Uploads/products/${img.url}`}
-                              alt="Existing Multiple"
-                            />
-                            <button
-                              type="button"
-                              className="remove-image"
-                              onClick={() => handleRemoveExistingImage('multiple', null, img.id)}
-                              disabled={isRemoving}
-                            >
-                              ×
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {variants.map((variant) => {
-                  const variantLabel = `${variant.size?.title || ''} / ${variant.color?.label || ''}`;
-                  const singleKey = `variant_${variant.id}_Single`;
-                  const multipleKey = `variant_${variant.id}_Multiple`;
-                  const variantImages = existingImages.variants[variant.id] || {
-                    main_image: null,
-                    multiple_images: [],
-                  };
-
-                  return (
-                    <div key={variant.id}>
-                      <h6 className="sub-heading">Variant: {variantLabel}</h6>
-                      <div className="row">
-                        <div className="col-lg-4 col-md-6 mb-3">
-                          <label className="form-label">Main Image</label>
-                          <input
-                            type="file"
-                            className="form-control"
-                            accept="image/*"
-                            onChange={(e) => handleSingleImageChange(e, singleKey)}
-                          />
-                          {singlePreviews[singleKey] ? (
-                            <div className="image-preview">
-                              <img src={singlePreviews[singleKey]} alt="Preview" />
-                              <button
-                                type="button"
-                                className="remove-image"
-                                onClick={() => handleRemoveSingle(singleKey)}
-                                disabled={isRemoving}
-                              >
-                                ×
-                              </button>
-                            </div>
-                          ) : variantImages.main_image?.url ? (
-                            <div className="image-preview">
-                              <img
-                                src={`${BASE_URL}/Uploads/products/${variantImages.main_image.url}`}
-                                alt="Variant Existing"
-                              />
-                              <button
-                                type="button"
-                                className="remove-image"
-                                onClick={() => handleRemoveExistingImage('variant_main', variant.id)}
-                                disabled={isRemoving}
-                              >
-                                ×
-                              </button>
-                            </div>
-                          ) : null}
-                        </div>
-
-                        <div className="col-lg-8 col-md-6 mb-3">
-                          <label className="form-label">Upload Multiple Images</label>
-                          <input
-                            type="file"
-                            className="form-control"
-                            accept="image/*"
-                            multiple
-                            onChange={(e) => handleMultipleImageChange(e, multipleKey)}
-                          />
-                          <div className="multiple-image-preview">
-                            {(multiplePreviews[multipleKey] || []).map((img, i) => (
-                              <div className="image-preview" key={`new-${i}`}>
-                                <img src={img} alt="Preview" />
-                                <button
-                                  type="button"
-                                  className="remove-image"
-                                  onClick={() => handleRemoveMultiple(multipleKey, i)}
-                                  disabled={isRemoving}
-                                >
-                                  ×
-                                </button>
-                              </div>
-                            ))}
-                            {(variantImages.multiple_images || []).map((img, i) => (
-                              <div className="image-preview" key={`existing-${img.id || img.url || i}`}>
-                                <img
-                                  src={`${BASE_URL}/Uploads/products/${img.url}`}
-                                  alt="Variant Existing Multiple"
-                                />
-                                <button
-                                  type="button"
-                                  className="remove-image"
-                                  onClick={() =>
-                                    handleRemoveExistingImage('variant_multiple', variant.id, img.id)
-                                  }
-                                  disabled={isRemoving}
-                                >
-                                  ×
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-
-                <div className="row">
-                  <div className="col-lg-12 text-center my-4">
-                    <button type="submit" className="btn btn-primary py-2 px-5 me-2">
-                      Upload Images
-                    </button>
-                    <button type="reset" className="btn btn-secondary py-2 px-5">
-                      Reset
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
+    <div className="container py-4">
+      <form onSubmit={handleSubmit}>
+        <div className="card mb-4">
+          <div className="card-header"><strong>Main Product Image</strong></div>
+          <div className="card-body">
+            <input type="file" onChange={(e) => handleSingleImageChange(e, 'productSingle')} className="form-control" />
+            {singlePreviews['productSingle'] && renderPreviewImages([singlePreviews['productSingle']])}
+            {existingImages.main_image?.url &&
+              renderExistingImages([existingImages.main_image])}
           </div>
         </div>
-      </div>
+
+        <div className="card mb-4">
+          <div className="card-header"><strong>Multiple Product Images</strong></div>
+          <div className="card-body">
+            <input type="file" multiple onChange={(e) => handleMultipleImageChange(e, 'productMultiple')} className="form-control" />
+            {renderPreviewImages(multiplePreviews['productMultiple'])}
+            {renderExistingImages(existingImages.multiple_images)}
+          </div>
+        </div>
+
+        {variants.map((variant) => {
+          const variantId = variant.id;
+          const singleKey = `variant_${variantId}_Single`;
+          const multipleKey = `variant_${variantId}_Multiple`;
+          const variantImages = existingImages.variants[variantId] || {};
+
+          return (
+            <div className="card mb-4" key={variantId}>
+              <div className="card-header">
+                <strong>Variant: {variant.size?.title || ''} / {variant.color?.label || ''}</strong>
+              </div>
+              <div className="card-body">
+                <div className="mb-3">
+                  <label className="form-label">Single Image</label>
+                  <input type="file" onChange={(e) => handleSingleImageChange(e, singleKey)} className="form-control" />
+                  {singlePreviews[singleKey] && renderPreviewImages([singlePreviews[singleKey]])}
+                  {variantImages.main_image?.url && renderExistingImages([variantImages.main_image])}
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label">Multiple Images</label>
+                  <input type="file" multiple onChange={(e) => handleMultipleImageChange(e, multipleKey)} className="form-control" />
+                  {renderPreviewImages(multiplePreviews[multipleKey])}
+                  {renderExistingImages(variantImages.multiple_images)}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+
+        <div className="text-end">
+          <button type="submit" className="btn btn-primary">Upload All Images</button>
+        </div>
+      </form>
     </div>
   );
 };
