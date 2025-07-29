@@ -92,6 +92,7 @@ export const editFilterSet = (payload) => async (dispatch) => {
     toast.success('Filter Set updated Successfully')
     dispatch(fetchFilterSets());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error editing filter set');
     dispatch({
       type: 'EDIT_FILTERSET_FAILURE',
       payload: error.response?.data?.message || 'Error editing filter set',
@@ -130,6 +131,7 @@ export const updateFilterSetPriority = ({ id, priority }) => async (dispatch) =>
 
     dispatch(fetchFilterSets()); 
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Failed to update priority');
     console.error('Failed to update priority', error);
   }
 };

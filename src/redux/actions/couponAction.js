@@ -56,6 +56,7 @@ export const addCoupon = (formData) => async (dispatch) => {
     toast.success('coupon created successfully')
     dispatch(fetchCoupon());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error adding coupons');
     dispatch({
       type: 'ADD_COUPON_FAILURE',
       payload: error.response?.data?.message || 'Error adding coupons',
@@ -80,6 +81,7 @@ export const editCoupon = (payload) => async (dispatch) => {
     toast.success('Coupons updated successfully')
     dispatch(fetchCoupon());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error editing colors');
     dispatch({
       type: 'EDIT_COUPON_FAILURE',
       payload: error.response?.data?.message || 'Error editing coupons',

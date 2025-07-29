@@ -59,6 +59,7 @@ export const addBrands = (formData) => async (dispatch) => {
     toast.success(successMessage);
     dispatch(fetchBrands());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error adding brand');
     dispatch({
       type: 'ADD_BRAND_FAILURE',
       payload: error.response?.data?.message || 'Error adding brand',
@@ -86,6 +87,7 @@ export const editBrands = (payload) => async (dispatch) => {
     toast.success(successMessage);
     dispatch(fetchBrands());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error editing brand');
     dispatch({
       type: 'EDIT_BRAND_FAILURE',
       payload: error.response?.data?.message || 'Error editing brand',
@@ -132,6 +134,7 @@ export const bulkUpdateBrandStatus = (ids,status) => async (dispatch) => {
     );
     dispatch(fetchBrands()); 
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Failed to update brand status');
     console.error(error);
     toast.error(error?.response?.data?.message || 'Failed to update brand status.');
   }

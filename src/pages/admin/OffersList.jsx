@@ -284,7 +284,7 @@ const OffersList = () => {
                 show={showDeleteModal}
                 onClose={() => setShowDeleteModal(false)}
                 onConfirm={handleDelete}
-                message="Are you sure you want to delete this size?"
+                message="Are you sure you want to delete this offer?"
               />
             )}
             {viewCouponModal && (

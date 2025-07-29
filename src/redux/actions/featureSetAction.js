@@ -57,6 +57,7 @@ export const addFeatureSet = (formData) => async (dispatch) => {
 
     dispatch(fetchFeatureSets());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error adding feature set');
     console.error('Error Response', error?.response?.data);
     dispatch({
       type: ADD_FEATURESET_FAILURE,
@@ -86,6 +87,7 @@ export const editFeatureSet = (payload) => async (dispatch) => {
 
     dispatch(fetchFeatureSets());
   } catch (error) {
+      toast.error(error?.response?.data?.message || 'Error editing feature set');
     dispatch({
       type: EDIT_FEATURESET_FAILURE,
       payload: error.response?.data?.message || 'Error editing feature set',
@@ -133,7 +135,6 @@ export const bulkUpdateFeatureTypeStatus = (ids, status) => async (dispatch) => 
 
     const successMessage = response?.data?.message || 'Status updated successfully';
     toast.success(successMessage);
-
     dispatch(fetchFeatureSets());
   } catch (error) {
     console.error(error);

@@ -20,8 +20,8 @@ import ViewProductModal from '../../modals/viewProductModal';
 const ManageProducts = () => {
     const dispatch = useDispatch();
     const { products = [] } = useSelector((state) => state.products);
-    console.log('products',products)
- console.log( products.variants?.map(v => v.id),'variantIds')
+    console.log('products', products)
+    console.log(products.variants?.map(v => v.id), 'variantIds')
     const navigate = useNavigate();
 
 
@@ -50,7 +50,7 @@ const ManageProducts = () => {
             product?.mainCategory?.title?.toLowerCase().includes(search) ||
             product?.subCategory?.title?.toLowerCase().includes(search) ||
             product?.listSubCategory?.title?.toLowerCase().includes(search) ||
-            product?.size?.title?.toLowerCase().includes(search) ||
+            product?.size?.title?.includes(search) ||
             product?.color?.label?.toLowerCase().includes(search);
 
 
@@ -109,12 +109,12 @@ const ManageProducts = () => {
     // }
 
     const handleEdit = (id, variantIds) => {
-    navigate(`/admin/edit-product/${id}`, {
-        state: { variantIds }
-       
-    });
-    
-};
+        navigate(`/admin/edit-product/${id}`, {
+            state: { variantIds }
+
+        });
+
+    };
 
 
     const handleBulkStatusUpdate = async (newStatus) => {
@@ -267,10 +267,9 @@ const ManageProducts = () => {
                                                                     </span>
                                                                 </td>
                                                                 <td>
-                                                                    {product.variants?.length > 0
-                                                                        ? `${product.variants.length} ${product.variants.length > 1 ? 's' : ''}`
-                                                                        : '-'}
+                                                                    {product.variants?.length > 0 ? product.variants.length : '-'}
                                                                 </td>
+
                                                                 {/* <td>{new Date(product.created_at).toLocaleString()}</td> */}
                                                                 <td>
                                                                     <button
@@ -315,7 +314,7 @@ const ManageProducts = () => {
                             </div>
                         </div>
                         <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-                        {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+                        {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this product?" />}
                         {showViewModal && <ViewProductModal show={showViewModal} onClose={() => setShowViewModal(false)} product={viewProduct} />}
                     </div>
                 </div>

@@ -11,6 +11,8 @@ const EditProductImages = ({ product }) => {
   const [singlePreviews, setSinglePreviews] = useState({});
   const [multiplePreviews, setMultiplePreviews] = useState({});
   const [filesMap, setFilesMap] = useState({});
+  const [loading, setLoading] = useState(false);
+
   const [existingImages, setExistingImages] = useState({
     main_image: null,
     multiple_images: [],
@@ -115,6 +117,7 @@ const EditProductImages = ({ product }) => {
       toast.warn('No images selected');
       return;
     }
+    setLoading(true);
 
     try {
       const token = localStorage.getItem('token');
@@ -124,10 +127,13 @@ const EditProductImages = ({ product }) => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      toast.success('Images uploaded successfully');
       dispatch(fetchProductById(product?.id));
+      toast.success('Images uploaded successfully');
+
     } catch (err) {
       toast.error('Upload failed');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -331,7 +337,14 @@ const EditProductImages = ({ product }) => {
         })}
 
         <div className="text-end">
-          <button type="submit" className="btn btn-primary">Upload All Images</button>
+          <button type="submit" className="btn btn-primary">   {loading ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Uploading...
+            </>
+          ) : (
+            'Upload All Images'
+          )}</button>
         </div>
       </form>
     </div>

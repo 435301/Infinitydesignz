@@ -210,7 +210,7 @@ const ManageFilterType = () => {
                         <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
                         {showAddModal && <AddFilterTypeModal show={showAddModal} onClose={() => setShowAddModal()} />}
                         {editModalVisible && <EditFilterTypeModal show={editModalVisible} onClose={() => setEditModalVisible(false)} filterType={selectedFilterType} />}
-                        {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
+                        {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this filter type?" />}
                         {viewModal && <ViewFilterTypeModal show={viewModal} onClose={() => setViewModal(false)} filterType={viewFilterType} />}
 
                     </div>
