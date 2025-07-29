@@ -44,21 +44,22 @@ const ManageProducts = () => {
 
 
     const filteredProducts = products.filter((product) => {
-        const search = searchTerm.toLowerCase();
-        const matchesSearch = product?.title?.toLowerCase().includes(search) ||
-            product?.sku === searchTerm || 
-            product?.mainCategory?.title?.toLowerCase().includes(search) ||
-            product?.subCategory?.title?.toLowerCase().includes(search) ||
-            product?.listSubCategory?.title?.toLowerCase().includes(search) ||
-            product?.size?.title?.includes(search) ||
-            product?.color?.label?.toLowerCase().includes(search);
+        const lowerSearch = searchTerm.toLowerCase();
 
+        const matchesSearch =
+            product?.title?.includes(lowerSearch) ||
+            product?.mainCategory?.title?.toLowerCase().includes(lowerSearch) ||
+            product?.subCategory?.title?.toLowerCase().includes(lowerSearch) ||
+            product?.listSubCategory?.title?.toLowerCase().includes(lowerSearch) ||
+            product?.size?.title?.toLowerCase().includes(lowerSearch) ||
+            product?.color?.label?.toLowerCase().includes(lowerSearch) ||
+            product?.sku === searchTerm;
 
         const matchesStatus = statusFilter
             ? (statusFilter === 'active' ? product.status === true : product.status === false)
             : true;
-        return matchesSearch && matchesStatus;
 
+        return matchesSearch && matchesStatus;
     });
 
 
