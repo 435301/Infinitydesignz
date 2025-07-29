@@ -2023,6 +2023,10 @@ select.form-control:not([size]):not([multiple]) {
 /* .table-responsive td{
   text-transform: capitalize;
 } */
+ .custom-ckeditor .ck-editor__editable_inline {
+  min-height: 150px; /* Or 800px as per your requirement */
+}
+
 .img-thumbnail {
     padding: .25rem;
     background-color: var(--bs-body-bg);
