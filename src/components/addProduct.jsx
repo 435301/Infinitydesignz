@@ -271,16 +271,45 @@ const AddProduct = ({ onClose, onProductCreated }) => {
   //   setVariants(updatedVariants);
   // };
 
+  // const handleChange = (index, field, value) => {
+  //   const updatedVariants = [...variants];
+
+  //   if (field === 'stock') {
+  //     value = value.replace(/\D/g, '').slice(0, 4);
+  //   }
+
+  //   updatedVariants[index][field] = value;
+  //   setVariants(updatedVariants);
+  // };
+
   const handleChange = (index, field, value) => {
-    const updatedVariants = [...variants];
+  const updatedVariants = [...variants];
 
-    if (field === 'stock') {
-      value = value.replace(/\D/g, '').slice(0, 4);
-    }
+  // Restrict stock to 4-digit numeric only
+  if (field === 'stock') {
+    value = value.replace(/\D/g, '').slice(0, 4);
+  }
 
-    updatedVariants[index][field] = value;
-    setVariants(updatedVariants);
-  };
+  // Only allow numeric values for mrp/sellingPrice (optional but recommended)
+  if (field === 'mrp' || field === 'sellingPrice') {
+    value = value.replace(/[^\d.]/g, '');
+  }
+
+  // Update field
+  updatedVariants[index][field] = value;
+
+  // Validation: Selling Price should not be greater than MRP
+  const mrp = parseFloat(field === 'mrp' ? value : updatedVariants[index]['mrp']);
+  const sp = parseFloat(field === 'sellingPrice' ? value : updatedVariants[index]['sellingPrice']);
+
+  if (!isNaN(mrp) && !isNaN(sp) && sp > mrp) {
+    updatedVariants[index].error = 'Selling Price cannot be greater than MRP';
+  } else {
+    updatedVariants[index].error = '';
+  }
+
+  setVariants(updatedVariants);
+};
 
 
   const addRow = () => {
@@ -664,6 +693,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                                 onChange={(e) => handleChange(index, 'mrp', e.target.value)}
                                 placeholder="MRP"
                               />
+                               {variant.error && <div className="text-danger small mt-1">{variant.error}</div>}
                             </td>
                             <td>
                               <input
@@ -673,6 +703,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                                 onChange={(e) => handleChange(index, 'sellingPrice', e.target.value)}
                                 placeholder="Selling Price"
                               />
+                               {variant.error && <div className="text-danger small mt-1">{variant.error}</div>}
                             </td>
                             <td>
                               <select

@@ -309,11 +309,34 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         { sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' },
     ]);
 
+    // const handleChange = (index, field, value) => {
+    //     const updatedVariants = [...variants];
+    //     updatedVariants[index][field] = value;
+    //     setVariants(updatedVariants);
+    // };
+
     const handleChange = (index, field, value) => {
         const updatedVariants = [...variants];
+
+        // Ensure only numeric input (optional, but good practice for prices)
+        if (['mrp', 'sellingPrice'].includes(field)) {
+            value = value.replace(/[^\d.]/g, '');
+        }
+
         updatedVariants[index][field] = value;
+        const mrp = parseFloat(field === 'mrp' ? value : updatedVariants[index]['mrp']);
+        const sp = parseFloat(field === 'sellingPrice' ? value : updatedVariants[index]['sellingPrice']);
+
+        if (!isNaN(mrp) && !isNaN(sp) && sp > mrp) {
+            updatedVariants[index].error = 'Selling Price cannot be greater than MRP';
+        } else {
+            updatedVariants[index].error = '';
+        }
+
         setVariants(updatedVariants);
     };
+
+
     const addRow = () => {
         setVariants([
             ...variants,
@@ -540,16 +563,39 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                             placeholder={field}
                                                             value={formData[field]}
                                                             onChange={(e) => {
-                                                                setFormData({ ...formData, [field]: e.target.value });
-                                                                if (errors[field]) {
-                                                                    setErrors({ ...errors, [field]: '' });
+                                                                let value = e.target.value;
+
+                                                                if (field === 'stock') {
+                                                                    value = value.replace(/\D/g, '').slice(0, 4); // Only digits, max 4
                                                                 }
+
+                                                                const updatedForm = { ...formData, [field]: value };
+
+                                                                // Check if sellingPrice > mrp
+                                                                if (field === 'sellingPrice') {
+                                                                    const mrp = parseFloat(updatedForm['mrp']);
+                                                                    const sp = parseFloat(value);
+                                                                    if (!isNaN(mrp) && !isNaN(sp) && sp > mrp) {
+                                                                        setErrors((prev) => ({
+                                                                            ...prev,
+                                                                            [field]: 'Selling Price cannot be greater than MRP',
+                                                                        }));
+                                                                    } else {
+                                                                        setErrors((prev) => ({ ...prev, [field]: '' }));
+                                                                    }
+                                                                } else if (errors[field]) {
+                                                                    setErrors((prev) => ({ ...prev, [field]: '' }));
+                                                                }
+
+                                                                setFormData(updatedForm);
                                                             }}
                                                         />
                                                         {errors[field] && <div className="invalid-feedback">{errors[field]}</div>}
                                                     </div>
                                                 );
                                             })}
+
+
                                             <div className="col-lg-3 mb-3">
                                                 <label className="form-label">
                                                     Brand
@@ -681,6 +727,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                                 onChange={(e) => handleChange(index, 'mrp', e.target.value)}
                                                                 placeholder="MRP"
                                                             />
+                                                             {variant.error && <div className="text-danger small mt-1">{variant.error}</div>}
                                                         </td>
                                                         <td>
                                                             <input
@@ -690,6 +737,10 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                                 onChange={(e) => handleChange(index, 'sellingPrice', e.target.value)}
                                                                 placeholder="Selling Price"
                                                             />
+                                                            {variant.error && (
+                                                                <div className="text-danger small mt-1">{variant.error}</div>
+                                                            )}
+
                                                         </td>
                                                         <td>
                                                             <select
