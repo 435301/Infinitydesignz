@@ -2021,7 +2021,15 @@ select.form-control:not([size]):not([multiple]) {
   position: relative;
 }
 
-
+.img-thumbnail {
+    padding: .25rem;
+    background-color: var(--bs-body-bg);
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    max-width: 100%;
+    height: auto;
+    width: 100%;
+}
 
 .image-preview img {
   width: 100%;

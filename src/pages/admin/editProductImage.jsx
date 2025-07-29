@@ -135,7 +135,7 @@ const EditProductImages = ({ product }) => {
         <div className="row mt-2">
             {images.map((img, i) => (
                 <div key={i} className="col-3 position-relative mb-2">
-                    <img src={img} alt="preview" className="img-thumbnail" style={{ height: '100px', objectFit: 'cover' }} />
+                    <img src={img} alt="preview" className="img-thumbnail" style={{ height: '100px', width:'100%', objectFit: 'cover' }} loading ="lazy" />
                     {onRemove && (
                         <button
                             type="button"
@@ -158,7 +158,8 @@ const EditProductImages = ({ product }) => {
                         src={`${BASE_URL}/Uploads/products/${img.url}`}
                         alt="existing"
                         className="img-thumbnail"
-                        style={{ height: '100px', objectFit: 'cover' }}
+                        style={{ height: '100px', with:'100%', objectFit: 'cover' }}
+                        loading="lazy"
                     />
                     {onRemove && (
                         <button
