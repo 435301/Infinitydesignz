@@ -16,6 +16,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { addVariants, editVariants } from '../redux/actions/variantsAction';
 import axios from 'axios';
 import BASE_URL from '../config/config';
+import { toast } from 'react-toastify';
 
 const EditProduct = ({ onClose, onProductCreated }) => {
     const dispatch = useDispatch();
@@ -96,73 +97,60 @@ const EditProduct = ({ onClose, onProductCreated }) => {
 
     const { product } = useSelector(state => state.products);
 
- useEffect(() => {
+useEffect(() => {
     if (product && categories.length) {
-        const p = product;
-        console.log('Product:', p);
-
-        // Find the category associated with listSubCategoryId or categoryId
+        console.log('Product:', product);
         const listSubCategory = categories.find(
-            (cat) => cat.id === (p.listSubCategoryId || p.categoryId)
+            (cat) => cat.id === (product.listSubCategoryId || product.categoryId)
         );
-
         let menuId = '';
         let subMenuId = '';
         let listSubMenuId = '';
 
         if (listSubCategory) {
             listSubMenuId = listSubCategory.id || '';
-
-            // Check if the category has a parent (submenu)
             const subCategory = listSubCategory.parentId
                 ? categories.find((cat) => cat.id === listSubCategory.parentId)
                 : null;
-
             if (subCategory) {
                 subMenuId = subCategory.id || '';
-
-                // Check if the submenu has a parent (menu)
                 const menuCategory = subCategory.parentId
                     ? categories.find((cat) => cat.id === subCategory.parentId)
                     : null;
-                menuId = menuCategory ? menuCategory.id : subCategory.id; // If no menu, submenu acts as menu
+                menuId = menuCategory ? menuCategory.id : subCategory.id;
             } else {
-                // If no parent, the category itself is the top-level menu
                 menuId = listSubCategory.id;
             }
         }
 
-        // Set the dropdown states
+        console.log('Setting Menu:', menuId, 'SubMenu:', subMenuId, 'ListSubMenu:', listSubMenuId);
+
         setSelectedMenu(menuId);
         setSelectedSubMenu(subMenuId);
         setSelectedListSubMenu(listSubMenuId);
-
-        // Set form data
         setFormData({
-            sku: p.sku || '',
-            title: p.title || '',
-            weight: p.productDetails?.weight || '',
-            model: p.productDetails?.model || '',
-            sla: p.productDetails?.sla || '',
-            deliveryCharges: p.productDetails?.deliveryCharges || '',
-            description: p.description || '',
-            status: p.status ? 'enable' : 'disable',
-            searchKeywords: p.searchKeywords || '',
-            stock: p.stock || '',
-            mrp: p.mrp || '',
-            sellingPrice: p.sellingPrice || '',
-            height: p.productDetails?.height || '',
-            width: p.productDetails?.width || '',
-            length: p.productDetails?.length || '',
-            sizeId: p.sizeId || '',
-            colorId: p.colorId || '',
-            brandId: p.brandId || '',
+            sku: product.sku || '',
+            title: product.title || '',
+            weight: product.productDetails?.weight || '',
+            model: product.productDetails?.model || '',
+            sla: product.productDetails?.sla || '',
+            deliveryCharges: product.productDetails?.deliveryCharges || '',
+            description: product.description || '',
+            status: product.status ? 'enable' : 'disable',
+            searchKeywords: product.searchKeywords || '',
+            stock: product.stock || '',
+            mrp: product.mrp || '',
+            sellingPrice: product.sellingPrice || '',
+            height: product.productDetails?.height || '',
+            width: product.productDetails?.width || '',
+            length: product.productDetails?.length || '',
+            sizeId: product.sizeId || '',
+            colorId: product.colorId || '',
+            brandId: product.brandId || '',
         });
-
-        // Set variants
         setVariants(
-            Array.isArray(p.variants) && p.variants.length
-                ? p.variants.map((v) => ({
+            Array.isArray(product.variants) && product.variants.length
+                ? product.variants.map((v) => ({
                       id: v.id,
                       sku: v.sku || '',
                       stock: v.stock?.toString() || '',
@@ -175,6 +163,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         );
     }
 }, [product, categories]);
+
     const handleToggleSidebar = (collapsed) => {
         setIsSidebarCollapsed(collapsed);
     };
@@ -189,27 +178,18 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         if (!formData.stock) newErrors.stock = 'Stock is required';
         if (!formData.mrp) newErrors.mrp = 'MRP is required';
         if (!formData.sellingPrice) newErrors.sellingPrice = 'Selling Price is required';
-        // if (!formData.brandId) newErrors.brandId = 'Brand is required';
         if (!formData.sizeId) newErrors.sizeId = 'Size is required';
         if (!formData.colorId) newErrors.colorId = 'Color is required';
         if (formData.stock && isNaN(formData.stock)) newErrors.stock = 'Stock must be a number';
         if (formData.mrp && isNaN(formData.mrp)) newErrors.mrp = 'MRP must be a number';
         if (formData.sellingPrice && isNaN(formData.sellingPrice))
             newErrors.sellingPrice = 'Selling Price must be a number';
-        // if (formData.height && isNaN(formData.height)) newErrors.height = 'Height must be a number';
-        // if (formData.width && isNaN(formData.width)) newErrors.width = 'Width must be a number';
-        // if (formData.length && isNaN(formData.length)) newErrors.length = 'Length must be a number';
         if (!formData.description.trim()) newErrors.description = 'Description is required';
         if (!formData.status) newErrors.status = 'Product status is required';
         if (!formData.searchKeywords.trim()) newErrors.searchKeywords = 'Search Keywords are required';
-        // if (!formData.height) newErrors.height = 'Height is required';
-        // if (!formData.width) newErrors.width = 'Width is required';
-        // if (!formData.length) newErrors.length = 'Length is required';
-        // if (!formData.weight) newErrors.weight = 'Weight is required';
         else if (isNaN(formData.weight)) newErrors.weight = 'Weight must be a number';
         if (!formData.sla) newErrors.sla = 'SLA is required';
         else if (isNaN(formData.sla)) newErrors.sla = 'SLA must be a number';
-        // if (!formData.deliveryCharges) newErrors.deliveryCharges = 'Delivery Charges are required';
         else if (isNaN(formData.deliveryCharges))
             newErrors.deliveryCharges = 'Delivery Charges must be a number';
 
@@ -224,8 +204,8 @@ const EditProduct = ({ onClose, onProductCreated }) => {
     if (!validate()) return;
 
     const cleanedVariants = variants
-        .filter(v => v.sku && v.stock && v.mrp && v.sellingPrice)
-        .map(v => ({
+        .filter((v) => v.sku && v.stock && v.mrp && v.sellingPrice)
+        .map((v) => ({
             ...v,
             sku: v.sku,
             stock: parseInt(v.stock),
@@ -250,7 +230,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         sizeId: parseInt(formData.sizeId),
         colorId: parseInt(formData.colorId),
         brandId: parseInt(formData.brandId),
-        categoryId: parseInt(selectedMenu),
+        categoryId: parseInt(selectedListSubMenu || selectedSubMenu || selectedMenu),
         status: formData.status === 'enable',
         featureTypeId: selectedFeatureTypeId,
         featureType: featureType,
@@ -262,7 +242,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
             sla: parseInt(formData.sla),
             deliveryCharges: parseFloat(formData.deliveryCharges),
         },
-        variants: cleanedVariants, 
+        variants: cleanedVariants,
     };
 
     console.log('Submitting Product with Variants:', payload);
@@ -277,15 +257,12 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         });
 
         console.log('Product updated successfully:', response.data);
+        toast.success('Product updated successfully');
 
-        // Reset form
-        setFormData(initialFormState);
-        setDescription('');
-        setSelectedMenu('');
-        setSelectedSubMenu('');
-        setSelectedListSubMenu('');
-        setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
+        // Re-fetch the updated product to ensure state consistency
+        dispatch(fetchProductById(id));
 
+        // Update created product ID
         setCreatedProductId(response.data.id);
 
         if (onProductCreated) {
@@ -302,6 +279,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
             onClose();
         }
     } catch (err) {
+        console.error('Error updating product:', err);
         setErrors({
             brand: err?.response?.data?.message || 'Something went wrong.',
         });
@@ -309,15 +287,22 @@ const EditProduct = ({ onClose, onProductCreated }) => {
 };
 
 
-    const handleReset = (e) => {
-        e.preventDefault();
-        setFormData(initialFormState);
-        setSelectedMenu('');
-        setSelectedSubMenu('');
-        setSelectedListSubMenu('');
-        setDescription('');
-        setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
-    };
+ const handleReset = (e) => {
+    e.preventDefault();
+    setFormData(initialFormState);
+    setDescription('');
+    setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
+    // Optionally preserve category selections
+    // setSelectedMenu('');
+    // setSelectedSubMenu('');
+    // setSelectedListSubMenu('');
+};
+
+useEffect(() => {
+    console.log('Menu Options:', menuOptions);
+    console.log('SubMenu Options:', subMenuOptions);
+    console.log('List SubMenu Options:', listSubMenuOptions);
+}, [menuOptions, subMenuOptions, listSubMenuOptions]);
 
     // Variants
     const [variants, setVariants] = useState([
