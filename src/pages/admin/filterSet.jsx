@@ -155,7 +155,7 @@ const ManageFilterSet = () => {
                         {items.map((item) => (
                           <div
                             key={item.id}
-                            className="feature-item d-flex justify-content-between align-items-center mb-2 p-2 border rounded"
+                            className="feature-item me-2 d-flex justify-content-between align-items-center mb-2 p-2 border rounded"
                           >
                             <div className="d-flex align-items-center">
                               <input

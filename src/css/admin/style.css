@@ -2020,7 +2020,9 @@ select.form-control:not([size]):not([multiple]) {
 .image-upload-container {
   position: relative;
 }
-
+/* .table-responsive td{
+  text-transform: capitalize;
+} */
 .img-thumbnail {
     padding: .25rem;
     background-color: var(--bs-body-bg);
