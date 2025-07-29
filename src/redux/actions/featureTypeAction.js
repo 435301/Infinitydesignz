@@ -54,13 +54,11 @@ export const addFeatureTypes = (formData) => async (dispatch) => {
     });
 
     dispatch({ type: ADD_FEATURETYPE_SUCCESS });
-
     const successMessage = response?.data?.message || 'Feature Type created successfully';
     toast.success(successMessage);
-
     dispatch(fetchFeatureTypes());
   } catch (error) {
-      toast.error(error?.response?.data?.message || 'Error adding feature type');
+    toast.error(error?.response?.data?.message || 'Error adding feature type');
     dispatch({
       type: ADD_FEATURETYPE_FAILURE,
       payload: error.response?.data?.message || 'Error adding featureType',
@@ -89,7 +87,7 @@ export const editFeatureTypes = (payload) => async (dispatch) => {
 
     dispatch(fetchFeatureTypes());
   } catch (error) {
-      toast.error(error?.response?.data?.message || 'Error editing feature type');
+    toast.error(error?.response?.data?.message || 'Error editing feature type');
     dispatch({
       type: EDIT_FEATURETYPE_FAILURE,
       payload: error.response?.data?.message || 'Error editing featureType',
@@ -106,11 +104,9 @@ export const deleteFeatureType = (id) => async (dispatch) => {
         Authorization: `Bearer ${token}`,
       },
     });
-
+    dispatch({ type: 'DELETE_FEATURE_TYPE_SUCCESS', payload: id });
     const successMessage = response?.data?.message || 'Feature Type deleted successfully';
     toast.success(successMessage);
-
-    dispatch(fetchFilterTypes(id));
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Failed to delete Feature Type.');
     console.error(error);

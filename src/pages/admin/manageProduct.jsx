@@ -46,7 +46,7 @@ const ManageProducts = () => {
     const filteredProducts = products.filter((product) => {
         const search = searchTerm.toLowerCase();
         const matchesSearch = product?.title?.toLowerCase().includes(search) ||
-            product?.sku?.includes(search) ||
+            product?.sku === searchTerm || 
             product?.mainCategory?.title?.toLowerCase().includes(search) ||
             product?.subCategory?.title?.toLowerCase().includes(search) ||
             product?.listSubCategory?.title?.toLowerCase().includes(search) ||
