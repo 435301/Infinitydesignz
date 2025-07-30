@@ -490,7 +490,7 @@ const validate = () => {
 
                       <div className="col-lg-6 mb-3">
                         <label className="form-label">
-                          Search Keywords<span className="text-danger">*</span>
+                         Comma Separated Search Keywords<span className="text-danger">*</span>
                         </label>
                         <input
                           type="text"
