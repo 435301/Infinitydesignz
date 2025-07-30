@@ -273,7 +273,7 @@ const ProductTopBar = () => {
 
                     <div className="row">
                         <div className="col-12 col-md-4 col-lg-3 mb-3">
-                            <FilterSidebar isMobile={false} accordionFilters={accordionFilters} standardFilters={standardFilters} onClearFilters={handleClearFilters} />
+                            {/* <FilterSidebar isMobile={false} accordionFilters={accordionFilters} standardFilters={standardFilters} onClearFilters={handleClearFilters} /> */}
                         </div>
                         <ProductList products={products} />
                     </div>

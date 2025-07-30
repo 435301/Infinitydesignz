@@ -69,6 +69,7 @@ import EditProductPage from './pages/admin/editproductPage.jsx';
 import EditProductFeatures from './pages/admin/editProductFeatures.jsx';
 import EditProductFilters from './pages/admin/editProductFilters.jsx';
 import EditProductImages from './pages/admin/editProductImage.jsx';
+import ProductsPage from './pages/users/allProducts.jsx';
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
     <div className="content">{children}</div>
@@ -149,6 +150,8 @@ function App() {
           <Route path='/admin/edit-product-features' element={<EditProductFeatures />}></Route>
           <Route path='/admin/edit-product-filters' element={<EditProductFilters />}></Route>
           <Route path='/admin/edit-product-images' element={<EditProductImages />}></Route>
+          <Route path='/products' element={<ProductsPage />}></Route>
+
 
         </Routes>
         <Routes>

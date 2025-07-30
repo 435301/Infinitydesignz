@@ -369,7 +369,7 @@ export default function HomeBannerSection() {
 
       <NewArrivalsSection title="New Arrivals" cards={cards} />
 
-      <ProductGrid products={products} />
+      {/* <ProductGrid products={products} /> */}
 
       <div className="container-fluid py-5" style={{ backgroundColor: "#eaf8ff" }}>
         <div className="container">
@@ -410,7 +410,7 @@ export default function HomeBannerSection() {
         </div>
       </div>
 
-      <ProductGrid products={products} />
+      {/* <ProductGrid products={products} /> */}
 
       <PromoSection heading="Trending" promos={promoData} />
   
@@ -428,7 +428,7 @@ export default function HomeBannerSection() {
         </div>
       </div>
 
-      <ProductGrid products={products} />
+      {/* <ProductGrid products={products} /> */}
 
       <HelpSection title="Need Help Buying?" items={helpItems} />
 

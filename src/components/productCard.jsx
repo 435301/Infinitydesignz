@@ -1,76 +1,82 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import BASE_URL from "../config/config";
+import { FaRegHeart } from "react-icons/fa"; 
+import '../../src/css/user/userstyle.css';
 
 const ProductCard = ({ product }) => {
   const {
+    id,
     title = "No Title",
+    mrp = 0,
     sellingPrice = 0,
-    mrp = 0
+    images = [],
+    variants = []
   } = product || {};
 
+  // Get main image or first image
+  const mainImageObj = images.find(img => img.isMain) || images[0];
+  const hasImage = !!mainImageObj?.url;
+  const imageUrl = hasImage ? `${BASE_URL}/uploads/products/${mainImageObj.url}` : "";
 
-  const images = [];
+  // Fallback to variant price if missing
+  let displayMrp = mrp;
+  let displayPrice = sellingPrice;
 
-  // Main product image
-  if (product?.images?.main?.url) {
-    images.push(`${BASE_URL}/uploads/products/${product.images.main.url}`);
+  if ((!displayMrp || !displayPrice) && variants.length > 0) {
+    displayMrp = variants[0].mrp || 0;
+    displayPrice = variants[0].sellingPrice || 0;
   }
 
-  // Additional product images
-  if (product?.images?.additional?.length) {
-    product.images.additional.forEach(img => {
-      if (img?.url) {
-        images.push(`${BASE_URL}/uploads/products/${img.url}`);
-      }
-    });
+  // Calculate discount
+  let discountPercent = 0;
+  if (displayMrp > displayPrice && displayMrp !== 0) {
+    discountPercent = Math.round(((displayMrp - displayPrice) / displayMrp) * 100);
   }
-
-  // Variant images (main and additional)
-  if (product?.images?.variants) {
-    Object.values(product.images.variants).forEach(variantImg => {
-      if (variantImg.main?.url) {
-        images.push(`${BASE_URL}/uploads/products/${variantImg.main.url}`);
-      }
-
-      if (Array.isArray(variantImg.additional)) {
-        variantImg.additional.forEach(addImg => {
-          if (addImg?.url) {
-            images.push(`${BASE_URL}/uploads/products/${addImg.url}`);
-          }
-        });
-      }
-    });
-  }
-
-  const fallback = "/placeholder.png";
-  const firstImage = images[0] || fallback;
-
-  let discountPercent = null;
-  if (mrp > sellingPrice && mrp !== 0) {
-    discountPercent = Math.round(((mrp - sellingPrice) / mrp) * 100);
-  }
-
 
   return (
     <div className="col-lg-4 col-6 p-2">
-      <Link to="/product-details" className="text_decoration">
+      <Link to={`/product-details/${id}`} className="text_decoration">
         <div className="card h-100 position-relative">
-           {discountPercent && (
-              <div className="discount-badge position-absolute top-0 start-0 bg-danger text-white px-2 py-1 rounded">
-                {discountPercent}% OFF
-              </div>
-            )}
-          <img src={firstImage} className="card-img-top" alt={product.title || "Product"} />
+          <div className="discount-badge position-absolute top-0 start-0 bg-danger text-white px-2 pt-1 mt-3 rounded">
+            {discountPercent}% OFF
+          </div>
+           <div
+            className="position-absolute top-0 end-0 p-2"
+            style={{ zIndex: 2 }}
+          >
+            <div
+              className="whishlist_Icon"
+            >
+              <FaRegHeart
+                className="text-black"
+                style={{ fontSize: "1.1rem", cursor: "pointer" }}
+                title="Add to Wishlist"
+              />
+            </div>
+          </div>
+          {hasImage ? (
+            <img src={imageUrl} className="card-img-top" alt={title} />
+          ) : (
+            <div
+              className="card-img-top d-flex align-items-center justify-content-center bg-light text-muted"
+              style={{ height: "200px", fontSize: "1.2rem" }}
+            >
+              N/A
+            </div>
+          )}
 
+          {/* Product Details */}
           <div className="card-body">
-            <h6 className="card-title">{product.title}</h6>
+            <h6 className="card-title">{title}</h6>
             <p className="card-text">
-              <strong>₹{product.sellingPrice}</strong>{" "}
-              <del>MRP ₹{product.mrp}</del>
+              <strong>₹{displayPrice}</strong>{" "}
+              {displayMrp > displayPrice ? (
+                <del>MRP ₹{displayMrp}</del>
+              ) : (
+                <span className="text-muted ms-2">(No discount)</span>
+              )}
             </p>
-           
-           
           </div>
         </div>
       </Link>

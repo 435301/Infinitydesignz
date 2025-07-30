@@ -18,6 +18,7 @@ const ProductPage = ({ createdProductId, selectedFeatureType }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [createdProductIdState, setCreatedProductId] = useState(null);
   const [createdProductInfo, setCreatedProductInfo] = useState(null);
+  console.log('createdProductInfo',createdProductInfo)
   const [createdVariantIds, setCreatedVariantIds] = useState([]);
 console.log('createdVariantIds',createdVariantIds)
  const {products=[]} = useSelector((state) => state.products);

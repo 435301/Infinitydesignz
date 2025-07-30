@@ -18,6 +18,7 @@ import MenuImg from '../../src/img/menu-img.webp';
 export default function Header() {
   const dispatch = useDispatch();
   const { categories = [] } = useSelector((state) => state.categories || {});
+  console.log('categories', categories)
   const navigate = useNavigate();
 
   const [query, setQuery] = useState("");
@@ -76,32 +77,44 @@ export default function Header() {
 
     return topLevel.map((parent) => {
       const children = groupedCategories[parent.id] || [];
+
       return (
         <div className="nav-item dropdown mega-dropdown" key={parent.id}>
-          <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">{parent.title}</a>
+          <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+            {parent.title}
+          </a>
           <div className="dropdown-menu mega-menu p-1 border-0 rounded-0 m-0">
             <div className="container">
               <div className="row">
-                {children.map((child, index) => {
+                {children.map((child) => {
                   const subChildren = groupedCategories[child.id] || [];
+
                   return (
                     <div className="col-md-3 col-lg-2 col-6" key={child.id}>
-                      <h3>{child.title}</h3>
+                      {/* Make subcategory title clickable */}
+                      <h3>
+                        <Link to={`/products?${new URLSearchParams({ ...(parent?.id && { mainCategoryId: parent.id }), ...(child?.id && { subCategoryId: child.id }), brandId: 0, searchStr: '', filters: '{}' }).toString()}`} className="subcategory-link"
+                        >
+                          {child.title}
+                        </Link>
+                      </h3>
+
+                      {/* Render list subcategories if available */}
                       {subChildren.length > 0 ? (
                         subChildren.map((sub) => (
-                          <Link to={`/shop?listSubCategoryId=${sub.id}`} className="dropdown-item">
+                          <Link to={`/products?${new URLSearchParams({ ...(parent?.id && { mainCategoryId: parent.id }), ...(child?.id && { subCategoryId: child.id }), ...(sub?.id && { listSubCatId: sub.id }), brandId: 0, searchStr: '', filters: '{}' }).toString()}`} className="dropdown-item"
+                          >
                             {sub.title}
                           </Link>
                         ))
                       ) : (
-                        <Link to={`/shop?category=${child.id}`} className="dropdown-item">
-                          View All
-                        </Link>
+                    ''
                       )}
                     </div>
                   );
                 })}
 
+                {/* Optional Promo Column */}
                 <div className="col-md-3 col-lg-2 d-none d-md-block promo-column">
                   <h3 className="promo-heading">Sink Into Comfort</h3>
                   <p className="promo-subheading">Explore {parent.title}</p>
@@ -114,6 +127,7 @@ export default function Header() {
       );
     });
   };
+
 
   return (
     <>
