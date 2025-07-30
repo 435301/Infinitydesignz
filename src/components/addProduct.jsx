@@ -98,7 +98,6 @@ const validate = () => {
 
   if (!formData.sku.trim()) newErrors.sku = 'SKU is required';
   if (!formData.title.trim()) newErrors.title = 'Title is required';
-  if (!formData.model.trim()) newErrors.model = 'Model is required';
   if (!selectedMenu) newErrors.selectedMenu = 'Menu is required';
   if (!selectedSubMenu) newErrors.selectedSubMenu = 'Sub Menu is required';
   if (!selectedListSubMenu) newErrors.selectedListSubMenu = 'List Sub Menu is required';
@@ -422,7 +421,7 @@ const validate = () => {
                         { id: 'sku', label: 'SKU Code', required: true },
                         { id: 'title', label: 'Title', required: true },
                         { id: 'weight', label: 'Weight (gms)', required: false },
-                        { id: 'model', label: 'Model', required: true },
+                        { id: 'model', label: 'Model', required: false },
                         { id: 'sla', label: 'SLA (Delivery Days)', required: true },
                         { id: 'deliveryCharges', label: 'Delivery Charges', required: false },
                       ].map((field, idx) => (

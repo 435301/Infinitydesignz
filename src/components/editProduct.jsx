@@ -453,7 +453,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                 { id: 'sku', label: 'SKU Code', required: true },
                                                 { id: 'title', label: 'Title', required: true },
                                                 { id: 'weight', label: 'Weight (gms)', required: false },
-                                                { id: 'model', label: 'Model', required: true },
+                                                { id: 'model', label: 'Model', required: false },
                                                 { id: 'sla', label: 'SLA (Delivery Days)', required: true },
                                                 { id: 'deliveryCharges', label: 'Delivery Charges', required: false },
                                             ].map((field, idx) => (
