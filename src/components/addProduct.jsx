@@ -112,15 +112,9 @@ const validate = () => {
   if (!formData.SellingPrice) newErrors.SellingPrice = 'Selling Price is required';
   else if (isNaN(formData.SellingPrice)) newErrors.SellingPrice = 'Selling Price must be a number';
   else if (parseFloat(formData.SellingPrice) > parseFloat(formData.Mrp)) {
-    newErrors.SellingPrice = 'Selling Price cannot be greater than MRP';
+    newErrors.SellingPrice = 'Selling Price cannot be greater than MRP'
   }
 
-  // if (formData.Height && isNaN(formData.Height)) newErrors.Height = 'Height must be a number';
-  // if (formData.Width && isNaN(formData.Width)) newErrors.Width = 'Width must be a number';
-  // if (formData.Length && isNaN(formData.Length)) newErrors.Length = 'Length must be a number';
-
-  // if (!formData.sizeId) newErrors.sizeId = 'Size is required';
-  // if (!formData.colorId) newErrors.colorId = 'Color is required';
 
   if (!formData.description.trim()) newErrors.description = 'Description is required';
   if (!formData.status) newErrors.status = 'Product status is required';
@@ -181,7 +175,7 @@ const validate = () => {
         model: formData.model,
         weight: parseFloat(formData.weight),
         sla: parseInt(formData.sla),
-        deliveryCharges: formData.deliveryCharges
+        deliveryCharges: parseFloat(formData.deliveryCharges)
       },
       variants: variantPayloads,
     };
@@ -471,9 +465,6 @@ const validate = () => {
                             }}
                           />
                         </div>
-
-
-
                         {errors.description && (
                           <div className="invalid-feedback">{errors.description}</div>
                         )}

@@ -133,7 +133,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                 title: product.title || '',
                 weight: product.productDetails?.weight || '',
                 model: product.productDetails?.model || '',
-                sla: product.productDetails?.sla || '',
+                sla: product.productDetails?.sla ?? '',   
                 deliveryCharges: product.productDetails?.deliveryCharges || '',
                 description: product.description || '',
                 status: product.status ? 'enable' : 'disable',
