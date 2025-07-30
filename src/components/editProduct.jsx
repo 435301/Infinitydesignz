@@ -178,8 +178,6 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         if (!formData.stock) newErrors.stock = 'Stock is required';
         if (!formData.mrp) newErrors.mrp = 'MRP is required';
         if (!formData.sellingPrice) newErrors.sellingPrice = 'Selling Price is required';
-        if (!formData.sizeId) newErrors.sizeId = 'Size is required';
-        if (!formData.colorId) newErrors.colorId = 'Color is required';
         if (formData.stock && isNaN(formData.stock)) newErrors.stock = 'Stock must be a number';
         if (formData.mrp && isNaN(formData.mrp)) newErrors.mrp = 'MRP must be a number';
         if (formData.sellingPrice && isNaN(formData.sellingPrice))
@@ -522,7 +520,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
 
                                             <div className="col-lg-6 mb-3">
                                                 <label className="form-label">
-                                                    Search Keywords<span className="text-danger">*</span>
+                                                  Comma Separated Search Keywords<span className="text-danger">*</span>
                                                 </label>
                                                 <input
                                                     type="text"
@@ -624,7 +622,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
 
                                             <div className="col-lg-3 mb-3">
                                                 <label className="form-label">
-                                                    Size<span className="text-danger">*</span>
+                                                    Size
                                                 </label>
                                                 <select
                                                     className={`form-control ${errors.sizeId ? 'is-invalid' : ''}`}
@@ -650,7 +648,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
 
                                             <div className="col-lg-3 mb-3">
                                                 <label className="form-label">
-                                                    Color<span className="text-danger">*</span>
+                                                    Color
                                                 </label>
                                                 <select
                                                     className={`form-control ${errors.colorId ? 'is-invalid' : ''}`}

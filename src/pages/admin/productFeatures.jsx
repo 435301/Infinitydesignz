@@ -15,33 +15,32 @@ const ProductFeatures = ({ createdProductId, featureTypeId, featureType }) => {
     }));
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const payloadArray = Object.entries(formValues)
-    .filter(([, value]) => value?.trim() !== '')
-    .map(([featureListId, value]) => ({
-      productId: createdProductId,
-      featureListId: parseInt(featureListId),
-      value: value.trim()
-    }));
+    const payloadArray = Object.entries(formValues)
+      .filter(([, value]) => value?.trim() !== '')
+      .map(([featureListId, value]) => ({
+        productId: createdProductId,
+        featureListId: parseInt(featureListId),
+        value: value.trim()
+      }));
 
-  if (payloadArray.length === 0) {
-    toast.warning('Please fill at least one feature value.');
-    return;
-  }
+    if (payloadArray.length === 0) {
+      toast.warning('Please fill at least one feature value.');
+      return;
+    }
 
-  console.log('Submitting payload array:', payloadArray);
+    console.log('Submitting payload array:', payloadArray);
 
-  try {
-    // ✅ Single POST with array payload
-    await axios.post(`${BASE_URL}/product-features`, payloadArray);
-    toast.success('Features submitted successfully!');
-  } catch (error) {
-    console.error('Submission failed:', error);
-    toast.error('Failed to submit features.');
-  }
-};
+    try {
+      await axios.post(`${BASE_URL}/product-features`, payloadArray);
+      toast.success('Features submitted successfully!');
+    } catch (error) {
+      console.error('Submission failed:', error);
+      toast.error('Failed to submit features.');
+    }
+  };
 
 
   const renderInput = (label, featureListId) => (
@@ -69,31 +68,37 @@ const ProductFeatures = ({ createdProductId, featureTypeId, featureType }) => {
             </div>
 
             <div className="card-block">
-              <form onSubmit={handleSubmit} className="app-form">
-                <div className="row">
-                  {(featureType?.featureSets || []).map((set) => (
-                    <div className="col-lg-6 mb-4" key={set.id}>
-                      <h6 className="sub-heading mb-3">{set.title}</h6>
-                      <div className="row">
-                        {(set.featureLists || []).map((feature) =>
-                          renderInput(feature.label, feature.id)
-                        )}
+              {featureType.length === 0 ? (
+                <div className="text-center text-muted py-5">
+                  <p className="mb-0">No features found for this Product</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="app-form">
+                  <div className="row">
+                    {(featureType?.featureSets || []).map((set) => (
+                      <div className="col-lg-6 mb-4" key={set.id}>
+                        <h6 className="sub-heading mb-3">{set.title}</h6>
+                        <div className="row">
+                          {(set.featureLists || []).map((feature) =>
+                            renderInput(feature.label, feature.id)
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
 
-                <div className="col-lg-12 text-center my-4">
-                  <button type="submit" className="btn btn-primary py-2 px-5 me-2">Update Features</button>
-                  <button
-                    type="button"
-                    className="btn btn-secondary py-2 px-5"
-                    onClick={() => setFormValues({})}
-                  >
-                    Reset
-                  </button>
-                </div>
-              </form>
+                  <div className="col-lg-12 text-center my-4">
+                    <button type="submit" className="btn btn-primary py-2 px-5 me-2">Update Features</button>
+                    <button
+                      type="button"
+                      className="btn btn-secondary py-2 px-5"
+                      onClick={() => setFormValues({})}
+                    >
+                      Reset
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
 
           </div>

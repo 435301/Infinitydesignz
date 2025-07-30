@@ -85,50 +85,56 @@ const EditProductFeatures = () => {
     <div className="container mt-4">
       <div className="card">
         <div className="card-body">
-      <form onSubmit={handleSubmit}>
-        <div className="row">
-          {featureSets.map((set) => (
-            <div key={set.id} className="col-md-6 mb-4">
-              <h6 className="mb-3 text-dark">{set.title}</h6>
-              {(set.featureLists || []).map((feature) => (
-                <div
-                  className="mb-3"
-                  key={feature.id}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginBottom: '15px',
-                  }}
-                >
-                  <label
-                    className="form-label"
-                    style={{
-                      minWidth: '120px',
-                      marginRight: '10px',
-                      marginBottom: 0,
-                    }}
-                  >
-                    {feature.label}
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    style={{ flex: 1 }}
-                    value={formValues[feature.id] || ''}
-                    onChange={(e) => handleChange(e, feature.id)}
-                  />
-                </div>
-              ))}
+          {featureSets.length === 0 ? (
+            <div className="text-center text-muted py-5">
+              <p className="mb-0">No features found for this Product</p>
             </div>
-          ))}
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <div className="row">
+                {featureSets.map((set) => (
+                  <div key={set.id} className="col-md-6 mb-4">
+                    <h6 className="mb-3 text-dark">{set.title}</h6>
+                    {(set.featureLists || []).map((feature) => (
+                      <div
+                        className="mb-3"
+                        key={feature.id}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          marginBottom: '15px',
+                        }}
+                      >
+                        <label
+                          className="form-label"
+                          style={{
+                            minWidth: '120px',
+                            marginRight: '10px',
+                            marginBottom: 0,
+                          }}
+                        >
+                          {feature.label}
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          style={{ flex: 1 }}
+                          value={formValues[feature.id] || ''}
+                          onChange={(e) => handleChange(e, feature.id)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+              <div className="text-center mt-4">
+                <button type="submit" className="btn btn-primary px-4">
+                  Save Features
+                </button>
+              </div>
+            </form>
+          )}
         </div>
-        <div className="text-center mt-4">
-          <button type="submit" className="btn btn-primary px-4">
-            Save Features
-          </button>
-        </div>
-      </form>
-    </div>
       </div>
     </div>
   );
