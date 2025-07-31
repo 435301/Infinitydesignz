@@ -17,8 +17,8 @@ const ProductsPage = () => {
   const subCategoryId = parseInt(searchParams.get('subCategoryId'));
   const listSubCatId = parseInt(searchParams.get('listSubCatId'));
 
-  const getCategoryTitle = (id) =>
-    categories.find((cat) => cat.id === id)?.title;
+    const getCategoryTitle = (id) =>
+        categories.find((cat) => cat.id === id)?.title;
 
   const breadcrumbItems = [
     { label: 'Home', link: '/' },

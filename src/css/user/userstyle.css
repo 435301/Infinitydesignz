@@ -1889,7 +1889,7 @@ MEGA MENU - Responsive Styles
 
 .product-main-view {
   position: relative;
-  padding-left: 100px;
+  padding-left: 10px;
 }
 
 .thumb-gallery {
@@ -2025,7 +2025,7 @@ MEGA MENU - Responsive Styles
 
 .product-details-page .dropdown-container {
   flex: 1;
-  max-width: 150px;
+  max-width: 40px;
   /* Constrain dropdown width */
 }
 
@@ -5524,7 +5524,7 @@ CHECKOUT PAGE
 .product-display {
   position: relative;
   display: flex;
-  overflow: visible; 
+  overflow: visible;
 }
 
 .zoom-lens {
@@ -5546,7 +5546,11 @@ CHECKOUT PAGE
   background-repeat: no-repeat;
   background-position: center;
   background-color: white;
-  z-index: 999; 
+  z-index: 999;
   display: none;
 }
 
+h3 a {
+  color: rgb(13 167 158);
+  text-decoration: none
+}
