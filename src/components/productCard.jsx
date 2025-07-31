@@ -51,7 +51,14 @@ const ProductCard = ({ product, variant = null }) => {
 
   return (
     <div className="col-lg-4 col-6 p-2">
-      <Link to={`/product-details/${id}`} className="text_decoration">
+    <Link
+  to={
+    variant
+      ? `/product-details/${id}?variantId=${variant.id}`
+      : `/product-details/${id}`
+  }
+  className="text_decoration"
+>
         <div className="card h-100 position-relative">
           {discountPercent > 0 && (
             <div className="discount-badge position-absolute top-0 start-0 bg-danger text-white px-2 pt-1 mt-3 rounded">

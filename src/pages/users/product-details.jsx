@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import Header from "../../includes/header";
 import Footer from "../../includes/footer";
 import axios from "axios";
@@ -14,6 +14,11 @@ import { useNavigate } from "react-router-dom";
 export default function ProductDetailPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+const variantIdFromURL = searchParams.get("variantId");
+const [thumbnails, setThumbnails] = useState([]);
+
+
   const { product = [] } = useSelector((state) => state.userProductDetails);
   const { productId } = useParams();
   // const [product, setProduct] = useState(null);
@@ -24,19 +29,47 @@ export default function ProductDetailPage() {
   const [pincode, setPincode] = useState("");
 
   useEffect(() => {
-    dispatch(fetchUserProductDetailsById(productId));
+   dispatch(fetchUserProductDetailsById(productId, variantIdFromURL));
   }, [dispatch, productId]);
 
-  useEffect(() => {
-    if (product) {
+useEffect(() => {
+  if (product) {
+    const variantId = parseInt(variantIdFromURL);
+    const allVariantImages = product.images?.variantImages || [];
+    const additional = product.images?.additional || [];
+
+    setSelectedSizeId(product.selectedVariant?.sizeId || '');
+    setSelectedColorId(product.selectedVariant?.colorId || '');
+
+    let selectedImages = [];
+
+    if (!isNaN(variantId)) {
+      selectedImages = allVariantImages.filter(
+        (img) => parseInt(img.variantId) === variantId
+      );
+    }
+
+    if (selectedImages.length > 0) {
+      const mainVariantImg = selectedImages.find((img) => img.isMain) || selectedImages[0];
+      setMainImage(`${BASE_URL}/uploads/products/${mainVariantImg.url}`);
+      setThumbnails([
+        ...selectedImages.map((img) => ({ url: img.url })),
+      ]);
+    } else {
+      // fallback to product-level images
       const mainImgUrl = product.images?.main?.url;
-      setSelectedSizeId(product.selectedVariant?.sizeId || '');
-      setSelectedColorId(product.selectedVariant?.colorId || '');
       if (mainImgUrl) {
         setMainImage(`${BASE_URL}/uploads/products/${mainImgUrl}`);
       }
+
+      setThumbnails([
+        { url: product.images?.main?.url, isMain: true },
+        ...additional,
+      ]);
     }
-  }, [product]);
+  }
+}, [product, variantIdFromURL]);
+
 
 
   useEffect(() => {
@@ -126,10 +159,10 @@ export default function ProductDetailPage() {
   const { title, brand, description, mrp, sellingPrice, stock, size, productDetails, variants, selectedVariant } = product;
 
   const additionalImages = product.images?.additional || [];
-  const thumbnails = [
-    { url: product.images?.main?.url, isMain: true },
-    ...additionalImages
-  ];
+  // const thumbnails = [
+  //   { url: product.images?.main?.url, isMain: true },
+  //   ...additionalImages
+  // ];
 
   return (
     <>
