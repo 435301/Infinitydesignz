@@ -9,7 +9,6 @@ import axios from 'axios';
 import BASE_URL from '../../config/config';
 import { useSelector } from 'react-redux';
 
-
 const ProductsPage = () => {
     const [products, setProducts] = useState([]);
     const [searchParams] = useSearchParams();
@@ -18,7 +17,8 @@ const ProductsPage = () => {
     const subCategoryId = parseInt(searchParams.get('subCategoryId'));
     const listSubCatId = parseInt(searchParams.get('listSubCatId'));
 
-    const getCategoryTitle = (id) => categories.find(cat => cat.id === id)?.title;
+    const getCategoryTitle = (id) =>
+        categories.find((cat) => cat.id === id)?.title;
 
     const breadcrumbItems = [
         { label: 'Home', link: '/' },
@@ -46,19 +46,17 @@ const ProductsPage = () => {
             .get(`${BASE_URL}/products/search?${queryString}`)
             .then((res) => {
                 const rawProducts = res.data || [];
-
-                // Flatten products + their variants
                 const combinedProducts = rawProducts.flatMap((product) => {
                     const mainProductEntry = { ...product, isVariant: false };
 
                     const variantEntries = (product.variants || []).map((variant) => ({
-                        ...product, // inherit product structure
-                        id: `${product.id}-${variant.id}`, // unique key
-                        title: `${product.title}`,
+                        ...product,
+                        id: `${product.id}-${variant.id}`,
                         mrp: variant.mrp,
                         sellingPrice: variant.sellingPrice,
                         variantId: variant.id,
-                        isVariant: true
+                        isVariant: true,
+                        _variant: variant,
                     }));
 
                     return [mainProductEntry, ...variantEntries];
@@ -67,9 +65,8 @@ const ProductsPage = () => {
                 setProducts(combinedProducts);
             })
             .catch((err) => {
-                console.error("GET: Failed to fetch products", err);
+                console.error('GET: Failed to fetch products', err);
             });
-
     }, [searchParams]);
 
     const groupByListSubCategory = (products) => {
@@ -98,11 +95,12 @@ const ProductsPage = () => {
                                         ) : (
                                             <strong>{item.label}</strong>
                                         )}
-                                        {index < breadcrumbItems.length - 1 && <span className="mx-2">{'>'}</span>}
+                                        {index < breadcrumbItems.length - 1 && (
+                                            <span className="mx-2">{'>'}</span>
+                                        )}
                                     </span>
                                 ))}
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -114,33 +112,42 @@ const ProductsPage = () => {
                     {listSubCatId && (
                         <div className="mb-3">
                             <h5>
-                                {getCategoryTitle(listSubCatId)} ({products.length} item{products.length !== 1 ? 's' : ''})
+                                {getCategoryTitle(listSubCatId)} ({products.length} item
+                                {products.length !== 1 ? 's' : ''})
                             </h5>
                         </div>
                     )}
                     <div className="row">
-                        <div className="col-lg-12 mb-3 sg">
+                        <div className="col-12 col-md-4 col-lg-3 mb-3">
+                        </div>
+                        <div className="col-lg-9 mb-3 sg">
                             <div className="Fabric pb-4">
                                 {products.length > 0 ? (
                                     subCategoryId && !listSubCatId ? (
-                                        // If subCategoryId exists but not listSubCatId → Group by listSubCategory
                                         Object.entries(groupByListSubCategory(products)).map(
                                             ([listSubCatTitle, subProducts]) => (
                                                 <div key={listSubCatTitle} className="mb-5">
                                                     <h4 className="mb-3">{listSubCatTitle}</h4>
                                                     <div className="row row-cols-1 row-cols-md-4 g-4">
                                                         {subProducts.map((product) => (
-                                                            <ProductCard key={product.id} product={product} />
+                                                            <ProductCard
+                                                                key={product.id}
+                                                                product={product}
+                                                                variant={product._variant}
+                                                            />
                                                         ))}
                                                     </div>
                                                 </div>
                                             )
                                         )
                                     ) : (
-                                        // For listSubCatId or any other view → flat list
                                         <div className="row row-cols-1 row-cols-md-4 g-4">
                                             {products.map((product) => (
-                                                <ProductCard key={product.id} product={product} />
+                                                <ProductCard
+                                                    key={product.id}
+                                                    product={product}
+                                                    variant={product._variant}
+                                                />
                                             ))}
                                         </div>
                                     )
