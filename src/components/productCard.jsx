@@ -13,13 +13,9 @@ const ProductCard = ({ product }) => {
     images = [],
     variants = []
   } = product || {};
-
-  // Get main image or first image
   const mainImageObj = images.find(img => img.isMain) || images[0];
   const hasImage = !!mainImageObj?.url;
   const imageUrl = hasImage ? `${BASE_URL}/uploads/products/${mainImageObj.url}` : "";
-
-  // Fallback to variant price if missing
   let displayMrp = mrp;
   let displayPrice = sellingPrice;
 
@@ -27,13 +23,10 @@ const ProductCard = ({ product }) => {
     displayMrp = variants[0].mrp || 0;
     displayPrice = variants[0].sellingPrice || 0;
   }
-
-  // Calculate discount
   let discountPercent = 0;
   if (displayMrp > displayPrice && displayMrp !== 0) {
     discountPercent = Math.round(((displayMrp - displayPrice) / displayMrp) * 100);
   }
-
   return (
     <div className="col-lg-4 col-6 p-2">
       <Link to={`/product-details/${id}`} className="text_decoration">
@@ -65,8 +58,6 @@ const ProductCard = ({ product }) => {
               N/A
             </div>
           )}
-
-          {/* Product Details */}
           <div className="card-body">
             <h6 className="card-title">{title}</h6>
             <p className="card-text">

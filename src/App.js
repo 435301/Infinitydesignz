@@ -90,7 +90,7 @@ function App() {
         <Routes>
           <Route path='/' element={<HomeBannerSection />} />
           <Route path='/shop' element={<ProductTopBar />} />
-          <Route path='/product-details' element={<ProductDetailPage />}></Route>
+          <Route path='/product-details/:productId' element={<ProductDetailPage />}></Route>
           <Route path='/users/address-book' element={<AddressBook />}></Route>
           <Route path='/profile' element={<ProfilePage />}></Route>
           <Route path='/wishlist' element={<WishlistPage />}></Route>

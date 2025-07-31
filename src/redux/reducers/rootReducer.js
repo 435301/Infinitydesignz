@@ -15,25 +15,27 @@ import filterSetReducer from './filterSetReducer';
 import filterListsReducer from './filterListReducer';
 import priceReducer from './priceReducer';
 import couponReducer from './couponReducer';
+import userProductDetailsReducer from './userProductDetailsReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  categories:categoryReducer,
-  sizes:sizeReducer,
-  colors:colorReducer,
-  brands:brandReducer,
-  featureTypes:featureTypeReducer,
+  categories: categoryReducer,
+  sizes: sizeReducer,
+  colors: colorReducer,
+  brands: brandReducer,
+  featureTypes: featureTypeReducer,
   filterTypes: filterTypeReducer,
-  products:productReducer,
-  featureSets:featureSetReducer,
-  variants:variantsReducer,
-  featureLists:featureListsReducer,
-  filterSets:filterSetReducer,
-  filterLists:filterListsReducer,
-  productFeatures:productReducer,
-  productFilters:productReducer,
-  prices:priceReducer,
-  coupons:couponReducer,
+  products: productReducer,
+  featureSets: featureSetReducer,
+  variants: variantsReducer,
+  featureLists: featureListsReducer,
+  filterSets: filterSetReducer,
+  filterLists: filterListsReducer,
+  productFeatures: productReducer,
+  productFilters: productReducer,
+  prices: priceReducer,
+  coupons: couponReducer,
+  userProductDetails: userProductDetailsReducer,
 });
 
 export default rootReducer;
