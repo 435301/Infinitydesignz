@@ -111,6 +111,13 @@ const ProductsPage = () => {
             <section className="terms-of-service">
                 <div className="container">
                     <h2>Products</h2>
+                    {listSubCatId && (
+                        <div className="mb-3">
+                            <h5>
+                                {getCategoryTitle(listSubCatId)} ({products.length} item{products.length !== 1 ? 's' : ''})
+                            </h5>
+                        </div>
+                    )}
                     <div className="row">
                         <div className="col-lg-12 mb-3 sg">
                             <div className="Fabric pb-4">
