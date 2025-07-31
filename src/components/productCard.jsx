@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import BASE_URL from "../config/config";
 import { FaRegHeart } from "react-icons/fa";
 import '../../src/css/user/userstyle.css';
-
+ 
 const ProductCard = ({ product, variant = null }) => {
   const {
     id,
@@ -13,16 +13,16 @@ const ProductCard = ({ product, variant = null }) => {
     sellingPrice,
     variants = [],
   } = product || {};
-
+ 
   let displayMrp = mrp;
   let displayPrice = sellingPrice;
   let mainImageObj = null;
-
+ 
   if (variant) {
     const variantId = variant.id;
     displayMrp = variant.mrp;
     displayPrice = variant.sellingPrice;
-
+ 
     mainImageObj =
       images.find((img) => img.variantId === variantId && img.isMain) ||
       images.find((img) => img.variantId === variantId);
@@ -30,25 +30,25 @@ const ProductCard = ({ product, variant = null }) => {
     mainImageObj =
       images.find((img) => img.variantId === null && img.isMain) ||
       images.find((img) => img.variantId === null);
-
+ 
     if ((!displayMrp || !displayPrice) && variants.length > 0) {
       displayMrp = variants[0].mrp || 0;
       displayPrice = variants[0].sellingPrice || 0;
     }
   }
-
+ 
   const hasImage = !!mainImageObj?.url;
   const imageUrl = hasImage
     ? `${BASE_URL}/uploads/products/${mainImageObj.url}`
     : "";
-
+ 
   let discountPercent = 0;
   if (displayMrp > displayPrice && displayMrp !== 0) {
     discountPercent = Math.round(
       ((displayMrp - displayPrice) / displayMrp) * 100
     );
   }
-
+ 
   return (
     <div className="col-lg-4 col-6 p-2">
     <Link
@@ -61,7 +61,7 @@ const ProductCard = ({ product, variant = null }) => {
 >
         <div className="card h-100 position-relative">
           {discountPercent > 0 && (
-            <div className="discount-badge position-absolute top-0 start-0 bg-danger text-white px-2 pt-1 mt-3 rounded">
+            <div className="discount-badge position-absolute ">
               {discountPercent}% OFF
             </div>
           )}
@@ -77,7 +77,7 @@ const ProductCard = ({ product, variant = null }) => {
               />
             </div>
           </div>
-
+ 
           {hasImage ? (
             <img src={imageUrl} className="card-img-top" alt={title} />
           ) : (
@@ -88,7 +88,7 @@ const ProductCard = ({ product, variant = null }) => {
               N/A
             </div>
           )}
-
+ 
           <div className="card-body">
             <h6 className="card-title">{title}</h6>
             <p className="card-text">
@@ -105,5 +105,5 @@ const ProductCard = ({ product, variant = null }) => {
     </div>
   );
 };
-
+ 
 export default ProductCard;

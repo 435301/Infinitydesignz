@@ -1889,7 +1889,7 @@ MEGA MENU - Responsive Styles
 
 .product-main-view {
   position: relative;
-  padding-left: 10px;
+  padding-left: 100px;
 }
 
 .thumb-gallery {
@@ -1933,7 +1933,7 @@ MEGA MENU - Responsive Styles
 
 #mainImageContainer {
   position: relative;
-  display: inline-block;
+  display:inline;
 }
 
 .product-details-page .product-title {
@@ -2025,7 +2025,7 @@ MEGA MENU - Responsive Styles
 
 .product-details-page .dropdown-container {
   flex: 1;
-  max-width: 40px;
+  max-width: 350px;
   /* Constrain dropdown width */
 }
 

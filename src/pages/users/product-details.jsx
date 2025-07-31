@@ -171,43 +171,44 @@ export default function ProductDetailPage() {
         <div className="container mt-5">
           <div className="row">
             <div className="col-md-6">
-              <div className="d-flex gap-2">
-                <div className="thumb-gallery d-flex flex-column me-2" style={{ marginTop: "200px" }}>
-                  {thumbnails.map((img, index) => (
-                    <div
-                      key={index}
-                      className="thumb-item mb-2"
-                      onClick={() => setMainImage(`${BASE_URL}/uploads/products/${img.url}`)}
-                      style={{
-                        cursor: "pointer",
-                        border: mainImage.includes(img.url) ? "2px solid #007bff" : "1px solid #ddd",
-                        borderRadius: 4
-                      }}
-                    >
-                      <img
-                        src={`${BASE_URL}/uploads/products/${img.url}`}
-                        alt={`Thumbnail ${index + 1}`}
-                        className="img-fluid"
-                        style={{ width: "60px", height: "60px", objectFit: "cover" }}
-                        loading="lazy"
-                      />
-                    </div>
-                  ))}
-                </div>
-                <div className="product-display mb-3" id="mainImageContainer" style={{ position: "relative" }}>
-                  <div className="zoom-lens" style={{ position: "absolute", display: "none" }}></div>
-                  <img
-                    src={mainImage}
-                    alt={title}
-                    className="img-fluid product-image"
-                    id="mainImage"
-                    loading="lazy"
-                  />
-                  <div className="zoom-result" id="zoomResult" style={{ display: "none" }}></div>
+              <div className="product-main-view">
+                <div className=" gap-2">
+                  <div className="thumb-gallery d-flex flex-column me-2">
+                    {thumbnails.map((img, index) => (
+                      <div
+                        key={index}
+                        className="thumb-item mb-2"
+                        onClick={() => setMainImage(`${BASE_URL}/uploads/products/${img.url}`)}
+                        style={{
+                          cursor: "pointer",
+                          border: mainImage.includes(img.url) ? "2px solid #007bff" : "1px solid #ddd",
+                          borderRadius: 4
+                        }}
+                      >
+                        <img
+                          src={`${BASE_URL}/uploads/products/${img.url}`}
+                          alt={`Thumbnail ${index + 1}`}
+                          className="img-fluid"
+                          style={{ width: "70px", height: "85px", objectFit: "cover" }}
+                          loading="lazy"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="product-display mb-3" id="mainImageContainer" style={{ position: "relative" }}>
+                    <div className="zoom-lens" style={{ position: "absolute", display: "none" }}></div>
+                    <img
+                      src={mainImage}
+                      alt={title}
+                      className="img-fluid product-image w-100"
+                      id="mainImage"
+                      loading="lazy"
+                    />
+                    <div className="zoom-result" id="zoomResult" style={{ display: "none" }}></div>
+                  </div>
                 </div>
               </div>
             </div>
-
             <div className="col-md-6">
               <h2 className="product-title">
                 {title} <span className="stock-status">{stock} left</span>
@@ -229,69 +230,77 @@ export default function ProductDetailPage() {
               </div>
 
               <div className="dropdown-container mb-3">
-                <label className="dropdown-label">Select Size</label>
-                <select
-                  className="form-select1 size-dropdown"
-                  value={selectedSizeId}
-                  onChange={(e) => {
-                    const newSizeId = parseInt(e.target.value);
-                    setSelectedSizeId(newSizeId);
+                <div className="row">
+                  {/* Size Dropdown */}
+                  <div className="col-md-6 mb-2">
+                    <label className="dropdown-label">Select Size</label>
+                    <select
+                      className="form-select1 size-dropdown w-100"
+                      value={selectedSizeId}
+                      onChange={(e) => {
+                        const newSizeId = parseInt(e.target.value);
+                        setSelectedSizeId(newSizeId);
 
-                    const matchedVariant = variants.find(
-                      (v) =>
-                        parseInt(v.size?.id) === newSizeId &&
-                        (!selectedColorId || v.color?.id === parseInt(selectedColorId))
-                    );
+                        const matchedVariant = variants.find(
+                          (v) =>
+                            parseInt(v.size?.id) === newSizeId &&
+                            (!selectedColorId || v.color?.id === parseInt(selectedColorId))
+                        );
 
-                    if (matchedVariant) {
-                      alert("Size matched");
-                      window.open(`/product-details/${matchedVariant.productId}`, '_blank');
-                    } else {
-                      alert("No matching variant found for selected size");
-                    }
-                  }}
-                >
-                  <option value="">Select</option>
-                  {[...new Map(variants.map(v => [v.size?.id, v.size])).values()]
-                    .filter(Boolean)
-                    .map(size => (
-                      <option key={size.id} value={size.id}>
-                        {size.title}
-                      </option>
-                    ))}
-                </select>
+                        if (matchedVariant) {
+                          alert("Size matched");
+                          window.open(`/product-details/${matchedVariant.productId}`, '_blank');
+                        } else {
+                          alert("No matching variant found for selected size");
+                        }
+                      }}
+                    >
+                      <option value="">Select</option>
+                      {[...new Map(variants.map(v => [v.size?.id, v.size])).values()]
+                        .filter(Boolean)
+                        .map(size => (
+                          <option key={size.id} value={size.id}>
+                            {size.title}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
 
-                <label className="dropdown-label mt-2">Select Color</label>
-                <select
-                  className="form-select1 color-dropdown"
-                  value={selectedColorId}
-                  onChange={(e) => {
-                    const newColorId = parseInt(e.target.value);
-                    setSelectedColorId(newColorId);
+                  {/* Color Dropdown */}
+                  <div className="col-md-6 mb-2">
+                    <label className="dropdown-label">Select Color</label>
+                    <select
+                      className="form-select1 color-dropdown w-100"
+                      value={selectedColorId}
+                      onChange={(e) => {
+                        const newColorId = parseInt(e.target.value);
+                        setSelectedColorId(newColorId);
 
-                    const matchedVariant = variants.find(
-                      (v) =>
-                        parseInt(v.color?.id) === newColorId &&
-                        (!selectedSizeId || v.size?.id === parseInt(selectedSizeId))
-                    );
+                        const matchedVariant = variants.find(
+                          (v) =>
+                            parseInt(v.color?.id) === newColorId &&
+                            (!selectedSizeId || v.size?.id === parseInt(selectedSizeId))
+                        );
 
-                    if (matchedVariant) {
-                      alert("Color matched");
-                      window.open(`/product-details/${matchedVariant.productId}`, '_blank');
-                    } else {
-                      alert("No matching variant found for selected color");
-                    }
-                  }}
-                >
-                  <option value="">Select</option>
-                  {[...new Map(variants.map(v => [v.color?.id, v.color])).values()]
-                    .filter(color => color?.id)
-                    .map(color => (
-                      <option key={color.id} value={color.id}>
-                        {color.label || "N/A"}
-                      </option>
-                    ))}
-                </select>
+                        if (matchedVariant) {
+                          alert("Color matched");
+                          window.open(`/product-details/${matchedVariant.productId}`, '_blank');
+                        } else {
+                          alert("No matching variant found for selected color");
+                        }
+                      }}
+                    >
+                      <option value="">Select</option>
+                      {[...new Map(variants.map(v => [v.color?.id, v.color])).values()]
+                        .filter(color => color?.id)
+                        .map(color => (
+                          <option key={color.id} value={color.id}>
+                            {color.label || "N/A"}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                </div>
               </div>
 
 
@@ -351,11 +360,13 @@ export default function ProductDetailPage() {
 
               <div className="product-details">
                 <h5>Product Details</h5>
-                <div className="multi-column">
-                  <div><h6>Description</h6><p dangerouslySetInnerHTML={{ __html: description }} /></div>
-                  <div><h6>Size</h6><p>{product.size?.title}</p></div>
-                  <div><h6>Color</h6><p>{product.color?.title || "N/A"}</p></div>
-                  <div>
+                <h6 className="mb-0">Description :</h6>
+                <p className="mb-0 mt-0" dangerouslySetInnerHTML={{ __html: description }} />
+                <div className="multi-column mt-2">
+
+                  <div className="mb-2"><h6>Size</h6><p>{product.size?.title}</p></div>
+                  <div className="mb-2"><h6>Color</h6><p>{product.color?.title || "N/A"}</p></div>
+                  <div className="mb-2">
                     <h6>Dimensions (in inches)</h6><p>{product.height ? `H ${product.height}` : 'H N/A'} ×{' '} {product.width ? `W ${product.width}` : 'W N/A'} ×{' '}{product.length ? `L ${product.length}` : 'L N/A'}</p>
                   </div>
                   <div><h6>SKU</h6><p>{product.sku}</p></div>
@@ -368,69 +379,71 @@ export default function ProductDetailPage() {
                   <a href="#">View More Details</a>
                 </div>
               </div>
-              <div className="container Fabric pb-4">
-                <h3>Related Products</h3>
-                <div className="row row-cols-1 row-cols-md-4 g-4">
-                  {product.relatedProducts && product.relatedProducts.length > 0 ? (
-                    product.relatedProducts.map((item) => {
-                      const mainImage = item.images?.find((img) => img.isMain && img.variantId === null) || item.images?.[0];
-                      const imageUrl = mainImage ? `${BASE_URL}/uploads/products/${mainImage.url}` : '';
-
-                      const hasDiscount =
-                        item.mrp && item.sellingPrice && item.mrp > item.sellingPrice;
-
-                      const discountPercent = hasDiscount
-                        ? Math.round(((item.mrp - item.sellingPrice) / item.mrp) * 100)
-                        : 0;
-
-                      return (
-                        <div className="col-lg-3 p-2" key={item.id}>
-                          <div className="card h-100 position-relative">
-                            {hasDiscount && (
-                              <div className="discount-badge position-absolute top-0 start-0 bg-danger text-white px-2 pt-1 mt-3 rounded">
-                                {discountPercent}% OFF
-                              </div>
-                            )}
-                            {/* <div className="wishlist-icon position-absolute top-0 end-0 p-2">
-                <img src={Icon} alt="Wishlist" />
-              </div> */}
-                            {imageUrl ? (
-                              <img
-                                src={imageUrl}
-                                className="card-img-top"
-                                alt={item.title}
-                                style={{ height: '220px', objectFit: 'cover' }}
-                              />
-                            ) : (
-                              <div
-                                className="card-img-top d-flex align-items-center justify-content-center bg-light text-muted"
-                                style={{ height: '220px' }}
-                              >
-                                No Image
-                              </div>
-                            )}
-                            <div className="card-body">
-                              <h6 className="card-title">{item.title}</h6>
-                              <p className="card-text">
-                                <strong>₹{item.sellingPrice}</strong>{' '}
-                                {hasDiscount && <del>MRP ₹{item.mrp}</del>}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <p>No related products found.</p>
-                  )}
-                </div>
-              </div>
 
             </div>
           </div>
         </div>
-      </section>
+        <div className="container Fabric pb-4">
+          <h3>Related Products</h3>
+          <div className="row row-cols-1 row-cols-md-4 g-4">
+            {product.relatedProducts && product.relatedProducts.length > 0 ? (
+              product.relatedProducts.map((item) => {
+                const mainImage = item.images?.find((img) => img.isMain && img.variantId === null) || item.images?.[0];
+                const imageUrl = mainImage ? `${BASE_URL}/uploads/products/${mainImage.url}` : '';
+
+                const hasDiscount =
+                  item.mrp && item.sellingPrice && item.mrp > item.sellingPrice;
+
+                const discountPercent = hasDiscount
+                  ? Math.round(((item.mrp - item.sellingPrice) / item.mrp) * 100)
+                  : 0;
+
+                return (
+                  <div className="col-lg-3 p-2" key={item.id}>
+                    <div className="card h-100 position-relative">
+                      {hasDiscount && (
+                        <div className="discount-badge position-absolute top-0 start-0 bg-danger text-white px-2 pt-1 mt-3 rounded">
+                          {discountPercent}% OFF
+                        </div>
+                      )}
+                      {/* <div className="wishlist-icon position-absolute top-0 end-0 p-2">
+                <img src={Icon} alt="Wishlist" />
+              </div> */}
+                      {imageUrl ? (
+                        <img
+                          src={imageUrl}
+                          className="card-img-top"
+                          alt={item.title}
+                          style={{ height: '220px', objectFit: 'cover' }}
+                        />
+                      ) : (
+                        <div
+                          className="card-img-top d-flex align-items-center justify-content-center bg-light text-muted"
+                          style={{ height: '220px' }}
+                        >
+                          No Image
+                        </div>
+                      )}
+                      <div className="card-body">
+                        <h6 className="card-title">{item.title}</h6>
+                        <p className="card-text">
+                          <strong>₹{item.sellingPrice}</strong>{' '}
+                          {hasDiscount && <del>MRP ₹{item.mrp}</del>}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <p>No related products found.</p>
+            )}
+          </div>
+        </div>
+
+      </section >
       <Footer />
     </>
   );
 }
+

@@ -8,7 +8,7 @@ import ProductCard from '../../components/productCard';
 import axios from 'axios';
 import BASE_URL from '../../config/config';
 import { useSelector } from 'react-redux';
-
+ 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [searchParams] = useSearchParams();
@@ -16,23 +16,23 @@ const ProductsPage = () => {
   const mainCategoryId = parseInt(searchParams.get('mainCategoryId'));
   const subCategoryId = parseInt(searchParams.get('subCategoryId'));
   const listSubCatId = parseInt(searchParams.get('listSubCatId'));
-
-    const getCategoryTitle = (id) =>
-        categories.find((cat) => cat.id === id)?.title;
-
+ 
+  const getCategoryTitle = (id) =>
+    categories.find((cat) => cat.id === id)?.title;
+ 
   const breadcrumbItems = [
     { label: 'Home', link: '/' },
     ...(mainCategoryId ? [{ label: getCategoryTitle(mainCategoryId) }] : []),
     ...(subCategoryId ? [{ label: getCategoryTitle(subCategoryId) }] : []),
     ...(listSubCatId ? [{ label: getCategoryTitle(listSubCatId) }] : []),
   ];
-
+ 
   useEffect(() => {
     const mainCategoryId = searchParams.get('mainCategoryId');
     const brandId = searchParams.get('brandId') || 0;
     const searchStr = searchParams.get('searchStr') || '';
     const filters = searchParams.get('filters') || '{}';
-
+ 
     const queryString = new URLSearchParams({
       ...(mainCategoryId && { mainCategoryId }),
       ...(subCategoryId && { subCategoryId }),
@@ -41,14 +41,14 @@ const ProductsPage = () => {
       searchStr,
       filters,
     }).toString();
-
+ 
     axios
       .get(`${BASE_URL}/products/search?${queryString}`)
       .then((res) => {
         const rawProducts = res.data || [];
         const combinedProducts = rawProducts.flatMap((product) => {
           const mainProductEntry = { ...product, isVariant: false };
-
+ 
           const variantEntries = (product.variants || []).map((variant) => ({
             ...product,
             id: `${product.id}-${variant.id}`,
@@ -56,19 +56,19 @@ const ProductsPage = () => {
             sellingPrice: variant.sellingPrice,
             variantId: variant.id,
             isVariant: true,
-            _variant: variant, 
+            _variant: variant,
           }));
-
+ 
           return [mainProductEntry, ...variantEntries];
         });
-
+ 
         setProducts(combinedProducts);
       })
       .catch((err) => {
         console.error('GET: Failed to fetch products', err);
       });
   }, [searchParams]);
-
+ 
   const groupByListSubCategory = (products) => {
     const grouped = {};
     products.forEach((product) => {
@@ -78,11 +78,11 @@ const ProductsPage = () => {
     });
     return grouped;
   };
-
+ 
   return (
     <>
       <Header />
-
+ 
       <section className="bg-light py-3">
         <div className="container shop">
           <div className="row">
@@ -105,7 +105,7 @@ const ProductsPage = () => {
           </div>
         </div>
       </section>
-
+ 
       <section className="terms-of-service">
         <div className="container">
           <h2>Products</h2>
@@ -118,7 +118,8 @@ const ProductsPage = () => {
             </div>
           )}
           <div className="row">
-            <div className="col-lg-12 mb-3 sg">
+            <div className="col-lg-3"></div>
+            <div className="col-lg-9 mb-3 sg">
               <div className="Fabric pb-4">
                 {products.length > 0 ? (
                   subCategoryId && !listSubCatId ? (
@@ -131,7 +132,7 @@ const ProductsPage = () => {
                               <ProductCard
                                 key={product.id}
                                 product={product}
-                                variant={product._variant} 
+                                variant={product._variant}
                               />
                             ))}
                           </div>
@@ -144,7 +145,7 @@ const ProductsPage = () => {
                         <ProductCard
                           key={product.id}
                           product={product}
-                          variant={product._variant} 
+                          variant={product._variant}
                         />
                       ))}
                     </div>
@@ -157,10 +158,10 @@ const ProductsPage = () => {
           </div>
         </div>
       </section>
-
+ 
       <Footer />
     </>
   );
 };
-
+ 
 export default ProductsPage;
