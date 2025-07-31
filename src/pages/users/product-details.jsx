@@ -15,8 +15,8 @@ export default function ProductDetailPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-const variantIdFromURL = searchParams.get("variantId");
-const [thumbnails, setThumbnails] = useState([]);
+  const variantIdFromURL = searchParams.get("variantId");
+  const [thumbnails, setThumbnails] = useState([]);
 
 
   const { product = [] } = useSelector((state) => state.userProductDetails);
@@ -29,46 +29,46 @@ const [thumbnails, setThumbnails] = useState([]);
   const [pincode, setPincode] = useState("");
 
   useEffect(() => {
-   dispatch(fetchUserProductDetailsById(productId, variantIdFromURL));
+    dispatch(fetchUserProductDetailsById(productId, variantIdFromURL));
   }, [dispatch, productId]);
 
-useEffect(() => {
-  if (product) {
-    const variantId = parseInt(variantIdFromURL);
-    const allVariantImages = product.images?.variantImages || [];
-    const additional = product.images?.additional || [];
+  useEffect(() => {
+    if (product) {
+      const variantId = parseInt(variantIdFromURL);
+      const allVariantImages = product.images?.variantImages || [];
+      const additional = product.images?.additional || [];
 
-    setSelectedSizeId(product.selectedVariant?.sizeId || '');
-    setSelectedColorId(product.selectedVariant?.colorId || '');
+      setSelectedSizeId(product.selectedVariant?.sizeId || '');
+      setSelectedColorId(product.selectedVariant?.colorId || '');
 
-    let selectedImages = [];
+      let selectedImages = [];
 
-    if (!isNaN(variantId)) {
-      selectedImages = allVariantImages.filter(
-        (img) => parseInt(img.variantId) === variantId
-      );
-    }
-
-    if (selectedImages.length > 0) {
-      const mainVariantImg = selectedImages.find((img) => img.isMain) || selectedImages[0];
-      setMainImage(`${BASE_URL}/uploads/products/${mainVariantImg.url}`);
-      setThumbnails([
-        ...selectedImages.map((img) => ({ url: img.url })),
-      ]);
-    } else {
-      // fallback to product-level images
-      const mainImgUrl = product.images?.main?.url;
-      if (mainImgUrl) {
-        setMainImage(`${BASE_URL}/uploads/products/${mainImgUrl}`);
+      if (!isNaN(variantId)) {
+        selectedImages = allVariantImages.filter(
+          (img) => parseInt(img.variantId) === variantId
+        );
       }
 
-      setThumbnails([
-        { url: product.images?.main?.url, isMain: true },
-        ...additional,
-      ]);
+      if (selectedImages.length > 0) {
+        const mainVariantImg = selectedImages.find((img) => img.isMain) || selectedImages[0];
+        setMainImage(`${BASE_URL}/uploads/products/${mainVariantImg.url}`);
+        setThumbnails([
+          ...selectedImages.map((img) => ({ url: img.url })),
+        ]);
+      } else {
+        // fallback to product-level images
+        const mainImgUrl = product.images?.main?.url;
+        if (mainImgUrl) {
+          setMainImage(`${BASE_URL}/uploads/products/${mainImgUrl}`);
+        }
+
+        setThumbnails([
+          { url: product.images?.main?.url, isMain: true },
+          ...additional,
+        ]);
+      }
     }
-  }
-}, [product, variantIdFromURL]);
+  }, [product, variantIdFromURL]);
 
 
 
@@ -368,6 +368,64 @@ useEffect(() => {
                   <a href="#">View More Details</a>
                 </div>
               </div>
+              <div className="container Fabric pb-4">
+                <h3>Related Products</h3>
+                <div className="row row-cols-1 row-cols-md-4 g-4">
+                  {product.relatedProducts && product.relatedProducts.length > 0 ? (
+                    product.relatedProducts.map((item) => {
+                      const mainImage = item.images?.find((img) => img.isMain && img.variantId === null) || item.images?.[0];
+                      const imageUrl = mainImage ? `${BASE_URL}/uploads/products/${mainImage.url}` : '';
+
+                      const hasDiscount =
+                        item.mrp && item.sellingPrice && item.mrp > item.sellingPrice;
+
+                      const discountPercent = hasDiscount
+                        ? Math.round(((item.mrp - item.sellingPrice) / item.mrp) * 100)
+                        : 0;
+
+                      return (
+                        <div className="col-lg-3 p-2" key={item.id}>
+                          <div className="card h-100 position-relative">
+                            {hasDiscount && (
+                              <div className="discount-badge position-absolute top-0 start-0 bg-danger text-white px-2 pt-1 mt-3 rounded">
+                                {discountPercent}% OFF
+                              </div>
+                            )}
+                            {/* <div className="wishlist-icon position-absolute top-0 end-0 p-2">
+                <img src={Icon} alt="Wishlist" />
+              </div> */}
+                            {imageUrl ? (
+                              <img
+                                src={imageUrl}
+                                className="card-img-top"
+                                alt={item.title}
+                                style={{ height: '220px', objectFit: 'cover' }}
+                              />
+                            ) : (
+                              <div
+                                className="card-img-top d-flex align-items-center justify-content-center bg-light text-muted"
+                                style={{ height: '220px' }}
+                              >
+                                No Image
+                              </div>
+                            )}
+                            <div className="card-body">
+                              <h6 className="card-title">{item.title}</h6>
+                              <p className="card-text">
+                                <strong>₹{item.sellingPrice}</strong>{' '}
+                                {hasDiscount && <del>MRP ₹{item.mrp}</del>}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <p>No related products found.</p>
+                  )}
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
