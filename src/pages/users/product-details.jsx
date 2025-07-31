@@ -9,10 +9,12 @@ import "../../css/user/bootstrap-icons.css";
 import G1 from "../../img/g1.png";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserProductDetailsById } from "../../redux/actions/userProductDetailsAction";
+import { useNavigate } from "react-router-dom";
 
 export default function ProductDetailPage() {
   const dispatch = useDispatch();
-  const {  product =[] } = useSelector((state) => state.userProductDetails);
+  const navigate = useNavigate();
+  const { product = [] } = useSelector((state) => state.userProductDetails);
   const { productId } = useParams();
   // const [product, setProduct] = useState(null);
   const [mainImage, setMainImage] = useState("");
@@ -154,11 +156,11 @@ export default function ProductDetailPage() {
                         alt={`Thumbnail ${index + 1}`}
                         className="img-fluid"
                         style={{ width: "60px", height: "60px", objectFit: "cover" }}
+                        loading="lazy"
                       />
                     </div>
                   ))}
                 </div>
-
                 <div className="product-display mb-3" id="mainImageContainer" style={{ position: "relative" }}>
                   <div className="zoom-lens" style={{ position: "absolute", display: "none" }}></div>
                   <img
@@ -166,6 +168,7 @@ export default function ProductDetailPage() {
                     alt={title}
                     className="img-fluid product-image"
                     id="mainImage"
+                    loading="lazy"
                   />
                   <div className="zoom-result" id="zoomResult" style={{ display: "none" }}></div>
                 </div>
@@ -197,30 +200,67 @@ export default function ProductDetailPage() {
                 <select
                   className="form-select1 size-dropdown"
                   value={selectedSizeId}
-                  onChange={(e) => setSelectedSizeId(e.target.value)}
+                  onChange={(e) => {
+                    const newSizeId = parseInt(e.target.value);
+                    setSelectedSizeId(newSizeId);
+
+                    const matchedVariant = variants.find(
+                      (v) =>
+                        parseInt(v.size?.id) === newSizeId &&
+                        (!selectedColorId || v.color?.id === parseInt(selectedColorId))
+                    );
+
+                    if (matchedVariant) {
+                      alert("Size matched");
+                      window.open(`/product-details/${matchedVariant.productId}`, '_blank');
+                    } else {
+                      alert("No matching variant found for selected size");
+                    }
+                  }}
                 >
                   <option value="">Select</option>
-                  {variants.map((v) => (
-                    <option key={v.id} value={v.size?.id}>
-                      {v.size?.title}
-                    </option>
-                  ))}
+                  {[...new Map(variants.map(v => [v.size?.id, v.size])).values()]
+                    .filter(Boolean)
+                    .map(size => (
+                      <option key={size.id} value={size.id}>
+                        {size.title}
+                      </option>
+                    ))}
                 </select>
 
                 <label className="dropdown-label mt-2">Select Color</label>
                 <select
                   className="form-select1 color-dropdown"
                   value={selectedColorId}
-                  onChange={(e) => setSelectedColorId(e.target.value)}
+                  onChange={(e) => {
+                    const newColorId = parseInt(e.target.value);
+                    setSelectedColorId(newColorId);
+
+                    const matchedVariant = variants.find(
+                      (v) =>
+                        parseInt(v.color?.id) === newColorId &&
+                        (!selectedSizeId || v.size?.id === parseInt(selectedSizeId))
+                    );
+
+                    if (matchedVariant) {
+                      alert("Color matched");
+                      window.open(`/product-details/${matchedVariant.productId}`, '_blank');
+                    } else {
+                      alert("No matching variant found for selected color");
+                    }
+                  }}
                 >
                   <option value="">Select</option>
-                  {variants.map((v) => (
-                    <option key={v.id} value={v.color?.id}>
-                      {v.color?.title || "N/A"}
-                    </option>
-                  ))}
+                  {[...new Map(variants.map(v => [v.color?.id, v.color])).values()]
+                    .filter(color => color?.id)
+                    .map(color => (
+                      <option key={color.id} value={color.id}>
+                        {color.label || "N/A"}
+                      </option>
+                    ))}
                 </select>
               </div>
+
 
               <div className="chat-button-row">
                 <button className="chat-button" onClick={handleChat}>
@@ -268,7 +308,7 @@ export default function ProductDetailPage() {
                   ].map((text, i) => (
                     <div className="feature-items" key={i}>
                       <div className="icon-box">
-                        <img src={G1} alt="Feature Icon" />
+                        <img src={G1} alt="Feature Icon" loading="lazy" />
                       </div>
                       <p>{text}</p>
                     </div>
