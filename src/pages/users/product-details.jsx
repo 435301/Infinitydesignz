@@ -10,6 +10,9 @@ import G1 from "../../img/g1.png";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserProductDetailsById } from "../../redux/actions/userProductDetailsAction";
 import { useNavigate } from "react-router-dom";
+import { FaRegHeart } from "react-icons/fa";
+import Loader from "../../includes/loader";
+import { fetchCategories } from "../../redux/actions/categoryAction";
 
 export default function ProductDetailPage() {
   const dispatch = useDispatch();
@@ -19,7 +22,8 @@ export default function ProductDetailPage() {
   const [thumbnails, setThumbnails] = useState([]);
 
 
-  const { product = [] } = useSelector((state) => state.userProductDetails);
+  const { product, loading } = useSelector((state) => state.userProductDetails);
+  const categories = useSelector((state) => state.categories.categories || []);
   const { productId } = useParams();
   // const [product, setProduct] = useState(null);
   const [mainImage, setMainImage] = useState("");
@@ -28,8 +32,29 @@ export default function ProductDetailPage() {
   const [selectedColorId, setSelectedColorId] = useState("");
   const [pincode, setPincode] = useState("");
 
+  const getCategoryHierarchy = (categoryId, allCategories) => {
+    const result = [];
+    let current = allCategories.find(cat => cat.id === categoryId);
+
+    while (current) {
+      result.unshift(current);
+      current = allCategories.find(cat => cat.id === current.parentId);
+    }
+    return result;
+  };
+  const breadcrumbItems = product
+    ? [
+      { label: 'Home' },
+      ...getCategoryHierarchy(product.category?.id, categories).map(cat => ({
+        label: cat.title,
+      })),
+      { label: product.title }
+    ]
+    : [{ label: 'Home' }];
+
   useEffect(() => {
     dispatch(fetchUserProductDetailsById(productId, variantIdFromURL));
+    dispatch(fetchCategories());
   }, [dispatch, productId]);
 
   useEffect(() => {
@@ -157,6 +182,7 @@ export default function ProductDetailPage() {
   if (!product) return <div className="container my-5">Loading...</div>;
 
   const { title, brand, description, mrp, sellingPrice, stock, size, productDetails, variants, selectedVariant } = product;
+  console.log('mrp', mrp, sellingPrice)
 
   const additionalImages = product.images?.additional || [];
   // const thumbnails = [
@@ -164,10 +190,33 @@ export default function ProductDetailPage() {
   //   ...additionalImages
   // ];
 
+
+  if (loading) return <Loader />;
+
   return (
     <>
       <Header />
       <section className="product-details-page">
+        <section className="bg-light py-3">
+          <div className="container">
+            <div className="row">
+              <div className="col-lg-12">
+                {breadcrumbItems.map((item, index) => (
+                  <span key={index}>
+                    {item.link ? (
+                      <Link to={item.link}>{item.label}</Link>
+                    ) : (
+                      <strong>{item.label}</strong>
+                    )}
+                    {index < breadcrumbItems.length - 1 && (
+                      <span className="mx-2">{'>'}</span>
+                    )}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
         <div className="container mt-5">
           <div className="row">
             <div className="col-md-6">
@@ -211,24 +260,41 @@ export default function ProductDetailPage() {
             </div>
             <div className="col-md-6">
               <h2 className="product-title">
-                {title} <span className="stock-status">{stock} left</span>
+                {title} <span className="stock-status">{selectedVariant?.stock ?? product?.stock} left</span>
               </h2>
 
               <div className="price-details">
                 <div>
-                  <span className="price-value">₹{selectedVariant?.sellingPrice}</span>
+                  <span className="price-value">
+                    ₹
+                    {selectedVariant && selectedVariant.sellingPrice
+                      ? selectedVariant.sellingPrice
+                      : product?.sellingPrice}
+                  </span>
+
                   <span className="discount-label">
-                    Flat{" "}
-                    {selectedVariant?.mrp && selectedVariant?.sellingPrice
-                      ? Math.round(((selectedVariant.mrp - selectedVariant.sellingPrice) / selectedVariant.mrp) * 100)
-                      : 0}
-                    % off
+                    {(() => {
+                      const mrp = selectedVariant ? selectedVariant.mrp : product?.mrp;
+                      const sp = selectedVariant ? selectedVariant.sellingPrice : product?.sellingPrice;
+                      if (mrp && sp && mrp > sp) {
+                        const discount = Math.round(((mrp - sp) / mrp) * 100);
+                        return `Flat ${discount}% off`;
+                      } else {
+                        return "No discount";
+                      }
+                    })()}
                   </span>
                 </div>
-                <span className="original-price">MRP: ₹{selectedVariant?.mrp}</span>
+
+                <span className="original-price">
+                  MRP: ₹
+                  {selectedVariant && selectedVariant.mrp
+                    ? selectedVariant.mrp
+                    : product?.mrp}
+                </span>
+
                 <p className="tax-info">Inclusive of all taxes</p>
               </div>
-
               <div className="dropdown-container mb-3">
                 <div className="row">
                   {/* Size Dropdown */}
@@ -363,17 +429,42 @@ export default function ProductDetailPage() {
                 <h6 className="mb-0">Description :</h6>
                 <p className="mb-0 mt-0" dangerouslySetInnerHTML={{ __html: description }} />
                 <div className="multi-column mt-2">
-
-                  <div className="mb-2"><h6>Size</h6><p>{product.size?.title}</p></div>
-                  <div className="mb-2"><h6>Color</h6><p>{product.color?.title || "N/A"}</p></div>
                   <div className="mb-2">
-                    <h6>Dimensions (in inches)</h6><p>{product.height ? `H ${product.height}` : 'H N/A'} ×{' '} {product.width ? `W ${product.width}` : 'W N/A'} ×{' '}{product.length ? `L ${product.length}` : 'L N/A'}</p>
+                    <h6>Size</h6>
+                    <p>{selectedVariant?.size?.title || product.size?.title || "N/A"}</p>
                   </div>
-                  <div><h6>SKU</h6><p>{product.sku}</p></div>
-                  <div><h6>Weight</h6><p>{productDetails?.weight} gms</p></div>
-                  <div><h6>Stock</h6><p>{product?.stock}</p></div>
-                  <div><h6>Delivery Charges</h6><p>₹{productDetails?.deliveryCharges}</p></div>
-                  <div><h6>SLA</h6><p>{productDetails?.sla} Days</p></div>
+                  <div className="mb-2">
+                    <h6>Color</h6>
+                    <p>{selectedVariant?.color?.label || product.color?.label || "N/A"}</p>
+                  </div>
+                  <div className="mb-2">
+                    <h6>Dimensions (in inches)</h6>
+                    <p>
+                      {product.height ? `H ${product.height}` : 'H N/A'} ×{' '}
+                      {product.width ? `W ${product.width}` : 'W N/A'} ×{' '}
+                      {product.length ? `L ${product.length}` : 'L N/A'}
+                    </p>
+                  </div>
+                  <div>
+                    <h6>SKU</h6>
+                    <p>{selectedVariant?.sku || product?.sku}</p>
+                  </div>
+                  <div>
+                    <h6>Weight</h6>
+                    <p>{productDetails?.weight} gms</p>
+                  </div>
+                  <div>
+                    <h6>Stock</h6>
+                    <p>{selectedVariant?.stock ?? product?.stock}</p>
+                  </div>
+                  <div>
+                    <h6>Delivery Charges</h6>
+                    <p>₹{productDetails?.deliveryCharges}</p>
+                  </div>
+                  <div>
+                    <h6>SLA</h6>
+                    <p>{productDetails?.sla} Days</p>
+                  </div>
                 </div>
                 <div className="view-more">
                   <a href="#">View More Details</a>
@@ -388,7 +479,8 @@ export default function ProductDetailPage() {
           <div className="row row-cols-1 row-cols-md-4 g-4">
             {product.relatedProducts && product.relatedProducts.length > 0 ? (
               product.relatedProducts.map((item) => {
-                const mainImage = item.images?.find((img) => img.isMain && img.variantId === null) || item.images?.[0];
+                const mainImage =
+                  item.images?.find((img) => img.isMain && img.variantId === null) || item.images?.[0];
                 const imageUrl = mainImage ? `${BASE_URL}/uploads/products/${mainImage.url}` : '';
 
                 const hasDiscount =
@@ -400,38 +492,55 @@ export default function ProductDetailPage() {
 
                 return (
                   <div className="col-lg-3 p-2" key={item.id}>
-                    <div className="card h-100 position-relative">
-                      {hasDiscount && (
-                        <div className="discount-badge position-absolute top-0 start-0 bg-danger text-white px-2 pt-1 mt-3 rounded">
-                          {discountPercent}% OFF
-                        </div>
-                      )}
-                      {/* <div className="wishlist-icon position-absolute top-0 end-0 p-2">
-                <img src={Icon} alt="Wishlist" />
-              </div> */}
-                      {imageUrl ? (
-                        <img
-                          src={imageUrl}
-                          className="card-img-top"
-                          alt={item.title}
-                          style={{ height: '220px', objectFit: 'cover' }}
-                        />
-                      ) : (
+                    <a
+                      href={`/product-details/${item.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-decoration-none text-dark"
+                    >
+                      <div className="card h-100 position-relative">
+                        {hasDiscount && (
+                          <div className="discount-badge position-absolute top-0 start-0 bg-danger text-white px-2 pt-1 mt-3 rounded">
+                            {discountPercent}% OFF
+                          </div>
+                        )}
                         <div
-                          className="card-img-top d-flex align-items-center justify-content-center bg-light text-muted"
-                          style={{ height: '220px' }}
+                          className="position-absolute top-0 end-0 p-2"
+                          style={{ zIndex: 2 }}
                         >
-                          No Image
+                          <div className="whishlist_Icon">
+                            <FaRegHeart
+                              className="text-black"
+                              style={{ fontSize: "1.1rem", cursor: "pointer" }}
+                              title="Add to Wishlist"
+                            />
+                          </div>
                         </div>
-                      )}
-                      <div className="card-body">
-                        <h6 className="card-title">{item.title}</h6>
-                        <p className="card-text">
-                          <strong>₹{item.sellingPrice}</strong>{' '}
-                          {hasDiscount && <del>MRP ₹{item.mrp}</del>}
-                        </p>
+                        {imageUrl ? (
+                          <img
+                            src={imageUrl}
+                            className="card-img-top"
+                            alt={item.title}
+                            style={{ height: '220px', objectFit: 'cover' }}
+                          />
+                        ) : (
+                          <div
+                            className="card-img-top d-flex align-items-center justify-content-center bg-light text-muted"
+                            style={{ height: '220px' }}
+                          >
+                            No Image
+                          </div>
+                        )}
+
+                        <div className="card-body">
+                          <h6 className="card-title">{item.title}</h6>
+                          <p className="card-text">
+                            <strong>₹{item.sellingPrice}</strong>{' '}
+                            {hasDiscount && <del>MRP ₹{item.mrp}</del>}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    </a>
                   </div>
                 );
               })
@@ -440,6 +549,7 @@ export default function ProductDetailPage() {
             )}
           </div>
         </div>
+
 
       </section >
       <Footer />
