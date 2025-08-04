@@ -15,6 +15,9 @@ import Loader from "../../includes/loader";
 import { fetchCategories } from "../../redux/actions/categoryAction";
 import RelatedProducts from "../../components/relatedProducts";
 import { setSelectedVariant } from "../../redux/actions/productAction";
+import { addToCart } from "../../redux/actions/cartAction";
+import { isLoggedIn } from "../../utils/auth";
+import { addToGuestCart } from "../../redux/actions/guestCartAction";
 
 export default function ProductDetailPage() {
   const dispatch = useDispatch();
@@ -22,8 +25,7 @@ export default function ProductDetailPage() {
   const [searchParams] = useSearchParams();
   const variantIdFromURL = searchParams.get("variantId");
   const [thumbnails, setThumbnails] = useState([]);
-
-
+  const [qty, setQty] = useState(1);
   const { product, loading } = useSelector((state) => state.userProductDetails);
   const categories = useSelector((state) => state.categories.categories || []);
   const { productId } = useParams();
@@ -173,7 +175,18 @@ export default function ProductDetailPage() {
   }, [mainImage]);
 
   const handleChat = () => alert("Chat selected!");
-  const handleCart = () => alert("Added to Cart!");
+   const handleCart = () => {
+    const cartItem = {
+      productId: parseInt(productId),
+      variantId: parseInt(variantIdFromURL) || null,
+      quantity: qty,
+    };
+    if (isLoggedIn()) {
+    dispatch(addToCart(cartItem));
+  } else {
+    dispatch(addToGuestCart(cartItem));
+  }
+  };
   const handleBuy = () => alert("Buy Now clicked!");
   const handleWishlist = () => alert("Added to Wishlist!");
   const handlePincodeCheck = () => {
@@ -187,13 +200,9 @@ export default function ProductDetailPage() {
   console.log('mrp', mrp, sellingPrice)
 
   const additionalImages = product.images?.additional || [];
-  // const thumbnails = [
-  //   { url: product.images?.main?.url, isMain: true },
-  //   ...additionalImages
-  // ];
-
-
   if (loading) return <Loader />;
+
+  
 
   return (
     <>

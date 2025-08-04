@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../css/user/cart.css";
 import "../../css/user/userstyle.css";
 import "../../css/user/bootstrap-icons.css";
-import Header from "../../includes/header"; // ✅ Only one Header import
+import Header from "../../includes/header";
 import Footer from "../../includes/footer";
 import P1 from "../../img/p1.png";
+import { useDispatch, useSelector } from "react-redux";
+import { isLoggedIn } from "../../utils/auth";
+import { fetchCart } from "../../redux/actions/cartAction";
+import BASE_URL from "../../config/config";
 
-const CartItem = ({ id, product }) => {
+const CartItem = ({ id, product, quantity = 1 }) => {
   const [qty, setQty] = useState(1);
 
   const increment = () => setQty((prev) => prev + 1);
@@ -15,7 +19,8 @@ const CartItem = ({ id, product }) => {
   return (
     <div className="cart-page">
       <div className="d-flex flex-column border-bottom flex-md-row gap-4 px-4 pt-3 pb-3">
-        <img src={product.image} alt="Product" className="product-img" />
+        <img src={product.image?.startsWith('http') ? product.image : `${BASE_URL}${product.image}`
+        } alt="Product" className="product-img" />
         <div className="flex-grow-1">
           <h4 className="text-bold product-info">{product.title}</h4>
           <p className="mb-1 product-info-p">{product.warranty}</p>
@@ -108,48 +113,80 @@ const PriceSummary = () => (
 );
 
 const CartPage = () => {
-  const cartProducts = [
-    {
-      id: 1,
-      title: "Andres Fabric 2 Seater Sofa In Sandy Brown Colour",
-      warranty: "36-Month Warranty Available",
-      price: "Rs.2405",
-      mrp: "MRP: Rs.3367",
-      sizes: ["L", "M", "S"],
-      image: P1,
-      delivery: "13 Aug",
-    },
-  ];
+  const dispatch = useDispatch();
+
+  const { items: userCartItems } = useSelector((state) => state.cart); // backend cart
+  const { items: guestCartItems } = useSelector((state) => state.guestCart); // guest cart
+
+  const loggedIn = isLoggedIn();
+  useEffect(() => {
+    if (loggedIn) {
+      dispatch(fetchCart());
+    }
+  }, [dispatch, loggedIn]);
+
+  const cartItems = loggedIn ? userCartItems : guestCartItems;
 
   return (
     <>
-      <Header /> {/* ✅ Correctly added once */}
+      <Header />
       <div className="container py-4">
         <div className="row">
           <div className="col-lg-8 p-0 border-end">
-            {cartProducts.map((product) => (
-              <CartItem key={product.id} id={product.id} product={product} />
-            ))}
+            {cartItems.length > 0 ? (cartItems.map((item) => {
+              const source = item.variant || item.product || {};
+              const image =
+                source.imageUrl
+                  ? source.imageUrl.startsWith('http')
+                    ? source.imageUrl
+                    : `${BASE_URL}${source.imageUrl}`
+                  : "/placeholder.jpg";
+
+              return (
+                <CartItem
+                  key={item.id || item.productId}
+                  id={item.id || item.productId}
+                  quantity={item.quantity}
+                  product={{
+                    title: source.title || "Untitled Product",
+                    warranty: source.brand || "No brand info",
+                    price: `Rs.${source.price || 0}`,
+                    mrp: `MRP: Rs.${source.mrp || 0}`,
+                    sizes: [source.size || "M"],
+                    image,
+                    delivery: "13 Aug",
+                  }}
+                />
+              );
+            }
+            ))
+              : (
+                <div className="p-3">No items in cart.</div>
+              )}
+
           </div>
+
           <div className="col-lg-4 p-0">
             <PriceSummary />
           </div>
         </div>
 
         {/* Delivery Info */}
-        <div className="mt-4">
-          <div className="deliver-to d-flex justify-content-between align-items-center p-4">
-            <div>
-              <h5 className="text-bold">Deliver to:</h5>
-              <p><strong>Chaitanya nelluri</strong></p>
-              <p>Flat no G3 Balaji homes, Nizampet, Hyderabad - 500090</p>
-              <p>Mobile: 8790969134</p>
+        {loggedIn && (
+          <div className="mt-4">
+            <div className="deliver-to d-flex justify-content-between align-items-center p-4">
+              <div>
+                <h5 className="text-bold">Deliver to:</h5>
+                <p><strong>Chaitanya nelluri</strong></p>
+                <p>Flat no G3 Balaji homes, Nizampet, Hyderabad - 500090</p>
+                <p>Mobile: 8790969134</p>
+              </div>
+              <button className="btn btn-change-address">Change Address</button>
             </div>
-            <button className="btn btn-change-address">Change Address</button>
           </div>
-        </div>
+        )}
       </div>
-      <Footer /> {/* ✅ Footer correctly added */}
+      <Footer />
     </>
   );
 };

@@ -16,7 +16,7 @@ import ShoppingCart from '../../src/img/shopping_cart.svg';
 import MenuImg from '../../src/img/menu-img.webp';
 import axios from "axios";
 import BASE_URL from "../config/config";
-import { getToken } from "../utils/auth";
+import { getToken, isLoggedIn } from "../utils/auth";
 import { fetchWishlist } from "../redux/actions/whishlistAction";
 
 export default function Header() {
@@ -24,16 +24,14 @@ export default function Header() {
   const { categories = [] } = useSelector((state) => state.categories || {});
 
   // const [wishListItems, setWishlistItems] = useState([])
-   const wishlistItems = useSelector((state) => state.whishlist.items || []);
+  const wishlistItems = useSelector((state) => state.whishlist.items || []);
   const wishlistCount = wishlistItems.length;
-
-   const [trigger, setTrigger] = useState(false);
-  useEffect(() => {
-    console.log("Header sees updated wishlistItems:", wishlistItems);
-    setTrigger((prev) => !prev); 
-  }, [wishlistItems]);
-
-  console.log('categories', categories)
+  const userCartItems = useSelector((state) => state.cart.items);
+  const guestCartItems = useSelector((state) => state.guestCart.items);
+  const userCartLength = userCartItems.length;
+  const guestCartLength = guestCartItems.length;
+  const cartCount = isLoggedIn() ? (userCartItems?.length || 0) : (guestCartItems?.length || 0);
+  console.log('userCartLength', guestCartItems)
   const navigate = useNavigate();
 
   const [query, setQuery] = useState("");
@@ -44,20 +42,6 @@ export default function Header() {
     dispatch(fetchCategories());
     dispatch(fetchWishlist());
   }, [dispatch]);
-
-  // useEffect(() => {
-  //   const fetchWishlist = async () => {
-  //     try {
-  //       const config = { headers: { Authorization: `Bearer ${getToken()}` } };
-  //       const res = await axios.get(`${BASE_URL}/wishlist`, config);
-  //       setWishlistItems(res.data || []);
-  //     } catch (err) {
-  //       console.error("Failed to load wishlist", err);
-  //     }
-  //   };
-
-  //   fetchWishlist();
-  // }, []);
 
   const suggestionsList = [
     "4 Door Wardrobes",
@@ -230,9 +214,21 @@ export default function Header() {
               <a href="/cart" className="text-decoration-none text-dark">
                 <span style={{ position: "relative", display: "inline-block" }}>
                   <img src={ShoppingCart} alt="cart" />
-                  <span className="badge rounded-pill text-white" style={{ backgroundColor: "rgb(212, 14, 0)", position: "absolute", top: -8, right: -8, fontSize: "0.65rem", padding: "2px 6px" }}>
-                    4
-                  </span>
+                  {cartCount > 0 && (
+                    <span
+                      className="badge rounded-pill text-white"
+                      style={{
+                        backgroundColor: "rgb(212, 14, 0)",
+                        position: "absolute",
+                        top: -8,
+                        right: -8,
+                        fontSize: "0.65rem",
+                        padding: "2px 6px",
+                      }}
+                    >
+                      {cartCount}
+                    </span>
+                  )}
                 </span>
                 My Cart
               </a>

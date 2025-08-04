@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { sendOtp, verifyOtp } from "../redux/actions/userAuthAction";
 import Logo from "../../src/img/logo.svg";
 import "../css/user/userstyle.css";
+import { syncGuestCartToUserCart } from "../redux/actions/cartAction";
 
 const OtpLoginModal = ({ show, onClose, onLoginSuccess }) => {
   const [mobile, setMobile] = useState("");
@@ -29,6 +30,7 @@ const OtpLoginModal = ({ show, onClose, onLoginSuccess }) => {
     setLoading(true);
     dispatch(verifyOtp(mobile, otp))
       .then(() => {
+         dispatch(syncGuestCartToUserCart());
         if (onLoginSuccess) onLoginSuccess();
         onClose();
       })
