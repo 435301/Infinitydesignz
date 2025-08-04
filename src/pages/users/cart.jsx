@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, memo, useCallback } from "react";
 import "../../css/user/cart.css";
 import "../../css/user/userstyle.css";
 import "../../css/user/bootstrap-icons.css";
@@ -10,71 +10,113 @@ import { isLoggedIn } from "../../utils/auth";
 import { DeleteFromCart, fetchCart } from "../../redux/actions/cartAction";
 import BASE_URL from "../../config/config";
 import { addToWishlist, deleteWishlistItem, fetchWishlist } from "../../redux/actions/whishlistAction";
+import Loader from "../../includes/loader";
+// Memoize CartItem to prevent unnecessary re-renders
 
+const CartItem = memo(
+  ({
+    id,
+    product,
+    quantity = 1,
+    variantId,
+    productId,
+    onWishlistToggle,
+    inWishlist,
+    onDeleteCartItem,
+    loadingWishlist,
+  }) => {
+    const [qty, setQty] = useState(quantity || 1);
 
-const CartItem = ({ id, product, quantity = 1, variantId, productId, onWishlistToggle, inWishlist,onDeleteCartItem }) => {
-  const [qty, setQty] = useState(quantity || 1);
+    // Memoize handlers to avoid recreation on each render
+    const increment = useCallback(() => setQty((prev) => prev + 1), []);
+    const decrement = useCallback(
+      () => setQty((prev) => (prev > 1 ? prev - 1 : 1)),
+      []
+    );
 
-  const increment = () => setQty((prev) => prev + 1);
-  const decrement = () => setQty((prev) => (prev > 1 ? prev - 1 : 1));
+    useEffect(() => {
+      setQty(quantity || 1);
+    }, [quantity]);
 
-  useEffect(() => {
-    setQty(quantity || 1);
-  }, [quantity]);
+    // Memoize image URL computation
+    const imageUrl = React.useMemo(() => {
+      if (!product.image) return "/placeholder.jpg";
+      return product.image.startsWith("http")
+        ? product.image
+        : `${BASE_URL}${product.image}`;
+    }, [product.image]);
 
-  return (
-    <div className="cart-page">
-      <div className="d-flex flex-column border-bottom flex-md-row gap-4 px-4 pt-3 pb-3">
-        <img src={product.image?.startsWith('http') ? product.image : `${BASE_URL}${product.image}`
-        } alt="Product" className="product-img" />
-        <div className="flex-grow-1">
-          <h4 className="text-bold product-info">{product.title}</h4>
-          <p className="mb-1 product-info-p">{product.warranty}</p>
-          <div className="d-flex align-items-center mb-3 gap-4 w-100">
-            <div className="d-flex align-items-center">
-              <label className="me-2 fw-semibold">Size</label>
-              <select className="form-select w-100 me-2">
-                {product.sizes.map((size) => (
-                  <option key={size}>{size}</option>
-                ))}
-              </select>
-            </div>
-            <div className="d-flex align-items-center">
-              <label className="me-2 fw-semibold">Qty</label>
-              <div className="qty-box">
-                <button className="btn-qty" onClick={decrement}>-</button>
-                <input
-                  type="text"
-                  className="qty-input"
-                  value={qty.toString().padStart(2, '0')}
-                  readOnly
-                />
-                <button className="btn-qty" onClick={increment}>+</button>
+    return (
+      <div className="cart-page">
+        <div className="d-flex flex-column border-bottom flex-md-row gap-4 px-4 pt-3 pb-3">
+          <img src={imageUrl} alt="Product" className="product-img" />
+          <div className="flex-grow-1">
+            <h4 className="text-bold product-info">{product.title}</h4>
+            <p className="mb-1 product-info-p">{product.warranty}</p>
+            <div className="d-flex align-items-center mb-3 gap-4 w-100">
+              <div className="d-flex align-items-center">
+                <label className="me-2 fw-semibold">Size</label>
+                <select className="form-select w-100 me-2" defaultValue={product.sizes[0]}>
+                  {product.sizes.map((size) => (
+                    <option key={size}>{size}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="d-flex align-items-center">
+                <label className="me-2 fw-semibold">Qty</label>
+                <div className="qty-box">
+                  <button className="btn-qty" onClick={decrement} aria-label="Decrease quantity">-</button>
+                  <input
+                    type="text"
+                    className="qty-input"
+                    value={qty.toString().padStart(2, "0")}
+                    readOnly
+                  />
+                  <button className="btn-qty" onClick={increment} aria-label="Increase quantity">+</button>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="d-flex align-items-center gap-3 mb-3">
-            <h4 className="mb-0 price">{product.price}</h4>
-            <span className="strike-text">{product.mrp}</span>
-          </div>
-          <div className="d-flex gap-2 mb-3">
-            <small><i className="bi bi-arrow-counterclockwise me-2"></i> Easy 14 days return</small>
-            <small><i className="bi bi-calendar me-2"></i> Delivery by {product.delivery}</small>
-          </div>
-          <div className="d-flex gap-3">
-            <button className="btn btn-outline-secondary btn-sm" onClick={() => onWishlistToggle(productId, variantId)}>
-              <i className={`bi ${inWishlist ? "bi-heart-fill" : "bi-heart"} me-2`}></i>
-              {inWishlist ? "Wishlisted" : "Wishlist"}
-            </button>
-            <button className="btn btn-outline-secondary btn-sm" onClick={onDeleteCartItem}>
-              <i className="bi bi-trash me-2"></i> Delete
-            </button>
+            <div className="d-flex align-items-center gap-3 mb-3">
+              <h4 className="mb-0 price">{product.price}</h4>
+              <span className="strike-text">{product.mrp}</span>
+            </div>
+            <div className="d-flex gap-2 mb-3">
+              <small>
+                <i className="bi bi-arrow-counterclockwise me-2"></i> Easy 14 days return
+              </small>
+              <small>
+                <i className="bi bi-calendar me-2"></i> Delivery by {product.delivery}
+              </small>
+            </div>
+            <div className="d-flex gap-3">
+              <button
+                className="btn btn-outline-secondary btn-sm"
+                onClick={() => onWishlistToggle(productId, variantId)}
+                aria-pressed={inWishlist}
+                disabled={loadingWishlist}
+              >
+                {loadingWishlist ? (
+                  <Loader size={16} />
+                ) : (
+                  <i className={`bi ${inWishlist ? "bi-heart-fill" : "bi-heart"} me-2`}></i>
+                )}
+                {inWishlist ? "Wishlisted" : "Wishlist"}
+              </button>
+              <button
+                className="btn btn-outline-secondary btn-sm"
+                onClick={onDeleteCartItem}
+                aria-label="Delete from cart"
+              >
+                <i className="bi bi-trash me-2"></i> Delete
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
+
 
 const PriceSummary = () => (
   <div className="p-3 border cart-page">
