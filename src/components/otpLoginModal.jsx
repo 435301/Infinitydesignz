@@ -30,7 +30,7 @@ const OtpLoginModal = ({ show, onClose, onLoginSuccess }) => {
     setLoading(true);
     dispatch(verifyOtp(mobile, otp))
       .then(() => {
-         dispatch(syncGuestCartToUserCart());
+         dispatch(syncGuestCartToUserCart()); 
         if (onLoginSuccess) onLoginSuccess();
         onClose();
       })

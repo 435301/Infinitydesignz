@@ -18,6 +18,7 @@ import { setSelectedVariant } from "../../redux/actions/productAction";
 import { addToCart } from "../../redux/actions/cartAction";
 import { isLoggedIn } from "../../utils/auth";
 import { addToGuestCart } from "../../redux/actions/guestCartAction";
+import { addToWishlist } from "../../redux/actions/whishlistAction";
 
 export default function ProductDetailPage() {
   const dispatch = useDispatch();
@@ -175,20 +176,29 @@ export default function ProductDetailPage() {
   }, [mainImage]);
 
   const handleChat = () => alert("Chat selected!");
-   const handleCart = () => {
+  const handleCart = () => {
     const cartItem = {
       productId: parseInt(productId),
       variantId: parseInt(variantIdFromURL) || null,
       quantity: qty,
     };
     if (isLoggedIn()) {
-    dispatch(addToCart(cartItem));
-  } else {
-    dispatch(addToGuestCart(cartItem));
-  }
+      dispatch(addToCart(cartItem));
+    } else {
+      dispatch(addToGuestCart(cartItem));
+    }
   };
   const handleBuy = () => alert("Buy Now clicked!");
-  const handleWishlist = () => alert("Added to Wishlist!");
+const handleWishlist = () => {
+  const parsedProductId = parseInt(productId);
+  const parsedVariantId = variantIdFromURL ? parseInt(variantIdFromURL) : null;
+  if (parsedVariantId) {
+    dispatch(addToWishlist(parsedProductId, parsedVariantId));
+  } else {
+    dispatch(addToWishlist(parsedProductId, null));
+  }
+};
+
   const handlePincodeCheck = () => {
     if (pincode) alert(`Checking delivery for PIN code: ${pincode}`);
     else alert("Please enter a PIN code");
@@ -202,7 +212,7 @@ export default function ProductDetailPage() {
   const additionalImages = product.images?.additional || [];
   if (loading) return <Loader />;
 
-  
+
 
   return (
     <>
@@ -323,7 +333,7 @@ export default function ProductDetailPage() {
                             parseInt(v.size?.id) === newSizeId &&
                             (!selectedColorId || v.color?.id === parseInt(selectedColorId))
                         );
-                         dispatch(setSelectedVariant(matchedVariant || null));
+                        dispatch(setSelectedVariant(matchedVariant || null));
 
 
                         // if (matchedVariant) {
@@ -360,7 +370,7 @@ export default function ProductDetailPage() {
                             parseInt(v.color?.id) === newColorId &&
                             (!selectedSizeId || v.size?.id === parseInt(selectedSizeId))
                         );
-                         dispatch(setSelectedVariant(matchedVariant || null));
+                        dispatch(setSelectedVariant(matchedVariant || null));
                         // if (matchedVariant) {
                         //   alert("Color matched");
                         //   window.open(`/product-details/${matchedVariant.productId}`, '_self');
@@ -490,7 +500,7 @@ export default function ProductDetailPage() {
         <div className="container Fabric pb-4">
           <h3>Related Products</h3>
           <div className="row row-cols-1 row-cols-md-4 g-4">
-           <RelatedProducts products={product.relatedProducts} />
+            <RelatedProducts products={product.relatedProducts} />
           </div>
         </div>
       </section >
