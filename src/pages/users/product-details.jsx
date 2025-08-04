@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import Header from "../../includes/header";
 import Footer from "../../includes/footer";
@@ -20,6 +20,7 @@ import { isLoggedIn } from "../../utils/auth";
 import { addToGuestCart } from "../../redux/actions/guestCartAction";
 import { addToWishlist } from "../../redux/actions/whishlistAction";
 
+
 export default function ProductDetailPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -30,37 +31,39 @@ export default function ProductDetailPage() {
   const { product, loading } = useSelector((state) => state.userProductDetails);
   const categories = useSelector((state) => state.categories.categories || []);
   const { productId } = useParams();
-  // const [product, setProduct] = useState(null);
   const [mainImage, setMainImage] = useState("");
-  console.log('mainImage', mainImage)
   const [selectedSizeId, setSelectedSizeId] = useState("");
   const [selectedColorId, setSelectedColorId] = useState("");
   const [pincode, setPincode] = useState("");
 
-  const getCategoryHierarchy = (categoryId, allCategories) => {
+  // Memoize category hierarchy to avoid recalculation
+  const getCategoryHierarchy = useCallback((categoryId, allCategories) => {
     const result = [];
     let current = allCategories.find(cat => cat.id === categoryId);
-
     while (current) {
       result.unshift(current);
       current = allCategories.find(cat => cat.id === current.parentId);
     }
     return result;
-  };
-  const breadcrumbItems = product
-    ? [
-      { label: 'Home' },
-      ...getCategoryHierarchy(product.category?.id, categories).map(cat => ({
-        label: cat.title,
-      })),
-      { label: product.title }
-    ]
-    : [{ label: 'Home' }];
+  }, []);
+
+  // Memoize breadcrumb items
+  const breadcrumbItems = useMemo(() => (
+    product
+      ? [
+        { label: 'Home' },
+        ...getCategoryHierarchy(product.category?.id, categories).map(cat => ({
+          label: cat.title,
+        })),
+        { label: product.title }
+      ]
+      : [{ label: 'Home' }]
+  ), [product, categories, getCategoryHierarchy]);
 
   useEffect(() => {
     dispatch(fetchUserProductDetailsById(productId, variantIdFromURL));
     dispatch(fetchCategories());
-  }, [dispatch, productId]);
+  }, [dispatch, productId, variantIdFromURL]);
 
   useEffect(() => {
     if (product) {
@@ -82,16 +85,12 @@ export default function ProductDetailPage() {
       if (selectedImages.length > 0) {
         const mainVariantImg = selectedImages.find((img) => img.isMain) || selectedImages[0];
         setMainImage(`${BASE_URL}/uploads/products/${mainVariantImg.url}`);
-        setThumbnails([
-          ...selectedImages.map((img) => ({ url: img.url })),
-        ]);
+        setThumbnails(selectedImages.map((img) => ({ url: img.url })));
       } else {
-        // fallback to product-level images
         const mainImgUrl = product.images?.main?.url;
         if (mainImgUrl) {
           setMainImage(`${BASE_URL}/uploads/products/${mainImgUrl}`);
         }
-
         setThumbnails([
           { url: product.images?.main?.url, isMain: true },
           ...additional,
@@ -100,8 +99,7 @@ export default function ProductDetailPage() {
     }
   }, [product, variantIdFromURL]);
 
-
-
+  // Memoize zoom handlers to avoid unnecessary re-creation
   useEffect(() => {
     const mainImg = document.getElementById("mainImage");
     const zoomResult = document.getElementById("zoomResult");
@@ -148,7 +146,6 @@ export default function ProductDetailPage() {
     };
 
     zoomResult.style.backgroundImage = `url('${mainImage}')`;
-    console.log("Zoom background:", zoomResult.style.backgroundImage);
 
     updateImageDimensions();
 
@@ -172,11 +169,16 @@ export default function ProductDetailPage() {
 
     return () => {
       window.removeEventListener("resize", updateImageDimensions);
+      mainImg.removeEventListener("load", updateImageDimensions);
+      imageContainer.removeEventListener("mouseenter", updateImageDimensions);
+      imageContainer.removeEventListener("mouseleave", updateImageDimensions);
+      imageContainer.removeEventListener("mousemove", moveLens);
     };
   }, [mainImage]);
 
-  const handleChat = () => alert("Chat selected!");
-  const handleCart = () => {
+  // Memoize handlers to avoid unnecessary re-renders
+  const handleChat = useCallback(() => alert("Chat selected!"), []);
+  const handleCart = useCallback(() => {
     const cartItem = {
       productId: parseInt(productId),
       variantId: parseInt(variantIdFromURL) || null,
@@ -187,32 +189,33 @@ export default function ProductDetailPage() {
     } else {
       dispatch(addToGuestCart(cartItem));
     }
-  };
-  const handleBuy = () => alert("Buy Now clicked!");
-const handleWishlist = () => {
-  const parsedProductId = parseInt(productId);
-  const parsedVariantId = variantIdFromURL ? parseInt(variantIdFromURL) : null;
-  if (parsedVariantId) {
+  }, [dispatch, productId, variantIdFromURL, qty]);
+  const handleBuy = useCallback(() => alert("Buy Now clicked!"), []);
+  const handleWishlist = useCallback(() => {
+    const parsedProductId = parseInt(productId);
+    const parsedVariantId = variantIdFromURL ? parseInt(variantIdFromURL) : null;
     dispatch(addToWishlist(parsedProductId, parsedVariantId));
-  } else {
-    dispatch(addToWishlist(parsedProductId, null));
-  }
-};
-
-  const handlePincodeCheck = () => {
+  }, [dispatch, productId, variantIdFromURL]);
+  const handlePincodeCheck = useCallback(() => {
     if (pincode) alert(`Checking delivery for PIN code: ${pincode}`);
     else alert("Please enter a PIN code");
-  };
+  }, [pincode]);
 
+  // Memoize dropdown options
+  const sizeOptions = useMemo(() => {
+    if (!product || !product.variants) return [];
+    return [...new Map(product.variants.map(v => [v.size?.id, v.size])).values()].filter(Boolean);
+  }, [product]);
+  const colorOptions = useMemo(() => {
+    if (!product || !product.variants) return [];
+    return [...new Map(product.variants.map(v => [v.color?.id, v.color])).values()].filter(color => color?.id);
+  }, [product]);
+
+  // Early return for loading state
+  if (loading) return <Loader />;
   if (!product) return <div className="container my-5">Loading...</div>;
 
   const { title, brand, description, mrp, sellingPrice, stock, size, productDetails, variants, selectedVariant } = product;
-  console.log('mrp', mrp, sellingPrice)
-
-  const additionalImages = product.images?.additional || [];
-  if (loading) return <Loader />;
-
-
 
   return (
     <>
@@ -334,24 +337,14 @@ const handleWishlist = () => {
                             (!selectedColorId || v.color?.id === parseInt(selectedColorId))
                         );
                         dispatch(setSelectedVariant(matchedVariant || null));
-
-
-                        // if (matchedVariant) {
-                        //   alert("Size matched");
-                        //   window.open(`/product-details/${matchedVariant.productId}`, '_self');
-                        // } else {
-                        //   alert("No matching variant found for selected size");
-                        // }
                       }}
                     >
                       <option value="">Select</option>
-                      {[...new Map(variants.map(v => [v.size?.id, v.size])).values()]
-                        .filter(Boolean)
-                        .map(size => (
-                          <option key={size.id} value={size.id}>
-                            {size.title}
-                          </option>
-                        ))}
+                      {sizeOptions.map(size => (
+                        <option key={size.id} value={size.id}>
+                          {size.title}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
@@ -371,27 +364,18 @@ const handleWishlist = () => {
                             (!selectedSizeId || v.size?.id === parseInt(selectedSizeId))
                         );
                         dispatch(setSelectedVariant(matchedVariant || null));
-                        // if (matchedVariant) {
-                        //   alert("Color matched");
-                        //   window.open(`/product-details/${matchedVariant.productId}`, '_self');
-                        // } else {
-                        //   alert("No matching variant found for selected color");
-                        // }
                       }}
                     >
                       <option value="">Select</option>
-                      {[...new Map(variants.map(v => [v.color?.id, v.color])).values()]
-                        .filter(color => color?.id)
-                        .map(color => (
-                          <option key={color.id} value={color.id}>
-                            {color.label || "N/A"}
-                          </option>
-                        ))}
+                      {colorOptions.map(color => (
+                        <option key={color.id} value={color.id}>
+                          {color.label || "N/A"}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
               </div>
-
 
               <div className="chat-button-row">
                 <button className="chat-button" onClick={handleChat}>
@@ -493,7 +477,6 @@ const handleWishlist = () => {
                   <a href="#">View More Details</a>
                 </div>
               </div>
-
             </div>
           </div>
         </div>

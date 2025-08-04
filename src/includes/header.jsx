@@ -19,19 +19,90 @@ import BASE_URL from "../config/config";
 import { getToken, isLoggedIn } from "../utils/auth";
 import { fetchWishlist } from "../redux/actions/whishlistAction";
 
+const SUGGESTIONS_LIST = [
+  "4 Door Wardrobes",
+  "4 seater dining table set",
+  "Centre Tab",
+  "Sofa Cum Beds",
+  "TV Units",
+  "Writing Tables",
+  "study table",
+];
+
+function useOutsideClick(ref, handler) {
+  useEffect(() => {
+    const listener = (event) => {
+      if (!ref.current || ref.current.contains(event.target)) return;
+      handler(event);
+    };
+    document.addEventListener("mousedown", listener);
+    return () => document.removeEventListener("mousedown", listener);
+  }, [ref, handler]);
+}
+
+function groupCategories(categories) {
+  const grouped = {};
+  for (const cat of categories) {
+    const parent = cat.parentId || 'root';
+    if (!grouped[parent]) grouped[parent] = [];
+    grouped[parent].push(cat);
+  }
+  return grouped;
+}
+
+const PromoColumn = React.memo(({ parentTitle }) => (
+  <div className="col-md-3 col-lg-2 d-none d-md-block promo-column">
+    <h3 className="promo-heading">Sink Into Comfort</h3>
+    <p className="promo-subheading">Explore {parentTitle}</p>
+    <img src={MenuImg} className="w-100" alt="Promo" loading="lazy" />
+  </div>
+));
+
+const MegaMenuColumn = React.memo(({ parent, children, groupedCategories }) => (
+  <div className="nav-item dropdown mega-dropdown" key={parent.id}>
+    <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+      {parent.title}
+    </a>
+    <div className="dropdown-menu mega-menu p-1 border-0 rounded-0 m-0">
+      <div className="container">
+        <div className="row">
+          {children.map((child) => {
+            const subChildren = groupedCategories[child.id] || [];
+            return (
+              <div className="col-md-3 col-lg-2 col-6" key={child.id}>
+                <h3>
+                  <Link to={`/products?${new URLSearchParams({ ...(parent?.id && { mainCategoryId: parent.id }), ...(child?.id && { subCategoryId: child.id }), brandId: 0, searchStr: '', filters: '{}' }).toString()}`} className="subcategory-link">
+                    {child.title}
+                  </Link>
+                </h3>
+                {subChildren.length > 0 &&
+                  subChildren.map((sub) => (
+                    <Link
+                      key={sub.id}
+                      to={`/products?${new URLSearchParams({ ...(parent?.id && { mainCategoryId: parent.id }), ...(child?.id && { subCategoryId: child.id }), ...(sub?.id && { listSubCatId: sub.id }), brandId: 0, searchStr: '', filters: '{}' }).toString()}`}
+                      className="dropdown-item"
+                    >
+                      {sub.title}
+                    </Link>
+                  ))}
+              </div>
+            );
+          })}
+          <PromoColumn parentTitle={parent.title} />
+        </div>
+      </div>
+    </div>
+  </div>
+));
+
 export default function Header() {
   const dispatch = useDispatch();
   const { categories = [] } = useSelector((state) => state.categories || {});
-
-  // const [wishListItems, setWishlistItems] = useState([])
   const wishlistItems = useSelector((state) => state.whishlist.items || []);
   const wishlistCount = wishlistItems.length;
   const userCartItems = useSelector((state) => state.cart.items);
   const guestCartItems = useSelector((state) => state.guestCart.items);
-  const userCartLength = userCartItems.length;
-  const guestCartLength = guestCartItems.length;
   const cartCount = isLoggedIn() ? (userCartItems?.length || 0) : (guestCartItems?.length || 0);
-  console.log('userCartLength', guestCartItems)
   const navigate = useNavigate();
 
   const [query, setQuery] = useState("");
@@ -43,15 +114,32 @@ export default function Header() {
     // dispatch(fetchWishlist());
   }, [dispatch]);
 
-  const suggestionsList = [
-    "4 Door Wardrobes",
-    "4 seater dining table set",
-    "Centre Tab",
-    "Sofa Cum Beds",
-    "TV Units",
-    "Writing Tables",
-    "study table",
-  ];
+  useOutsideClick(inputRef, () => setShowSuggestions(false));
+
+  const filteredSuggestions = React.useMemo(
+    () =>
+      SUGGESTIONS_LIST.filter((item) =>
+        item.toLowerCase().includes(query.toLowerCase())
+      ),
+    [query]
+  );
+
+  const groupedCategories = React.useMemo(() => groupCategories(categories), [categories]);
+
+  const renderMegaMenuColumns = React.useCallback(() => {
+    const topLevel = groupedCategories['root'] || [];
+    return topLevel.map((parent) => {
+      const children = groupedCategories[parent.id] || [];
+      return (
+        <MegaMenuColumn
+          key={parent.id}
+          parent={parent}
+          children={children}
+          groupedCategories={groupedCategories}
+        />
+      );
+    });
+  }, [groupedCategories]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -59,89 +147,6 @@ export default function Header() {
       navigate(`/search?query=${encodeURIComponent(query.trim())}`);
     }
   };
-
-  const filteredSuggestions = suggestionsList.filter((item) =>
-    item.toLowerCase().includes(query.toLowerCase())
-  );
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (inputRef.current && !inputRef.current.contains(event.target)) {
-        setShowSuggestions(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const groupCategories = () => {
-    const grouped = {};
-    categories.forEach(cat => {
-      const parent = cat.parentId || 'root';
-      if (!grouped[parent]) grouped[parent] = [];
-      grouped[parent].push(cat);
-    });
-    return grouped;
-  };
-
-  const groupedCategories = groupCategories();
-
-  const renderMegaMenuColumns = () => {
-    const topLevel = groupedCategories['root'] || [];
-
-    return topLevel.map((parent) => {
-      const children = groupedCategories[parent.id] || [];
-
-      return (
-        <div className="nav-item dropdown mega-dropdown" key={parent.id}>
-          <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-            {parent.title}
-          </a>
-          <div className="dropdown-menu mega-menu p-1 border-0 rounded-0 m-0">
-            <div className="container">
-              <div className="row">
-                {children.map((child) => {
-                  const subChildren = groupedCategories[child.id] || [];
-
-                  return (
-                    <div className="col-md-3 col-lg-2 col-6" key={child.id}>
-                      {/* Make subcategory title clickable */}
-                      <h3>
-                        <Link to={`/products?${new URLSearchParams({ ...(parent?.id && { mainCategoryId: parent.id }), ...(child?.id && { subCategoryId: child.id }), brandId: 0, searchStr: '', filters: '{}' }).toString()}`} className="subcategory-link"
-                        >
-                          {child.title}
-                        </Link>
-                      </h3>
-
-                      {/* Render list subcategories if available */}
-                      {subChildren.length > 0 ? (
-                        subChildren.map((sub) => (
-                          <Link to={`/products?${new URLSearchParams({ ...(parent?.id && { mainCategoryId: parent.id }), ...(child?.id && { subCategoryId: child.id }), ...(sub?.id && { listSubCatId: sub.id }), brandId: 0, searchStr: '', filters: '{}' }).toString()}`} className="dropdown-item"
-                          >
-                            {sub.title}
-                          </Link>
-                        ))
-                      ) : (
-                        ''
-                      )}
-                    </div>
-                  );
-                })}
-
-                {/* Optional Promo Column */}
-                <div className="col-md-3 col-lg-2 d-none d-md-block promo-column">
-                  <h3 className="promo-heading">Sink Into Comfort</h3>
-                  <p className="promo-subheading">Explore {parent.title}</p>
-                  <img src={MenuImg} className="w-100" alt="Promo" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    });
-  };
-
 
   return (
     <>
@@ -151,11 +156,11 @@ export default function Header() {
           <div className="row align-items-center top-bar">
             <div className="col-lg-3 col-md-12">
               <a href="/" className="navbar-brand m-0 p-0">
-                <img src={Logo} alt="Logo" />
+                <img src={Logo} alt="Logo" loading="lazy" />
               </a>
             </div>
             <div className="col-lg-5 col-md-4 my-3 position-relative" ref={inputRef}>
-              <form className="d-flex" onSubmit={handleSearch}>
+              <form className="d-flex" onSubmit={handleSearch} autoComplete="off">
                 <input
                   type="text"
                   className="form-control1 search-input"
@@ -163,12 +168,13 @@ export default function Header() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onFocus={() => setShowSuggestions(true)}
+                  aria-label="Search"
                 />
-                <button className="btn btn-light" type="submit">
-                  <img src={Search} style={{ height: 25 }} alt="search" />
+                <button className="btn btn-light" type="submit" aria-label="Search">
+                  <img src={Search} style={{ height: 25 }} alt="search" loading="lazy" />
                 </button>
               </form>
-              {showSuggestions && (
+              {showSuggestions && filteredSuggestions.length > 0 && (
                 <div className="suggestions-dropdown" id="suggestions" style={{ display: "block" }}>
                   <div className="suggestions-header">Popular Searches</div>
                   <div className="suggestions-grid" id="suggestionsGrid">
@@ -176,7 +182,18 @@ export default function Header() {
                       <div
                         key={idx}
                         className="suggestion-item"
-                        onClick={() => navigate(`/shop.php?query=${encodeURIComponent(item)}`)}
+                        onClick={() => {
+                          setShowSuggestions(false);
+                          navigate(`/shop.php?query=${encodeURIComponent(item)}`);
+                        }}
+                        tabIndex={0}
+                        role="button"
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') {
+                            setShowSuggestions(false);
+                            navigate(`/shop.php?query=${encodeURIComponent(item)}`);
+                          }
+                        }}
                       >
                         {item}
                       </div>
@@ -189,7 +206,7 @@ export default function Header() {
             <div className="col-lg-4 Wishlist col-md-8 text-end d-flex justify-content-end align-items-center gap-4">
               <a href="/wishlist" className="text-decoration-none text-dark">
                 <span style={{ position: "relative", display: "inline-block" }}>
-                  <img src={Favourite} alt="wishlist" />
+                  <img src={Favourite} alt="wishlist" loading="lazy" />
                   {wishlistCount > 0 && (
                     <span
                       className="badge rounded-pill text-white"
@@ -209,11 +226,11 @@ export default function Header() {
                 Wishlist
               </a>
               <a href="/profile" className="text-decoration-none text-dark">
-                <img src={AccountBox} style={{ height: 18 }} alt="account" /> My Account
+                <img src={AccountBox} style={{ height: 18 }} alt="account" loading="lazy" /> My Account
               </a>
               <a href="/cart" className="text-decoration-none text-dark">
                 <span style={{ position: "relative", display: "inline-block" }}>
-                  <img src={ShoppingCart} alt="cart" />
+                  <img src={ShoppingCart} alt="cart" loading="lazy" />
                   {cartCount > 0 && (
                     <span
                       className="badge rounded-pill text-white"
@@ -235,23 +252,25 @@ export default function Header() {
             </div>
           </div>
         </div>
-      </div>
+        {/* </div> */}
 
-      {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-dark sticky-top py-lg-0 wow fadeIn" data-wow-delay="0.1s">
-        <a href="#" className="navbar-brand ms-3 d-lg-none">MENU</a>
-        <button className="navbar-toggler me-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarCollapse">
-          <div className="navbar-nav mx-auto p-3 p-lg-0 d-flex justify-content-center">
-            <a href="/" className="navbar-brand sticky-logo">
-              <img src={MiniLogo} alt="Logo" style={{ maxHeight: 40, width: "100%" }} />
-            </a>
-            {renderMegaMenuColumns()}
+        {/* Navbar */}
+        <nav className="navbar navbar-expand-lg navbar-dark sticky-top py-lg-0 wow fadeIn" data-wow-delay="0.1s">
+          <a href="#" className="navbar-brand ms-3 d-lg-none">MENU</a>
+          <button className="navbar-toggler me-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarCollapse">
+            <div className="navbar-nav mx-auto p-3 p-lg-0 d-flex justify-content-center">
+              <a href="/" className="navbar-brand sticky-logo">
+                <img src={MiniLogo} alt="Logo" style={{ maxHeight: 40, width: "100%" }} loading="lazy" />
+              </a>
+              {renderMegaMenuColumns()}
+            </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+
+      </div>
     </>
   );
 }

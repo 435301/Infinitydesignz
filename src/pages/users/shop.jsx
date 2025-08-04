@@ -16,114 +16,45 @@ import NewArrivals from "../../components/newArrivalSection";
 import axios from 'axios';
 import BASE_URL from '../../config/config';
 import { useLocation } from 'react-router-dom';
-
-
 import AccImg from '../../img/acc-img.png';
 import bgImage from '../../img/prbg3.png';
+import Loader from "../../includes/loader";
 
-const ProductTopBar = () => {
+
+const ProductTopBar = React.memo(() => {
     const location = useLocation();
-    const params = new URLSearchParams(location.search);
+    const params = React.useMemo(() => new URLSearchParams(location.search), [location.search]);
     const listSubCategoryId = params.get('listSubCategoryId');
-    console.log("List Sub Category ID:", listSubCategoryId);
 
     const [products, setProducts] = useState([]);
-    console.log('Products:', products);
-    const [filterGroups, setFilterGroups] = useState([]);
-    const [sortOption, setSortOption] = useState('recommended');
-    const [isMobileFilterOpen, setMobileFilterOpen] = useState(false);
     const [accordionFilters, setAccordionFilters] = useState([]);
     const [standardFilters, setStandardFilters] = useState({ colors: [], brands: [], sizes: [] });
+    const [sortOption, setSortOption] = useState('recommended');
+    const [isMobileFilterOpen, setMobileFilterOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    // useEffect(() => {
-    //     const fetchProducts = async () => {
-    //         try {
-    //             const res = await axios.get(`${BASE_URL}/products`);
-    //             const data = res.data;
-    //             if (listSubCategoryId) {
-    //                 data = data.filter(product => product.listSubCategoryId === parseInt(listSubCategoryId));
-    //             }
-
-    //             setProducts(data);
-    //             // setProducts(data);
-
-    //             const colorMap = new Map();
-    //             const brandMap = new Map();
-    //             const sizeMap = new Map();
-    //             const accordion = [];
-
-    //             data.forEach(product => {
-    //                 // Accordion filters (filterType -> filterSets)
-    //                 product.category?.filterType?.filterSets?.forEach(set => {
-    //                     accordion.push({
-    //                         title: set.title,
-    //                         options: set.filterLists.map(list => ({ label: list.label, checked: false }))
-    //                     });
-    //                 });
-
-
-    //                 product.category?.featureType?.featureSets?.forEach(set => {
-    //                     accordion.push({
-    //                         title: set.title,
-    //                         options: set.featureLists.map(list => ({ label: list.label, checked: false }))
-    //                     });
-    //                 });
-
-    //                 if (product.color?.label && product.color?.hex_code) {
-    //                     colorMap.set(product.color.label, product.color.hex_code);
-    //                 }
-    //                 if (product.brand?.name) {
-    //                     brandMap.set(product.brand.name, true);
-    //                 }
-    //                 if (product.size?.title) {
-    //                     sizeMap.set(product.size.title, true);
-    //                 }
-
-    //                 product.variants?.forEach(variant => {
-    //                     if (variant.color?.label && variant.color?.hex_code) {
-    //                         colorMap.set(variant.color.label, variant.color.hex_code);
-    //                     }
-    //                     if (variant.size?.title) {
-    //                         sizeMap.set(variant.size.title, true);
-    //                     }
-    //                 });
-    //             });
-
-    //             const colors = Array.from(colorMap.entries()).map(([label, hex_code]) => ({ label, hex_code }));
-    //             const brands = Array.from(brandMap.keys()).map(name => ({ name }));
-    //             const sizes = Array.from(sizeMap.keys()).map(title => ({ title }));
-
-    //             setAccordionFilters(accordion);
-    //             setStandardFilters({ colors, brands, sizes });
-    //         } catch (err) {
-    //             console.error("Error fetching products:", err);
-    //         }
-    //     };
-
-    //     fetchProducts();
-    // }, []);
-
+    // Fetch products and filters
     useEffect(() => {
+        let ignore = false;
         const fetchProducts = async () => {
+            setLoading(true);
             try {
                 const res = await axios.get(`${BASE_URL}/products`);
                 let data = res.data;
-                console.log("Fetched products:", data);
 
                 if (listSubCategoryId) {
-                    data = data.filter(product => {
-                        console.log("Product's listSubCategoryId:", product.listSubCategoryId);
-                        return product.listSubCategoryId === parseInt(listSubCategoryId);
-                    });
+                    const subCatId = parseInt(listSubCategoryId, 10);
+                    data = data.filter(product => product.listSubCategoryId === subCatId);
                 }
 
-                console.log("Filtered products:", data);
+                if (ignore) return;
 
                 setProducts(data);
 
+                // Use Sets for uniqueness and reduce iterations
                 const colorMap = new Map();
-                const brandMap = new Map();
-                const sizeMap = new Map();
+                const brandSet = new Set();
+                const sizeSet = new Set();
                 const accordion = [];
 
                 data.forEach(product => {
@@ -145,10 +76,10 @@ const ProductTopBar = () => {
                         colorMap.set(product.color.label, product.color.hex_code);
                     }
                     if (product.brand?.name) {
-                        brandMap.set(product.brand.name, true);
+                        brandSet.add(product.brand.name);
                     }
                     if (product.size?.title) {
-                        sizeMap.set(product.size.title, true);
+                        sizeSet.add(product.size.title);
                     }
 
                     product.variants?.forEach(variant => {
@@ -156,25 +87,30 @@ const ProductTopBar = () => {
                             colorMap.set(variant.color.label, variant.color.hex_code);
                         }
                         if (variant.size?.title) {
-                            sizeMap.set(variant.size.title, true);
+                            sizeSet.add(variant.size.title);
                         }
                     });
                 });
 
-                const colors = Array.from(colorMap.entries()).map(([label, hex_code]) => ({ label, hex_code }));
-                const brands = Array.from(brandMap.keys()).map(name => ({ name }));
-                const sizes = Array.from(sizeMap.keys()).map(title => ({ title }));
-
                 setAccordionFilters(accordion);
-                setStandardFilters({ colors, brands, sizes });
-
+                setStandardFilters({
+                    colors: Array.from(colorMap.entries()).map(([label, hex_code]) => ({ label, hex_code })),
+                    brands: Array.from(brandSet).map(name => ({ name })),
+                    sizes: Array.from(sizeSet).map(title => ({ title }))
+                });
             } catch (err) {
+                // Optionally handle error UI
                 console.error("Error fetching products:", err);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchProducts();
-    }, [location.search]);
+        return () => { ignore = true; };
+    }, [listSubCategoryId]);
+
+    // Responsive filter sidebar
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth >= 768) setMobileFilterOpen(false);
@@ -183,39 +119,38 @@ const ProductTopBar = () => {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    const handleSortChange = (e) => {
+    const handleSortChange = React.useCallback((e) => {
         setSortOption(e.target.value);
-    };
+    }, []);
 
-    const toggleMobileFilter = () => setMobileFilterOpen(!isMobileFilterOpen);
-    const closeMobileFilter = () => setMobileFilterOpen(false);
-    const handleClearFilters = (e) => {
+    const toggleMobileFilter = React.useCallback(() => setMobileFilterOpen(open => !open), []);
+    const closeMobileFilter = React.useCallback(() => setMobileFilterOpen(false), []);
+    const handleClearFilters = React.useCallback((e) => {
         e.preventDefault();
-        console.log("Clear all filters");
-    };
-    const handleFormSubmit = (data) => {
+        // Implement filter clearing logic here
+    }, []);
+    const handleFormSubmit = React.useCallback((data) => {
         alert(`Name: ${data.name}, Mobile: ${data.mobile}`);
-    };
+    }, []);
 
-    const arrivals = [
+    // Memoize static data
+    const arrivals = React.useMemo(() => [
         { src: AccImg, alt: "New Arrival 1" },
-    ];
-
-    const helpItems = [
+    ], []);
+    const helpItems = React.useMemo(() => [
         { image: '', title: "Sofa", alt: "Sofa" },
         { image: '', title: "Bed", alt: "Bed" },
         { image: '', title: "Mattress", alt: "Mattress" },
         { image: '', title: "Wardrobes", alt: "Wardrobes" },
         { image: '', title: "Dining table", alt: "Dining Table" },
-    ];
-
-    const accordionData = [
+    ], []);
+    const accordionData = React.useMemo(() => [
         {
             id: "collapseOne",
             title: "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
             content: "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer...",
         },
-    ];
+    ], []);
 
     return (
         <>
@@ -238,7 +173,7 @@ const ProductTopBar = () => {
                             <h6 className="product-title">Products <span className="item-count">({products.length} items)</span></h6>
                         </div>
                         <div className="col-lg-3 text-lg-end">
-                            <div className="product-sorting d-flex align-items-center justify-content-lg-end mb-3">
+                            <div className="product-sorting d-flex align-items-center justify-content-lg-end mb-3"></div>
                                 <label htmlFor="sort" className="sort-label me-2">Sort by:</label>
                                 <select
                                     id="sort"
@@ -256,7 +191,6 @@ const ProductTopBar = () => {
                             </div>
                         </div>
                     </div>
-                </div>
             </section>
 
             <section className="shop_grid_area py-3">
@@ -267,17 +201,18 @@ const ProductTopBar = () => {
 
                     <div className={`mobile-filter-overlay ${isMobileFilterOpen ? "active" : ""}`} onClick={closeMobileFilter} />
 
-                    <div className={`mobile-filter-sidebar ${isMobileFilterOpen ? "active" : ""}`} id="filterSidebar">
+                    <div className={`mobile-filter-sidebar ${isMobileFilterOpen ? "active" : ""}`} id="filterSidebar"></div>
                         <FilterSidebar isMobile={true} accordionFilters={accordionFilters} standardFilters={standardFilters} />
                     </div>
 
-                    <div className="row">
-                        <div className="col-12 col-md-4 col-lg-3 mb-3">
+                    <div className="row"></div>
+                        <div className="col-12 col-md-4 col-lg-3 mb-3"></div>
                             {/* <FilterSidebar isMobile={false} accordionFilters={accordionFilters} standardFilters={standardFilters} onClearFilters={handleClearFilters} /> */}
-                        </div>
-                        <ProductList products={products} />
-                    </div>
-                </div>
+                        {loading ? (
+                            <Loader />
+                        ) : (
+                            <ProductList products={products} />
+                        )}
             </section>
 
             {/* <NewArrivals title="New Arrivals" images={arrivals} /> */}
@@ -310,7 +245,7 @@ const ProductTopBar = () => {
             </section>
 
             <div className="container my-5">
-                <div className="callback-container d-flex flex-column flex-md-row justify-content-between align-items-center" style={{ backgroundImage: `url(${bgImage})` }}>
+                <div className="callback-container d-flex flex-column flex-md-row justify-content-between align-items-center" style={{ backgroundImage: `url(${bgImage})` }}></div>
                     <div className="info-block mb-4 mb-md-0" style={{ maxWidth: "40%" }}>
                         <h2 className="callback-heading">Lorem Ipsum is simply</h2>
                         <p className="callback-text text-start">
@@ -319,11 +254,9 @@ const ProductTopBar = () => {
                     </div>
                     <CallbackForm onSubmit={handleFormSubmit} />
                 </div>
-            </div>
-
             <Footer />
         </>
     );
-};
+});
 
 export default ProductTopBar;

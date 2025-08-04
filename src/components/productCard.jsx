@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
@@ -8,12 +8,13 @@ import { getToken, isLoggedIn } from "../utils/auth";
 import "../../src/css/user/userstyle.css";
 import { addToWishlist, deleteWishlistItem } from "../redux/actions/whishlistAction";
 import OtpLoginModal from "./otpLoginModal";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 
 const ProductCard = ({ product, variant = null }) => {
   const dispatch = useDispatch();
   const [showLogin, setShowLogin] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const [wishlistItemId, setWishlistItemId] = useState(null); // store for delete
+  const [wishlistItemId, setWishlistItemId] = useState(null);
 
   const {
     id,
@@ -24,68 +25,84 @@ const ProductCard = ({ product, variant = null }) => {
     variants = [],
   } = product || {};
 
-  // Price & Image Logic
-  let displayMrp = mrp;
-  let displayPrice = sellingPrice;
-  let mainImageObj = null;
+  // Memoize price, image, and discount calculations
+  const { displayMrp, displayPrice, mainImageObj, hasImage, imageUrl, discountPercent } = useMemo(() => {
+    let _displayMrp = mrp;
+    let _displayPrice = sellingPrice;
+    let _mainImageObj = null;
 
-  if (variant) {
-    const variantId = variant.id;
-    displayMrp = variant.mrp;
-    displayPrice = variant.sellingPrice;
-
-    mainImageObj =
-      images.find((img) => img.variantId === variantId && img.isMain) ||
-      images.find((img) => img.variantId === variantId);
-  } else {
-    mainImageObj =
-      images.find((img) => img.variantId === null && img.isMain) ||
-      images.find((img) => img.variantId === null);
-
-    if ((!displayMrp || !displayPrice) && variants.length > 0) {
-      displayMrp = variants[0].mrp || 0;
-      displayPrice = variants[0].sellingPrice || 0;
-    }
-  }
-
-  const hasImage = !!mainImageObj?.url;
-  const imageUrl = hasImage
-    ? `${BASE_URL}/uploads/products/${mainImageObj.url}`
-    : "";
-
-  const discountPercent =
-    displayMrp > displayPrice && displayMrp !== 0
-      ? Math.round(((displayMrp - displayPrice) / displayMrp) * 100)
-      : 0;
-
-  const handleWishlistClick = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!isLoggedIn()) {
-      setShowLogin(true);
-      return;
-    }
-
-    if (isWishlisted) {
-      try {
-        await dispatch(deleteWishlistItem(wishlistItemId));
-        setIsWishlisted(false);
-      } catch (err) {
-        console.error("Failed to remove from wishlist", err);
-      }
+    if (variant) {
+      const variantId = variant.id;
+      _displayMrp = variant.mrp;
+      _displayPrice = variant.sellingPrice;
+      _mainImageObj =
+        images.find((img) => img.variantId === variantId && img.isMain) ||
+        images.find((img) => img.variantId === variantId);
     } else {
-      try {
-        const res = await dispatch(addToWishlist(product?.id, variant?.id ?? null));
-        setIsWishlisted(true);
-        if (res?.payload?.id) setWishlistItemId(res.payload.id);
-      } catch (err) {
-        console.error("Failed to add to wishlist", err);
+      _mainImageObj =
+        images.find((img) => img.variantId === null && img.isMain) ||
+        images.find((img) => img.variantId === null);
+
+      if ((!_displayMrp || !_displayPrice) && variants.length > 0) {
+        _displayMrp = variants[0].mrp || 0;
+        _displayPrice = variants[0].sellingPrice || 0;
       }
     }
-  };
 
+    const _hasImage = !!_mainImageObj?.url;
+    const _imageUrl = _hasImage
+      ? `${BASE_URL}/uploads/products/${_mainImageObj.url}`
+      : "";
+
+    const _discountPercent =
+      _displayMrp > _displayPrice && _displayMrp !== 0
+        ? Math.round(((_displayMrp - _displayPrice) / _displayMrp) * 100)
+        : 0;
+
+    return {
+      displayMrp: _displayMrp,
+      displayPrice: _displayPrice,
+      mainImageObj: _mainImageObj,
+      hasImage: _hasImage,
+      imageUrl: _imageUrl,
+      discountPercent: _discountPercent,
+    };
+  }, [mrp, sellingPrice, images, variants, variant]);
+
+  // Memoize wishlist handler
+  const handleWishlistClick = useCallback(
+    async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (!isLoggedIn()) {
+        setShowLogin(true);
+        return;
+      }
+
+      if (isWishlisted) {
+        try {
+          await dispatch(deleteWishlistItem(wishlistItemId));
+          setIsWishlisted(false);
+        } catch (err) {
+          console.error("Failed to remove from wishlist", err);
+        }
+      } else {
+        try {
+          const res = await dispatch(addToWishlist(product?.id, variant?.id ?? null));
+          setIsWishlisted(true);
+          if (res?.payload?.id) setWishlistItemId(res.payload.id);
+        } catch (err) {
+          console.error("Failed to add to wishlist", err);
+        }
+      }
+    },
+    [dispatch, isWishlisted, wishlistItemId, product?.id, variant?.id]
+  );
+
+  // Fetch wishlist only when logged in and product/variant changes
   useEffect(() => {
+    let isMounted = true;
     const fetchWishlist = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/wishlist`, {
@@ -95,28 +112,39 @@ const ProductCard = ({ product, variant = null }) => {
 
         const match = wishlist.find((item) => {
           if (variant?.id) {
-            console.log('variant?.id', variant?.id)
             return item.productId === product.id && item.variantId === variant.id;
           } else {
             return item.productId === product.id && !item.variantId;
           }
         });
 
-        if (match) {
+        if (isMounted && match) {
           setIsWishlisted(true);
           setWishlistItemId(match.id);
         }
+        if (isMounted && !match) {
+          setIsWishlisted(false);
+          setWishlistItemId(null);
+        }
       } catch (err) {
+        if (isMounted) {
+          setIsWishlisted(false);
+          setWishlistItemId(null);
+        }
         console.error("Error checking wishlist", err);
       }
     };
 
     if (isLoggedIn()) {
       fetchWishlist();
+    } else {
+      setIsWishlisted(false);
+      setWishlistItemId(null);
     }
+    return () => {
+      isMounted = false;
+    };
   }, [product.id, variant?.id]);
-
-
 
   return (
     <>
@@ -188,13 +216,6 @@ const ProductCard = ({ product, variant = null }) => {
       </div>
 
       {/* OTP Login Modal */}
-      {/* <OtpLoginModal
-        show={showLogin}
-        onClose={() => setShowLogin(false)}
-        onLoginSuccess={() => {
-          dispatch(addToWishlist(id, variant?.id ?? null));
-        }}
-      /> */}
       <OtpLoginModal
         show={showLogin}
         onClose={() => setShowLogin(false)}
@@ -206,7 +227,6 @@ const ProductCard = ({ product, variant = null }) => {
           }
         }}
       />
-
     </>
   );
 };
