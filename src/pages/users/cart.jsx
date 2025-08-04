@@ -11,10 +11,14 @@ import { fetchCart } from "../../redux/actions/cartAction";
 import BASE_URL from "../../config/config";
 
 const CartItem = ({ id, product, quantity = 1 }) => {
-  const [qty, setQty] = useState(1);
+  const [qty, setQty] = useState(quantity || 1);
 
   const increment = () => setQty((prev) => prev + 1);
   const decrement = () => setQty((prev) => (prev > 1 ? prev - 1 : 1));
+
+  useEffect(() => {
+  setQty(quantity || 1);
+}, [quantity]);
 
   return (
     <div className="cart-page">

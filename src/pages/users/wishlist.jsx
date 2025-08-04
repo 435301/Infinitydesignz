@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Carousel } from "react-bootstrap";
-import { getToken } from "../../utils/auth";
+import { getToken, isLoggedIn } from "../../utils/auth";
 import BASE_URL from "../../config/config";
 import axios from "axios";
 import "../../css/user/userstyle.css";
@@ -21,6 +21,8 @@ import { addToWishlist, deleteWishlistItem } from "../../redux/actions/whishlist
 import { fetchUserProductDetailsById } from "../../redux/actions/userProductDetailsAction";
 import RelatedProducts from "../../components/relatedProducts";
 import { toast } from "react-toastify";
+import { addToCart } from "../../redux/actions/cartAction";
+import { addToGuestCart } from "../../redux/actions/guestCartAction";
 
 
 export default function WishlistPage() {
@@ -29,6 +31,8 @@ export default function WishlistPage() {
   const [wishlistItems, setWishlistItems] = useState([]);
   const { sizes = [] } = useSelector((state) => state.sizes || {});
   const { product, loading } = useSelector((state) => state.userProductDetails);
+  const [quantities, setQuantities] = useState({});
+
 
   const fetchWishlist = async () => {
     try {
@@ -59,8 +63,34 @@ export default function WishlistPage() {
       }
     }
   }, [wishlistItems, dispatch]);
-  const increment = () => setQuantity((prev) => Math.min(prev + 1, 99));
-  const decrement = () => setQuantity((prev) => Math.max(prev - 1, 1));
+
+// const increment = (id) => {
+//   setQuantities((prev) => ({
+//     ...prev,[id]: Math.min((prev[id] || 1) + 1, 99),
+//   }));
+// };
+// const decrement = (id) => {
+//   setQuantities((prev) => ({
+//     ...prev,[id]: Math.max((prev[id] || 1) - 1, 1),
+//   }));
+// };
+
+const increment = (item) => {
+  const key = `${item.productId}-${item.variantId || 'null'}`;
+  setQuantities((prev) => ({
+    ...prev,
+    [key]: Math.min((prev[key] || 1) + 1, 99),
+  }));
+};
+
+const decrement = (item) => {
+  const key = `${item.productId}-${item.variantId || 'null'}`;
+  setQuantities((prev) => ({
+    ...prev,
+    [key]: Math.max((prev[key] || 1) - 1, 1),
+  }));
+};
+
 
   const relatedProducts = [
     {
@@ -80,6 +110,26 @@ export default function WishlistPage() {
       rating: "4.7 | 10K"
     }
   ];
+
+   const handleCart = (item) => {
+  const productId = item?.productId;
+  const variantId = item?.variantId || null;
+   const key = `${productId}-${variantId || 'null'}`;
+  const qty = quantities[key] || 1;
+
+  const cartItem = {
+    productId,
+    variantId,
+    quantity:qty,
+  };
+
+  if (isLoggedIn()) {
+    dispatch(addToCart(cartItem));
+  } else {
+    dispatch(addToGuestCart(cartItem));
+  }
+};
+
   return (
     <>
       <Header wishlistCount={wishlistItems.length} />
@@ -150,14 +200,14 @@ export default function WishlistPage() {
 
                         <label className="me-2 fw-semibold">Qty</label>
                         <div className="qty-box d-flex align-items-center">
-                          <button className="btn-qty" onClick={decrement}>-</button>
+                          <button className="btn-qty" onClick={() => decrement(item)}>-</button>
                           <input
                             type="text"
                             className="qty-input text-center"
-                            value={quantity.toString().padStart(2, '0')}
+                             value={(quantities[`${item.productId}-${item.variantId || 'null'}`] || 1).toString().padStart(2, '0')}
                             readOnly
                           />
-                          <button className="btn-qty" onClick={increment}>+</button>
+                          <button className="btn-qty" onClick={() => increment(item)}>+</button>
                         </div>
                       </div>
 
@@ -176,7 +226,7 @@ export default function WishlistPage() {
                       </div>
 
                       <div className="actions mt-3">
-                        <button className="btn me-2">
+                        <button className="btn me-2" onClick={() => handleCart(item)}>
                           <i className="bi bi-cart"></i> Move to cart
                         </button>
                         <button
