@@ -72,6 +72,10 @@ import EditProductImages from './pages/admin/editProductImage.jsx';
 import ProductsPage from './pages/users/allProducts.jsx';
 import { useDispatch, useSelector } from 'react-redux';
 import OtpLoginModal from './components/otpLoginModal.jsx';
+import { fetchWishlist } from './redux/actions/whishlistAction.js';
+import { useEffect } from 'react';
+import { isLoggedIn } from './utils/auth.js';
+import { fetchCart } from './redux/actions/cartAction.js';
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
     <div className="content">{children}</div>
@@ -85,8 +89,14 @@ function App() {
 
   const handleLoginSuccess = () => {
     dispatch({ type: "HIDE_LOGIN_MODAL" });
-    // Optionally reload data or toast a message
   };
+
+    useEffect(() => {
+    if (isLoggedIn()) {
+      dispatch(fetchWishlist());
+      dispatch(fetchCart());
+    }
+  }, [dispatch])
 
   return (
 

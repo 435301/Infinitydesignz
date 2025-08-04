@@ -40,7 +40,7 @@ export default function Header() {
 
   useEffect(() => {
     dispatch(fetchCategories());
-    dispatch(fetchWishlist());
+    // dispatch(fetchWishlist());
   }, [dispatch]);
 
   const suggestionsList = [

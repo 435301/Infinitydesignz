@@ -1,21 +1,18 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect, useCallback, useMemo } from "react";
 import { Carousel } from "react-bootstrap";
 import { getToken, isLoggedIn } from "../../utils/auth";
 import BASE_URL from "../../config/config";
 import axios from "axios";
 import "../../css/user/userstyle.css";
 import "../../css/user/whishlist.css";
-
 import Header from "../../includes/header";
 import Footer from "../../includes/footer";
-
 import AdBanner from "../../img/ad-banner.png";
 import Img3 from "../../img/img3.png";
 import Star from "../../img/star.svg";
 import Star1 from "../../img/star1.svg";
 import Sofa from "../../img/sofa.png";
 import Icon from "../../img/icon.svg";
-import { useDispatch, useSelector } from "react-redux";
 import { fetchSizes } from "../../redux/actions/sizeAction";
 import { addToWishlist, deleteWishlistItem } from "../../redux/actions/whishlistAction";
 import { fetchUserProductDetailsById } from "../../redux/actions/userProductDetailsAction";
@@ -23,76 +20,71 @@ import RelatedProducts from "../../components/relatedProducts";
 import { toast } from "react-toastify";
 import { addToCart } from "../../redux/actions/cartAction";
 import { addToGuestCart } from "../../redux/actions/guestCartAction";
+import Loader from "../../includes/loader";
 
-
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 export default function WishlistPage() {
   const dispatch = useDispatch();
-  const [quantity, setQuantity] = useState(1);
   const [wishlistItems, setWishlistItems] = useState([]);
-  const { sizes = [] } = useSelector((state) => state.sizes || {});
-  const { product, loading } = useSelector((state) => state.userProductDetails);
   const [quantities, setQuantities] = useState({});
+  const [loadingWishlist, setLoadingWishlist] = useState(true);
 
+  // Memoized selectors for redux state
+  const sizes = useSelector((state) => state.sizes?.sizes || [], shallowEqual);
+  const { product, loading } = useSelector((state) => state.userProductDetails, shallowEqual);
 
-  const fetchWishlist = async () => {
+  // Fetch wishlist only once
+  const fetchWishlist = useCallback(async () => {
+    setLoadingWishlist(true);
     try {
       const config = { headers: { Authorization: `Bearer ${getToken()}` } };
       const res = await axios.get(`${BASE_URL}/wishlist`, config);
       setWishlistItems(res.data || []);
     } catch (err) {
       console.error("Failed to load wishlist", err);
+    } finally {
+      setLoadingWishlist(false);
     }
-  };
-
-  useEffect(() => {
-    fetchWishlist();
   }, []);
 
   useEffect(() => {
-    dispatch(fetchSizes());
-  }, [dispatch])
+    fetchWishlist();
+  }, [fetchWishlist]);
 
   useEffect(() => {
-    if (wishlistItems.length > 0) {
-      const firstItem = wishlistItems[0];
-      const productId = firstItem?.product?.id;
-      const variantId = firstItem?.variantId;
+    dispatch(fetchSizes());
+  }, [dispatch]);
 
+  // Only fetch product details if first wishlist item changes
+  useEffect(() => {
+    if (wishlistItems.length > 0) {
+      const { product: prod, variantId } = wishlistItems[0];
+      const productId = prod?.id;
       if (productId) {
         dispatch(fetchUserProductDetailsById(productId, variantId));
       }
     }
   }, [wishlistItems, dispatch]);
 
-// const increment = (id) => {
-//   setQuantities((prev) => ({
-//     ...prev,[id]: Math.min((prev[id] || 1) + 1, 99),
-//   }));
-// };
-// const decrement = (id) => {
-//   setQuantities((prev) => ({
-//     ...prev,[id]: Math.max((prev[id] || 1) - 1, 1),
-//   }));
-// };
+  // Memoize increment/decrement handlers
+  const increment = useCallback((item) => {
+    const key = `${item.productId}-${item.variantId || 'null'}`;
+    setQuantities((prev) => ({
+      ...prev,
+      [key]: Math.min((prev[key] || 1) + 1, 99),
+    }));
+  }, []);
 
-const increment = (item) => {
-  const key = `${item.productId}-${item.variantId || 'null'}`;
-  setQuantities((prev) => ({
-    ...prev,
-    [key]: Math.min((prev[key] || 1) + 1, 99),
-  }));
-};
+  const decrement = useCallback((item) => {
+    const key = `${item.productId}-${item.variantId || 'null'}`;
+    setQuantities((prev) => ({
+      ...prev,
+      [key]: Math.max((prev[key] || 1) - 1, 1),
+    }));
+  }, []);
 
-const decrement = (item) => {
-  const key = `${item.productId}-${item.variantId || 'null'}`;
-  setQuantities((prev) => ({
-    ...prev,
-    [key]: Math.max((prev[key] || 1) - 1, 1),
-  }));
-};
-
-
-  const relatedProducts = [
+  // Memoize related products
+  const relatedProducts = useMemo(() => [
     {
       id: 1,
       title: "Andres Fabric 3 Seater Sofa In Sandy Brown Colour",
@@ -109,40 +101,48 @@ const decrement = (item) => {
       img: Img3,
       rating: "4.7 | 10K"
     }
-  ];
+  ], []);
 
-   const handleCart = async (item) => {
-  const productId = item?.productId;
-  const variantId = item?.variantId || null;
-  const key = `${productId}-${variantId || 'null'}`;
-  const qty = quantities[key] || 1;
+  // Memoize handleCart to avoid re-creation
+  const handleCart = useCallback(async (item) => {
+    const productId = item?.productId;
+    const variantId = item?.variantId || null;
+    const key = `${productId}-${variantId || 'null'}`;
+    const qty = quantities[key] || 1;
 
-  const cartItem = {
-    productId,
-    variantId,
-    quantity: qty,
-  };
+    const cartItem = {
+      productId,
+      variantId,
+      quantity: qty,
+    };
 
-  try {
-    if (isLoggedIn()) {
-      await dispatch(addToCart(cartItem));
-    } else {
-      dispatch(addToGuestCart(cartItem));
+    try {
+      if (isLoggedIn()) {
+        await dispatch(addToCart(cartItem));
+      } else {
+        dispatch(addToGuestCart(cartItem));
+      }
+      setWishlistItems((prev) => prev.filter((w) => w.id !== item.id));
+      await dispatch(deleteWishlistItem(item.id));
+    } catch (error) {
+      console.error("Error moving to cart:", error);
+      toast.error("Failed to move to cart.");
     }
-    setWishlistItems((prev) => prev.filter((w) => w.id !== item.id));
-    await dispatch(deleteWishlistItem(item.id));
-  } catch (error) {
-    console.error("Error moving to cart:", error);
-    toast.error("Failed to move to cart.");
-  }
-};
+  }, [dispatch, quantities]);
+
+  // Memoize delete handler
+  const handleDelete = useCallback(async (itemId) => {
+    await dispatch(deleteWishlistItem(itemId));
+    fetchWishlist();
+    toast.success("Removed from wishlist successfully");
+  }, [dispatch, fetchWishlist]);
 
   return (
     <>
       <Header wishlistCount={wishlistItems.length} />
       <section className="bg-light py-3">
         <div className="container shop">
-          <div class="row">
+          <div className="row">
             <div className="col-lg-12">
               <a href=""><strong>My Account</strong></a>
             </div>
@@ -162,98 +162,100 @@ const decrement = (item) => {
               <div className="wishlist-header">
                 <h2 className="m-0">Wishlist</h2>
               </div>
+              {loadingWishlist ? (
+                <Loader />
+              ) : (
+                wishlistItems.length > 0 ? (
+                  wishlistItems.map((item, index) => {
+                    const displayData = item.variantId && item.variant
+                      ? item.variant
+                      : (!item.variantId && item.productId && item.product ? item.product : null);
 
-              {wishlistItems.map((item, index) => {
-                const displayData = item.variantId && item.variant
-                  ? item.variant
-                  : (!item.variantId && item.productId && item.product ? item.product : null);
+                    if (!displayData) return null;
 
-                if (!displayData) return null;
+                    const imageUrl = displayData.imageUrl
+                      ? (displayData.imageUrl.startsWith("http")
+                        ? displayData.imageUrl
+                        : `${BASE_URL}${displayData.imageUrl}`)
+                      : Sofa;
 
-                const imageUrl = displayData.imageUrl
-                  ? (displayData.imageUrl.startsWith("http")
-                    ? displayData.imageUrl
-                    : `${BASE_URL}${displayData.imageUrl}`)
-                  : Sofa;
+                    const imageAlt = displayData.imageAlt || displayData.title || "Product Image";
+                    const title = displayData.title || "No Title";
+                    const price = displayData.price || 0;
+                    const mrp = displayData.mrp || 0;
+                    const size = displayData.size || "N/A";
+                    const key = `${item.productId}-${item.variantId || 'null'}`;
 
-                const imageAlt = displayData.imageAlt || displayData.title || "Product Image";
-                const title = displayData.title || "No Title";
-                const price = displayData.price || 0;
-                const mrp = displayData.mrp || 0;
-                const size = displayData.size || "N/A";
-
-                return (
-                  <div key={index} className="wishlist-item border-between d-flex">
-                    <div className="col-3">
-                      <img
-                        src={imageUrl}
-                        alt={imageAlt}
-                        className="wishlist-item-img img-fluid"
-                      />
-                    </div>
-                    <div className="details ms-3">
-                      <h5>{title}</h5>
-                      <p>36-Month Warranty Available</p>
-
-                      <div className="d-flex align-items-center mb-3">
-                        <label className="me-2 fw-semibold">Size</label>
-                        <select className="form-select w-auto me-4" value={size}>
-                          {sizes.map((s) => (
-                            <option key={s.id} value={s.title}>
-                              {s.title}
-                            </option>
-                          ))}
-                        </select>
-
-                        <label className="me-2 fw-semibold">Qty</label>
-                        <div className="qty-box d-flex align-items-center">
-                          <button className="btn-qty" onClick={() => decrement(item)}>-</button>
-                          <input
-                            type="text"
-                            className="qty-input text-center"
-                             value={(quantities[`${item.productId}-${item.variantId || 'null'}`] || 1).toString().padStart(2, '0')}
-                            readOnly
+                    return (
+                      <div key={item.id || index} className="wishlist-item border-between d-flex">
+                        <div className="col-3">
+                          <img
+                            src={imageUrl}
+                            alt={imageAlt}
+                            className="wishlist-item-img img-fluid"
                           />
-                          <button className="btn-qty" onClick={() => increment(item)}>+</button>
+                        </div>
+                        <div className="details ms-3">
+                          <h5>{title}</h5>
+                          <p>36-Month Warranty Available</p>
+
+                          <div className="d-flex align-items-center mb-3">
+                            <label className="me-2 fw-semibold">Size</label>
+                            <select className="form-select w-auto me-4" value={size} readOnly>
+                              {sizes.map((s) => (
+                                <option key={s.id} value={s.title}>
+                                  {s.title}
+                                </option>
+                              ))}
+                            </select>
+
+                            <label className="me-2 fw-semibold">Qty</label>
+                            <div className="qty-box d-flex align-items-center">
+                              <button className="btn-qty" onClick={() => decrement(item)}>-</button>
+                              <input
+                                type="text"
+                                className="qty-input text-center"
+                                value={(quantities[key] || 1).toString().padStart(2, '0')}
+                                readOnly
+                              />
+                              <button className="btn-qty" onClick={() => increment(item)}>+</button>
+                            </div>
+                          </div>
+
+                          <div className="price">
+                            <span className="currency">₹</span>{price}{" "}
+                            <small>MRP: <span className="currency">₹</span>{mrp}</small>
+                          </div>
+
+                          <div className="icons">
+                            <span>
+                              <i className="bi bi-arrow-return-right icon-return"></i> Easy 14 days return & exchange
+                            </span>
+                            <span>
+                              <i className="bi bi-truck icon-delivery"></i> Estimated delivery by 13 Aug
+                            </span>
+                          </div>
+
+                          <div className="actions mt-3">
+                            <button className="btn me-2" onClick={() => handleCart(item)}>
+                              <i className="bi bi-cart"></i> Move to cart
+                            </button>
+                            <button
+                              className="btn"
+                              onClick={() => handleDelete(item.id)}
+                            >
+                              <i className="bi bi-trash"></i> Delete
+                            </button>
+                          </div>
                         </div>
                       </div>
-
-                      <div className="price">
-                        <span className="currency">₹</span>{price}{" "}
-                        <small>MRP: <span className="currency">₹</span>{mrp}</small>
-                      </div>
-
-                      <div className="icons">
-                        <span>
-                          <i className="bi bi-arrow-return-right icon-return"></i> Easy 14 days return & exchange
-                        </span>
-                        <span>
-                          <i className="bi bi-truck icon-delivery"></i> Estimated delivery by 13 Aug
-                        </span>
-                      </div>
-
-                      <div className="actions mt-3">
-                        <button className="btn me-2" onClick={() => handleCart(item)}>
-                          <i className="bi bi-cart"></i> Move to cart
-                        </button>
-                        <button
-                          className="btn"
-                          onClick={async () => {
-                            await dispatch(deleteWishlistItem(item.id));
-                            fetchWishlist();
-                            toast.success("Removed from wishlist successfully")
-                          }}
-                        >
-                          <i className="bi bi-trash"></i> Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-
+                    );
+                  })
+                ) : (
+                  <p className="text-center">Your wishlist is empty.</p>
+                )
+              )}
             </div>
-
             {/* Related Products Section */}
             <div className="col-md-3">
               <div className="ad-banner mb-4">
@@ -296,7 +298,6 @@ const decrement = (item) => {
                 </Carousel>
               </div>
             </div>
-
           </div>
         </div>
       </section>
