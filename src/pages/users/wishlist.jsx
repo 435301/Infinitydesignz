@@ -20,6 +20,7 @@ import { fetchSizes } from "../../redux/actions/sizeAction";
 import { addToWishlist, deleteWishlistItem } from "../../redux/actions/whishlistAction";
 import { fetchUserProductDetailsById } from "../../redux/actions/userProductDetailsAction";
 import RelatedProducts from "../../components/relatedProducts";
+import { toast } from "react-toastify";
 
 
 export default function WishlistPage() {
@@ -106,9 +107,24 @@ export default function WishlistPage() {
               </div>
 
               {wishlistItems.map((item, index) => {
-                const product = item?.product || {};
-                const imageUrl = item?.imageUrl?.startsWith('http') ? item.imageUrl : `${BASE_URL}${item.imageUrl}`;
-                const imageAlt = item?.imageAlt || product?.title || 'Product Image';
+                const displayData = item.variantId && item.variant
+                  ? item.variant
+                  : (!item.variantId && item.productId && item.product ? item.product : null);
+
+                if (!displayData) return null;
+
+                const imageUrl = displayData.imageUrl
+                  ? (displayData.imageUrl.startsWith("http")
+                    ? displayData.imageUrl
+                    : `${BASE_URL}${displayData.imageUrl}`)
+                  : Sofa;
+
+                const imageAlt = displayData.imageAlt || displayData.title || "Product Image";
+                const title = displayData.title || "No Title";
+                const price = displayData.price || 0;
+                const mrp = displayData.mrp || 0;
+                const size = displayData.size || "N/A";
+
                 return (
                   <div key={index} className="wishlist-item border-between d-flex">
                     <div className="col-3">
@@ -119,28 +135,19 @@ export default function WishlistPage() {
                       />
                     </div>
                     <div className="details ms-3">
-                      <h5>{item?.title}</h5>
+                      <h5>{title}</h5>
+                      <p>36-Month Warranty Available</p>
 
                       <div className="d-flex align-items-center mb-3">
                         <label className="me-2 fw-semibold">Size</label>
-                        {(() => {
-                          const selectedSizeId = item?.size?.toLowerCase();
-                          console.log('selectedSizeId', selectedSizeId)
-                          const sortedSizes = [...sizes].sort((a, b) => {
-                            if (a.id === selectedSizeId) return -1;
-                            if (b.id === selectedSizeId) return 1;
-                            return 0;
-                          });
-                          return (
-                            <select className="form-select w-auto me-4" value={selectedSizeId}>
-                              {sortedSizes.map((size) => (
-                                <option key={size.id} value={size.title?.toLowerCase()}>
-                                  {size.title}
-                                </option>
-                              ))}
-                            </select>
-                          );
-                        })()}
+                        <select className="form-select w-auto me-4" value={size}>
+                          {sizes.map((s) => (
+                            <option key={s.id} value={s.title}>
+                              {s.title}
+                            </option>
+                          ))}
+                        </select>
+
                         <label className="me-2 fw-semibold">Qty</label>
                         <div className="qty-box d-flex align-items-center">
                           <button className="btn-qty" onClick={decrement}>-</button>
@@ -153,10 +160,12 @@ export default function WishlistPage() {
                           <button className="btn-qty" onClick={increment}>+</button>
                         </div>
                       </div>
+
                       <div className="price">
-                        <span className="currency">₹</span>{item?.price || 0}{" "}
-                        <small>MRP: <span className="currency">₹</span>{item?.mrp || 0}</small>
+                        <span className="currency">₹</span>{price}{" "}
+                        <small>MRP: <span className="currency">₹</span>{mrp}</small>
                       </div>
+
                       <div className="icons">
                         <span>
                           <i className="bi bi-arrow-return-right icon-return"></i> Easy 14 days return & exchange
@@ -165,14 +174,19 @@ export default function WishlistPage() {
                           <i className="bi bi-truck icon-delivery"></i> Estimated delivery by 13 Aug
                         </span>
                       </div>
+
                       <div className="actions mt-3">
                         <button className="btn me-2">
                           <i className="bi bi-cart"></i> Move to cart
                         </button>
-                        <button className="btn" onClick={async () => {
-                          await dispatch(deleteWishlistItem(item.id));
-                          fetchWishlist();
-                        }}>
+                        <button
+                          className="btn"
+                          onClick={async () => {
+                            await dispatch(deleteWishlistItem(item.id));
+                            fetchWishlist();
+                            toast.success("Removed from wishlist successfully")
+                          }}
+                        >
                           <i className="bi bi-trash"></i> Delete
                         </button>
                       </div>
@@ -180,6 +194,7 @@ export default function WishlistPage() {
                   </div>
                 );
               })}
+
             </div>
 
             {/* Related Products Section */}

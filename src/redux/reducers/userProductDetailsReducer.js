@@ -19,6 +19,14 @@ const initialState = {
       return { loading: false, product: action.payload, error: null };
     case FETCH_PRODUCT_FAILURE:
       return { loading: false, product: null, error: action.payload };
+       case "SET_SELECTED_VARIANT":
+      return {
+        ...state,
+        product: {
+          ...state.product,
+          selectedVariant: action.payload,
+        },
+      };
     default:
       return state;
   }

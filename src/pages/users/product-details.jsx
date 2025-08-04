@@ -14,6 +14,7 @@ import { FaRegHeart } from "react-icons/fa";
 import Loader from "../../includes/loader";
 import { fetchCategories } from "../../redux/actions/categoryAction";
 import RelatedProducts from "../../components/relatedProducts";
+import { setSelectedVariant } from "../../redux/actions/productAction";
 
 export default function ProductDetailPage() {
   const dispatch = useDispatch();
@@ -313,13 +314,15 @@ export default function ProductDetailPage() {
                             parseInt(v.size?.id) === newSizeId &&
                             (!selectedColorId || v.color?.id === parseInt(selectedColorId))
                         );
+                         dispatch(setSelectedVariant(matchedVariant || null));
 
-                        if (matchedVariant) {
-                          alert("Size matched");
-                          window.open(`/product-details/${matchedVariant.productId}`, '_blank');
-                        } else {
-                          alert("No matching variant found for selected size");
-                        }
+
+                        // if (matchedVariant) {
+                        //   alert("Size matched");
+                        //   window.open(`/product-details/${matchedVariant.productId}`, '_self');
+                        // } else {
+                        //   alert("No matching variant found for selected size");
+                        // }
                       }}
                     >
                       <option value="">Select</option>
@@ -348,13 +351,13 @@ export default function ProductDetailPage() {
                             parseInt(v.color?.id) === newColorId &&
                             (!selectedSizeId || v.size?.id === parseInt(selectedSizeId))
                         );
-
-                        if (matchedVariant) {
-                          alert("Color matched");
-                          window.open(`/product-details/${matchedVariant.productId}`, '_blank');
-                        } else {
-                          alert("No matching variant found for selected color");
-                        }
+                         dispatch(setSelectedVariant(matchedVariant || null));
+                        // if (matchedVariant) {
+                        //   alert("Color matched");
+                        //   window.open(`/product-details/${matchedVariant.productId}`, '_self');
+                        // } else {
+                        //   alert("No matching variant found for selected color");
+                        // }
                       }}
                     >
                       <option value="">Select</option>

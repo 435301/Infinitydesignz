@@ -1,17 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { FaRegHeart } from "react-icons/fa";
+import { FaRegHeart, FaHeart } from "react-icons/fa";
 import axios from "axios";
 import BASE_URL from "../config/config";
-import { isLoggedIn } from "../utils/auth";
+import { getToken, isLoggedIn } from "../utils/auth";
 import "../../src/css/user/userstyle.css";
-import { addToWishlist } from "../redux/actions/whishlistAction";
+import { addToWishlist, deleteWishlistItem } from "../redux/actions/whishlistAction";
 import OtpLoginModal from "./otpLoginModal";
 
 const ProductCard = ({ product, variant = null }) => {
   const dispatch = useDispatch();
   const [showLogin, setShowLogin] = useState(false);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [wishlistItemId, setWishlistItemId] = useState(null); // store for delete
 
   const {
     id,
@@ -56,16 +58,65 @@ const ProductCard = ({ product, variant = null }) => {
       ? Math.round(((displayMrp - displayPrice) / displayMrp) * 100)
       : 0;
 
-  // Wishlist Click Handler
   const handleWishlistClick = async (e) => {
     e.preventDefault();
     e.stopPropagation();
+
     if (!isLoggedIn()) {
       setShowLogin(true);
       return;
     }
-    dispatch(addToWishlist(id, variant?.id ?? null));
+
+    if (isWishlisted) {
+      try {
+        await dispatch(deleteWishlistItem(wishlistItemId));
+        setIsWishlisted(false);
+      } catch (err) {
+        console.error("Failed to remove from wishlist", err);
+      }
+    } else {
+      try {
+        const res = await dispatch(addToWishlist(product?.id, variant?.id ?? null));
+        setIsWishlisted(true);
+        if (res?.payload?.id) setWishlistItemId(res.payload.id);
+      } catch (err) {
+        console.error("Failed to add to wishlist", err);
+      }
+    }
   };
+
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/wishlist`, {
+          headers: { Authorization: `Bearer ${getToken()}` },
+        });
+        const wishlist = res.data || [];
+
+        const match = wishlist.find((item) => {
+          if (variant?.id) {
+            console.log('variant?.id', variant?.id)
+            return item.productId === product.id && item.variantId === variant.id;
+          } else {
+            return item.productId === product.id && !item.variantId;
+          }
+        });
+
+        if (match) {
+          setIsWishlisted(true);
+          setWishlistItemId(match.id);
+        }
+      } catch (err) {
+        console.error("Error checking wishlist", err);
+      }
+    };
+
+    if (isLoggedIn()) {
+      fetchWishlist();
+    }
+  }, [product.id, variant?.id]);
+
+
 
   return (
     <>
@@ -92,11 +143,19 @@ const ProductCard = ({ product, variant = null }) => {
               style={{ zIndex: 2 }}
             >
               <div className="whishlist_Icon" onClick={handleWishlistClick}>
-                <FaRegHeart
-                  className="text-black"
-                  style={{ fontSize: "1.1rem", cursor: "pointer" }}
-                  title="Add to Wishlist"
-                />
+                {isWishlisted ? (
+                  <FaHeart
+                    className="text-danger"
+                    style={{ fontSize: "1.1rem", cursor: "pointer" }}
+                    title="Remove from Wishlist"
+                  />
+                ) : (
+                  <FaRegHeart
+                    className="text-black"
+                    style={{ fontSize: "1.1rem", cursor: "pointer" }}
+                    title="Add to Wishlist"
+                  />
+                )}
               </div>
             </div>
 
@@ -129,13 +188,25 @@ const ProductCard = ({ product, variant = null }) => {
       </div>
 
       {/* OTP Login Modal */}
-      <OtpLoginModal
+      {/* <OtpLoginModal
         show={showLogin}
         onClose={() => setShowLogin(false)}
         onLoginSuccess={() => {
           dispatch(addToWishlist(id, variant?.id ?? null));
         }}
+      /> */}
+      <OtpLoginModal
+        show={showLogin}
+        onClose={() => setShowLogin(false)}
+        onLoginSuccess={async () => {
+          const res = await dispatch(addToWishlist(id, variant?.id ?? null));
+          if (res?.payload?.id) {
+            setIsWishlisted(true);
+            setWishlistItemId(res.payload.id);
+          }
+        }}
       />
+
     </>
   );
 };

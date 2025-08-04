@@ -70,6 +70,8 @@ import EditProductFeatures from './pages/admin/editProductFeatures.jsx';
 import EditProductFilters from './pages/admin/editProductFilters.jsx';
 import EditProductImages from './pages/admin/editProductImage.jsx';
 import ProductsPage from './pages/users/allProducts.jsx';
+import { useDispatch, useSelector } from 'react-redux';
+import OtpLoginModal from './components/otpLoginModal.jsx';
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
     <div className="content">{children}</div>
@@ -77,16 +79,20 @@ const AdminLayout = ({ children }) => (
 );
 
 function App() {
-  useMainScripts(); // Runs the converted jQuery logic
+  useMainScripts(); 
+  const dispatch = useDispatch();
+  const showLoginModal = useSelector((state) => state.login.showLoginModal);
+
+  const handleLoginSuccess = () => {
+    dispatch({ type: "HIDE_LOGIN_MODAL" });
+    // Optionally reload data or toast a message
+  };
 
   return (
 
     <BrowserRouter>
       <div className="App">
-        {/* <div id="spinner" className="show">Loading...</div>
-        <nav className="sticky-top">Navbar</nav> */}
         <ToastContainer />
-
         <Routes>
           <Route path='/' element={<HomeBannerSection />} />
           <Route path='/shop' element={<ProductTopBar />} />
@@ -162,7 +168,13 @@ function App() {
         </Routes>
 
       </div>
+       <OtpLoginModal
+        show={showLoginModal}
+        onClose={() => dispatch({ type: "HIDE_LOGIN_MODAL" })}
+        onLoginSuccess={handleLoginSuccess}
+      />
     </BrowserRouter>
+    
   );
 }
 

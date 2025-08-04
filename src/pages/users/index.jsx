@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../../includes/header';
 import Footer from '../../includes/footer';
 import '../../css/user/userstyle.css';
@@ -61,12 +61,42 @@ import PromoSection from '../../components/PromoSection';
 import IconFeatureGrid from '../../components/iconFeaturedGrid';
 import NewArrivalsSection from '../../components/newArrivalSection';
 import CallbackForm from '../../components/callbackForm';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import OtpLoginModal from '../../components/otpLoginModal';
 
 
+const waitAndShowModal = () =>
+  new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, 1000); 
+  }); 
 
 export default function HomeBannerSection() {
- 
+ const [showLoginModal, setShowLoginModal] = useState(false);
+  const location = useLocation();
+
+  useQuery({
+    queryKey: ["show-login-modal"],
+    queryFn: waitAndShowModal,
+    enabled: location.pathname === "/", // only run on `/`
+    onSuccess: () => {
+      setShowLoginModal(true);
+    },
+    staleTime: Infinity,
+    cacheTime: 0, // don't cache it, run fresh each time
+  });
+
+  const handleCloseModal = () => {
+    setShowLoginModal(false);
+  };
+
+  const handleLoginSuccess = () => {
+    setShowLoginModal(false);
+    // Optional: Perform success logic (e.g., toast, redirect)
+  };
+
   const images = [
     { src: living, label: "Sofa / Sofa Chairs" },
     { src: c2, label: "Centre Table" },
@@ -442,7 +472,11 @@ export default function HomeBannerSection() {
           </div>
 
           <CallbackForm onSubmit={handleFormSubmit} />
-
+ <OtpLoginModal
+        show={showLoginModal}
+        onClose={handleCloseModal}
+        onLoginSuccess={handleLoginSuccess}
+      />
         </div>
       </div>
       <Footer />

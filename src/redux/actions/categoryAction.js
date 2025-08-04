@@ -50,7 +50,6 @@ export const fetchCategories = () => {
       //  toast.dismiss(loadingToastId);
     } catch (error) {
       toast.dismiss();
-      toast.error(error?.response?.data?.message || 'Failed to fetch categories');
       dispatch({
         type: FETCH_CATEGORIES_FAILURE,
         payload: error.response?.data?.message || error.message,

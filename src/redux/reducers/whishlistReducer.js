@@ -8,7 +8,7 @@ import {
   DELETE_WISHLIST_ITEM_FAILURE
 } from '../actions/whishlistAction';
 
-const initialState = {
+const initialState = {                                                 
   items: [],
   loading: false,
   error: null
@@ -19,6 +19,7 @@ const wishlistReducer = (state = initialState, action) => {
     case FETCH_WISHLIST_REQUEST:
       return { ...state, loading: true };
     case FETCH_WISHLIST_SUCCESS:
+      console.log("Reducer received new wishlist:", action.payload);
       return { ...state, loading: false, items: action.payload };
     case FETCH_WISHLIST_FAILURE:
       return { ...state, loading: false, error: action.payload };

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import BASE_URL from '../../config/config';
+import { toast } from 'react-toastify';
 
 export const FETCH_WISHLIST_REQUEST = 'FETCH_WISHLIST_REQUEST';
 export const FETCH_WISHLIST_SUCCESS = 'FETCH_WISHLIST_SUCCESS';
@@ -19,10 +20,10 @@ export const fetchWishlist = () => async (dispatch) => {
     const res = await axios.get(`${BASE_URL}/wishlist`, {
       headers: { Authorization: `Bearer ${getToken()}` }
     });
-      console.log("Wishlist API response:", res.data);
-    dispatch({ type: FETCH_WISHLIST_SUCCESS, payload: res.data.data });
+    console.log("Wishlist API response:", res.data);
+    dispatch({ type: FETCH_WISHLIST_SUCCESS, payload: res.data });
   } catch (error) {
-     console.error("Wishlist error:", error);
+    console.error("Wishlist error:", error);
     dispatch({ type: FETCH_WISHLIST_FAILURE, payload: error.message });
   }
 };
@@ -37,11 +38,12 @@ export const addToWishlist = (productId, variantId = null) => async (dispatch) =
     });
 
     dispatch({ type: ADD_TO_WISHLIST_SUCCESS, payload: res.data.data });
+    const successMessage = res.message || 'Added to whishlist';
+    toast.success(successMessage)
   } catch (error) {
     console.error('Add to wishlist failed', error);
   }
 };
-
 
 
 
@@ -51,8 +53,11 @@ export const deleteWishlistItem = (wishlistId) => async (dispatch) => {
     const config = {
       headers: { Authorization: `Bearer ${getToken()}` }
     };
-    await axios.delete(`${BASE_URL}/wishlist/${wishlistId}`, config);
+    const res = await axios.delete(`${BASE_URL}/wishlist/${wishlistId}`, config);
     dispatch({ type: DELETE_WISHLIST_ITEM_SUCCESS, payload: wishlistId });
+    const successMessage = res.message || 'removed from whishlist';
+    toast.success(successMessage)
+    dispatch(fetchWishlist());
   } catch (error) {
     dispatch({
       type: DELETE_WISHLIST_ITEM_FAILURE,

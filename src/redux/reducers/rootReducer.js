@@ -18,6 +18,7 @@ import couponReducer from './couponReducer';
 import userProductDetailsReducer from './userProductDetailsReducer';
 import userAuthReducer from './userAuthReducer';
 import wishlistReducer from './whishlistReducer';
+import LoginReducer from './loginReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -40,6 +41,7 @@ const rootReducer = combineReducers({
   userProductDetails: userProductDetailsReducer,
   userAuth:userAuthReducer,
   whishlist:wishlistReducer,
+  login: LoginReducer,
 });
 
 export default rootReducer;

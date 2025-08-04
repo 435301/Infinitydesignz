@@ -34,6 +34,7 @@ export const EDIT_PRODUCT_FILTERS_SUCCESS = 'EDIT_PRODUCT_FILTERS_SUCCESS';
 export const EDIT_PRODUCT_FILTERS_FAILURE = 'EDIT_PRODUCT_FILTERS_FAILURE';
 export const DELETE_PRODUCT_FILTERS_SUCCESS = 'DELETE_PRODUCT_FILTERS_SUCCESS';
 export const FETCH_VARIANT_IMAGE_SUCCESS = 'FETCH_VARIANT_IMAGE_SUCCESS';
+export const SET_SELECTED_VARIANT ='SET_SELECTED_VARIANT';
 
 export const fetchProducts = () => {
 
@@ -385,4 +386,11 @@ export const fetchVariantImagesById = (id) => async (dispatch) => {
   } catch (err) {
     toast.error("Failed to fetch variant images.");
   }
+};
+
+export const setSelectedVariant = (variant) => {
+  return {
+    type: "SET_SELECTED_VARIANT",
+    payload: variant,
+  };
 };

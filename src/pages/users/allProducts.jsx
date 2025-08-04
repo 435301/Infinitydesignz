@@ -49,15 +49,25 @@ const ProductsPage = () => {
         const combinedProducts = rawProducts.flatMap((product) => {
           const mainProductEntry = { ...product, isVariant: false };
  
+          // const variantEntries = (product.variants || []).map((variant) => ({
+          //   ...product,
+          //   id: `${product.id}-${variant.id}`,
+          //   mrp: variant.mrp,
+          //   sellingPrice: variant.sellingPrice,
+          //   variantId: variant.id,
+          //   isVariant: true,
+          //   _variant: variant,
+          // }));
+
           const variantEntries = (product.variants || []).map((variant) => ({
-            ...product,
-            id: `${product.id}-${variant.id}`,
-            mrp: variant.mrp,
-            sellingPrice: variant.sellingPrice,
-            variantId: variant.id,
-            isVariant: true,
-            _variant: variant,
-          }));
+  ...product,
+  variantId: variant.id,
+  isVariant: true,
+  _variant: variant,
+  mrp: variant.mrp,
+  sellingPrice: variant.sellingPrice,
+}));
+
  
           return [mainProductEntry, ...variantEntries];
         });

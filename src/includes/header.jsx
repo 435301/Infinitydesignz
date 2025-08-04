@@ -17,12 +17,22 @@ import MenuImg from '../../src/img/menu-img.webp';
 import axios from "axios";
 import BASE_URL from "../config/config";
 import { getToken } from "../utils/auth";
+import { fetchWishlist } from "../redux/actions/whishlistAction";
 
-export default function Header({wishlistCount}) {
+export default function Header() {
   const dispatch = useDispatch();
   const { categories = [] } = useSelector((state) => state.categories || {});
+
   // const [wishListItems, setWishlistItems] = useState([])
-  // const wishlistCount = wishListItems.length;
+   const wishlistItems = useSelector((state) => state.whishlist.items || []);
+  const wishlistCount = wishlistItems.length;
+
+   const [trigger, setTrigger] = useState(false);
+  useEffect(() => {
+    console.log("Header sees updated wishlistItems:", wishlistItems);
+    setTrigger((prev) => !prev); 
+  }, [wishlistItems]);
+
   console.log('categories', categories)
   const navigate = useNavigate();
 
@@ -32,6 +42,7 @@ export default function Header({wishlistCount}) {
 
   useEffect(() => {
     dispatch(fetchCategories());
+    dispatch(fetchWishlist());
   }, [dispatch]);
 
   // useEffect(() => {
