@@ -111,22 +111,29 @@ const decrement = (item) => {
     }
   ];
 
-   const handleCart = (item) => {
+   const handleCart = async (item) => {
   const productId = item?.productId;
   const variantId = item?.variantId || null;
-   const key = `${productId}-${variantId || 'null'}`;
+  const key = `${productId}-${variantId || 'null'}`;
   const qty = quantities[key] || 1;
 
   const cartItem = {
     productId,
     variantId,
-    quantity:qty,
+    quantity: qty,
   };
 
-  if (isLoggedIn()) {
-    dispatch(addToCart(cartItem));
-  } else {
-    dispatch(addToGuestCart(cartItem));
+  try {
+    if (isLoggedIn()) {
+      await dispatch(addToCart(cartItem));
+    } else {
+      dispatch(addToGuestCart(cartItem));
+    }
+    setWishlistItems((prev) => prev.filter((w) => w.id !== item.id));
+    await dispatch(deleteWishlistItem(item.id));
+  } catch (error) {
+    console.error("Error moving to cart:", error);
+    toast.error("Failed to move to cart.");
   }
 };
 
