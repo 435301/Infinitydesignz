@@ -60,7 +60,7 @@ export const UpdateToCart = (id, updatedItem) => async (dispatch) => {
     }
 };
 
-export const DeleteToCart = (id) => async (dispatch) => {
+export const DeleteFromCart = (id) => async (dispatch) => {
     try {
         const response = await axios.delete(`${BASE_URL}/cart/${id}`, {
             headers: {
@@ -69,7 +69,7 @@ export const DeleteToCart = (id) => async (dispatch) => {
         });
         dispatch({ type: DELETE_FROM_CART_SUCCESS, payload: id });
         dispatch(fetchCart());
-        toast.success(response?.message || 'Removed from Cart successfully');
+        toast.success(response?.data?.message || 'Removed from Cart successfully');
     } catch (error) {
         console.error("Delete from cart failed:", error)
     }
@@ -100,7 +100,7 @@ export const syncGuestCartToUserCart = () => async (dispatch, getState) => {
     }
 
     dispatch({type:CLEAR_GUEST_CART});
-    dispatch(fetchCart()); // refresh user cart from backend
+    dispatch(fetchCart()); 
   } catch (error) {
     console.error("Failed to sync guest cart:", error);
   }

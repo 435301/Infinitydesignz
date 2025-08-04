@@ -7,18 +7,20 @@ import Footer from "../../includes/footer";
 import P1 from "../../img/p1.png";
 import { useDispatch, useSelector } from "react-redux";
 import { isLoggedIn } from "../../utils/auth";
-import { fetchCart } from "../../redux/actions/cartAction";
+import { DeleteFromCart, fetchCart } from "../../redux/actions/cartAction";
 import BASE_URL from "../../config/config";
+import { addToWishlist, deleteWishlistItem, fetchWishlist } from "../../redux/actions/whishlistAction";
 
-const CartItem = ({ id, product, quantity = 1 }) => {
+
+const CartItem = ({ id, product, quantity = 1, variantId, productId, onWishlistToggle, inWishlist,onDeleteCartItem }) => {
   const [qty, setQty] = useState(quantity || 1);
 
   const increment = () => setQty((prev) => prev + 1);
   const decrement = () => setQty((prev) => (prev > 1 ? prev - 1 : 1));
 
   useEffect(() => {
-  setQty(quantity || 1);
-}, [quantity]);
+    setQty(quantity || 1);
+  }, [quantity]);
 
   return (
     <div className="cart-page">
@@ -60,10 +62,11 @@ const CartItem = ({ id, product, quantity = 1 }) => {
             <small><i className="bi bi-calendar me-2"></i> Delivery by {product.delivery}</small>
           </div>
           <div className="d-flex gap-3">
-            <button className="btn btn-outline-secondary btn-sm">
-              <i className="bi bi-heart me-2"></i> Wishlist
+            <button className="btn btn-outline-secondary btn-sm" onClick={() => onWishlistToggle(productId, variantId)}>
+              <i className={`bi ${inWishlist ? "bi-heart-fill" : "bi-heart"} me-2`}></i>
+              {inWishlist ? "Wishlisted" : "Wishlist"}
             </button>
-            <button className="btn btn-outline-secondary btn-sm">
+            <button className="btn btn-outline-secondary btn-sm" onClick={onDeleteCartItem}>
               <i className="bi bi-trash me-2"></i> Delete
             </button>
           </div>
@@ -121,6 +124,7 @@ const CartPage = () => {
 
   const { items: userCartItems } = useSelector((state) => state.cart); // backend cart
   const { items: guestCartItems } = useSelector((state) => state.guestCart); // guest cart
+  const { items: wishlistItems } = useSelector((state) => state.whishlist);
 
   const loggedIn = isLoggedIn();
   useEffect(() => {
@@ -129,7 +133,40 @@ const CartPage = () => {
     }
   }, [dispatch, loggedIn]);
 
+  useEffect(() => {
+    if (loggedIn) {
+      dispatch(fetchWishlist());
+    }
+  }, [dispatch, loggedIn]);
+
   const cartItems = loggedIn ? userCartItems : guestCartItems;
+
+  const isInWishlist = (productId, variantId) => {
+    return wishlistItems.some(
+      (item) =>
+        item.productId === productId &&
+        (item.variantId === variantId || (!item.variantId && !variantId))
+    );
+  };
+
+  const handleWishlistToggle = (productId, variantId) => {
+    const item = wishlistItems.find(
+      (item) =>
+        item.productId === productId &&
+        (item.variantId === variantId || (!item.variantId && !variantId))
+    );
+
+    if (item) {
+      dispatch(deleteWishlistItem(item.id));
+       dispatch(fetchWishlist());
+    } else {
+      dispatch(addToWishlist(productId, variantId || null));
+       dispatch(fetchWishlist());
+    }
+
+    dispatch(fetchWishlist());
+  };
+
 
   return (
     <>
@@ -145,11 +182,13 @@ const CartPage = () => {
                     ? source.imageUrl
                     : `${BASE_URL}${source.imageUrl}`
                   : "/placeholder.jpg";
-
+              const productId = item.productId;
+              const variantId = item.variantId || null;
               return (
                 <CartItem
                   key={item.id || item.productId}
-                  id={item.id || item.productId}
+                  productId={productId}
+                  variantId={variantId}
                   quantity={item.quantity}
                   product={{
                     title: source.title || "Untitled Product",
@@ -160,6 +199,9 @@ const CartPage = () => {
                     image,
                     delivery: "13 Aug",
                   }}
+                  onWishlistToggle={handleWishlistToggle}
+                  inWishlist={isInWishlist(item.productId, item.variantId)}
+                  onDeleteCartItem={() => dispatch(DeleteFromCart(item.id))}
                 />
               );
             }
