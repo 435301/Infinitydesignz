@@ -28,9 +28,7 @@ const ProductsPage = () => {
   ];
 
 useEffect(() => {
-  // 🚨 Clear products immediately when params change
-  setProducts([]); // This prevents "carry over" of previous products
-
+  setProducts([]);
   const mainCategoryId = searchParams.get('mainCategoryId');
   const subCategoryId = parseInt(searchParams.get('subCategoryId'));
   const listSubCatId = parseInt(searchParams.get('listSubCatId'));
