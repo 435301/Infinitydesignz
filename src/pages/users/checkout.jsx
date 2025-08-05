@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from "react";
+
 import { Link } from "react-router-dom";
 import "../../css/user/userstyle.css"
 import Img1 from "../../img/img1.png";
@@ -6,53 +6,65 @@ import Img2 from "../../img/img2.png";
 
 import Header from "../../includes/header"; // ✅ Only one Header import
 import Footer from "../../includes/footer";
-import { useDispatch, useSelector } from "react-redux";
 import { fetchAddresses } from "../../redux/actions/addressAction";
 import AddressModal from "../../components/addAddressModal";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 
-const savedAddresses = [
-  {
-    id: "address1",
-    name: "Amit Sharma (Home)",
-    text: "Flat 101, Sunshine Apartments, Sector 15, MG Road, Near Apollo Hospital, Mumbai, Maharashtra, 400001",
-    phone: "+91 98765 43210",
-  },
-  {
-    id: "address2",
-    name: "Amit Sharma (Office)",
-    text: "Office No. 305, Tech Park, Andheri East, Mumbai, Maharashtra, 400069",
-    phone: "+91 98765 43210",
-  },
-];
 
 const CheckoutPage = () => {
-   const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
-  const { addresses = [] } = useSelector((state) => state.addressBook);
-  const [showNewAddress, setShowNewAddress] = useState(false);
+  const addresses = useSelector(
+    (state) => state.addressBook.addresses || [],
+    shallowEqual
+  );
   const [paymentMethod, setPaymentMethod] = useState("upi");
 
-  const toggleNewAddressForm = () => {
-    setShowNewAddress(!showNewAddress);
-  };
-
-  const handlePaymentChange = (e) => {
-    setPaymentMethod(e.target.value);
-  };
-
-    useEffect(() => {
+  useEffect(() => {
     dispatch(fetchAddresses());
   }, [dispatch]);
+
+  const handlePaymentChange = useCallback((e) => {
+    setPaymentMethod(e.target.value);
+  }, []);
+
+  const handleAddressSelect = useCallback((id) => {
+    setSelectedAddressId(id);
+  }, []);
+
+  const paymentOptions = useMemo(
+    () => [
+      { value: "upi", label: "UPI" },
+      { value: "creditCard", label: "Credit/Debit Card" },
+      { value: "netBanking", label: "Net Banking" },
+      { value: "emi", label: "EMI (No Cost EMI Available)" },
+      { value: "wallet", label: "Wallets (Paytm, Amazon Pay, etc.)" },
+      { value: "cod", label: "Cash on Delivery (₹100 Extra)" },
+    ],
+    []
+  );
+
+  const deliveryOptions = useMemo(
+    () => [
+      { value: "standard", label: "Standard Delivery (7–10 Days) - ₹499" },
+      { value: "express", label: "Express Delivery (3–5 Days) - ₹999" },
+      { value: "pickup", label: "Store Pickup (Free)" },
+    ],
+    []
+  );
 
   return (
     <>
       <Header />
       <section className="bg-light py-3">
-        <div class="container shop">
-          <div class="row">
+        <div className="container shop">
+          <div className="row">
             <div className="col-lg-12">
-              <a href=""><strong>Checkout</strong></a>
+              <a href="">
+                <strong>Checkout</strong>
+              </a>
             </div>
           </div>
         </div>
@@ -64,22 +76,21 @@ const CheckoutPage = () => {
             <div className="col-lg-8">
               <div className="checkout-form">
                 <h3>Shipping Information</h3>
-
                 <h4 className="mb-2">Select a Saved Address</h4>
-               {addresses.map((addr) => (
+                {addresses.map((addr) => (
                   <div className="saved-location" key={addr.id}>
                     <input
                       type="radio"
                       name="address"
                       id={`address-${addr.id}`}
                       checked={selectedAddressId === addr.id}
-                      onChange={() => setSelectedAddressId(addr.id)}
+                      onChange={() => handleAddressSelect(addr.id)}
                     />
                     <div className="location-details">
                       <div className="d-flex align-items-center">
-                        <span className="location-title">{addr.name} ({addr.label})</span>
-                        {/* Optional Edit Button */}
-                        {/* <Link to="#" className="location-edit">Edit</Link> */}
+                        <span className="location-title">
+                          {addr.name} ({addr.label})
+                        </span>
                       </div>
                       <p className="location-text">
                         {addr.flatNumber}, {addr.buildingName}, {addr.addressLine1}, {addr.addressLine2}
@@ -91,54 +102,43 @@ const CheckoutPage = () => {
                     </div>
                   </div>
                 ))}
-
-
-                <button type="button" className="secondary-action mb-3" onClick={() => setShowModal(true)}>
+                <button
+                  type="button"
+                  className="secondary-action mb-3"
+                  onClick={() => setShowModal(true)}
+                >
                   + Add New Address
                 </button>
-
-
-              
                 {/* Delivery Options */}
                 <h3 className="mt-4 mb-3">Delivery Options</h3>
                 <div className="shipping-methods">
-                  {["standard", "express", "pickup"].map((method) => (
-                    <div className="shipping-method" key={method}>
-                      <input type="radio" name="delivery" id={method} defaultChecked={method === "standard"} />
-                      <label htmlFor={method}>
-                        {method === "standard" && "Standard Delivery (7–10 Days) - ₹499"}
-                        {method === "express" && "Express Delivery (3–5 Days) - ₹999"}
-                        {method === "pickup" && "Store Pickup (Free)"}
-                      </label>
+                  {deliveryOptions.map((method) => (
+                    <div className="shipping-method" key={method.value}>
+                      <input
+                        type="radio"
+                        name="delivery"
+                        id={method.value}
+                        defaultChecked={method.value === "standard"}
+                      />
+                      <label htmlFor={method.value}>{method.label}</label>
                     </div>
                   ))}
                 </div>
-
                 {/* Payment Method */}
                 <h3 className="mt-4 mb-3">Payment Method</h3>
-                {["upi", "creditCard", "netBanking", "emi", "wallet", "cod"].map((method) => (
-                  <div className="payment-method" key={method}>
+                {paymentOptions.map((method) => (
+                  <div className="payment-method" key={method.value}>
                     <input
                       type="radio"
                       name="payment"
-                      id={method}
-                      value={method}
-                      checked={paymentMethod === method}
+                      id={method.value}
+                      value={method.value}
+                      checked={paymentMethod === method.value}
                       onChange={handlePaymentChange}
                     />
-                    <label htmlFor={method}>
-                      {{
-                        upi: "UPI",
-                        creditCard: "Credit/Debit Card",
-                        netBanking: "Net Banking",
-                        emi: "EMI (No Cost EMI Available)",
-                        wallet: "Wallets (Paytm, Amazon Pay, etc.)",
-                        cod: "Cash on Delivery (₹100 Extra)",
-                      }[method]}
-                    </label>
+                    <label htmlFor={method.value}>{method.label}</label>
                   </div>
                 ))}
-
                 {/* Conditional Payment Fields */}
                 {paymentMethod === "creditCard" && (
                   <div id="cardDetails">
@@ -162,14 +162,12 @@ const CheckoutPage = () => {
                     </div>
                   </div>
                 )}
-
                 {paymentMethod === "upi" && (
                   <div id="upiDetails" className="mt-3">
                     <label className="field-label">UPI ID</label>
                     <input type="text" className="text-field" placeholder="yourname@upi" />
                   </div>
                 )}
-
                 {paymentMethod === "emi" && (
                   <div id="emiDetails" className="mt-3">
                     <label className="field-label">Select EMI Plan</label>
@@ -180,7 +178,6 @@ const CheckoutPage = () => {
                     </select>
                   </div>
                 )}
-
                 {paymentMethod === "netBanking" && (
                   <div className="mt-3">
                     <label className="field-label">Select Bank</label>
@@ -193,7 +190,6 @@ const CheckoutPage = () => {
                     </select>
                   </div>
                 )}
-
                 {paymentMethod === "wallet" && (
                   <div className="mt-3">
                     <label className="field-label">Select Wallet</label>
@@ -206,7 +202,6 @@ const CheckoutPage = () => {
                 )}
               </div>
             </div>
-
             {/* RIGHT COLUMN */}
             <div className="col-lg-4">
               <div className="cart-details">
@@ -251,20 +246,18 @@ const CheckoutPage = () => {
                   </div>
                 </div>
               </div>
-               {showModal && (
+              {showModal && (
                 <AddressModal
                   selectedType="Home"
                   onClose={() => setShowModal(false)}
-                  onTypeChange={() => { }}
+                  onTypeChange={() => {}}
                 />
               )}
-
             </div>
           </div>
         </div>
       </div>
-            <Footer />
-
+      <Footer />
     </>
   );
 };
