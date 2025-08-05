@@ -39,9 +39,8 @@ const ProductTopBar = React.memo(() => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                const res = await axios.get(`${BASE_URL}/products`);
+                const res = await axios.get(`${BASE_URL}/products/search`);
                 let data = res.data;
-
                 if (listSubCategoryId) {
                     const subCatId = parseInt(listSubCategoryId, 10);
                     data = data.filter(product => product.listSubCategoryId === subCatId);
