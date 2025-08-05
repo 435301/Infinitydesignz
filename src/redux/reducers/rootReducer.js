@@ -21,6 +21,7 @@ import wishlistReducer from './whishlistReducer';
 import LoginReducer from './loginReducer';
 import { cartReducer } from './cartReducer';
 import { guestCartReducer } from './guestCartReducer';
+import addressReducer from './addressReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -46,6 +47,7 @@ const rootReducer = combineReducers({
   login: LoginReducer,
   cart:cartReducer,
   guestCart:guestCartReducer,
+  addressBook: addressReducer,
 });
 
 export default rootReducer;

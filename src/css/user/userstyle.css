@@ -3783,6 +3783,12 @@ Address Book
   font-weight: 600;
 }
 
+.address-label.other {
+  background-color: rgb(222, 215, 215);
+  color: #000;
+  font-weight: 600;
+}
+
 .address-details {
   color: #6c757d;
   font-size: 0.9rem;
@@ -5605,4 +5611,13 @@ h3 a {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
+.error-msg {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+.input-error {
+  border: 1px solid red;
+}
 
