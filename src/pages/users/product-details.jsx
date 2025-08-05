@@ -18,8 +18,8 @@ import { setSelectedVariant } from "../../redux/actions/productAction";
 import { addToCart } from "../../redux/actions/cartAction";
 import { isLoggedIn } from "../../utils/auth";
 import { addToGuestCart } from "../../redux/actions/guestCartAction";
-import { addToWishlist } from "../../redux/actions/whishlistAction";
-
+import { addToWishlist, deleteWishlistItem, fetchWishlist } from "../../redux/actions/whishlistAction";
+import { toast } from "react-toastify";
 
 export default function ProductDetailPage() {
   const dispatch = useDispatch();
@@ -35,6 +35,10 @@ export default function ProductDetailPage() {
   const [selectedSizeId, setSelectedSizeId] = useState("");
   const [selectedColorId, setSelectedColorId] = useState("");
   const [pincode, setPincode] = useState("");
+  const wishlistItems = useSelector((state) => state.whishlist.items);
+  console.log('wishlistItems', wishlistItems)
+    const [localWishlisted, setLocalWishlisted] = useState(false);
+
 
   // Memoize category hierarchy to avoid recalculation
   const getCategoryHierarchy = useCallback((categoryId, allCategories) => {
@@ -63,6 +67,7 @@ export default function ProductDetailPage() {
   useEffect(() => {
     dispatch(fetchUserProductDetailsById(productId, variantIdFromURL));
     dispatch(fetchCategories());
+    dispatch(fetchWishlist());
   }, [dispatch, productId, variantIdFromURL]);
 
   useEffect(() => {
@@ -191,11 +196,32 @@ export default function ProductDetailPage() {
     }
   }, [dispatch, productId, variantIdFromURL, qty]);
   const handleBuy = useCallback(() => alert("Buy Now clicked!"), []);
+
+  const parsedProductId = parseInt(productId);
+  const parsedVariantId = variantIdFromURL ? parseInt(variantIdFromURL) : null;
+
+  const wishlistItem  = wishlistItems.find(
+    (item) =>
+      item.productId === parsedProductId &&
+      (!parsedVariantId || item.variantId === parsedVariantId)
+  );
+  const isWishlisted = Boolean(wishlistItem);
+  console.log('wishlistItem',wishlistItem?.id)
+
+useEffect(() => {
+  setLocalWishlisted(isWishlisted);
+}, [isWishlisted]);
+
   const handleWishlist = useCallback(() => {
-    const parsedProductId = parseInt(productId);
-    const parsedVariantId = variantIdFromURL ? parseInt(variantIdFromURL) : null;
-    dispatch(addToWishlist(parsedProductId, parsedVariantId));
-  }, [dispatch, productId, variantIdFromURL]);
+    if (wishlistItem?.id) {
+      dispatch(deleteWishlistItem(wishlistItem?.id));
+      toast.success("Removed from wishlist successfully");
+      setLocalWishlisted(false);
+    } else {
+      dispatch(addToWishlist(parsedProductId, parsedVariantId));
+    }
+  }, [dispatch, wishlistItem, parsedProductId, parsedVariantId]);
+
   const handlePincodeCheck = useCallback(() => {
     if (pincode) alert(`Checking delivery for PIN code: ${pincode}`);
     else alert("Please enter a PIN code");
@@ -390,8 +416,12 @@ export default function ProductDetailPage() {
                 <button className="buy-now-btn" onClick={handleBuy}>
                   <i className="bi bi-lightning-charge-fill"></i> Buy Now
                 </button>
-                <button className="add-to-wishlist-btn" onClick={handleWishlist}>
-                  <i className="bi bi-heart"></i> Add to Wishlist
+                <button
+                  className="add-to-wishlist-btn"
+                  onClick={handleWishlist}
+                  title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"} >
+                  <i className={`bi ${localWishlisted  ? "bi-heart-fill" : "bi-heart"}`}></i>{" "}
+                  {isWishlisted ? "Wishlisted" : "Add to Wishlist"}
                 </button>
               </div>
 

@@ -8,7 +8,7 @@ import ProductCard from '../../components/productCard';
 import axios from 'axios';
 import BASE_URL from '../../config/config';
 import { useSelector } from 'react-redux';
- 
+
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [searchParams] = useSearchParams();
@@ -16,69 +16,71 @@ const ProductsPage = () => {
   const mainCategoryId = parseInt(searchParams.get('mainCategoryId'));
   const subCategoryId = parseInt(searchParams.get('subCategoryId'));
   const listSubCatId = parseInt(searchParams.get('listSubCatId'));
- 
+
   const getCategoryTitle = (id) =>
     categories.find((cat) => cat.id === id)?.title;
- 
+
   const breadcrumbItems = [
     { label: 'Home', link: '/' },
     ...(mainCategoryId ? [{ label: getCategoryTitle(mainCategoryId) }] : []),
     ...(subCategoryId ? [{ label: getCategoryTitle(subCategoryId) }] : []),
     ...(listSubCatId ? [{ label: getCategoryTitle(listSubCatId) }] : []),
   ];
- 
-  useEffect(() => {
-    const mainCategoryId = searchParams.get('mainCategoryId');
-    const brandId = searchParams.get('brandId') || 0;
-    const searchStr = searchParams.get('searchStr') || '';
-    const filters = searchParams.get('filters') || '{}';
- 
-    const queryString = new URLSearchParams({
-      ...(mainCategoryId && { mainCategoryId }),
-      ...(subCategoryId && { subCategoryId }),
-      ...(listSubCatId && { listSubCatId }),
-      brandId,
-      searchStr,
-      filters,
-    }).toString();
- 
-    axios
-      .get(`${BASE_URL}/products/search?${queryString}`)
-      .then((res) => {
-        const rawProducts = res.data || [];
-        const combinedProducts = rawProducts.flatMap((product) => {
-          const mainProductEntry = { ...product, isVariant: false };
- 
-          // const variantEntries = (product.variants || []).map((variant) => ({
-          //   ...product,
-          //   id: `${product.id}-${variant.id}`,
-          //   mrp: variant.mrp,
-          //   sellingPrice: variant.sellingPrice,
-          //   variantId: variant.id,
-          //   isVariant: true,
-          //   _variant: variant,
-          // }));
 
-          const variantEntries = (product.variants || []).map((variant) => ({
-  ...product,
-  variantId: variant.id,
-  isVariant: true,
-  _variant: variant,
-  mrp: variant.mrp,
-  sellingPrice: variant.sellingPrice,
-}));
+useEffect(() => {
+  // 🚨 Clear products immediately when params change
+  setProducts([]); // This prevents "carry over" of previous products
 
- 
-          return [mainProductEntry, ...variantEntries];
-        });
- 
-        setProducts(combinedProducts);
-      })
-      .catch((err) => {
-        console.error('GET: Failed to fetch products', err);
+  const mainCategoryId = searchParams.get('mainCategoryId');
+  const subCategoryId = parseInt(searchParams.get('subCategoryId'));
+  const listSubCatId = parseInt(searchParams.get('listSubCatId'));
+  const brandId = searchParams.get('brandId') || 0;
+  const searchStr = searchParams.get('searchStr') || '';
+  const filters = searchParams.get('filters') || '{}';
+
+  const queryString = new URLSearchParams({
+    ...(mainCategoryId && { mainCategoryId }),
+    ...(subCategoryId && { subCategoryId }),
+    ...(listSubCatId && { listSubCatId }),
+    brandId,
+    searchStr,
+    filters,
+  }).toString();
+
+  axios
+    .get(`${BASE_URL}/products/search?${queryString}`)
+    .then((res) => {
+      const rawProducts = res.data || [];
+
+      const filteredProducts = listSubCatId
+        ? rawProducts.filter((p) => p.category?.id === listSubCatId)
+        : subCategoryId
+        ? rawProducts.filter((p) => p.category?.parentId === subCategoryId)
+        : rawProducts;
+
+      const combinedProducts = filteredProducts.flatMap((product) => {
+        const mainProductEntry = { ...product, isVariant: false };
+        const variantEntries = (product.variants || []).map((variant) => ({
+          ...product,
+          variantId: variant.id,
+          isVariant: true,
+          _variant: variant,
+          mrp: variant.mrp,
+          sellingPrice: variant.sellingPrice,
+        }));
+        return [mainProductEntry, ...variantEntries];
       });
-  }, [searchParams]);
- 
+
+      setProducts(combinedProducts); // ✅ Fresh data only
+    })
+    .catch((err) => {
+      console.error('GET: Failed to fetch products', err);
+    });
+}, [searchParams]);
+
+
+
+
   const groupByListSubCategory = (products) => {
     const grouped = {};
     products.forEach((product) => {
@@ -88,11 +90,10 @@ const ProductsPage = () => {
     });
     return grouped;
   };
- 
+
   return (
     <>
       <Header />
- 
       <section className="bg-light py-3">
         <div className="container shop">
           <div className="row">
@@ -115,16 +116,22 @@ const ProductsPage = () => {
           </div>
         </div>
       </section>
- 
+
       <section className="terms-of-service">
         <div className="container">
           <h2>Products</h2>
           {subCategoryId && (
             <div className="mb-3">
-              <h5>
+              {/* <h5>
                 {getCategoryTitle(subCategoryId)} ({products.length} item
                 {products.length !== 1 ? 's' : ''})
-              </h5>
+              </h5> */}
+              <h5>
+  {listSubCatId
+    ? getCategoryTitle(listSubCatId)
+    : getCategoryTitle(subCategoryId)} ({products.length} item{products.length !== 1 ? 's' : ''})
+</h5>
+
             </div>
           )}
           <div className="row">
@@ -168,10 +175,10 @@ const ProductsPage = () => {
           </div>
         </div>
       </section>
- 
+
       <Footer />
     </>
   );
 };
- 
+
 export default ProductsPage;

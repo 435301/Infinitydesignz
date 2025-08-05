@@ -214,8 +214,6 @@ const ProductCard = ({ product, variant = null }) => {
           </div>
         </Link>
       </div>
-
-      {/* OTP Login Modal */}
       <OtpLoginModal
         show={showLogin}
         onClose={() => setShowLogin(false)}
