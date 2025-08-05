@@ -25,7 +25,7 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   position: relative;
   z-index: 1050;
-  max-height: 150vh;
+  /* max-height: 200vh; */
 }
 
 .modal-top h3 {

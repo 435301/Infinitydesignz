@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import { Link } from "react-router-dom";
 import "../../css/user/userstyle.css"
 import Img1 from "../../img/img1.png";
@@ -6,6 +6,10 @@ import Img2 from "../../img/img2.png";
 
 import Header from "../../includes/header"; // ✅ Only one Header import
 import Footer from "../../includes/footer";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAddresses } from "../../redux/actions/addressAction";
+import AddressModal from "../../components/addAddressModal";
+
 const savedAddresses = [
   {
     id: "address1",
@@ -22,6 +26,10 @@ const savedAddresses = [
 ];
 
 const CheckoutPage = () => {
+   const dispatch = useDispatch();
+  const [showModal, setShowModal] = useState(false);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const { addresses = [] } = useSelector((state) => state.addressBook);
   const [showNewAddress, setShowNewAddress] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("upi");
 
@@ -32,6 +40,10 @@ const CheckoutPage = () => {
   const handlePaymentChange = (e) => {
     setPaymentMethod(e.target.value);
   };
+
+    useEffect(() => {
+    dispatch(fetchAddresses());
+  }, [dispatch]);
 
   return (
     <>
@@ -54,76 +66,39 @@ const CheckoutPage = () => {
                 <h3>Shipping Information</h3>
 
                 <h4 className="mb-2">Select a Saved Address</h4>
-                {savedAddresses.map((addr) => (
+               {addresses.map((addr) => (
                   <div className="saved-location" key={addr.id}>
-                    <input type="radio" name="address" id={addr.id} defaultChecked={addr.id === "address1"} />
+                    <input
+                      type="radio"
+                      name="address"
+                      id={`address-${addr.id}`}
+                      checked={selectedAddressId === addr.id}
+                      onChange={() => setSelectedAddressId(addr.id)}
+                    />
                     <div className="location-details">
                       <div className="d-flex align-items-center">
-                        <span className="location-title">{addr.name}</span>
-                        <Link to="#" className="location-edit">Edit</Link>
+                        <span className="location-title">{addr.name} ({addr.label})</span>
+                        {/* Optional Edit Button */}
+                        {/* <Link to="#" className="location-edit">Edit</Link> */}
                       </div>
-                      <p className="location-text">{addr.text}</p>
+                      <p className="location-text">
+                        {addr.flatNumber}, {addr.buildingName}, {addr.addressLine1}, {addr.addressLine2}
+                      </p>
+                      <p className="location-text">
+                        {addr.city}, {addr.state}, {addr.pincode}
+                      </p>
                       <p className="location-text">Phone: {addr.phone}</p>
                     </div>
                   </div>
                 ))}
 
-                <button type="button" className="secondary-action mb-3" onClick={toggleNewAddressForm}>
-                  Add New Address
+
+                <button type="button" className="secondary-action mb-3" onClick={() => setShowModal(true)}>
+                  + Add New Address
                 </button>
 
-                {showNewAddress && (
-                  <div id="newAddressForm">
-                    <h4>Add New Address</h4>
-                    <div className="row">
-                      <div className="col-md-6 mb-2">
-                        <label className="field-label">Full Name</label>
-                        <input type="text" className="text-field" placeholder="Amit Sharma" required />
-                      </div>
-                      <div className="col-md-6 mb-2">
-                        <label className="field-label">Email Address</label>
-                        <input type="email" className="text-field" placeholder="amit.sharma@example.com" required />
-                      </div>
-                    </div>
-                    <div className="mb-2">
-                      <label className="field-label">Mobile Number</label>
-                      <input type="tel" className="text-field" placeholder="+91 98765 43210" required />
-                    </div>
-                    <div className="mb-2">
-                      <label className="field-label">Flat, House No., Company</label>
-                      <input type="text" className="text-field" placeholder="Flat 101, Sunshine Apartments" required />
-                    </div>
-                    <div className="mb-2">
-                      <label className="field-label">Area, Street</label>
-                      <input type="text" className="text-field" placeholder="Sector 15, MG Road" required />
-                    </div>
-                    <div className="mb-2">
-                      <label className="field-label">Landmark (Optional)</label>
-                      <input type="text" className="text-field" placeholder="Near Apollo Hospital" />
-                    </div>
-                    <div className="location-layout">
-                      <div className="location-box mb-2">
-                        <label className="field-label">Town/City</label>
-                        <input type="text" className="text-field" placeholder="Mumbai" required />
-                      </div>
-                      <div className="location-box mb-2">
-                        <label className="field-label">State</label>
-                        <select className="dropdown-field" required>
-                          <option value="">Select State</option>
-                          <option>Maharashtra</option>
-                          <option>Delhi</option>
-                          <option>Karnataka</option>
-                          <option>Tamil Nadu</option>
-                        </select>
-                      </div>
-                      <div className="location-box mb-2">
-                        <label className="field-label">Pincode</label>
-                        <input type="text" className="text-field" placeholder="400001" required />
-                      </div>
-                    </div>
-                  </div>
-                )}
 
+              
                 {/* Delivery Options */}
                 <h3 className="mt-4 mb-3">Delivery Options</h3>
                 <div className="shipping-methods">
@@ -276,6 +251,14 @@ const CheckoutPage = () => {
                   </div>
                 </div>
               </div>
+               {showModal && (
+                <AddressModal
+                  selectedType="Home"
+                  onClose={() => setShowModal(false)}
+                  onTypeChange={() => { }}
+                />
+              )}
+
             </div>
           </div>
         </div>

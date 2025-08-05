@@ -31,8 +31,8 @@ export const addAddress = (address) => async (dispatch) => {
             headers: { Authorization: `Bearer ${getToken()}` }
         });
         dispatch({ type: ADD_ADDRESS, payload: res.data });
-        dispatch(fetchAddresses());
         toast.success(res.data?.message || 'Address added succesfully')
+        dispatch(fetchAddresses());
     } catch (error) {
         console.error("Add address failed", error);
     }
@@ -44,8 +44,9 @@ export const editAddress = (id, updatedAddress) => async (dispatch) => {
             headers: { Authorization: `Bearer ${getToken()}` }
         });
         dispatch({ type: UPDATE_ADDRESS, payload: res.data });
+        toast.success(res.data?.message || 'Address edited succesfully')
         dispatch(fetchAddresses());
-         toast.success(res.data?.message || 'Address edited succesfully')
+
     } catch (error) {
         console.error("Update address failed", error);
     }
@@ -58,8 +59,8 @@ export const deleteAddress = (id) => async (dispatch) => {
             headers: { Authorization: `Bearer ${getToken()}` }
         });
         dispatch({ type: DELETE_ADDRESS, payload: id });
+        toast.success(res.data?.message || 'Address deleted succesfully')
         dispatch(fetchAddresses());
-         toast.success(res.data?.message || 'Address deleted succesfully')
     } catch (error) {
         console.error("Delete address failed", error);
     }
