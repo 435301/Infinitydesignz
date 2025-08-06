@@ -90,23 +90,24 @@ function EditAddressModal({ addressData, onClose, selectedType, onTypeChange }) 
                 pincode: addressData.pincode || '',
                 phone: addressData.phone || '',
                 label: addressData.label || selectedType || '',
+                default: addressData.default || false,
             });
             setSelectedState(addressData.state || '');
             setSelectedCity(addressData.city || '');
         }
     }, [addressData]);
 
-    useEffect(() => {
-        if (addressData) {
-            setFormData({ ...addressData });
-            setSelectedState(addressData.state);
-            setSelectedCity(addressData.city);
-            setFormData(prev => ({
-                ...prev,
-                ...addressData,
-            }));
-        }
-    }, [addressData]);
+    // useEffect(() => {
+    //     if (addressData) {
+    //         setFormData({ ...addressData });
+    //         setSelectedState(addressData.state);
+    //         setSelectedCity(addressData.city);
+    //         setFormData(prev => ({
+    //             ...prev,
+    //             ...addressData,
+    //         }));
+    //     }
+    // }, [addressData]);
 
     useEffect(() => {
         setFormData((prev) => ({

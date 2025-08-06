@@ -66,9 +66,16 @@ export const deleteAddress = (id) => async (dispatch) => {
     }
 };
 
-export const setDefaultAddress = (id) => {
-    return {
-        type: SET_DEFAULT_ADDRESS,
-        payload: id,
-    };
+
+export const setDefaultAddress = (id) => async (dispatch) => {
+    try {
+        const response = await axios.patch(`${BASE_URL}/user/addresses/set-default/${id}`,{} ,{
+            headers: { Authorization: `Bearer ${getToken()}` }
+        });
+        toast.success(response.data?.message)
+       await dispatch(fetchAddresses());
+        return response.data;
+    } catch (error) {
+        console.error('Error setting default address:', error);
+    }
 };

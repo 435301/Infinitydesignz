@@ -5621,3 +5621,12 @@ h3 a {
   border: 1px solid red;
 }
 
+.make-default-btn.default-active {
+  background-color: #6c757d !important; /* Bootstrap grey */
+  color: white !important;
+  border: 1px solid #6c757d;
+  cursor: default;
+}
+
+
+

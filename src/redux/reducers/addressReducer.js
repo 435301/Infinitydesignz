@@ -19,8 +19,18 @@ const addressReducer = (state = initialState, action) => {
   switch (action.type) {
     case FETCH_ADDRESSES_REQUEST:
       return { ...state, loading: true };
+    // case FETCH_ADDRESSES_SUCCESS:
+    //   return { ...state, loading: false, addresses: action.payload, error: "" };
     case FETCH_ADDRESSES_SUCCESS:
-      return { ...state, loading: false, addresses: action.payload, error: "" };
+  return {
+    ...state,
+    loading: false,
+    addresses: action.payload.map((addr) => ({
+      ...addr,
+      isDefault: addr.default === true,
+    })),
+    error: "",
+  };
     case FETCH_ADDRESSES_FAILURE:
       return { ...state, loading: false, addresses: [], error: action.payload };
 

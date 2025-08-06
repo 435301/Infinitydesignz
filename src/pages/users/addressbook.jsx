@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import Header from '../../includes/header';
 import Footer from '../../includes/footer';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAddresses, addAddress, editAddress, deleteAddress } from '../../redux/actions/addressAction';
+import { fetchAddresses, addAddress, editAddress, deleteAddress, setDefaultAddress } from '../../redux/actions/addressAction';
 import '../../css/admin/style.css';
 import EditAddressModal from '../../components/editAddressModal';
 import DeleteModal from '../../modals/deleteModal';
@@ -39,6 +39,11 @@ export default function AddressBook() {
     setDeleteModalOpen(false);
     setAddressToDelete(null);
   };
+
+  const handleSetDefault = (id) => {
+    dispatch(setDefaultAddress(id));
+  };
+
 
   return (
     <>
@@ -94,6 +99,7 @@ export default function AddressBook() {
                       setAddressToDelete(addr);
                       setDeleteModalOpen(true);
                     }}
+                    onSetDefault={() => handleSetDefault(addr.id)}
                   />
                 ))}
               </div>
@@ -110,7 +116,7 @@ export default function AddressBook() {
       <Footer />
 
       {/* Modal Popup */}
-      {showModal && <AddressModal selectedType={selectedType} onClose={()=>setShowModal(false)} onTypeChange={handleTypeSelect} />}
+      {showModal && <AddressModal selectedType={selectedType} onClose={() => setShowModal(false)} onTypeChange={handleTypeSelect} />}
       {editModalOpen && selectedAddress && (
         <EditAddressModal addressData={selectedAddress} selectedType={selectedAddress.label} onTypeChange={handleTypeSelect} onClose={() => {
           setEditModalOpen(false)
@@ -128,7 +134,7 @@ export default function AddressBook() {
   );
 }
 
-function AddressEntry({ name, addressLines, mobile, label, isDefault = false, onEdit, onDelete }) {
+function AddressEntry({ name, addressLines, mobile, label, isDefault = false, onEdit, onDelete, onSetDefault }) {
   return (
     <div className="address-entry p-3">
       {isDefault && <p className="default-address-text"><strong>Default Address</strong></p>}
@@ -141,7 +147,17 @@ function AddressEntry({ name, addressLines, mobile, label, isDefault = false, on
       <div className="address-actions">
         <div className="action-group">
           <button className="btn action-btn" onClick={onEdit}><i className="bi bi-pencil" ></i> Edit Address</button>
-          {!isDefault && <button className="btn action-btn make-default-btn"><i className="bi bi-check-circle"></i> Make it Default</button>}
+          {!isDefault && (
+            <button
+              className={`btn action-btn make-default-btn ${isDefault ? 'default-selected' : ''}`}
+              onClick={onSetDefault}
+              disabled={isDefault}
+            >
+              <i className="bi bi-check-circle"></i>
+              {isDefault ? 'Default Selected' : 'Make it Default'}
+            </button>
+
+          )}
         </div>
         <button className="btn action-btn delete-btn" onClick={onDelete}><i className="bi bi-x"></i> Delete Address</button>
       </div>
