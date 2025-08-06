@@ -20,13 +20,17 @@ export const cartReducer = (state = initialState, action) => {
             return { ...state, loading: true };
 
         case FETCH_CART_SUCCESS:
-            return { ...state, loading: false, items: action.payload };
+            return {
+                ...state,
+                items: action.payload.items || [],
+                priceSummary: action.payload.priceSummary || {},
+            };
 
         case FETCH_CART_FAILURE:
             return { ...state, loading: false, error: action.payload };
 
         case ADD_TO_CART_SUCCESS:
-            return { ...state, items: [...state.items, action.payload] };
+            return { ...state, items: [...(state.items || []), action.payload] };
 
         case UPDATE_CART_SUCCESS:
             return {

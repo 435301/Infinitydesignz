@@ -3,14 +3,12 @@ import { Link } from "react-router-dom";
 import "../../css/user/userstyle.css"
 import Img1 from "../../img/img1.png";
 import Img2 from "../../img/img2.png";
-
-import Header from "../../includes/header"; // ✅ Only one Header import
+import Header from "../../includes/header"; 
 import Footer from "../../includes/footer";
 import { fetchAddresses } from "../../redux/actions/addressAction";
 import AddressModal from "../../components/addAddressModal";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-
 
 const CheckoutPage = () => {
   const dispatch = useDispatch();
@@ -46,14 +44,14 @@ const CheckoutPage = () => {
     []
   );
 
-  const deliveryOptions = useMemo(
-    () => [
-      { value: "standard", label: "Standard Delivery (7–10 Days) - ₹499" },
-      { value: "express", label: "Express Delivery (3–5 Days) - ₹999" },
-      { value: "pickup", label: "Store Pickup (Free)" },
-    ],
-    []
-  );
+  // const deliveryOptions = useMemo(
+  //   () => [
+  //     { value: "standard", label: "Standard Delivery (7–10 Days) - ₹499" },
+  //     { value: "express", label: "Express Delivery (3–5 Days) - ₹999" },
+  //     { value: "pickup", label: "Store Pickup (Free)" },
+  //   ],
+  //   []
+  // );
 
   return (
     <>
@@ -110,8 +108,8 @@ const CheckoutPage = () => {
                   + Add New Address
                 </button>
                 {/* Delivery Options */}
-                <h3 className="mt-4 mb-3">Delivery Options</h3>
-                <div className="shipping-methods">
+                {/* <h3 className="mt-4 mb-3">Delivery Options</h3> */}
+                {/* <div className="shipping-methods">
                   {deliveryOptions.map((method) => (
                     <div className="shipping-method" key={method.value}>
                       <input
@@ -123,10 +121,10 @@ const CheckoutPage = () => {
                       <label htmlFor={method.value}>{method.label}</label>
                     </div>
                   ))}
-                </div>
+                </div> */}
                 {/* Payment Method */}
-                <h3 className="mt-4 mb-3">Payment Method</h3>
-                {paymentOptions.map((method) => (
+                {/* <h3 className="mt-4 mb-3">Payment Method</h3> */}
+                {/* {paymentOptions.map((method) => (
                   <div className="payment-method" key={method.value}>
                     <input
                       type="radio"
@@ -138,9 +136,9 @@ const CheckoutPage = () => {
                     />
                     <label htmlFor={method.value}>{method.label}</label>
                   </div>
-                ))}
+                ))} */}
                 {/* Conditional Payment Fields */}
-                {paymentMethod === "creditCard" && (
+                {/* {paymentMethod === "creditCard" && (
                   <div id="cardDetails">
                     <div className="mb-2">
                       <label className="field-label">Card Number</label>
@@ -161,14 +159,14 @@ const CheckoutPage = () => {
                       <input type="text" className="text-field" placeholder="Amit Sharma" />
                     </div>
                   </div>
-                )}
-                {paymentMethod === "upi" && (
+                )} */}
+                {/* {paymentMethod === "upi" && (
                   <div id="upiDetails" className="mt-3">
                     <label className="field-label">UPI ID</label>
                     <input type="text" className="text-field" placeholder="yourname@upi" />
                   </div>
-                )}
-                {paymentMethod === "emi" && (
+                )} */}
+                {/* {paymentMethod === "emi" && (
                   <div id="emiDetails" className="mt-3">
                     <label className="field-label">Select EMI Plan</label>
                     <select className="dropdown-field">
@@ -177,8 +175,8 @@ const CheckoutPage = () => {
                       <option>6 Months – ₹6,250/month</option>
                     </select>
                   </div>
-                )}
-                {paymentMethod === "netBanking" && (
+                )} */}
+                {/* {paymentMethod === "netBanking" && (
                   <div className="mt-3">
                     <label className="field-label">Select Bank</label>
                     <select className="dropdown-field">
@@ -189,8 +187,8 @@ const CheckoutPage = () => {
                       <option>Axis</option>
                     </select>
                   </div>
-                )}
-                {paymentMethod === "wallet" && (
+                )} */}
+                {/* {paymentMethod === "wallet" && (
                   <div className="mt-3">
                     <label className="field-label">Select Wallet</label>
                     <select className="dropdown-field">
@@ -199,7 +197,7 @@ const CheckoutPage = () => {
                       <option>Amazon Pay</option>
                     </select>
                   </div>
-                )}
+                )} */}
               </div>
             </div>
             {/* RIGHT COLUMN */}
