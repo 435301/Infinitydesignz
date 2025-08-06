@@ -5,12 +5,12 @@ import { toast } from "react-toastify";
 export const FETCH_CART_REQUEST = "FETCH_CART_REQUEST";
 export const FETCH_CART_SUCCESS = "FETCH_CART_SUCCESS";
 export const FETCH_CART_FAILURE = "FETCH_CART_FAILURE";
-
 export const ADD_TO_CART_SUCCESS = "ADD_TO_CART_SUCCESS";
 export const UPDATE_CART_SUCCESS = "UPDATE_CART_SUCCESS";
 export const DELETE_FROM_CART_SUCCESS = "DELETE_FROM_CART_SUCCESS";
-
-export const CLEAR_GUEST_CART='CLEAR_GUEST_CART'
+export const APPLY_COUPON_SUCCESS = "APPLY_COUPON_SUCCESS";
+export const REMOVE_COUPON = 'REMOVE_COUPON';
+export const CLEAR_GUEST_CART = 'CLEAR_GUEST_CART'
 
 const getToken = () => localStorage.getItem('access_token');
 
@@ -76,32 +76,62 @@ export const DeleteFromCart = (id) => async (dispatch) => {
 };
 
 export const syncGuestCartToUserCart = () => async (dispatch, getState) => {
-  const { guestCart: { items } } = getState();
+    const { guestCart: { items } } = getState();
 
-  if (!items || items.length === 0) return;
+    if (!items || items.length === 0) return;
 
-  try {
-    const token = getToken();
+    try {
+        const token = getToken();
 
-    for (const item of items) {
-      await axios.post(
-        `${BASE_URL}/cart`,
-        {
-          productId: item.productId,
-          variantId: item.variantId,
-          quantity: item.quantity,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        for (const item of items) {
+            await axios.post(
+                `${BASE_URL}/cart`,
+                {
+                    productId: item.productId,
+                    variantId: item.variantId,
+                    quantity: item.quantity,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
         }
-      );
-    }
 
-    dispatch({type:CLEAR_GUEST_CART});
-    dispatch(fetchCart()); 
-  } catch (error) {
-    console.error("Failed to sync guest cart:", error);
-  }
+        dispatch({ type: CLEAR_GUEST_CART });
+        dispatch(fetchCart());
+    } catch (error) {
+        console.error("Failed to sync guest cart:", error);
+    }
 };
+
+export const applyCoupon = (couponCode, items) => async (dispatch) => {
+    try {
+        const response = await axios.post(
+            `${BASE_URL}/coupons/apply`,
+            {
+                items,
+                coupon: { code: couponCode },
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                },
+            }
+        );
+        dispatch({
+            type: APPLY_COUPON_SUCCESS,
+            payload: {
+                priceSummary: response.data.priceSummary,
+                coupon: response.data.coupon,
+            },
+        });
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Invalid coupon code");
+    }
+};
+
+export const removeCoupon = () => ({
+    type: REMOVE_COUPON,
+});

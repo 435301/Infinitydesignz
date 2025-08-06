@@ -7,8 +7,10 @@ import Footer from "../../includes/footer";
 import { useDispatch, useSelector } from "react-redux";
 import { isLoggedIn } from "../../utils/auth";
 import {
+  applyCoupon,
   DeleteFromCart,
   fetchCart,
+  removeCoupon,
 } from "../../redux/actions/cartAction";
 import BASE_URL from "../../config/config";
 import {
@@ -118,6 +120,11 @@ const CartItem = ({
 };
 
 const PriceSummary = ({ summary = {} }) => {
+  const dispatch = useDispatch();
+  const [couponCode, setCouponCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const { items, priceSummary, appliedCoupon } = useSelector((state) => state.cart);
   const {
     totalMRP = 0,
     discountOnMRP = 0,
@@ -125,19 +132,57 @@ const PriceSummary = ({ summary = {} }) => {
     platformFee = 0,
     shippingFee = 0,
     finalPayable = 0,
-  } = summary;
+  } = priceSummary;
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setLoading(true);
+    setError("");
+    try {
+      await dispatch(applyCoupon(couponCode, items));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    dispatch(removeCoupon());
+    setCouponCode("");
+  };
+
 
   return (
     <div className="p-3 border cart-page">
       <div className="mb-3">
         <h5 className="text-bold mt-1">Coupon</h5>
         <div className="coupon-section">
-          <input type="text" className="form-control" placeholder="" />
-          <button className="btn btn-apply p-0">Apply</button>
-          <button className="coupon-section__remove">
-            <i className="bi bi-trash"></i>
-          </button>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Enter coupon code"
+            value={couponCode}
+            disabled={!!appliedCoupon}
+            onChange={(e) => setCouponCode(e.target.value)}
+          />
+          {!appliedCoupon ? (
+            <button className="btn btn-apply p-0" onClick={handleApplyCoupon} disabled={loading}>
+              {loading ? "Applying..." : "Apply"}
+            </button>
+          ) : (
+            <button className="coupon-section__remove" onClick={handleRemoveCoupon}>
+              <i className="bi bi-trash"></i>
+            </button>
+          )}
+
         </div>
+        {error && <div className="text-danger small mt-1">{error}</div>}
+        {appliedCoupon && (
+          <div className="text-success small mt-1">
+            Coupon "{appliedCoupon.code}" applied!
+          </div>
+        )}
       </div>
       <hr />
       <h5 className="text-bold">Price details</h5>
