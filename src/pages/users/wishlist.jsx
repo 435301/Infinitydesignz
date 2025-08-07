@@ -23,9 +23,11 @@ import { addToGuestCart } from "../../redux/actions/guestCartAction";
 import Loader from "../../includes/loader";
 
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import { useNavigate } from "react-router-dom";
 export default function WishlistPage() {
   const dispatch = useDispatch();
-  const [wishlistItems, setWishlistItems] = useState([]);
+  const navigate = useNavigate();
+    const [wishlistItems, setWishlistItems] = useState([]);
   const [quantities, setQuantities] = useState({});
   const [loadingWishlist, setLoadingWishlist] = useState(true);
 
@@ -82,6 +84,15 @@ export default function WishlistPage() {
       [key]: Math.max((prev[key] || 1) - 1, 1),
     }));
   }, []);
+
+  const handleProductClick = useCallback((productId, variantId) => {
+  if (variantId) {
+    navigate(`/product-details/${productId}?variantId=${variantId}`);
+  } else {
+    navigate(`/product-details/${productId}`);
+  }
+}, [navigate]);
+
 
   // Memoize related products
   const relatedProducts = useMemo(() => [
@@ -187,7 +198,7 @@ export default function WishlistPage() {
                     const key = `${item.productId}-${item.variantId || 'null'}`;
 
                     return (
-                      <div key={item.id || index} className="wishlist-item border-between d-flex">
+                      <div key={item.id || index} className="wishlist-item border-between d-flex"   onClick={() => handleProductClick(item.productId, item.variantId)}  style={{cursor:"pointer"}}>
                         <div className="col-3">
                           <img
                             src={imageUrl}
@@ -197,7 +208,6 @@ export default function WishlistPage() {
                         </div>
                         <div className="details ms-3">
                           <h5>{title}</h5>
-                          <p>36-Month Warranty Available</p>
 
                           <div className="d-flex align-items-center mb-3">
                             <label className="me-2 fw-semibold">Size</label>
