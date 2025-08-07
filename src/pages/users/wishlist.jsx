@@ -198,8 +198,8 @@ export default function WishlistPage() {
                     const key = `${item.productId}-${item.variantId || 'null'}`;
 
                     return (
-                      <div key={item.id || index} className="wishlist-item border-between d-flex"   onClick={() => handleProductClick(item.productId, item.variantId)}  style={{cursor:"pointer"}}>
-                        <div className="col-3">
+                      <div key={item.id || index} className="wishlist-item border-between d-flex"  >
+                        <div className="col-3"  onClick={() => handleProductClick(item.productId, item.variantId)}  style={{cursor:"pointer"}}>
                           <img
                             src={imageUrl}
                             alt={imageAlt}
@@ -207,7 +207,7 @@ export default function WishlistPage() {
                           />
                         </div>
                         <div className="details ms-3">
-                          <h5>{title}</h5>
+                          <h5 style={{ cursor: "pointer" }} onClick={() => handleProductClick(item.productId, item.variantId)}>{title}</h5>
 
                           <div className="d-flex align-items-center mb-3">
                             <label className="me-2 fw-semibold">Size</label>

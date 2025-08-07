@@ -71,10 +71,10 @@ const handleProductClick = () => {
 
   return (
     <div className="cart-page">
-      <div className="d-flex flex-column border-bottom flex-md-row gap-4 px-4 pt-3 pb-3" style={{cursor:"pointer"}} onClick={handleProductClick}>
-        <img src={imageUrl} alt="Product" className="product-img" />
+      <div className="d-flex flex-column border-bottom flex-md-row gap-4 px-4 pt-3 pb-3" >
+        <img src={imageUrl} alt="Product" className="product-img" style={{cursor:"pointer"}} onClick={handleProductClick} />
         <div className="flex-grow-1">
-          <h4 className="text-bold product-info">{product.title || "Untitled Product"}</h4>
+          <h4 className="text-bold product-info" style={{cursor:"pointer"}} onClick={handleProductClick} >{product.title || "Untitled Product"}</h4>
           <p className="mb-1 product-info-p">{product.warranty || "No warranty info"}</p>
           <div className="d-flex align-items-center mb-3 gap-4 w-100">
             <div className="d-flex align-items-center">
