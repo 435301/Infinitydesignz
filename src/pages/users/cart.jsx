@@ -22,6 +22,7 @@ import {
 import Loader from "../../includes/loader";
 import PlaceOrderButton from "../../components/placeOrderButton";
 import { fetchAddresses } from "../../redux/actions/addressAction";
+import { useNavigate } from "react-router-dom";
 const CartItem = ({
   id,
   product = {},
@@ -35,6 +36,16 @@ const CartItem = ({
   onQuantityChange,
 }) => {
   const [qty, setQty] = useState(quantity || 1);
+
+   const navigate = useNavigate();
+
+const handleProductClick = () => {
+  if (variantId) {
+    navigate(`/product-details/${productId}?variantId=${variantId}`);
+  } else {
+    navigate(`/product-details/${productId}`);
+  }
+};
 
   const increment = () => {
     const newQty = qty + 1;
@@ -60,7 +71,7 @@ const CartItem = ({
 
   return (
     <div className="cart-page">
-      <div className="d-flex flex-column border-bottom flex-md-row gap-4 px-4 pt-3 pb-3">
+      <div className="d-flex flex-column border-bottom flex-md-row gap-4 px-4 pt-3 pb-3" style={{cursor:"pointer"}} onClick={handleProductClick}>
         <img src={imageUrl} alt="Product" className="product-img" />
         <div className="flex-grow-1">
           <h4 className="text-bold product-info">{product.title || "Untitled Product"}</h4>
@@ -232,7 +243,6 @@ const PriceSummary = ({ summary = {} }) => {
       <PlaceOrderButton
        disabled={!itemsFromCart || itemsFromCart.length === 0}
         buildOrderData={() => {
-           if (!itemsFromCart || itemsFromCart.length === 0) return null;
           const items = itemsFromCart.map((item) => ({
             productId: item.productId,
             variantId: item.variantId || null,
