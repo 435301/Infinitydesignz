@@ -90,10 +90,12 @@ export const syncGuestCartToUserCart = () => async (dispatch, getState) => {
                     productId: item.productId,
                     variantId: item.variantId,
                     quantity: item.quantity,
+                    sizeId: item.sizeId,
                 },
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
                     },
                 }
             );
@@ -117,6 +119,7 @@ export const applyCoupon = (couponCode, items) => async (dispatch) => {
             {
                 headers: {
                     Authorization: `Bearer ${getToken()}`,
+                    'Content-Type': 'application/json',
                 },
             }
         );

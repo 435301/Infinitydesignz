@@ -2673,10 +2673,10 @@ CART PAGE
 
 .cart-page .product-img {
   width: 100%;
-  max-width: 200px;
+  max-width: 150px;
   border-radius: 8px;
   object-fit: cover;
-  height: 250px;
+  height: 180px;
 }
 
 .cart-page .strike-text {

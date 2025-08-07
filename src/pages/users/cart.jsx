@@ -11,6 +11,7 @@ import {
   DeleteFromCart,
   fetchCart,
   removeCoupon,
+  UpdateToCart,
 } from "../../redux/actions/cartAction";
 import BASE_URL from "../../config/config";
 import {
@@ -19,6 +20,8 @@ import {
   fetchWishlist,
 } from "../../redux/actions/whishlistAction";
 import Loader from "../../includes/loader";
+import PlaceOrderButton from "../../components/placeOrderButton";
+import { fetchAddresses } from "../../redux/actions/addressAction";
 const CartItem = ({
   id,
   product = {},
@@ -125,6 +128,11 @@ const PriceSummary = ({ summary = {} }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { items, priceSummary, appliedCoupon } = useSelector((state) => state.cart);
+  const itemsFromCart = useSelector((state) => state.cart.items);
+  const { addresses = [] } = useSelector((state) => state.addressBook);
+  const selectedAddress = addresses.find((addr) => addr.default) || addresses[0];
+  const selectedAddressId = selectedAddress?.id || null;
+  console.log('addresses', selectedAddressId)
   const {
     totalMRP = 0,
     discountOnMRP = 0,
@@ -139,6 +147,12 @@ const PriceSummary = ({ summary = {} }) => {
     setLoading(true);
     setError("");
     try {
+      // const enrichedItems = items.map(item => ({
+      //   productId: item.productId,
+      //   variantId: item.variantId,
+      //   quantity: item.quantity,
+      // }));
+      // console.log('enrichedItems', enrichedItems)
       await dispatch(applyCoupon(couponCode, items));
     } catch (err) {
       setError(err.message);
@@ -152,6 +166,9 @@ const PriceSummary = ({ summary = {} }) => {
     setCouponCode("");
   };
 
+  useEffect(() => {
+    dispatch(fetchAddresses());
+  }, [dispatch]);
 
   return (
     <div className="p-3 border cart-page">
@@ -211,7 +228,29 @@ const PriceSummary = ({ summary = {} }) => {
         <span>Total Amount</span>
         <span>Rs.{finalPayable}</span>
       </div>
-      <a href="/checkout" className="btn btn-place-order w-100">Place Order</a>
+      <PlaceOrderButton
+        buildOrderData={() => {
+    const items = itemsFromCart.map((item) => ({
+      productId: item.productId,
+      variantId: item.variantId || null,
+      quantity: item.quantity,
+      price: item.variant?.price || item.product?.price || 0,
+      total: (item.variant?.price || item.product?.price || 0) * item.quantity,
+    }));
+
+    return {
+      addressId: selectedAddressId, 
+      paymentMethod: 'COD',
+      note: 'Leave at door',
+      subtotal: totalMRP - discountOnMRP,
+      shippingFee,
+      gst: 0, // optional
+      totalAmount: finalPayable,
+      items,
+    };
+     }}
+      />
+     
     </div>
   );
 };
@@ -221,6 +260,7 @@ const CartPage = () => {
 
   const { items: userCartItems = [] } = useSelector((state) => state.cart || {});
   const { items: guestCartItems = [] } = useSelector((state) => state.guestCart || {});
+  console.log('guestCartItems', guestCartItems)
   const { items: wishlistItems } = useSelector((state) => state.whishlist);
 
   const loggedIn = isLoggedIn();
@@ -248,6 +288,15 @@ const CartPage = () => {
         item.id === id ? { ...item, quantity: newQty } : item
       )
     );
+    const itemToUpdate = localCart.find(item => item.id === id);
+    if (itemToUpdate) {
+      const updatedItem = {
+        quantity: newQty,
+        productId: itemToUpdate.productId,
+        variantId: itemToUpdate.variantId || null,
+      };
+      dispatch(UpdateToCart(id, updatedItem));
+    }
   };
 
   const isInWishlist = (productId, variantId) => {
@@ -347,20 +396,6 @@ const CartPage = () => {
             <PriceSummary summary={dynamicPriceSummary} />
           </div>
         </div>
-
-        {loggedIn && (
-          <div className="mt-4">
-            <div className="deliver-to d-flex justify-content-between align-items-center p-4">
-              <div>
-                <h5 className="text-bold">Deliver to:</h5>
-                <p><strong>Chaitanya nelluri</strong></p>
-                <p>Flat no G3 Balaji homes, Nizampet, Hyderabad - 500090</p>
-                <p>Mobile: 8790969134</p>
-              </div>
-              <button className="btn btn-change-address">Change Address</button>
-            </div>
-          </div>
-        )}
       </div>
       <Footer />
     </>
