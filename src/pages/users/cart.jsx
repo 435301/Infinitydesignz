@@ -170,6 +170,7 @@ const PriceSummary = ({ summary = {} }) => {
     dispatch(fetchAddresses());
   }, [dispatch]);
 
+    if (!itemsFromCart || itemsFromCart.length === 0) return null;
   return (
     <div className="p-3 border cart-page">
       <div className="mb-3">
@@ -229,28 +230,30 @@ const PriceSummary = ({ summary = {} }) => {
         <span>Rs.{finalPayable}</span>
       </div>
       <PlaceOrderButton
+       disabled={!itemsFromCart || itemsFromCart.length === 0}
         buildOrderData={() => {
-    const items = itemsFromCart.map((item) => ({
-      productId: item.productId,
-      variantId: item.variantId || null,
-      quantity: item.quantity,
-      price: item.variant?.price || item.product?.price || 0,
-      total: (item.variant?.price || item.product?.price || 0) * item.quantity,
-    }));
+           if (!itemsFromCart || itemsFromCart.length === 0) return null;
+          const items = itemsFromCart.map((item) => ({
+            productId: item.productId,
+            variantId: item.variantId || null,
+            quantity: item.quantity,
+            price: item.variant?.price || item.product?.price || 0,
+            total: (item.variant?.price || item.product?.price || 0) * item.quantity,
+          }));
 
-    return {
-      addressId: selectedAddressId, 
-      paymentMethod: 'COD',
-      note: 'Leave at door',
-      subtotal: totalMRP - discountOnMRP,
-      shippingFee,
-      gst: 0, // optional
-      totalAmount: finalPayable,
-      items,
-    };
-     }}
+          return {
+            addressId: selectedAddressId,
+            paymentMethod: 'COD',
+            note: 'Leave at door',
+            subtotal: totalMRP - discountOnMRP,
+            shippingFee,
+            gst: 0, // optional
+            totalAmount: finalPayable,
+            items,
+          };
+        }}
       />
-     
+
     </div>
   );
 };
