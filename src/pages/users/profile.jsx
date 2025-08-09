@@ -88,7 +88,7 @@ export default function ProfilePage() {
 
                   {loading ? (
                     <p>Loading...</p>
-                  ) : (
+                  ) : profile ? (
                     <div className="profile-entry">
                       {[
                         { icon: "bi-person", label: "Full Name", value: formData.name },
@@ -107,6 +107,8 @@ export default function ProfilePage() {
                         </div>
                       ))}
                     </div>
+                  ) : (
+                    <p>No profile data available.</p>
                   )}
                 </div>
               </div>
