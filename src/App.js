@@ -76,6 +76,7 @@ import { fetchWishlist } from './redux/actions/whishlistAction.js';
 import { useEffect } from 'react';
 import { isLoggedIn } from './utils/auth.js';
 import { fetchCart } from './redux/actions/cartAction.js';
+import { fetchProfile } from './redux/actions/profileAction.js';
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
     <div className="content">{children}</div>
@@ -95,6 +96,7 @@ function App() {
     if (isLoggedIn()) {
       dispatch(fetchWishlist());
       dispatch(fetchCart());
+      dispatch(fetchProfile());
     }
   }, [dispatch])
 
