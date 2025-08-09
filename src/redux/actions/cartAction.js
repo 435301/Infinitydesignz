@@ -1,6 +1,7 @@
 import axios from "axios";
 import BASE_URL from "../../config/config";
 import { toast } from "react-toastify";
+import { getToken } from "../../utils/auth";
 
 export const FETCH_CART_REQUEST = "FETCH_CART_REQUEST";
 export const FETCH_CART_SUCCESS = "FETCH_CART_SUCCESS";
@@ -12,7 +13,6 @@ export const APPLY_COUPON_SUCCESS = "APPLY_COUPON_SUCCESS";
 export const REMOVE_COUPON = 'REMOVE_COUPON';
 export const CLEAR_GUEST_CART = 'CLEAR_GUEST_CART'
 
-const getToken = () => localStorage.getItem('access_token');
 
 export const fetchCart = () => async (dispatch) => {
     dispatch({ type: FETCH_CART_REQUEST });

@@ -11,6 +11,7 @@ import RelatedProductsCarousel from "../users/RelatedProductsCarousel";
 import BASE_URL from "../../config/config";
 import { fetchOrders } from "../../redux/actions/orderAction";
 import { useDispatch, useSelector } from "react-redux";
+import { getToken } from "../../utils/auth";
 // Replace with your footer component
 
 const orders = [
@@ -114,7 +115,6 @@ const MyOrdersPage = () => {
     const fetchFullOrder = async () => {
       if (orders.length > 0) {
         const latestOrder = orders[0];
-        const getToken = () => localStorage.getItem('access_token');
         try {
           const res = await fetch(`${BASE_URL}/orders/${latestOrder.id}`, {
             method: 'GET',

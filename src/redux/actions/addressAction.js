@@ -1,6 +1,7 @@
 import { toast } from 'react-toastify';
 import BASE_URL from '../../config/config';
 import axios from 'axios';
+import { getToken } from '../../utils/auth';
 
 export const FETCH_ADDRESSES_REQUEST = "FETCH_ADDRESSES_REQUEST";
 export const FETCH_ADDRESSES_SUCCESS = "FETCH_ADDRESSES_SUCCESS";
@@ -11,7 +12,6 @@ export const UPDATE_ADDRESS = "UPDATE_ADDRESS";
 export const DELETE_ADDRESS = "DELETE_ADDRESS";
 export const SET_DEFAULT_ADDRESS = "SET_DEFAULT_ADDRESS";
 
-const getToken = () => localStorage.getItem('access_token');
 
 export const fetchAddresses = () => async (dispatch) => {
     dispatch({ type: FETCH_ADDRESSES_REQUEST });

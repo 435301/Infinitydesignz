@@ -1,6 +1,7 @@
 import axios from 'axios';
 import BASE_URL from '../../config/config';
 import { toast } from 'react-toastify';
+import { getToken } from '../../utils/auth';
 
 export const FETCH_WISHLIST_REQUEST = 'FETCH_WISHLIST_REQUEST';
 export const FETCH_WISHLIST_SUCCESS = 'FETCH_WISHLIST_SUCCESS';
@@ -12,7 +13,6 @@ export const DELETE_WISHLIST_ITEM_REQUEST = 'DELETE_WISHLIST_ITEM_REQUEST';
 export const DELETE_WISHLIST_ITEM_SUCCESS = 'DELETE_WISHLIST_ITEM_SUCCESS';
 export const DELETE_WISHLIST_ITEM_FAILURE = 'DELETE_WISHLIST_ITEM_FAILURE';
 
-const getToken = () => localStorage.getItem('access_token');
 
 export const fetchWishlist = () => async (dispatch) => {
   dispatch({ type: FETCH_WISHLIST_REQUEST });
