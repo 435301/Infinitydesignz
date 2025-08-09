@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import '../../css/user/userstyle.css';
 import '../../css/user/bootstrap-icons.css';
 import '../../css/user/bootstrap.min.css';
@@ -8,7 +8,10 @@ import Header from "../../includes/header";
 import Footer from "../../includes/footer";
 import { Link } from "react-router-dom";
 import RelatedProductsCarousel from "../users/RelatedProductsCarousel";
-    // Replace with your footer component
+import BASE_URL from "../../config/config";
+import { fetchOrders } from "../../redux/actions/orderAction";
+import { useDispatch, useSelector } from "react-redux";
+// Replace with your footer component
 
 const orders = [
   {
@@ -70,7 +73,7 @@ const sampleProducts = [
     emi: "EMI starting from ₹1,825/month",
     shipping: "Express Shipping in 1 day"
   },
-   {
+  {
     title: "Andres Fabric 3 Seater Sofa In Sandy Brown Colour",
     price: "₹37,999",
     originalPrice: "MRP ₹48,999",
@@ -82,7 +85,7 @@ const sampleProducts = [
     emi: "EMI starting from ₹1,825/month",
     shipping: "Express Shipping in 1 day"
   },
-   {
+  {
     title: "Andres Fabric 3 Seater Sofa In Sandy Brown Colour",
     price: "₹37,999",
     originalPrice: "MRP ₹48,999",
@@ -98,6 +101,43 @@ const sampleProducts = [
 
 
 const MyOrdersPage = () => {
+  const dispatch = useDispatch();
+  const { orders = [], loading, error } = useSelector((state) => state.order);
+  const latestOrder = orders.length > 0 ? orders[0] : null;
+  const [latestOrderDetails, setLatestOrderDetails] = useState(null);
+
+  useEffect(() => {
+    dispatch(fetchOrders());
+  }, [dispatch]);
+
+  useEffect(() => {
+    const fetchFullOrder = async () => {
+      if (orders.length > 0) {
+        const latestOrder = orders[0];
+        const getToken = () => localStorage.getItem('access_token');
+        try {
+          const res = await fetch(`${BASE_URL}/orders/${latestOrder.id}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${getToken()}`,
+            },
+          });
+
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+          const fullOrder = await res.json();
+          setLatestOrderDetails(fullOrder);
+        } catch (err) {
+          console.error("Error fetching order details:", err);
+        }
+      }
+    };
+
+    fetchFullOrder();
+  }, [orders]);
+
   return (
     <>
       <Header />
@@ -118,65 +158,134 @@ const MyOrdersPage = () => {
             </aside>
 
             <main className="col-md-7">
-              {orders.map((order, idx) => (
-                <div key={order.id} className="order-block">
-                  <div className="order-item">
-                    <div class="order-image">
-                      <img src={order.image} alt="Product" className="order-item-img" />
-                    </div>
-                    
-                    <div className="order-details">
-                      <h5>{order.title}</h5>
-                      <p className="warranty">{order.warranty}</p>
-                      <div className="order-meta">
-                        <span className="separator">Size: {order.size}</span>
-                        <span className="separator">Qty: {String(order.qty).padStart(2, "0")}</span>
-                        <span>Payment Status: <strong>{order.payment}</strong></span>
-                      </div>
-                      <div className="order-price">
-                        <span className="current-price">₹{order.price.toLocaleString()}</span>
-                        <del class="mrp">MRP: ₹{order.mrp.toLocaleString()}</del>
-                      </div>
-                      <div className="order-info">
-                        <span><i class="bi bi-truck"></i> Estimated delivery by {order.delivery}</span>
-                        <span><i class="bi bi-arrow-return-right"></i> Easy 14 days return & exchange available</span>
-                      </div>
-                      <div className="order-status">
-                         <div class="status">
-                           <span>Status: <span className={`status ${order.status.toLowerCase()}`}>{order.status}</span></span>
-                         </div>
-                       
-                        {order.status === "In-Progress" && (
-                          <button className=" action-btn">Cancel Order</button>
-                        )}
-                        {order.status === "Delivered" && (
-                          <div className="rate-review">
-                            <span>Rate & Review:</span>
-                            <div className="stars">
-                              {[...Array(5)].map((_, i) => (
-                                <i key={i} className="bi bi-star"></i>
-                              ))}
-                            </div>
+              {latestOrderDetails ? (
+                <div key={latestOrderDetails.id} className="order-block">
+                  {latestOrderDetails.items.map((item) => {
+                    const productData = item.variant || item.product || {};
+                    return (
+                      <div className="order-item" key={item.id}>
+                        <div className="order-image">
+                          <img
+                            src={
+                              productData.imageUrl
+                                ? `${BASE_URL}/uploads/products/${productData.imageUrl}`
+                                : "/placeholder.jpg"
+                            }
+                            alt={productData.imageAlt || productData.title || "Product"}
+                            className="order-item-img"
+                          />
+                        </div>
+
+                        <div className="order-details">
+                          <h5>{productData.title || "Product"}</h5>
+                          <p className="warranty">{productData.warranty || ""}</p>
+
+                          <div className="order-meta">
+                            <span className="separator">
+                              Size: {productData.size || "N/A"}
+                            </span>
+                            <span className="separator">
+                              Qty: {String(item.quantity).padStart(2, "0")}
+                            </span>
+                            <span>
+                              Payment Status:{" "}
+                              <strong>{latestOrderDetails.payment?.method || "N/A"}</strong>
+                            </span>
                           </div>
-                        )}
-                        {order.status === "Delivered" && order.deliveryDate && (
-                          <p className="delivery-date">On {order.deliveryDate}</p>
-                        )}
-                        {order.status === "Cancelled" && order.refundedDate && (
-                          <p className="refunded">Refunded on: {order.refundedDate}</p>
-                        )}
+
+                          <div className="order-price">
+                            <span className="current-price">
+                              ₹{item.total?.toLocaleString() || 0}
+                            </span>
+                            <del className="mrp">
+                              MRP: ₹
+                              {(item.product?.mrp ?? item.variant?.mrp ?? 0).toLocaleString()}
+                            </del>
+                          </div>
+
+                          <div className="order-info">
+                            <span>
+                              <i className="bi bi-truck"></i> Estimated delivery by{" "}
+                              {latestOrderDetails.estimatedDelivery || "N/A"}
+                            </span>
+                            <span>
+                              <i className="bi bi-arrow-return-right"></i> Easy 14 days
+                              return & exchange available
+                            </span>
+                          </div>
+
+                          <div className="order-status">
+                            <div className="status">
+                              <span>
+                                Status:{" "}
+                                <span
+                                  className={`status ${latestOrderDetails?.payment?.status?.toLowerCase()}`}
+                                >
+                                  {latestOrderDetails?.payment?.status || "N/A"}
+                                </span>
+                              </span>
+                            </div>
+
+                            {latestOrderDetails?.payment?.status === "In-Progress" && (
+                              <button className="action-btn">Cancel Order</button>
+                            )}
+
+                            {latestOrderDetails?.payment?.status === "Delivered" && (
+                              <div className="rate-review">
+                                <span>Rate & Review:</span>
+                                <div className="stars">
+                                  {[...Array(5)].map((_, i) => (
+                                    <i key={i} className="bi bi-star"></i>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* 
+                {latestOrderDetails?.payment?.status === "Delivered" && order.deliveryDate && (
+                  <p className="delivery-date">On {order.deliveryDate}</p>
+                )}
+                {latestOrderDetails?.payment?.status === "Cancelled" && order.refundedDate && (
+                  <p className="refunded">Refunded on: {order.refundedDate}</p>
+                )} 
+                */}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  {order.address && (
+                    );
+                  })}
+
+                  {latestOrderDetails?.address && (
                     <div className="delivery-address">
-                      <strong>Deliver to:</strong> {order.address}
+                      <strong>Deliver to:</strong> <br />
+                      <span className="name">{latestOrderDetails.address.name}</span> <br />
+                      <span className="address-line">
+                        {latestOrderDetails.address.flatNumber},{" "}
+                        {latestOrderDetails.address.buildingName}
+                      </span>
+                      <br />
+                      <span className="address-line">
+                        {latestOrderDetails.address.addressLine1},{" "}
+                        {latestOrderDetails.address.addressLine2}
+                      </span>
+                      <br />
+                      <span className="address-line">
+                        {latestOrderDetails.address.city},{" "}
+                        {latestOrderDetails.address.state} -{" "}
+                        {latestOrderDetails.address.pincode}
+                      </span>
+                      <br />
+                      <span className="phone">
+                        Phone: {latestOrderDetails.address.phone}
+                      </span>
                     </div>
                   )}
-                  {idx < orders.length - 1 && <hr />}
                 </div>
-              ))}
+              ) : (
+                !loading && <p>No latest order found</p>
+              )}
             </main>
+
 
             <aside className="col-md-3 ads-related">
               <div className="ad-banner">
@@ -184,7 +293,7 @@ const MyOrdersPage = () => {
               </div>
               <div className="related-products">
                 <h4>Related Products</h4>
-                <RelatedProductsCarousel products={sampleProducts}/>
+                <RelatedProductsCarousel products={sampleProducts} />
               </div>
             </aside>
           </div>

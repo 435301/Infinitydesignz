@@ -19,7 +19,7 @@ const PlaceOrderButton = ({ buildOrderData }) => {
     }
     try {
       await dispatch(placeOrder(orderData));
-      navigate('/checkout');
+      navigate('/orders');
     } catch (e) {
       // Already handled in redux state
     }
@@ -28,7 +28,7 @@ const PlaceOrderButton = ({ buildOrderData }) => {
   return (
     <>
       <button
-        className="btn btn-place-order w-100"
+        className="main-action w-100 mt-3"
         onClick={handlePlaceOrder}
         disabled={loading}
       >

@@ -20,7 +20,7 @@ import {
   fetchWishlist,
 } from "../../redux/actions/whishlistAction";
 import Loader from "../../includes/loader";
-import PlaceOrderButton from "../../components/placeOrderButton";
+// import PlaceOrderButton from "../../components/placeOrderButton";
 import { fetchAddresses } from "../../redux/actions/addressAction";
 import { useNavigate } from "react-router-dom";
 const CartItem = ({
@@ -135,7 +135,8 @@ const handleProductClick = () => {
 
 const PriceSummary = ({ summary = {} }) => {
   const dispatch = useDispatch();
-  const [couponCode, setCouponCode] = useState("");
+  const navigate = useNavigate()
+;  const [couponCode, setCouponCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { items, priceSummary, appliedCoupon } = useSelector((state) => state.cart);
@@ -176,6 +177,10 @@ const PriceSummary = ({ summary = {} }) => {
     dispatch(removeCoupon());
     setCouponCode("");
   };
+
+  const handleClick = ()=>{
+  navigate('/checkout');
+}
 
   useEffect(() => {
     dispatch(fetchAddresses());
@@ -240,32 +245,9 @@ const PriceSummary = ({ summary = {} }) => {
         <span>Total Amount</span>
         <span>Rs.{finalPayable}</span>
       </div>
-      <PlaceOrderButton
-       disabled={!itemsFromCart || itemsFromCart.length === 0}
-        buildOrderData={() => {
-          const items = itemsFromCart.map((item) => ({
-            productId: item.productId,
-            variantId: item.variantId || null,
-            quantity: item.quantity,
-            price: item.variant?.price || item.product?.price || 0,
-            total: (item.variant?.price || item.product?.price || 0) * item.quantity,
-          }));
-
-          return {
-            addressId: selectedAddressId,
-            paymentMethod: 'COD',
-            note: 'Leave at door',
-            subtotal: totalMRP - discountOnMRP,
-            shippingFee,
-            gst: 0, // optional
-            totalAmount: finalPayable,
-            items,
-          };
-        }}
-      />
-
+        <button className="btn btn-place-order w-100" onClick={handleClick}>Checkout </button>
     </div>
-  );
+  )
 };
 
 const CartPage = () => {
