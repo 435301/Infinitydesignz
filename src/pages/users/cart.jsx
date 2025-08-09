@@ -12,6 +12,8 @@ import {
   fetchCart,
   removeCoupon,
   UpdateToCart,
+  addToGuestCart,
+  syncGuestCartToUserCart,
 } from "../../redux/actions/cartAction";
 import BASE_URL from "../../config/config";
 import {
@@ -20,9 +22,12 @@ import {
   fetchWishlist,
 } from "../../redux/actions/whishlistAction";
 import Loader from "../../includes/loader";
-// import PlaceOrderButton from "../../components/placeOrderButton";
 import { fetchAddresses } from "../../redux/actions/addressAction";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { deleteFromGuestCart, initializeGuestCart, updateGuestCart } from "../../redux/actions/guestCartAction";
+
 const CartItem = ({
   id,
   product = {},
@@ -35,33 +40,25 @@ const CartItem = ({
   loadingWishlist,
   onQuantityChange,
 }) => {
-  const [qty, setQty] = useState(quantity || 1);
+  const navigate = useNavigate();
 
-   const navigate = useNavigate();
-
-const handleProductClick = () => {
-  if (variantId) {
-    navigate(`/product-details/${productId}?variantId=${variantId}`);
-  } else {
-    navigate(`/product-details/${productId}`);
-  }
-};
+  const handleProductClick = () => {
+    if (variantId) {
+      navigate(`/product-details/${productId}?variantId=${variantId}`);
+    } else {
+      navigate(`/product-details/${productId}`);
+    }
+  };
 
   const increment = () => {
-    const newQty = qty + 1;
-    setQty(newQty);
+    const newQty = quantity + 1;
     onQuantityChange?.(newQty);
   };
 
   const decrement = () => {
-    const newQty = qty > 1 ? qty - 1 : 1;
-    setQty(newQty);
+    const newQty = quantity > 1 ? quantity - 1 : 1;
     onQuantityChange?.(newQty);
   };
-
-  useEffect(() => {
-    setQty(quantity || 1);
-  }, [quantity]);
 
   const imageUrl = product.image
     ? product.image.startsWith("http")
@@ -71,10 +68,22 @@ const handleProductClick = () => {
 
   return (
     <div className="cart-page">
-      <div className="d-flex flex-column border-bottom flex-md-row gap-4 px-4 pt-3 pb-3" >
-        <img src={imageUrl} alt="Product" className="product-img" style={{cursor:"pointer"}} onClick={handleProductClick} />
+      <div className="d-flex flex-column border-bottom flex-md-row gap-4 px-4 pt-3 pb-3">
+        <img
+          src={imageUrl}
+          alt="Product"
+          className="product-img"
+          style={{ cursor: "pointer" }}
+          onClick={handleProductClick}
+        />
         <div className="flex-grow-1">
-          <h4 className="text-bold product-info" style={{cursor:"pointer"}} onClick={handleProductClick} >{product.title || "Untitled Product"}</h4>
+          <h4
+            className="text-bold product-info"
+            style={{ cursor: "pointer" }}
+            onClick={handleProductClick}
+          >
+            {product.title || "Untitled Product"}
+          </h4>
           <p className="mb-1 product-info-p">{product.warranty || "No warranty info"}</p>
           <div className="d-flex align-items-center mb-3 gap-4 w-100">
             <div className="d-flex align-items-center">
@@ -92,7 +101,7 @@ const handleProductClick = () => {
                 <input
                   type="text"
                   className="qty-input"
-                  value={qty.toString().padStart(2, "0")}
+                  value={quantity.toString().padStart(2, "0")}
                   readOnly
                 />
                 <button className="btn-qty" onClick={increment}>+</button>
@@ -104,8 +113,12 @@ const handleProductClick = () => {
             <span className="strike-text">{product.mrp || "MRP: Rs.0"}</span>
           </div>
           <div className="d-flex gap-2 mb-3">
-            <small><i className="bi bi-arrow-counterclockwise me-2"></i> Easy 14 days return</small>
-            <small><i className="bi bi-calendar me-2"></i> Delivery by {product.delivery || "N/A"}</small>
+            <small>
+              <i className="bi bi-arrow-counterclockwise me-2"></i> Easy 14 days return
+            </small>
+            <small>
+              <i className="bi bi-calendar me-2"></i> Delivery by {product.delivery || "N/A"}
+            </small>
           </div>
           <div className="d-flex gap-3">
             <button
@@ -135,36 +148,20 @@ const handleProductClick = () => {
 
 const PriceSummary = ({ summary = {} }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate()
-;  const [couponCode, setCouponCode] = useState("");
+  const navigate = useNavigate();
+  const [couponCode, setCouponCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { items, priceSummary, appliedCoupon } = useSelector((state) => state.cart);
-  const itemsFromCart = useSelector((state) => state.cart.items);
   const { addresses = [] } = useSelector((state) => state.addressBook);
   const selectedAddress = addresses.find((addr) => addr.default) || addresses[0];
   const selectedAddressId = selectedAddress?.id || null;
-  console.log('addresses', selectedAddressId)
-  const {
-    totalMRP = 0,
-    discountOnMRP = 0,
-    couponDiscount = 0,
-    platformFee = 0,
-    shippingFee = 0,
-    finalPayable = 0,
-  } = priceSummary;
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
     setLoading(true);
     setError("");
     try {
-      // const enrichedItems = items.map(item => ({
-      //   productId: item.productId,
-      //   variantId: item.variantId,
-      //   quantity: item.quantity,
-      // }));
-      // console.log('enrichedItems', enrichedItems)
       await dispatch(applyCoupon(couponCode, items));
     } catch (err) {
       setError(err.message);
@@ -178,15 +175,16 @@ const PriceSummary = ({ summary = {} }) => {
     setCouponCode("");
   };
 
-  const handleClick = ()=>{
-  navigate('/checkout');
-}
+  const handleClick = () => {
+    navigate("/checkout");
+  };
 
   useEffect(() => {
     dispatch(fetchAddresses());
   }, [dispatch]);
 
-    if (!itemsFromCart || itemsFromCart.length === 0) return null;
+  if (!items || items.length === 0) return null;
+
   return (
     <div className="p-3 border cart-page">
       <div className="mb-3">
@@ -201,7 +199,11 @@ const PriceSummary = ({ summary = {} }) => {
             onChange={(e) => setCouponCode(e.target.value)}
           />
           {!appliedCoupon ? (
-            <button className="btn btn-apply p-0" onClick={handleApplyCoupon} disabled={loading}>
+            <button
+              className="btn btn-apply p-0"
+              onClick={handleApplyCoupon}
+              disabled={loading}
+            >
               {loading ? "Applying..." : "Apply"}
             </button>
           ) : (
@@ -209,7 +211,6 @@ const PriceSummary = ({ summary = {} }) => {
               <i className="bi bi-trash"></i>
             </button>
           )}
-
         </div>
         {error && <div className="text-danger small mt-1">{error}</div>}
         {appliedCoupon && (
@@ -222,75 +223,162 @@ const PriceSummary = ({ summary = {} }) => {
       <h5 className="text-bold">Price details</h5>
       <div className="d-flex justify-content-between">
         <span>Total MRP</span>
-        <span>Rs.{totalMRP}</span>
+        <span>Rs.{summary.totalMRP || 0}</span>
       </div>
       <div className="d-flex justify-content-between">
         <span>Discount on MRP</span>
-        <span className="discount-text">Rs.{discountOnMRP}</span>
+        <span className="discount-text">Rs.{summary.discountOnMRP || 0}</span>
       </div>
       <div className="d-flex justify-content-between">
         <span>Coupon Discount</span>
-        <span className="discount-text">Rs.{couponDiscount}</span>
+        <span className="discount-text">Rs.{summary.couponDiscount || 0}</span>
       </div>
       <div className="d-flex justify-content-between">
         <span>Platform fee <small className="know-more">Know More</small></span>
-        <span>Rs.{platformFee}</span>
+        <span>Rs.{summary.platformFee || 0}</span>
       </div>
       <div className="d-flex justify-content-between mb-3">
         <span>Shipping fee <small className="know-more">Know More</small></span>
-        <span>Rs.{shippingFee}</span>
+        <span>Rs.{summary.shippingFee || 0}</span>
       </div>
       <hr />
       <div className="d-flex justify-content-between total-amount mb-3">
         <span>Total Amount</span>
-        <span>Rs.{finalPayable}</span>
+        <span>Rs.{summary.finalPayable || 0}</span>
       </div>
-        <button className="btn btn-place-order w-100" onClick={handleClick}>Checkout </button>
+      <button className="btn btn-place-order w-100" onClick={handleClick}>
+        Checkout
+      </button>
     </div>
-  )
+  );
 };
 
 const CartPage = () => {
   const dispatch = useDispatch();
-
-  const { items: userCartItems = [] } = useSelector((state) => state.cart || {});
+  const navigate = useNavigate();
+  const { items: userCartItems = [], priceSummary = {} } = useSelector((state) => state.cart || {});
   const { items: guestCartItems = [] } = useSelector((state) => state.guestCart || {});
-  console.log('guestCartItems', guestCartItems)
-  const { items: wishlistItems } = useSelector((state) => state.whishlist);
-
+  const { items: wishlistItems = [] } = useSelector((state) => state.whishlist || {});
   const loggedIn = isLoggedIn();
-
   const [localCart, setLocalCart] = useState([]);
+  const [loading, setLoading] = useState(false);
 
+  // Initialize guest cart from localStorage
+  useEffect(() => {
+    dispatch(initializeGuestCart());
+  }, [dispatch]);
+
+  // Fetch user cart and wishlist if logged in
   useEffect(() => {
     if (loggedIn) {
+      setLoading(true);
       dispatch(fetchCart());
       dispatch(fetchWishlist());
+      dispatch(syncGuestCartToUserCart()).finally(() => setLoading(false));
     }
   }, [dispatch, loggedIn]);
 
+  // Fetch product details for guest cart items
   useEffect(() => {
-    const updatedCart = (loggedIn ? userCartItems : guestCartItems).map((item) => ({
-      ...item,
-      quantity: item.quantity || 1,
-    }));
-    setLocalCart(updatedCart);
+    const fetchGuestCartDetails = async () => {
+      if (!loggedIn && guestCartItems.length > 0) {
+        try {
+          setLoading(true);
+          const itemsWithDetails = await Promise.all(
+            guestCartItems.map(async (item) => {
+              try {
+                const response = await axios.get(
+                  `${BASE_URL}/products/${item.productId}${
+                    item.variantId ? `?variantId=${item.variantId}` : ""
+                  }`
+                );
+                const productData = response.data;
+                const source = item.variantId ? productData.variant : productData.product;
+                return {
+                  ...item,
+                  product: {
+                    title: source.title,
+                    warranty: source.brand,
+                    price: `Rs.${source.price || 0}`,
+                    mrp: `MRP: Rs.${source.mrp || 0}`,
+                    sizes: [source.size || "M"],
+                    image: source.imageUrl || "/placeholder.jpg",
+                    delivery: "13 Aug",
+                  },
+                };
+              } catch (error) {
+                console.error(`Failed to fetch product ${item.productId}:`, error);
+                return {
+                  ...item,
+                  product: {
+                    title: "Unknown Product",
+                    warranty: "N/A",
+                    price: "Rs.0",
+                    mrp: "MRP: Rs.0",
+                    sizes: ["M"],
+                    image: "/placeholder.jpg",
+                    delivery: "N/A",
+                  },
+                };
+              }
+            })
+          );
+          setLocalCart(itemsWithDetails);
+        } catch (error) {
+          console.error("Failed to fetch guest cart details:", error);
+          toast.error("Failed to load guest cart details");
+        } finally {
+          setLoading(false);
+        }
+      } else if (loggedIn) {
+        setLocalCart(
+          userCartItems.map((item) => ({
+            ...item,
+            quantity: item.quantity || 1,
+            product: {
+              title: (item.variant || item.product)?.title,
+              warranty: (item.variant || item.product)?.brand,
+              price: `Rs.${(item.variant || item.product)?.price || 0}`,
+              mrp: `MRP: Rs.${(item.variant || item.product)?.mrp || 0}`,
+              sizes: [(item.variant || item.product)?.size || "M"],
+              image: (item.variant || item.product)?.imageUrl || "/placeholder.jpg",
+              delivery: "13 Aug",
+            },
+          }))
+        );
+      }
+    };
+
+    fetchGuestCartDetails();
   }, [userCartItems, guestCartItems, loggedIn]);
 
-  const handleQuantityChange = (id, newQty) => {
-    setLocalCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === id ? { ...item, quantity: newQty } : item
-      )
-    );
-    const itemToUpdate = localCart.find(item => item.id === id);
-    if (itemToUpdate) {
-      const updatedItem = {
-        quantity: newQty,
-        productId: itemToUpdate.productId,
-        variantId: itemToUpdate.variantId || null,
-      };
-      dispatch(UpdateToCart(id, updatedItem));
+  const handleQuantityChange = (id, newQty, productId, variantId) => {
+    if (loggedIn) {
+      const itemToUpdate = localCart.find((item) => item.id === id);
+      if (itemToUpdate) {
+        const updatedItem = {
+          quantity: newQty,
+          productId: itemToUpdate.productId,
+          variantId: itemToUpdate.variantId || null,
+        };
+        dispatch(UpdateToCart(id, updatedItem));
+      }
+    } else {
+      dispatch(
+        updateGuestCart(id, {
+          productId,
+          variantId: variantId || null,
+          quantity: newQty,
+        })
+      );
+    }
+  };
+
+  const handleDeleteCartItem = (id, productId, variantId) => {
+    if (loggedIn) {
+      dispatch(DeleteFromCart(id));
+    } else {
+      dispatch(deleteFromGuestCart(productId, variantId));
     }
   };
 
@@ -303,6 +391,10 @@ const CartPage = () => {
   };
 
   const handleWishlistToggle = (productId, variantId) => {
+    if (!loggedIn) {
+      toast.error("Please log in to manage your wishlist");
+      return;
+    }
     const item = wishlistItems.find(
       (item) =>
         item.productId === productId &&
@@ -321,15 +413,17 @@ const CartPage = () => {
   const calculateSummary = () => {
     let totalMRP = 0;
     let discountOnMRP = 0;
-    const couponDiscount = 1000;
-    const platformFee = 20;
-    const shippingFee = 80;
+    const couponDiscount = priceSummary.couponDiscount || 0;
+    const platformFee = priceSummary.platformFee || 20;
+    const shippingFee = priceSummary.shippingFee || 80;
 
     localCart.forEach((item) => {
       const source = item.variant || item.product || {};
       const qty = item.quantity || 1;
-      totalMRP += (source.mrp || 0) * qty;
-      discountOnMRP += ((source.mrp || 0) - (source.price || 0)) * qty;
+      const price = parseFloat(source.price?.replace("Rs.", "") || 0);
+      const mrp = parseFloat(source.mrp?.replace("MRP: Rs.", "") || 0);
+      totalMRP += mrp * qty;
+      discountOnMRP += (mrp - price) * qty;
     });
 
     const totalAfterDiscount = totalMRP - discountOnMRP - couponDiscount;
@@ -341,17 +435,17 @@ const CartPage = () => {
       couponDiscount,
       platformFee,
       shippingFee,
-      totalAfterDiscount,
       finalPayable,
     };
   };
 
-  const dynamicPriceSummary = calculateSummary();
+  const dynamicPriceSummary = loggedIn ? priceSummary : calculateSummary();
 
   return (
     <>
       <Header />
       <div className="container py-4">
+        {loading && <Loader />}
         <div className="row">
           <div className="col-lg-8 p-0 border-end">
             {localCart.length > 0 ? (
@@ -362,24 +456,26 @@ const CartPage = () => {
 
                 return (
                   <CartItem
-                    key={item.id || productId}
-                    id={item.id}
+                    key={item.id || `${productId}-${variantId}`}
+                    id={item.id || `${productId}-${variantId}`}
                     productId={productId}
                     variantId={variantId}
                     quantity={item.quantity}
                     product={{
                       title: source.title,
-                      warranty: source.brand,
-                      price: `Rs.${source.price || 0}`,
-                      mrp: `MRP: Rs.${source.mrp || 0}`,
-                      sizes: [source.size || "M"],
-                      image: source.imageUrl || "/placeholder.jpg",
-                      delivery: "13 Aug",
+                      warranty: source.warranty || source.brand,
+                      price: source.price || "Rs.0",
+                      mrp: source.mrp || "MRP: Rs.0",
+                      sizes: source.sizes || [source.size || "M"],
+                      image: source.image || source.imageUrl || "/placeholder.jpg",
+                      delivery: source.delivery || "13 Aug",
                     }}
                     onWishlistToggle={handleWishlistToggle}
                     inWishlist={isInWishlist(productId, variantId)}
-                    onDeleteCartItem={() => dispatch(DeleteFromCart(item.id))}
-                    onQuantityChange={(newQty) => handleQuantityChange(item.id, newQty)}
+                    onDeleteCartItem={() => handleDeleteCartItem(item.id, productId, variantId)}
+                    onQuantityChange={(newQty) =>
+                      handleQuantityChange(item.id || `${productId}-${variantId}`, newQty, productId, variantId)
+                    }
                   />
                 );
               })

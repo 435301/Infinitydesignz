@@ -14,52 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getToken } from "../../utils/auth";
 // Replace with your footer component
 
-const orders = [
-  {
-    id: 1,
-    image: P1,
-    title: "ANDRES FABRIC 2 SEATER SOFA IN SANDY BROWN COLOUR",
-    warranty: "36-MONTH WARRANTY AVAILABLE",
-    size: "L",
-    qty: 1,
-    payment: "Paid Online",
-    price: 2405,
-    mrp: 33679,
-    delivery: "13 Aug",
-    status: "In-Progress",
-    canCancel: true,
-    address: "Chaitanya Nelluri, Flat no 63 Balaji homes plot no 201-203, Nizampet, Hyderabad - 500090, TELANGANA..."
-  },
-  {
-    id: 2,
-    image: P1,
-    title: "ANDRES FABRIC 2 SEATER SOFA IN SANDY BROWN COLOUR",
-    warranty: "36-MONTH WARRANTY AVAILABLE",
-    size: "L",
-    qty: 1,
-    payment: "COD (Cash on Delivery)",
-    price: 2405,
-    mrp: 33679,
-    delivery: "13 Aug",
-    status: "Delivered",
-    deliveryDate: "15 Apr 2025",
-    rateable: true
-  },
-  {
-    id: 3,
-    image: P1,
-    title: "ANDRES FABRIC 2 SEATER SOFA IN SANDY BROWN COLOUR",
-    warranty: "36-MONTH WARRANTY AVAILABLE",
-    size: "L",
-    qty: 1,
-    payment: "Paid Online",
-    price: 2405,
-    mrp: 33679,
-    delivery: "13 Aug",
-    status: "Cancelled",
-    refundedDate: "12 Apr 2025"
-  }
-];
+
 
 const sampleProducts = [
   {
@@ -226,7 +181,7 @@ const MyOrdersPage = () => {
                               </span>
                             </div>
 
-                            {latestOrderDetails?.payment?.status === "In-Progress" && (
+                            {latestOrderDetails?.payment?.status === "Pending" && (
                               <button className="action-btn">Cancel Order</button>
                             )}
 

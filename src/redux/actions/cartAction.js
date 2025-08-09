@@ -1,7 +1,8 @@
 import axios from "axios";
 import BASE_URL from "../../config/config";
 import { toast } from "react-toastify";
-import { getToken } from "../../utils/auth";
+import { getToken, isLoggedIn } from "../../utils/auth";
+import { addToGuestCart } from "./guestCartAction";
 
 export const FETCH_CART_REQUEST = "FETCH_CART_REQUEST";
 export const FETCH_CART_SUCCESS = "FETCH_CART_SUCCESS";
@@ -28,20 +29,46 @@ export const fetchCart = () => async (dispatch) => {
     }
 };
 
+// export const addToCart = (cartItem) => async (dispatch) => {
+//     try {
+//         const response = await axios.post(`${BASE_URL}/cart`, cartItem, {
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 Authorization: `Bearer ${getToken()}`,
+//             },
+//         });
+//         dispatch({ type: ADD_TO_CART_SUCCESS, payload: response.data });
+//         dispatch(fetchCart());
+//         toast.success(response?.message || 'Added to cart successfully');
+//     } catch (error) {
+//         console.error('Add to cart failed:', error);
+//     }
+
+// };
+
 export const addToCart = (cartItem) => async (dispatch) => {
+  if (isLoggedIn()) {
     try {
-        const response = await axios.post(`${BASE_URL}/cart`, cartItem, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${getToken()}`,
-            },
-        });
-        dispatch({ type: ADD_TO_CART_SUCCESS, payload: response.data });
-        dispatch(fetchCart());
-        toast.success(response?.message || 'Added to cart successfully');
+      const response = await axios.post(
+        `${BASE_URL}/cart`,
+        cartItem,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+      dispatch({ type: ADD_TO_CART_SUCCESS, payload: response.data });
+      dispatch(fetchCart());
+      toast.success(response?.data?.message || "Added to cart successfully");
     } catch (error) {
-        console.error('Add to cart failed:', error);
+      console.error("Add to cart failed:", error);
+      toast.error("Failed to add to cart");
     }
+  } else {
+    dispatch(addToGuestCart(cartItem));
+  }
 };
 
 export const UpdateToCart = (id, updatedItem) => async (dispatch) => {
@@ -76,36 +103,31 @@ export const DeleteFromCart = (id) => async (dispatch) => {
 };
 
 export const syncGuestCartToUserCart = () => async (dispatch, getState) => {
-    const { guestCart: { items } } = getState();
+  const { guestCart: { items } } = getState();
 
-    if (!items || items.length === 0) return;
+  if (!items || items.length === 0) return;
 
-    try {
-        const token = getToken();
+  try {
+    const token = getToken();
+    const response = await axios.post(
+      `${BASE_URL}/cart/sync`,
+      { items },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-        for (const item of items) {
-            await axios.post(
-                `${BASE_URL}/cart`,
-                {
-                    productId: item.productId,
-                    variantId: item.variantId,
-                    quantity: item.quantity,
-                    sizeId: item.sizeId,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
-        }
-
-        dispatch({ type: CLEAR_GUEST_CART });
-        dispatch(fetchCart());
-    } catch (error) {
-        console.error("Failed to sync guest cart:", error);
-    }
+    // Update user cart with synced data
+    dispatch({ type: FETCH_CART_SUCCESS, payload: response.data.data });
+    dispatch({ type: CLEAR_GUEST_CART });
+    toast.success(response.data.message || "Guest cart synced successfully");
+  } catch (error) {
+    console.error("Failed to sync guest cart:", error);
+    toast.error("Failed to sync guest cart");
+  }
 };
 
 export const applyCoupon = (couponCode, items) => async (dispatch) => {
