@@ -27,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { deleteFromGuestCart, initializeGuestCart, updateGuestCart } from "../../redux/actions/guestCartAction";
+import { getBuyNow } from "../../redux/actions/buyNowAction";
 
 const CartItem = ({
   id,
@@ -259,9 +260,14 @@ const CartPage = () => {
   const { items: userCartItems = [], priceSummary = {} } = useSelector((state) => state.cart || {});
   const { items: guestCartItems = [] } = useSelector((state) => state.guestCart || {});
   const { items: wishlistItems = [] } = useSelector((state) => state.whishlist || {});
+  const { buyNow = null } = useSelector((state) => state.buyNow || {});
   const loggedIn = isLoggedIn();
   const [localCart, setLocalCart] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const params = new URLSearchParams(window.location.search);
+const isBuyNowMode = params.get("buyNow") === "true";
+
 
   // Initialize guest cart from localStorage
   useEffect(() => {
@@ -269,88 +275,121 @@ const CartPage = () => {
   }, [dispatch]);
 
   // Fetch user cart and wishlist if logged in
-  useEffect(() => {
-    if (loggedIn) {
-      setLoading(true);
-      dispatch(fetchCart());
-      dispatch(fetchWishlist());
-      dispatch(syncGuestCartToUserCart()).finally(() => setLoading(false));
-    }
-  }, [dispatch, loggedIn]);
+ useEffect(() => {
+  if (isBuyNowMode) {
+    dispatch(getBuyNow());
+  } else if (loggedIn) {
+    dispatch(fetchCart());
+    dispatch(fetchWishlist());
+    dispatch(syncGuestCartToUserCart());
+  } else {
+    dispatch(initializeGuestCart());
+  }
+}, [dispatch, loggedIn, isBuyNowMode]);
 
   // Fetch product details for guest cart items
-  useEffect(() => {
-    const fetchGuestCartDetails = async () => {
-      if (!loggedIn && guestCartItems.length > 0) {
-        try {
-          setLoading(true);
-          const itemsWithDetails = await Promise.all(
-            guestCartItems.map(async (item) => {
-              try {
-                const response = await axios.get(
-                  `${BASE_URL}/products/${item.productId}${
-                    item.variantId ? `?variantId=${item.variantId}` : ""
-                  }`
-                );
-                const productData = response.data;
-                const source = item.variantId ? productData.variant : productData.product;
-                return {
-                  ...item,
-                  product: {
-                    title: source.title,
-                    warranty: source.brand,
-                    price: `Rs.${source.price || 0}`,
-                    mrp: `MRP: Rs.${source.mrp || 0}`,
-                    sizes: [source.size || "M"],
-                    image: source.imageUrl || "/placeholder.jpg",
-                    delivery: "13 Aug",
-                  },
-                };
-              } catch (error) {
-                console.error(`Failed to fetch product ${item.productId}:`, error);
-                return {
-                  ...item,
-                  product: {
-                    title: "Unknown Product",
-                    warranty: "N/A",
-                    price: "Rs.0",
-                    mrp: "MRP: Rs.0",
-                    sizes: ["M"],
-                    image: "/placeholder.jpg",
-                    delivery: "N/A",
-                  },
-                };
-              }
-            })
-          );
-          setLocalCart(itemsWithDetails);
-        } catch (error) {
-          console.error("Failed to fetch guest cart details:", error);
-          toast.error("Failed to load guest cart details");
-        } finally {
-          setLoading(false);
-        }
-      } else if (loggedIn) {
-        setLocalCart(
-          userCartItems.map((item) => ({
-            ...item,
-            quantity: item.quantity || 1,
-            product: {
-              title: (item.variant || item.product)?.title,
-              warranty: (item.variant || item.product)?.brand,
-              price: `Rs.${(item.variant || item.product)?.price || 0}`,
-              mrp: `MRP: Rs.${(item.variant || item.product)?.mrp || 0}`,
-              sizes: [(item.variant || item.product)?.size || "M"],
-              image: (item.variant || item.product)?.imageUrl || "/placeholder.jpg",
-              delivery: "13 Aug",
-            },
-          }))
-        );
-      }
-    };
+useEffect(() => {
+  const loadCartData = async () => {
+    // 1️⃣ Buy Now Mode
+   if (isBuyNowMode && buyNow?.items?.length > 0) {
+  setLocalCart(
+    buyNow.items.map((item) => {
+      const source = item.variant || item.product || {};
+      return {
+        id: item.id,
+        productId: item.productId,
+        variantId: item.variantId || null, // null for products without variants
+        quantity: item.quantity || 1,
+        product: {
+          title: source.title || "Untitled Product",
+          warranty: source.brand || "N/A",
+          price: `Rs.${source.price || 0}`,
+          mrp: `MRP: Rs.${source.mrp || 0}`,
+          sizes: [source.size || "M"],
+          image: source.imageUrl || "/placeholder.jpg",
+          delivery: "13 Aug",
+        },
+      };
+    })
+  );
+  return;
+}
+    // 2️⃣ Logged-in normal cart
+    if (loggedIn) {
+      setLocalCart(
+        userCartItems.map((item) => ({
+          ...item,
+          quantity: item.quantity || 1,
+          product: {
+            title: (item.variant || item.product)?.title,
+            warranty: (item.variant || item.product)?.brand,
+            price: `Rs.${(item.variant || item.product)?.price || 0}`,
+            mrp: `MRP: Rs.${(item.variant || item.product)?.mrp || 0}`,
+            sizes: [(item.variant || item.product)?.size || "M"],
+            image: (item.variant || item.product)?.imageUrl || "/placeholder.jpg",
+            delivery: "13 Aug",
+          },
+        }))
+      );
+      return;
+    }
 
-    fetchGuestCartDetails();
-  }, [userCartItems, guestCartItems, loggedIn]);
+    // 3️⃣ Guest cart
+    if (!loggedIn && guestCartItems.length > 0) {
+      try {
+        setLoading(true);
+        const itemsWithDetails = await Promise.all(
+          guestCartItems.map(async (item) => {
+            try {
+              const response = await axios.get(
+                `${BASE_URL}/products/${item.productId}${
+                  item.variantId ? `?variantId=${item.variantId}` : ""
+                }`
+              );
+              const productData = response.data;
+              const source = item.variantId ? productData.variant : productData.product;
+              return {
+                ...item,
+                product: {
+                  title: source.title,
+                  warranty: source.brand,
+                  price: `Rs.${source.price || 0}`,
+                  mrp: `MRP: Rs.${source.mrp || 0}`,
+                  sizes: [source.size || "M"],
+                  image: source.imageUrl || "/placeholder.jpg",
+                  delivery: "13 Aug",
+                },
+              };
+            } catch (error) {
+              console.error(`Failed to fetch product ${item.productId}:`, error);
+              return {
+                ...item,
+                product: {
+                  title: "Unknown Product",
+                  warranty: "N/A",
+                  price: "Rs.0",
+                  mrp: "MRP: Rs.0",
+                  sizes: ["M"],
+                  image: "/placeholder.jpg",
+                  delivery: "N/A",
+                },
+              };
+            }
+          })
+        );
+        setLocalCart(itemsWithDetails);
+      } catch (error) {
+        console.error("Failed to fetch guest cart details:", error);
+        toast.error("Failed to load guest cart details");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  loadCartData();
+}, [isBuyNowMode, buyNow, loggedIn, userCartItems, guestCartItems]);
+
 
   const handleQuantityChange = (id, newQty, productId, variantId) => {
     if (loggedIn) {
@@ -439,7 +478,7 @@ const CartPage = () => {
     };
   };
 
-  const dynamicPriceSummary = loggedIn ? priceSummary : calculateSummary();
+const dynamicPriceSummary = isBuyNowMode ? buyNow?.priceSummary || {}: loggedIn ? priceSummary : calculateSummary();
 
   return (
     <>

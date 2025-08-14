@@ -20,6 +20,8 @@ import { isLoggedIn } from "../../utils/auth";
 import { addToGuestCart } from "../../redux/actions/guestCartAction";
 import { addToWishlist, deleteWishlistItem, fetchWishlist } from "../../redux/actions/whishlistAction";
 import { toast } from "react-toastify";
+import OtpLoginModal from "../../components/otpLoginModal";
+import { setBuyNow } from "../../redux/actions/buyNowAction";
 
 export default function ProductDetailPage() {
   const dispatch = useDispatch();
@@ -35,10 +37,13 @@ export default function ProductDetailPage() {
   const [selectedSizeId, setSelectedSizeId] = useState("");
   const [selectedColorId, setSelectedColorId] = useState("");
   const [pincode, setPincode] = useState("");
+  const [result, setResult] = useState(null);
   const wishlistItems = useSelector((state) => state.whishlist.items);
   console.log('wishlistItems', wishlistItems)
-    const [localWishlisted, setLocalWishlisted] = useState(false);
-
+  const [localWishlisted, setLocalWishlisted] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [postLoginAction, setPostLoginAction] = useState(null);
+  const [checked, setChecked] = useState(false);
 
   // Memoize category hierarchy to avoid recalculation
   const getCategoryHierarchy = useCallback((categoryId, allCategories) => {
@@ -195,37 +200,107 @@ export default function ProductDetailPage() {
       dispatch(addToGuestCart(cartItem));
     }
   }, [dispatch, productId, variantIdFromURL, qty]);
-  const handleBuy = useCallback(() => alert("Buy Now clicked!"), []);
+
 
   const parsedProductId = parseInt(productId);
   const parsedVariantId = variantIdFromURL ? parseInt(variantIdFromURL) : null;
 
-  const wishlistItem  = wishlistItems.find(
+  const wishlistItem = wishlistItems.find(
     (item) =>
       item.productId === parsedProductId &&
       (!parsedVariantId || item.variantId === parsedVariantId)
   );
   const isWishlisted = Boolean(wishlistItem);
-  console.log('wishlistItem',wishlistItem?.id)
+  console.log('wishlistItem', wishlistItem?.id)
 
-useEffect(() => {
-  setLocalWishlisted(isWishlisted);
-}, [isWishlisted]);
+  useEffect(() => {
+    setLocalWishlisted(isWishlisted);
+  }, [isWishlisted]);
 
-  const handleWishlist = useCallback(() => {
-    if (wishlistItem?.id) {
-      dispatch(deleteWishlistItem(wishlistItem?.id));
-      toast.success("Removed from wishlist successfully");
-      setLocalWishlisted(false);
-    } else {
-      dispatch(addToWishlist(parsedProductId, parsedVariantId));
+  // Centralized login trigger function
+  const triggerLogin = useCallback((actionCallback) => {
+    if (!isLoggedIn()) {
+      setPostLoginAction(() => actionCallback); // Store the action to perform after login
+      setShowLogin(true);
+      return false;
     }
-  }, [dispatch, wishlistItem, parsedProductId, parsedVariantId]);
+    return true;
+  }, []);
 
-  const handlePincodeCheck = useCallback(() => {
-    if (pincode) alert(`Checking delivery for PIN code: ${pincode}`);
-    else alert("Please enter a PIN code");
-  }, [pincode]);
+  // const handleWishlist = useCallback(() => {
+  //    if (!isLoggedIn()) {
+  //     setShowLogin(true);
+  //     return;
+  //   }
+
+  //   if (wishlistItem?.id) {
+  //     dispatch(deleteWishlistItem(wishlistItem?.id));
+  //     toast.success("Removed from wishlist successfully");
+  //     setLocalWishlisted(false);
+  //   } else {
+  //     dispatch(addToWishlist(parsedProductId, parsedVariantId));
+  //   }
+  // }, [dispatch, wishlistItem, parsedProductId, parsedVariantId]);
+
+  const handleWishlist = useCallback(async () => {
+    const wishlistAction = async () => {
+      if (wishlistItem?.id) {
+        await dispatch(deleteWishlistItem(wishlistItem.id));
+        toast.success("Removed from wishlist successfully");
+        setLocalWishlisted(false);
+      } else {
+        const res = await dispatch(addToWishlist(parsedProductId, parsedVariantId));
+        if (res?.payload?.id) {
+          toast.success("Added to wishlist successfully");
+          setLocalWishlisted(true);
+        } else {
+          toast.error("Failed to add to wishlist");
+        }
+      }
+    };
+
+    if (triggerLogin(wishlistAction)) {
+      await wishlistAction(); // Execute immediately if logged in
+    }
+  }, [dispatch, wishlistItem, parsedProductId, parsedVariantId, triggerLogin]);
+
+  const handleBuy = useCallback(() => {
+    const buyAction = () => {
+      const payload = {
+        productId: parseInt(productId),
+        variantId: variantIdFromURL ? parseInt(variantIdFromURL) : null,
+        quantity: qty
+      };
+      dispatch(setBuyNow(payload, navigate));
+    };
+
+    if (triggerLogin(buyAction)) {
+      buyAction();
+    }
+  }, [dispatch, navigate, productId, variantIdFromURL, qty, triggerLogin]);
+
+
+
+  const handlePincodeCheck = async () => {
+    if (!pincode) {
+      return;
+    }
+    if (checked) {
+      // If already checked → reset state
+      setChecked(false);
+      setResult(null);
+      return;
+    }
+    try {
+
+      setResult(null);
+      const res = await axios.get(`${BASE_URL}/pincode/${pincode}`);
+      setResult(res.data);
+        setChecked(true);
+    } catch (err) {
+    }
+  };
+
 
   // Memoize dropdown options
   const sizeOptions = useMemo(() => {
@@ -420,7 +495,7 @@ useEffect(() => {
                   className="add-to-wishlist-btn"
                   onClick={handleWishlist}
                   title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"} >
-                  <i className={`bi ${localWishlisted  ? "bi-heart-fill" : "bi-heart"}`}></i>{" "}
+                  <i className={`bi ${localWishlisted ? "bi-heart-fill" : "bi-heart"}`}></i>{" "}
                   {isWishlisted ? "Wishlisted" : "Add to Wishlist"}
                 </button>
               </div>
@@ -436,9 +511,26 @@ useEffect(() => {
                     onChange={(e) => setPincode(e.target.value)}
                   />
                   <button className="check-btn" onClick={handlePincodeCheck}>
-                    Check
+                    {checked ? "Uncheck" : "Check"}
                   </button>
+
                 </div>
+                {checked && result && (
+                  <div style={{ marginTop: "10px" }}>
+                    <p><strong>Pincode:</strong> {result.pincode}</p>
+                    <p><strong>Available:</strong> {result.available ? "Yes" : "No"}</p>
+                    {result.area ? (
+                      <p>
+                        <strong>Area:</strong> {result.area.city}, {result.area.state}
+                      </p>
+                    ) : (
+                      <p><strong>Area:</strong> N/A</p>
+                    )}
+                    <p><strong>COD Available:</strong> {result.codAvailable ? "Yes" : "No"}</p>
+                    <p><strong>ETA Days:</strong> {result.etaDays ?? "N/A"}</p>
+                    <p><strong>Fee:</strong> {result.fee !== null ? `₹${result.fee}` : "N/A"}</p>
+                  </div>
+                )}
                 <p className="note-text">
                   Please enter PIN code to check delivery time & Pay on Delivery Availability
                 </p>
@@ -506,6 +598,20 @@ useEffect(() => {
                 <div className="view-more">
                   <a href="#">View More Details</a>
                 </div>
+                <OtpLoginModal
+                  show={showLogin}
+                  onClose={() => {
+                    setShowLogin(false);
+                    setPostLoginAction(null); // Clear action after closing
+                  }}
+                  onLoginSuccess={async () => {
+                    if (postLoginAction) {
+                      await postLoginAction(); // Execute the stored action
+                    }
+                    setShowLogin(false);
+                    setPostLoginAction(null); // Clear action after execution
+                  }}
+                />
               </div>
             </div>
           </div>

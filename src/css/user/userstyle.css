@@ -5628,5 +5628,35 @@ h3 a {
   cursor: default;
 }
 
+.pincode-result {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  max-width: 400px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 12px;
+}
+
+.result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #374151;
+}
+.result-item .icon {
+  width: 20px;
+  height: 20px;
+}
+
+
 
 

@@ -7,39 +7,109 @@ import Footer from "../../includes/footer";
 import { fetchAddresses } from "../../redux/actions/addressAction";
 import AddressModal from "../../components/addAddressModal";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchOrders } from "../../redux/actions/orderAction";
 import { fetchCart } from "../../redux/actions/cartAction";
 import BASE_URL from "../../config/config";
 import PlaceOrderButton from "../../components/placeOrderButton";
+import { applyCouponBuyNow } from "../../redux/actions/buyNowAction";
 
 const CheckoutPage = () => {
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
   const { addresses = [] } = useSelector((state) => state.addressBook);
- const [selectedAddressId, setSelectedAddressId] = useState(null);
-  console.log('addresses', selectedAddressId)
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
 
-  const itemsFromCart = useSelector((state) => state.cart.items);
-  console.log('itemsFromCart', itemsFromCart)
-  const priceSummary = useSelector((state) => state.cart.priceSummary);
-
-  // const latestOrder = orders.length > 0 ? orders[0] : null;
-
+  const itemsFromCart = useSelector((state) => state.cart.items) || [];
+  const { buyNow } = useSelector((state) => state.buyNow);
+  //   const cartPriceSummary  = useSelector((state) => state.cart.priceSummary) || {};
+  // const buyNowPriceSummary = useSelector((state) => state.buyNow.priceSummary) || {};
+  //   const isBuyNow = buyNow?.items?.length > 0;
+  //     console.log('buyNowPriceSummary',isBuyNow)
+  // const priceSummary = isBuyNow ? buyNowPriceSummary : cartPriceSummary;
+  const [displayItems, setDisplayItems] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("upi");
+  // const { coupon } = useSelector((state) => state.buyNow);
+ 
+  const [promoCode, setPromoCode] = useState("");
 
+  const cart = useSelector((state) => state.cart);
+  // const buyNow = useSelector((state) => state.buyNow);
+
+  const cartPriceSummary = cart?.priceSummary || {};
+  const buyNowPriceSummary = buyNow?.priceSummary || {};
+
+  const isBuyNow = buyNow?.items?.length > 0;
+  const priceSummary = isBuyNow ? buyNowPriceSummary : cartPriceSummary;
+
+  const cartCoupon = cart?.coupon;
+  const buyNowCoupon = buyNow?.coupon;
+
+   const coupon = isBuyNow ? buyNowCoupon  :cartCoupon ;
+  console.log('coupon',coupon)
+
+
+  // Fetch initial data
   useEffect(() => {
     dispatch(fetchAddresses());
     dispatch(fetchOrders());
     dispatch(fetchCart());
   }, [dispatch]);
 
-    useEffect(() => {
+  // Select default address
+  useEffect(() => {
     if (addresses.length > 0) {
       const defaultAddress = addresses.find((addr) => addr.default) || addresses[0];
       setSelectedAddressId(defaultAddress?.id || defaultAddress?._id || null);
     }
   }, [addresses]);
+
+  // Display items logic (Buy Now or Cart)
+  useEffect(() => {
+    if (buyNow?.items?.length > 0) {
+      // Buy Now mode
+      setDisplayItems(
+        buyNow.items.map((item) => {
+          const source = item.variant || item.product || {};
+          return {
+            id: item.id,
+            productId: item.productId,
+            variantId: item.variantId || null,
+            quantity: item.quantity || 1,
+            product: {
+              title: source.title || "Untitled Product",
+              brand: source.brand || "N/A",
+              price: source.price || 0,
+              mrp: source.mrp || 0,
+              size: source.size || "M",
+              imageUrl: source.imageUrl || "/placeholder.jpg",
+              delivery: "13 Aug",
+            },
+          };
+        })
+      );
+    } else if (itemsFromCart.length > 0) {
+      // Cart mode
+      setDisplayItems(
+        itemsFromCart.map((item) => {
+          const source = item.variant || item.product || {};
+          return {
+            ...item,
+            quantity: item.quantity || 1,
+            product: {
+              title: source.title || "Untitled Product",
+              brand: source.brand || "N/A",
+              price: source.price || 0,
+              mrp: source.mrp || 0,
+              size: source.size || "M",
+              imageUrl: source.imageUrl || "/placeholder.jpg",
+              delivery: "13 Aug",
+            },
+          };
+        })
+      );
+    }
+  }, [buyNow, itemsFromCart]);
 
   const handlePaymentChange = useCallback((e) => {
     setPaymentMethod(e.target.value);
@@ -48,6 +118,22 @@ const CheckoutPage = () => {
   const handleAddressSelect = useCallback((id) => {
     setSelectedAddressId(id);
   }, []);
+
+  const handleApplyCoupon = () => {
+    if (!promoCode.trim()) return;
+    dispatch(
+      applyCouponBuyNow({
+        code: promoCode,
+        productId: displayItems[0]?.productId,
+        variantId: displayItems[0]?.variantId || null,
+        quantity: displayItems[0]?.quantity || 1,
+      })
+    );
+  };
+
+  const handleRemoveCoupon = () => {
+    setPromoCode("");
+  };
 
   const paymentOptions = useMemo(
     () => [
@@ -83,13 +169,13 @@ const CheckoutPage = () => {
                 <h4 className="mb-2">Select a Saved Address</h4>
 
                 {addresses.map((addr) => (
-                  <div className="saved-location" key={addr.id}>
+                  <div className="saved-location" key={addr.id || addr._id}>
                     <input
                       type="radio"
                       name="address"
-                      id={`address-${addr.id}`}
-                      checked={selectedAddressId === addr.id}
-                      onChange={() => handleAddressSelect(addr.id)}
+                      id={`address-${addr.id || addr._id}`}
+                      checked={selectedAddressId === (addr.id || addr._id)}
+                      onChange={() => handleAddressSelect(addr.id || addr._id)}
                     />
                     <div className="location-details">
                       <div className="d-flex align-items-center">
@@ -122,92 +208,102 @@ const CheckoutPage = () => {
             <div className="col-lg-4">
               <div className="cart-details">
                 <h3>Order Summary</h3>
-                {itemsFromCart && itemsFromCart.length > 0 ? (
+                {displayItems.length > 0 && (
                   <>
-                    {itemsFromCart.map((item) => {
-                      const productData = item.variant || item.product;
-                      return (
-                        <div className="cart-item" key={item.id}>
-                          <img
-                            src={`${BASE_URL}${productData.imageUrl}`}
-                            className="cart-item__thumbnail"
-                            alt={productData.imageAlt || productData.title}
-                          />
-                          <div className="cart-item__info">
-                            <p className="cart-item__title">{productData.title}</p>
-                            <span>Brand: {productData.brand}</span>
-                            <span>Qty: {item.quantity}</span>
-                            <span className="cart-item__cost">
-                              ₹{(productData.price * item.quantity).toLocaleString("en-IN")}
-                            </span>
-                          </div>
+                    {displayItems.map((item) => (
+                      <div className="cart-item" key={item.id}>
+                        <img
+                          src={`${BASE_URL}${item.product.imageUrl}`}
+                          className="cart-item__thumbnail"
+                          alt={item.product.title}
+                        />
+                        <div className="cart-item__info">
+                          <p className="cart-item__title">{item.product.title}</p>
+                          <span>Brand: {item.product.brand}</span>
+                          <span>Qty: {item.quantity}</span>
+                          <span className="cart-item__cost">
+                            ₹{(item.product.price * item.quantity).toLocaleString("en-IN")}
+                          </span>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
 
-                    {/* Totals from priceSummary */}
+                    {/* Coupon */}
+                    <div className="coupon-section">
+                      <input
+                        type="text"
+                        className="coupon-section__field"
+                        placeholder="Promo Code"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        className="coupon-section__action"
+                        onClick={handleApplyCoupon}
+                      >
+                        Apply
+                      </button>
+                      {coupon && (
+                        <button
+                          type="button"
+                          className="coupon-section__remove"
+                          onClick={handleRemoveCoupon}
+                        >
+                          <i className="bi bi-trash"></i>
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Totals */}
                     <div className="cart-total mt-3">
                       <div className="cart-total__line">
                         <span>Subtotal</span>
-                        <span>₹{priceSummary.totalAfterDiscount.toLocaleString("en-IN")}</span>
+                        <span>₹{priceSummary.totalAfterDiscount?.toLocaleString("en-IN")}</span>
                       </div>
+
+                      {coupon && (
+                        <div className="cart-total__line">
+                          <span>Discount</span>
+                          <span>- ₹{coupon?.discount?.toLocaleString("en-IN")}</span>
+                        </div>
+                      )}
+
                       <div className="cart-total__line">
                         <span>Shipping</span>
-                        <span>₹{priceSummary.shippingFee.toLocaleString("en-IN")}</span>
+                        <span>₹{priceSummary.shippingFee?.toLocaleString("en-IN")}</span>
                       </div>
+
                       <div className="cart-total__line">
                         <span>Platform Fee</span>
-                        <span>₹{priceSummary.platformFee.toLocaleString("en-IN")}</span>
+                        <span>₹{priceSummary.platformFee?.toLocaleString("en-IN")}</span>
                       </div>
+
                       <div className="cart-total__final">
                         <strong>Total</strong>
-                        <strong>₹{priceSummary.finalPayable.toLocaleString("en-IN")}</strong>
-                      </div>
-                      {/* <button className="main-action w-100 mt-3">Place Order</button> */}
-                      <PlaceOrderButton
-                        disabled={
-                          !itemsFromCart.length || !selectedAddressId
-                        }
-                        buildOrderData={() => {
-                          const items = itemsFromCart.map((item) => {
-                            const productData = item.variant || item.product;
-                            return {
-                              productId: item.productId,
-                              variantId: item.variantId || null,
-                              quantity: item.quantity,
-                              price: productData.price,
-                              total: productData.price * item.quantity,
-                            };
-                          });
-
-                          return {
-                            addressId: selectedAddressId,
-                            paymentMethod: paymentMethod.toUpperCase(),
-                            note: "Leave at door",
-                            subtotal: priceSummary.totalAfterDiscount,
-                            shippingFee: priceSummary.shippingFee,
-                            gst: 0,
-                            totalAmount: priceSummary.finalPayable,
-                            items,
-                          };
-                        }}
-                      />
-                      <div className="trust-section mt-2">
-                        <i className="fas fa-lock me-2"></i>
-                        Secure Checkout Powered by Infinity Designz
+                        <strong>
+                          ₹{(priceSummary.finalPayable - (coupon?.discount || 0))
+                            .toLocaleString("en-IN")}
+                        </strong>
                       </div>
                     </div>
+
                   </>
-                ) : (
-                  ""
-                  // !loading && <p>No items in cart</p>
                 )}
               </div>
             </div>
+
           </div>
         </div>
       </div>
       <Footer />
+
+      {showModal && (
+        <AddressModal
+          show={showModal}
+          onClose={() => setShowModal(false)}
+        />
+      )}
     </>
   );
 };
