@@ -81,6 +81,7 @@ export const applyCouponBuyNow = (couponData) => async (dispatch) => {
             },
         });
         dispatch({ type: APPLY_COUPON_BUY_NOW, payload: res.data });
+        console.log("applyCouponBuyNow API response", res.data);
     } catch (error) {
         dispatch({ type: BUY_NOW_ERROR, payload: error.message });
     }

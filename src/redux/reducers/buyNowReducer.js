@@ -8,10 +8,11 @@ import {
 } from "../actions/buyNowAction";
 
 const initialState = {
-  buyNow: null, // only one product for buy now flow
+  buyNow: null, 
   coupon: null,
   loading: false,
   error: null,
+  priceSummary: {}
 };
 
 export const buyNowReducer = (state = initialState, action) => {
@@ -28,8 +29,12 @@ export const buyNowReducer = (state = initialState, action) => {
     case DELETE_BUY_NOW:
       return { ...state, buyNow: null, loading: false };
 
-    case APPLY_COUPON_BUY_NOW:
-      return { ...state, coupon: action.payload, loading: false };
+  case APPLY_COUPON_BUY_NOW:
+  return {
+    ...state,
+    coupon: action.payload.coupon,
+    priceSummary: action.payload.priceSummary
+  };
 
     case BUY_NOW_ERROR:
       return { ...state, error: action.payload, loading: false };

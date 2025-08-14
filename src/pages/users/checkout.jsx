@@ -9,7 +9,7 @@ import AddressModal from "../../components/addAddressModal";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOrders } from "../../redux/actions/orderAction";
-import { fetchCart } from "../../redux/actions/cartAction";
+import { applyCoupon, fetchCart } from "../../redux/actions/cartAction";
 import BASE_URL from "../../config/config";
 import PlaceOrderButton from "../../components/placeOrderButton";
 import { applyCouponBuyNow } from "../../redux/actions/buyNowAction";
@@ -19,35 +19,37 @@ const CheckoutPage = () => {
   const [showModal, setShowModal] = useState(false);
   const { addresses = [] } = useSelector((state) => state.addressBook);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
-
-  const itemsFromCart = useSelector((state) => state.cart.items) || [];
-  const { buyNow } = useSelector((state) => state.buyNow);
-  //   const cartPriceSummary  = useSelector((state) => state.cart.priceSummary) || {};
-  // const buyNowPriceSummary = useSelector((state) => state.buyNow.priceSummary) || {};
-  //   const isBuyNow = buyNow?.items?.length > 0;
-  //     console.log('buyNowPriceSummary',isBuyNow)
-  // const priceSummary = isBuyNow ? buyNowPriceSummary : cartPriceSummary;
   const [displayItems, setDisplayItems] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("upi");
-  // const { coupon } = useSelector((state) => state.buyNow);
- 
   const [promoCode, setPromoCode] = useState("");
-
+  const itemsFromCart = useSelector((state) => state.cart.items) || [];
+  const { buyNow } = useSelector((state) => state.buyNow);
   const cart = useSelector((state) => state.cart);
-  // const buyNow = useSelector((state) => state.buyNow);
+  const reduxBuyNowPriceSummary = useSelector((state) => state.buyNow.priceSummary) || {};
+  const reduxCartPriceSummary = useSelector((state) => state.cart.priceSummary) || {};
 
-  const cartPriceSummary = cart?.priceSummary || {};
-  const buyNowPriceSummary = buyNow?.priceSummary || {};
+  const buyNowItems = buyNow?.items || [];
+  const isBuyNow = buyNowItems.length > 0;
 
-  const isBuyNow = buyNow?.items?.length > 0;
-  const priceSummary = isBuyNow ? buyNowPriceSummary : cartPriceSummary;
+  const priceSummary = isBuyNow
+    ? (Object.keys(reduxBuyNowPriceSummary).length > 0
+      ? reduxBuyNowPriceSummary
+      : (buyNow?.priceSummary || {}))
+    : (Object.keys(reduxCartPriceSummary).length > 0
+      ? reduxCartPriceSummary
+      : (cart?.priceSummary || {}));
 
-  const cartCoupon = cart?.coupon;
-  const buyNowCoupon = buyNow?.coupon;
+  // const cartCoupon = useSelector((state) => state.cart.appliedCoupon);
+  // const Buynowcoupon = useSelector((state) => state.buyNow.coupon);
+  const cartCoupon = useSelector(state => state.cart.appliedCoupon);
+const buyNowCoupon = useSelector(state => state.buyNow.coupon);
 
-   const coupon = isBuyNow ? buyNowCoupon  :cartCoupon ;
-  console.log('coupon',coupon)
+const coupon = isBuyNow ? buyNowCoupon : cartCoupon;
 
+
+
+  console.log('cartCoupon',cartCoupon)
+  console.log('Buynowcoupon',buyNowCoupon)
 
   // Fetch initial data
   useEffect(() => {
@@ -119,16 +121,25 @@ const CheckoutPage = () => {
     setSelectedAddressId(id);
   }, []);
 
-  const handleApplyCoupon = () => {
+ const handleApplyCoupon = () => {
     if (!promoCode.trim()) return;
-    dispatch(
-      applyCouponBuyNow({
-        code: promoCode,
-        productId: displayItems[0]?.productId,
-        variantId: displayItems[0]?.variantId || null,
-        quantity: displayItems[0]?.quantity || 1,
-      })
-    );
+
+    if (isBuyNow) {
+      dispatch(
+        applyCouponBuyNow({
+          code: promoCode,
+          productId: displayItems[0]?.productId,
+          variantId: displayItems[0]?.variantId || null,
+          quantity: displayItems[0]?.quantity || 1,
+        })
+      );
+    } else {
+      dispatch(
+        applyCoupon({
+          code: promoCode,
+        })
+      );
+    }
   };
 
   const handleRemoveCoupon = () => {
@@ -262,12 +273,13 @@ const CheckoutPage = () => {
                         <span>₹{priceSummary.totalAfterDiscount?.toLocaleString("en-IN")}</span>
                       </div>
 
-                      {coupon && (
+                      {priceSummary?.couponDiscount > 0 && (
                         <div className="cart-total__line">
                           <span>Discount</span>
-                          <span>- ₹{coupon?.discount?.toLocaleString("en-IN")}</span>
+                          <span>- ₹{priceSummary.couponDiscount.toLocaleString("en-IN")}</span>
                         </div>
                       )}
+
 
                       <div className="cart-total__line">
                         <span>Shipping</span>
@@ -281,6 +293,43 @@ const CheckoutPage = () => {
 
                       <div className="cart-total__final">
                         <strong>Total</strong>
+                        <strong>
+                          ₹{(priceSummary.finalPayable - (coupon?.discount || 0))
+                            .toLocaleString("en-IN")}
+                        </strong>
+                      </div>
+
+                      <PlaceOrderButton
+                        disabled={
+                          !itemsFromCart.length || !selectedAddressId
+                        }
+                        buildOrderData={() => {
+                          const items = itemsFromCart.map((item) => {
+                            const productData = item.variant || item.product;
+                            return {
+                              productId: item.productId,
+                              variantId: item.variantId || null,
+                              quantity: item.quantity,
+                              price: productData.price,
+                              total: productData.price * item.quantity,
+                            };
+                          });
+
+                          return {
+                            addressId: selectedAddressId,
+                            paymentMethod: paymentMethod.toUpperCase(),
+                            note: "Leave at door",
+                            subtotal: priceSummary.totalAfterDiscount,
+                            shippingFee: priceSummary.shippingFee,
+                            gst: 0,
+                            totalAmount: priceSummary.finalPayable,
+                            items,
+                          };
+                        }}
+                      />
+                      <div className="trust-section mt-2">
+                        <i className="fas fa-lock me-2"></i>
+                        Secure Checkout Powered by Infinity Designz
                         <strong>
                           ₹{(priceSummary.finalPayable - (coupon?.discount || 0))
                             .toLocaleString("en-IN")}
