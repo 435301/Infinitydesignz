@@ -1,27 +1,87 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import BASE_URL from '../config/config';
-import { placeOrder } from '../redux/actions/orderAction';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import { placeOrder } from '../redux/actions/orderAction';
+import { placeBuyNowOrder } from '../redux/actions/buyNowAction';
 
-const PlaceOrderButton = ({ buildOrderData }) => {
+const PlaceOrderButton = ({
+  mode = "cart", // "cart" or "buyNow"
+  disabled = false,
+  selectedAddressId,
+  paymentMethod = "COD",
+  cartItems = [],
+  buyNowProduct = null,
+  priceSummary = {},
+  appliedCoupon = null
+}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  // Select appropriate loading/error slice
   const { loading, error } = useSelector((state) => state.order);
 
+  // Build Cart payload
+  const buildCartOrderData = () => {
+    const items = cartItems.map(item => {
+      const productData = item.variant || item.product;
+      return {
+        productId: item.productId,
+        variantId: item.variantId || null,
+        quantity: item.quantity,
+        price: productData.price,
+        total: productData.price * item.quantity,
+      };
+    });
+
+    return {
+      addressId: selectedAddressId,
+      paymentMethod: paymentMethod.toUpperCase(),
+      note: "Leave at door",
+      subtotal: priceSummary.totalAfterDiscount || 0,
+      shippingFee: priceSummary.shippingFee || 0,
+      gst: priceSummary.gst || 0,
+      totalAmount: priceSummary.finalPayable || 0,
+      items,
+    };
+  };
+
+  // Build Buy Now payload
+  const buildBuyNowOrderData = () => ({
+    productId: buyNowProduct.productId,
+    variantId: buyNowProduct.variantId || null,
+    quantity: buyNowProduct.quantity,
+    addressId: selectedAddressId,
+    note: "Leave at door",
+    couponDiscount: appliedCoupon?.discount || 0,
+    couponId: appliedCoupon?.id || null,
+  });
+
   const handlePlaceOrder = async () => {
-    const orderData = buildOrderData();
-    if (!orderData || !orderData.items || orderData.items.length === 0) {
-      toast.error("Cart is empty. Cannot place order")
-      return;
+    let orderData;
+    if (mode === "buyNow") {
+      if (!buyNowProduct) {
+        toast.error("No Buy Now product selected");
+        return;
+      }
+      orderData = buildBuyNowOrderData();
+    } else {
+      if (!cartItems.length) {
+        toast.error("Cart is empty. Cannot place order");
+        return;
+      }
+      orderData = buildCartOrderData();
     }
+
     try {
-      await dispatch(placeOrder(orderData));
+      if (mode === "buyNow") {
+        await dispatch(placeBuyNowOrder(orderData));
+      } else {
+        await dispatch(placeOrder(orderData));
+      }
       navigate('/orders');
     } catch (e) {
-      // Already handled in redux state
+      // Error already handled in Redux
     }
   };
 
@@ -30,7 +90,7 @@ const PlaceOrderButton = ({ buildOrderData }) => {
       <button
         className="main-action w-100 mt-3"
         onClick={handlePlaceOrder}
-        disabled={loading}
+        disabled={disabled || loading}
       >
         {loading ? 'Placing Order...' : 'Place Order'}
       </button>

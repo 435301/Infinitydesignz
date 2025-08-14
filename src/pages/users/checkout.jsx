@@ -42,14 +42,14 @@ const CheckoutPage = () => {
   // const cartCoupon = useSelector((state) => state.cart.appliedCoupon);
   // const Buynowcoupon = useSelector((state) => state.buyNow.coupon);
   const cartCoupon = useSelector(state => state.cart.appliedCoupon);
-const buyNowCoupon = useSelector(state => state.buyNow.coupon);
+  const buyNowCoupon = useSelector(state => state.buyNow.coupon);
 
-const coupon = isBuyNow ? buyNowCoupon : cartCoupon;
+  const coupon = isBuyNow ? buyNowCoupon : cartCoupon;
 
 
 
-  console.log('cartCoupon',cartCoupon)
-  console.log('Buynowcoupon',buyNowCoupon)
+  console.log('cartCoupon', cartCoupon)
+  console.log('Buynowcoupon', buyNowCoupon)
 
   // Fetch initial data
   useEffect(() => {
@@ -121,7 +121,7 @@ const coupon = isBuyNow ? buyNowCoupon : cartCoupon;
     setSelectedAddressId(id);
   }, []);
 
- const handleApplyCoupon = () => {
+  const handleApplyCoupon = () => {
     if (!promoCode.trim()) return;
 
     if (isBuyNow) {
@@ -300,33 +300,17 @@ const coupon = isBuyNow ? buyNowCoupon : cartCoupon;
                       </div>
 
                       <PlaceOrderButton
-                        disabled={
-                          !itemsFromCart.length || !selectedAddressId
-                        }
-                        buildOrderData={() => {
-                          const items = itemsFromCart.map((item) => {
-                            const productData = item.variant || item.product;
-                            return {
-                              productId: item.productId,
-                              variantId: item.variantId || null,
-                              quantity: item.quantity,
-                              price: productData.price,
-                              total: productData.price * item.quantity,
-                            };
-                          });
-
-                          return {
-                            addressId: selectedAddressId,
-                            paymentMethod: paymentMethod.toUpperCase(),
-                            note: "Leave at door",
-                            subtotal: priceSummary.totalAfterDiscount,
-                            shippingFee: priceSummary.shippingFee,
-                            gst: 0,
-                            totalAmount: priceSummary.finalPayable,
-                            items,
-                          };
-                        }}
+                        mode={isBuyNow ? "buyNow" : "cart"}
+                        disabled={(!itemsFromCart.length && !buyNowItems.length) || !selectedAddressId}
+                        selectedAddressId={selectedAddressId}
+                        paymentMethod={paymentMethod}
+                        cartItems={itemsFromCart}
+                        buyNowProduct={buyNowItems[0]}
+                        priceSummary={priceSummary}
+                        appliedCoupon={coupon}
                       />
+
+
                       <div className="trust-section mt-2">
                         <i className="fas fa-lock me-2"></i>
                         Secure Checkout Powered by Infinity Designz

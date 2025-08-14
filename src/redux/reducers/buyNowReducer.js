@@ -5,6 +5,9 @@ import {
   DELETE_BUY_NOW,
   APPLY_COUPON_BUY_NOW,
   BUY_NOW_ERROR,
+    PLACE_ORDER_BUYNOW_REQUEST,
+  PLACE_ORDER_BUYNOW_SUCCESS,
+  PLACE_ORDER_BUYNOW_FAILURE
 } from "../actions/buyNowAction";
 
 const initialState = {
@@ -38,7 +41,13 @@ export const buyNowReducer = (state = initialState, action) => {
 
     case BUY_NOW_ERROR:
       return { ...state, error: action.payload, loading: false };
-
+       case PLACE_ORDER_BUYNOW_REQUEST:
+      return { ...state, loading: true, error: null };
+    case PLACE_ORDER_BUYNOW_SUCCESS:
+      return { ...state, loading: false, order: action.payload };
+    case PLACE_ORDER_BUYNOW_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+      
     default:
       return state;
   }
