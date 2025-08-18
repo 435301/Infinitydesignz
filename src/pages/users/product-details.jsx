@@ -254,7 +254,7 @@ export default function ProductDetailPage() {
           toast.success("Added to wishlist successfully");
           setLocalWishlisted(true);
         } else {
-          toast.error("Failed to add to wishlist");
+          // toast.error("Failed to add to wishlist");
         }
       }
     };

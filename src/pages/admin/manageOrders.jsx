@@ -46,9 +46,7 @@ const ManageOrders = () => {
 
           <div className="main-header mt-0">
             <h4>Orders</h4>
-            <ol className="breadcrumb breadcrumb-title breadcrumb-arrow">
-              <li className="breadcrumb-item"><a href="#">Manage</a></li>
-            </ol>
+           
           </div>
 
           <div className="container-fluid manage">
@@ -83,8 +81,6 @@ const ManageOrders = () => {
                   <div className="col-md-12 text-end pt pt">
                     <button className="btn btn-success me-2">Active</button>
                     <button className="btn btn-secondary me-2">Inactive</button>
-                    <button className="btn btn-danger me-2">Delete</button>
-                    <button className="btn btn-warning">Trash</button>
                   </div>
                 </div>
 
@@ -109,9 +105,9 @@ const ManageOrders = () => {
                           <td>{order.customer}</td>
                           <td>{order.mobile}</td>
                           <td>
-                            <a href="/order-details" className="btn btn-sm btn-outline-primary">
+                            <button className="btn btn-sm btn-outline-primary">
                               <FaEye /> View
-                            </a>
+                            </button>
                           </td>
                         </tr>
                       ))}

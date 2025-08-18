@@ -128,7 +128,7 @@ const ManageSliders = () => {
                   <div className="col-md-6 text-end pt pt">
                     <button className="btn btn-success me-2" disabled={selectedRows.length === 0}
                       onClick={() => handleBulkStatusUpdate(true)}>Active</button>
-                    <button className="btn btn-secondary me-2" disabled={selectedRows.length === 0}
+                    <button className="btn btn-danger" disabled={selectedRows.length === 0}
                       onClick={() => handleBulkStatusUpdate(false)}>Inactive</button>
 
                   </div>
@@ -179,7 +179,7 @@ const ManageSliders = () => {
                             <td>{slider?.priority}</td>
                             <td>
                               <span
-                                className={`badge ${slider?.status ? 'bg-success' : 'bg-secondary'} text-light`}
+                                className={`badge ${slider?.status ? 'text-light-primary' : 'text-light-danger'} `}
                               >
                                 {slider?.status ? 'Active' : 'Inactive'}
                               </span>

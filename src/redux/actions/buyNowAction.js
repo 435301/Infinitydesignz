@@ -40,7 +40,9 @@ export const setBuyNow = (buyNowData, navigate) => async (dispatch) => {
             }
         );
         dispatch({ type: SET_BUY_NOW, payload: res.data });
+        toast.success("Buy Now item added successfully");
         navigate("/cart?buyNow=true");
+
     } catch (error) {
         dispatch({ type: BUY_NOW_ERROR, payload: error.message });
     }
@@ -58,6 +60,7 @@ export const updateBuyNow = (id, updateData) => async (dispatch) => {
             }
         );
         dispatch({ type: UPDATE_BUY_NOW, payload: res.data });
+        toast.success("Buy Now item updated successfully");
     } catch (error) {
         dispatch({ type: BUY_NOW_ERROR, payload: error.message });
     }
@@ -72,6 +75,7 @@ export const deleteBuyNow = (id) => async (dispatch) => {
             },
         });
         dispatch({ type: DELETE_BUY_NOW, payload: id });
+        toast.success("Buy Now item deleted successfully");
     } catch (error) {
         dispatch({ type: BUY_NOW_ERROR, payload: error.message });
     }
@@ -87,6 +91,7 @@ export const applyCouponBuyNow = (couponData) => async (dispatch) => {
         });
         dispatch({ type: APPLY_COUPON_BUY_NOW, payload: res.data });
         console.log("applyCouponBuyNow API response", res.data);
+        toast.success(res.data?.message || 'Coupon applied successfully');
     } catch (error) {
         dispatch({ type: BUY_NOW_ERROR, payload: error.message });
     }
