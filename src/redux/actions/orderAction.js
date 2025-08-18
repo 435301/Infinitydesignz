@@ -35,7 +35,7 @@ export const fetchOrders = () => async (dispatch) => {
   dispatch({ type: FETCH_ORDERS_REQUEST });
 
   try {
-    const response = await axios.get(`${BASE_URL}/orders`, {
+    const response = await axios.get(`${BASE_URL}/orders/user`, {
       headers: {
         Authorization: `Bearer ${getToken()}`,
       },
