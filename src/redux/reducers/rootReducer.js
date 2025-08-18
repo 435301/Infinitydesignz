@@ -25,6 +25,7 @@ import addressReducer from './addressReducer';
 import orderReducer from './orderReducer';
 import { profileReducer } from './profileReducer';
 import { buyNowReducer } from './buyNowReducer';
+import slidersReducer from './sliderReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -54,6 +55,7 @@ const rootReducer = combineReducers({
   order: orderReducer,
   profile: profileReducer,
   buyNow:buyNowReducer,
+  sliders:slidersReducer
 });
 
 export default rootReducer;

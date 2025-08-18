@@ -145,7 +145,7 @@ function App() {
           <Route path='/admin/orders' element={<AdminRoute><ManageOrders /></AdminRoute>}></Route>
           <Route path='/admin/add-coupon' element={<AdminRoute><CreateCoupon /></AdminRoute>}></Route>
           <Route path='/admin/manage-coupons' element={<AdminRoute><ManageCoupons /></AdminRoute>}></Route>
-          <Route path='/admin/sliders' element={<AdminRoute><AddSlider /></AdminRoute>}></Route>
+          {/* <Route path='/admin/sliders' element={<AdminRoute><AddSlider /></AdminRoute>}></Route> */}
           <Route path='/admin/manage-sliders' element={<AdminRoute><ManageSliders /></AdminRoute>}></Route>
           <Route path='/admin/change-password' element={<AdminRoute><ChangePassword /></AdminRoute>}></Route>
           <Route path='/admin/offers' element={<AdminRoute><OffersList /></AdminRoute>}></Route>

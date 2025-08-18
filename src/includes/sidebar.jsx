@@ -40,7 +40,7 @@ const Sidebar = ({ isCollapsed, onClose }) => {
     users: ['/admin/manage-users'],
     orders: ['/admin/orders'],
     offers: ['/admin/offers', '/create-coupon'],
-    sliders: ['/admin/sliders', '/admin/manage-sliders'],
+    sliders: [ '/admin/manage-sliders'],
     others: ['/admin/contact', '/admin/keywords', '/admin/subscriberslist'],
     promotions: [
       '/admin/home-screen-promotion-category',
@@ -331,7 +331,7 @@ const Sidebar = ({ isCollapsed, onClose }) => {
             </li>
             <li>
               <NavLink
-                to="/admin/sliders"
+                to="/admin/manage-sliders"
                 className={({ isActive }) => (isActive ? 'active' : '')}
                 style={navLinkStyle(isCollapsed)}
                 onClick={() => window.innerWidth <= 767 && onClose()}
