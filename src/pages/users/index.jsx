@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../../includes/header';
 import Footer from '../../includes/footer';
 import '../../css/user/userstyle.css';
@@ -64,18 +64,31 @@ import CallbackForm from '../../components/callbackForm';
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import OtpLoginModal from '../../components/otpLoginModal';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchRightSliders, fetchSliders } from '../../redux/actions/slidersAction';
+import BASE_URL from '../../config/config';
+import BannerSlider from '../../components/bannerSlider';
 
 const waitAndShowModal = () =>
   new Promise((resolve) => {
     setTimeout(() => {
       resolve(true);
-    }, 1000); 
-  }); 
+    }, 1000);
+  });
 
 export default function HomeBannerSection() {
- const [showLoginModal, setShowLoginModal] = useState(false);
+  const dispatch = useDispatch();
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const location = useLocation();
+  const { sliders } = useSelector((state) => state.sliders);
+  const { rightSliders } = useSelector((state) => state.rightSliders);
+
+  console.log("sliders", rightSliders);
+
+  useEffect(() => {
+    dispatch(fetchSliders());
+    dispatch(fetchRightSliders());
+  }, [dispatch]);
 
   useQuery({
     queryKey: ["show-login-modal"],
@@ -314,62 +327,43 @@ export default function HomeBannerSection() {
         <div className="container py-4">
           <div className="row g-4">
             {/* Left Banner Card */}
-            <div className="col-md-6">
-              <div
-                className="furniture-banner position-relative overflow-hidden rounded shadow-lg"
-                style={{
-                  background: `url(${SlideImage}) center center / cover no-repeat`,
-                  minHeight: '100%',
-                }}
-              >
-                {/* Teal info box */}
-                <div
-                  className="info-box text-white p-4"
-                  style={{
-                    backgroundColor: '#0da79e',
-                    maxWidth: '312px',
-                    borderTopRightRadius: '58px',
-                    borderBottomRightRadius: '58px',
-                    marginTop: '73px',
-                    marginLeft: '1px',
-                  }}
-                >
-                  <img src={Modern} alt="Modern" style={{ width: '108px' }} className="mb-2" />
-                  <img src={Furniture} alt="Furniture" style={{ width: '190px' }} className="mb-3" />
-                  <ul className="list-unstyled fs-6">
-                    <li className="mb-2">• 36-Month Warranty Available</li>
-                    <li className="mb-2">• EMI starting from ₹1,825/month</li>
-                    <li className="mb-2">• Express Shipping in 1 day</li>
-                  </ul>
-                  <div className="Shop align-items-center d-flex">
-                    <Link to="/shop" className="btn btn-light rounded-pill px-4 text-dark">
-                      Shop Now
-                    </Link>
-                    <img src={Aa} alt="Arrow" style={{ width: '21px' }} className="ms-2" />
-                  </div>
-                </div>
-              </div>
-            </div>
+
+            <BannerSlider sliders={sliders} />
 
             {/* Right Product Grid */}
             <div className="col-md-6">
               <div className="row g-3">
                 <div className="col-6">
                   <div className="rounded overflow-hidden">
-                    <img src={S1} className="img-fluid rounded" alt="Sofa 1" />
+                    <img
+                      src={rightSliders?.image1 ? `${BASE_URL}${rightSliders.image3}` : S1}
+                      className="img-fluid rounded"
+                      alt="Sofa 1"
+                    />
                   </div>
                 </div>
+
                 <div className="col-6">
                   <div className="rounded overflow-hidden">
-                    <img src={S2} className="img-fluid rounded" alt="Sofa 2" />
+                    <img
+                      src={rightSliders?.image2 ? `${BASE_URL}${rightSliders.image2}` : S2}
+                      className="img-fluid rounded"
+                      alt="Sofa 2"
+                    />
                   </div>
                 </div>
+
                 {/* Sale Banner */}
                 <div className="col-12">
-                  <img src={S4} alt="Sale Banner" className="w-100" />
+                  <img
+                    src={rightSliders?.image3 ? `${BASE_URL}${rightSliders.image1}` : S4}
+                    alt="Sale Banner"
+                    className="w-100"
+                  />
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
@@ -443,7 +437,7 @@ export default function HomeBannerSection() {
       {/* <ProductGrid products={products} /> */}
 
       <PromoSection heading="Trending" promos={promoData} />
-  
+
       <div className="container mb-4">
         <div className="row">
           <div className="col-md-4">
@@ -472,11 +466,11 @@ export default function HomeBannerSection() {
           </div>
 
           <CallbackForm onSubmit={handleFormSubmit} />
- <OtpLoginModal
-        show={showLoginModal}
-        onClose={handleCloseModal}
-        onLoginSuccess={handleLoginSuccess}
-      />
+          <OtpLoginModal
+            show={showLoginModal}
+            onClose={handleCloseModal}
+            onLoginSuccess={handleLoginSuccess}
+          />
         </div>
       </div>
       <Footer />

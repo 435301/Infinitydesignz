@@ -12,7 +12,9 @@ export const EDIT_SLIDERS_REQUEST='EDIT_SLIDERS_REQUEST';
 export const EDIT_SLIDERS_SUCCESS='EDIT_SLIDERS_SUCCESS';
 export const EDIT_SLIDERS_FAILURE='EDIT_SLIDERS_FAILURE';
 export const DELETE_SLIDERS_SUCCESS ='DELETE_SLIDERS_SUCCESS'
-
+export const FETCH_RIGHTSLIDERS_REQUEST = 'FETCH_RIGHTSLIDERS_REQUEST';
+export const FETCH_RIGHTSLIDERS_SUCCESS = 'FETCH_RIGHTSLIDERS_SUCCESS';
+export const FETCH_RIGHTSLIDERS_FAILURE = 'FETCH_RIGHTSLIDERS_FAILURE';
 
 export const fetchSliders = () => {
   return async (dispatch) => {
@@ -140,3 +142,26 @@ export const bulkUpdateSliderStatus = (ids, status) => async (dispatch) => {
   }
 };
 
+export const fetchRightSliders = () => {
+  return async (dispatch) => {
+    dispatch({ type: FETCH_RIGHTSLIDERS_REQUEST });
+    try {
+      const token = localStorage.getItem('token');
+
+      const response = await axios.get(`${BASE_URL}/slider-right`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      dispatch({ type: FETCH_RIGHTSLIDERS_SUCCESS, payload: response.data });
+    } catch (error) {
+      toast.dismiss();
+      toast.error(error?.response?.data?.message || 'Failed to fetch right sliders');
+      dispatch({
+        type: FETCH_RIGHTSLIDERS_FAILURE,
+        payload: error.response?.data?.message || error.message,
+      });
+    }
+  };
+};
