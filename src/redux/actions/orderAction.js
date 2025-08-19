@@ -11,6 +11,10 @@ export const FETCH_ORDERS_REQUEST = 'FETCH_ORDERS_REQUEST';
 export const FETCH_ORDERS_SUCCESS = 'FETCH_ORDERS_SUCCESS';
 export const FETCH_ORDERS_FAILURE = 'FETCH_ORDERS_FAILURE';
 
+export const FETCH_ADMINORDERS_REQUEST = 'FETCH_ADMINORDERS_REQUEST';
+export const FETCH_ADMINORDERS_SUCCESS = 'FETCH_ADMINORDERS_SUCCESS';
+export const FETCH_ADMINORDERS_FAILURE = 'FETCH_ADMINORDERS_FAILURE';
+
 export const placeOrder = (orderData) => async (dispatch) => {
   dispatch({ type: PLACE_ORDER_REQUEST });
   try {
@@ -43,7 +47,7 @@ export const fetchOrders = () => async (dispatch) => {
 
     dispatch({
       type: FETCH_ORDERS_SUCCESS,
-      payload: response.data, 
+      payload: response.data,
     });
   } catch (error) {
     dispatch({
@@ -53,3 +57,48 @@ export const fetchOrders = () => async (dispatch) => {
   }
 };
 
+export const fetchAdminOrders = (filters = {}) => async (dispatch) => {
+  dispatch({ type: FETCH_ADMINORDERS_REQUEST });
+
+  const {
+    status = 'DELIVERED',
+    orderId = '',
+    dateFrom = '',
+    dateTo = '',
+    active = true,
+    orderFrom = 'web',
+    page = 1,
+    pageSize = 10,
+  } = filters;
+
+  try {
+     const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/orders`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      {
+      params: {
+        status,
+        orderId,
+        dateFrom,
+        dateTo,
+        active,
+        orderFrom,
+        page,
+        pageSize,
+      },
+    });
+
+    dispatch({
+      type: FETCH_ADMINORDERS_SUCCESS,
+      payload: response.data,
+    });
+  } catch (error) {
+    dispatch({
+      type: FETCH_ADMINORDERS_FAILURE,
+      payload: error.message,
+    });
+  }
+};

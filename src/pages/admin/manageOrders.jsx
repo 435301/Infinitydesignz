@@ -4,35 +4,60 @@ import Sidebar from '../../includes/sidebar';
 import { FaEye } from 'react-icons/fa';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAdminOrders } from '../../redux/actions/orderAction';
 
 const ManageOrders = () => {
+  const dispatch = useDispatch();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const { orders, loading } = useSelector((state) => state.ordersState);
+  console.log('orders', orders);
+  const [filters, setFilters] = useState({
+    orderId: '',
+    dateFrom: '',
+    dateTo: '',
+  });
 
-  const orders = [
-    {
-      orderNo: '#1001',
-      qty: 5,
-      date: '2025-05-25',
-      customer: 'Vikas Reddy',
-      mobile: '9876543210',
-    },
-    {
-      orderNo: '#1002',
-      qty: 2,
-      date: '2025-05-24',
-      customer: 'Vikas Reddy',
-      mobile: '9876543211',
-    },
-  ];
+  useEffect(() => {
+    dispatch(fetchAdminOrders(filters));
+  }, []);
+
+  // const orders = [
+  //   {
+  //     orderNo: '#1001',
+  //     qty: 5,
+  //     date: '2025-05-25',
+  //     customer: 'Vikas Reddy',
+  //     mobile: '9876543210',
+  //   },
+  //   {
+  //     orderNo: '#1002',
+  //     qty: 2,
+  //     date: '2025-05-24',
+  //     customer: 'Vikas Reddy',
+  //     mobile: '9876543211',
+  //   },
+  // ];
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log('Searching orders...');
-    // You can fetch filtered results here
+    const orderId = e.target.orderNo.value;
+    const dateFrom = e.target.fromDate.value;
+    const dateTo = e.target.toDate.value;
+
+    const newFilters = {
+      orderId,
+      dateFrom,
+      dateTo,
+    };
+
+    setFilters(newFilters);
+    dispatch(fetchAdminOrders(newFilters));
   };
+
 
   return (
     <div className="sidebar-mini fixed">
@@ -46,7 +71,7 @@ const ManageOrders = () => {
 
           <div className="main-header mt-0">
             <h4>Orders</h4>
-           
+
           </div>
 
           <div className="container-fluid manage">
@@ -97,20 +122,32 @@ const ManageOrders = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {orders.map((order, index) => (
-                        <tr key={index}>
-                          <td>{order.orderNo}</td>
-                          <td>{order.qty}</td>
-                          <td>{order.date}</td>
-                          <td>{order.customer}</td>
-                          <td>{order.mobile}</td>
-                          <td>
-                            <button className="btn btn-sm btn-outline-primary">
-                              <FaEye /> View
-                            </button>
-                          </td>
+                      {Array.isArray(orders) && orders.length > 0 ? (
+                        orders.map((order, index) => (
+                          <tr key={index}>
+                            <td>{order.orderId || order.orderNo}</td>
+                            <td>{order.totalQuantity || order.qty}</td>
+                            <td>{order.orderDate || order.date}</td>
+                            <td>{order.customerName || order.customer}</td>
+                            <td>{order.mobile}</td>
+                            <td>
+                              <button className="btn btn-sm btn-outline-primary">
+                                <FaEye /> View
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      ) : loading ? (
+                        <tr>
+                          <td colSpan="6" className="text-center">Loading...</td>
                         </tr>
-                      ))}
+                      ) : (
+                        <tr>
+                          <td colSpan="6" className="text-center">No orders found.</td>
+                        </tr>
+                      )}
+
+
                     </tbody>
                   </table>
                 </div>
