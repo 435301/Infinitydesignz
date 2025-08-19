@@ -35,6 +35,9 @@ export const EDIT_PRODUCT_FILTERS_FAILURE = 'EDIT_PRODUCT_FILTERS_FAILURE';
 export const DELETE_PRODUCT_FILTERS_SUCCESS = 'DELETE_PRODUCT_FILTERS_SUCCESS';
 export const FETCH_VARIANT_IMAGE_SUCCESS = 'FETCH_VARIANT_IMAGE_SUCCESS';
 export const SET_SELECTED_VARIANT ='SET_SELECTED_VARIANT';
+export const FETCH_ALLPRODUCTS_REQUEST = 'FETCH_ALLPRODUCTS_REQUEST';
+export const FETCH_ALLPRODUCTS_SUCCESS = 'FETCH_ALLPRODUCTS_SUCCESS';
+export const FETCH_ALLPRODUCTS_FAILURE = 'FETCH_ALLPRODUCTS_FAILURE';
 
 export const fetchProducts = () => {
 
@@ -393,4 +396,38 @@ export const setSelectedVariant = (variant) => {
     type: "SET_SELECTED_VARIANT",
     payload: variant,
   };
+};
+
+export const fetchAllProducts = (filters = {}) => async (dispatch) => {
+  dispatch({ type: FETCH_ALLPRODUCTS_REQUEST });
+
+  try {
+    const response = await axios.get(`${BASE_URL}/products/search`, {
+      params: {
+        color: filters.color?.join(','),
+        size: filters.size?.join(','),
+        filterListIds: filters.filterListIds?.join(','),
+        searchStr: filters.searchStr,
+        brandId: filters.brandId,
+        mainCategoryId: filters.mainCategoryId,
+        listSubCatId: filters.listSubCatId,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+        sort: filters.sort,
+        page: filters.page || 1,
+        pageSize: filters.pageSize || 24,
+      },
+    });
+
+    dispatch({
+      type: FETCH_ALLPRODUCTS_SUCCESS,
+      payload: response.data,
+    });
+    console.log('response',response)
+  } catch (error) {
+    dispatch({
+      type: FETCH_ALLPRODUCTS_FAILURE,
+      payload: error.message,
+    });
+  }
 };

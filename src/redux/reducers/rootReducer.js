@@ -57,7 +57,8 @@ const rootReducer = combineReducers({
   buyNow:buyNowReducer,
   sliders:slidersReducer,
   rightSliders: slidersReducer,
-  ordersState:orderReducer
+  ordersState:orderReducer,
+  productState: productReducer,
 });
 
 export default rootReducer;

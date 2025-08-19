@@ -30,7 +30,10 @@ import {
   EDIT_PRODUCT_FILTERS_SUCCESS,
   EDIT_PRODUCT_FILTERS_FAILURE,
   DELETE_PRODUCT_FILTERS_SUCCESS,
-  FETCH_VARIANT_IMAGE_SUCCESS
+  FETCH_VARIANT_IMAGE_SUCCESS,
+  FETCH_ALLPRODUCTS_REQUEST,
+  FETCH_ALLPRODUCTS_SUCCESS,
+  FETCH_ALLPRODUCTS_FAILURE,
 } from '../actions/productAction';
 
 const initialState = {
@@ -38,7 +41,15 @@ const initialState = {
   products: [],
   productFeatures: [],
   productFilters: [],
+  allProducts: [],
   error: null,
+  pagination: {
+    page: 1,
+    pageSize: 24,
+    total: 0,
+    totalPages: 0,
+    sort: 'recommended',
+  },
 };
 
 const productReducer = (state = initialState, action) => {
@@ -127,12 +138,27 @@ const productReducer = (state = initialState, action) => {
         ...state,
         productFilters: state.productFilters.filter((item) => item.id !== action.payload),
       };
-       case FETCH_VARIANT_IMAGE_SUCCESS:
+    case FETCH_VARIANT_IMAGE_SUCCESS:
       return {
         ...state,
         product: action.payload,
       };
-
+    case FETCH_ALLPRODUCTS_REQUEST:
+      return { ...state, loading: true };
+    case FETCH_ALLPRODUCTS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        allProducts: action.payload.items,
+        pagination: action.payload.meta,
+        error: '',
+      };
+    case FETCH_ALLPRODUCTS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
 
     default:
       return state;
