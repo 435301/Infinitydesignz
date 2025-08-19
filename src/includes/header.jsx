@@ -58,7 +58,8 @@ const PromoColumn = React.memo(({ parentTitle }) => (
   </div>
 ));
 
-const MegaMenuColumn = React.memo(({ parent, children, groupedCategories }) => (
+const MegaMenuColumn = React.memo(({ parent, children, groupedCategories  }) => (
+  
   <div className="nav-item dropdown mega-dropdown" key={parent.id}>
     <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
       {parent.title}
@@ -71,7 +72,23 @@ const MegaMenuColumn = React.memo(({ parent, children, groupedCategories }) => (
             return (
               <div className="col-md-3 col-lg-2 col-6" key={child.id}>
                 <h3>
-                  <Link to={`/products?${new URLSearchParams({ ...(parent?.id && { mainCategoryId: parent.id }), ...(child?.id && { subCategoryId: child.id }), brandId: 0, searchStr: '', filters: '{}' }).toString()}`} className="subcategory-link">
+                  <Link
+                    to={`/products?${new URLSearchParams({
+                      ...(parent?.id && { mainCategoryId: parent.id }),
+                      ...(child?.id && { subCategoryId: child.id }),
+                      // brandId:,
+                      searchStr: '',
+                      color: '',
+                      size: '',
+                      filterListIds: '',
+                      minPrice: '',
+                      maxPrice: '',
+                      sort: '',
+                      page: 1,
+                      pageSize: 24
+                    }).toString()}`}
+                    className="subcategory-link"
+                  >
                     {child.title}
                   </Link>
                 </h3>
@@ -79,7 +96,21 @@ const MegaMenuColumn = React.memo(({ parent, children, groupedCategories }) => (
                   subChildren.map((sub) => (
                     <Link
                       key={sub.id}
-                      to={`/products?${new URLSearchParams({ ...(parent?.id && { mainCategoryId: parent.id }), ...(child?.id && { subCategoryId: child.id }), ...(sub?.id && { listSubCatId: sub.id }), brandId: 0, searchStr: '', filters: '{}' }).toString()}`}
+                      to={`/products?${new URLSearchParams({
+                        ...(parent?.id && { mainCategoryId: parent.id }),
+                        ...(child?.id && { subCategoryId: child.id }),
+                        ...(sub?.id && { listSubCatId: sub.id }),
+                        brandId: null,
+                        searchStr: '',
+                        color: '',
+                        size: '',
+                        filterListIds: '',
+                        minPrice: '',
+                        maxPrice: '',
+                        sort: '',
+                        page: 1,
+                        pageSize: 24
+                      }).toString()}`}
                       className="dropdown-item"
                     >
                       {sub.title}

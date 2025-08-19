@@ -17,6 +17,7 @@ const ProductsPage = () => {
   const subCategoryId = parseInt(searchParams.get('subCategoryId'));
   const listSubCatId = parseInt(searchParams.get('listSubCatId'));
 
+
   const getCategoryTitle = (id) =>
     categories.find((cat) => cat.id === id)?.title;
 
@@ -29,26 +30,41 @@ const ProductsPage = () => {
 
 useEffect(() => {
   setProducts([]);
+  
   const mainCategoryId = searchParams.get('mainCategoryId');
   const subCategoryId = parseInt(searchParams.get('subCategoryId'));
   const listSubCatId = parseInt(searchParams.get('listSubCatId'));
-  const brandId = searchParams.get('brandId') || 0;
+  const brandId = searchParams.get('brandId') || null;
   const searchStr = searchParams.get('searchStr') || '';
-  const filters = searchParams.get('filters') || '{}';
+  const color = searchParams.get('color') || '';
+  const size = searchParams.get('size') || '';
+  const filterListIds = searchParams.get('filterListIds') || '';
+  const minPrice = searchParams.get('minPrice') || '';
+  const maxPrice = searchParams.get('maxPrice') || '';
+  const sort = searchParams.get('sort') || '';
+  const page = searchParams.get('page') || 1;
+  const pageSize = searchParams.get('pageSize') || 24;
 
   const queryString = new URLSearchParams({
     ...(mainCategoryId && { mainCategoryId }),
     ...(subCategoryId && { subCategoryId }),
     ...(listSubCatId && { listSubCatId }),
-    brandId,
-    searchStr,
-    filters,
+    ...(brandId && { brandId }),
+    ...(searchStr && { searchStr }),
+    ...(color && { color }),
+    ...(size && { size }),
+    ...(filterListIds && { filterListIds }),
+    ...(minPrice && { minPrice }),
+    ...(maxPrice && { maxPrice }),
+    ...(sort && { sort }),
+    ...(page && { page }),
+    ...(pageSize && { pageSize }),
   }).toString();
 
   axios
     .get(`${BASE_URL}/products/search?${queryString}`)
     .then((res) => {
-      const rawProducts = res.data || [];
+      const rawProducts = res.data?.items || [];
 
       const filteredProducts = listSubCatId
         ? rawProducts.filter((p) => p.category?.id === listSubCatId)
@@ -69,15 +85,12 @@ useEffect(() => {
         return [mainProductEntry, ...variantEntries];
       });
 
-      setProducts(combinedProducts); // ✅ Fresh data only
+      setProducts(combinedProducts);
     })
     .catch((err) => {
       console.error('GET: Failed to fetch products', err);
     });
 }, [searchParams]);
-
-
-
 
   const groupByListSubCategory = (products) => {
     const grouped = {};
