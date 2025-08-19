@@ -6,52 +6,58 @@ import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAdminOrders } from '../../redux/actions/orderAction';
+import { useNavigate } from 'react-router-dom';
+
 
 const ManageOrders = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const { orders, loading } = useSelector((state) => state.ordersState);
+  const { adminOrder: orders, loading } = useSelector((state) => state.ordersState);
   console.log('orders', orders);
   const [filters, setFilters] = useState({
     orderId: '',
     dateFrom: '',
     dateTo: '',
+    status: 'PENDING',
+    active: true,
+    orderFrom: 'web',
+    page: 1,
+    pageSize: 10,
   });
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
+  const handleViewOrder = (orderId) => {
+    navigate(`/admin/orders/${orderId}`);
+  };
 
   useEffect(() => {
     dispatch(fetchAdminOrders(filters));
   }, []);
 
-  // const orders = [
-  //   {
-  //     orderNo: '#1001',
-  //     qty: 5,
-  //     date: '2025-05-25',
-  //     customer: 'Vikas Reddy',
-  //     mobile: '9876543210',
-  //   },
-  //   {
-  //     orderNo: '#1002',
-  //     qty: 2,
-  //     date: '2025-05-24',
-  //     customer: 'Vikas Reddy',
-  //     mobile: '9876543211',
-  //   },
-  // ];
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
+
     const orderId = e.target.orderNo.value;
     const dateFrom = e.target.fromDate.value;
     const dateTo = e.target.toDate.value;
+    const status = e.target.status.value;
 
     const newFilters = {
       orderId,
       dateFrom,
       dateTo,
+      status,
+      active: true,
+      orderFrom: 'web',
+      page: 1,
+      pageSize: 10,
     };
 
     setFilters(newFilters);
@@ -59,6 +65,20 @@ const ManageOrders = () => {
   };
 
 
+  const handleReset = () => {
+    const resetFilters = {
+      orderId: '',
+      dateFrom: '',
+      dateTo: '',
+      status: 'PENDING',
+      active: true,
+      orderFrom: 'web',
+      page: 1,
+      pageSize: 10,
+    };
+    setFilters(resetFilters);
+    dispatch(fetchAdminOrders(resetFilters));
+  }
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
@@ -81,7 +101,7 @@ const ManageOrders = () => {
                 <form onSubmit={handleSearch} className="row align-items-end g-3">
                   <div className="col-md-3">
                     <label htmlFor="orderNo" className="form-label">Order No</label>
-                    <input type="text" className="form-control" id="orderNo" placeholder="Enter Order No" />
+                    <input type="text" className="form-control" id="orderNo" />
                   </div>
                   <div className="col-md-3">
                     <label htmlFor="fromDate" className="form-label">From Date</label>
@@ -91,11 +111,20 @@ const ManageOrders = () => {
                     <label htmlFor="toDate" className="form-label">To Date</label>
                     <input type="date" className="form-control" id="toDate" />
                   </div>
+                  <div className="col-md-3">
+                    <label htmlFor="status" className="form-label">Status</label>
+                    <select id="status" className="form-select default-select">
+                      <option value="PENDING">PENDING</option>
+                      <option value="DELIVERED">DELIVERED</option>
+                      <option value="CANCELLED">CANCELLED</option>
+                    </select>
+                  </div>
                   <div className="col-md-3 d-flex gap-2">
                     <button type="submit" className="btn btn-danger"><i className="ti-search me-1"></i> Search</button>
-                    <button type="reset" className="btn btn-success"><i className="icon-refresh me-1"></i> Reset</button>
+                    <button type="reset" className="btn btn-success" onClick={handleReset}><i className="icon-refresh me-1"></i> Reset</button>
                   </div>
                 </form>
+
               </div>
             </div>
 
@@ -103,10 +132,7 @@ const ManageOrders = () => {
             <div className="card">
               <div className="card-block">
                 <div className="row mb-2">
-                  <div className="col-md-12 text-end pt pt">
-                    <button className="btn btn-success me-2">Active</button>
-                    <button className="btn btn-secondary me-2">Inactive</button>
-                  </div>
+                 
                 </div>
 
                 <div className="table-responsive">
@@ -116,8 +142,8 @@ const ManageOrders = () => {
                         <th>Order No</th>
                         <th>Qty</th>
                         <th>Order Date</th>
-                        <th>Customer Name</th>
-                        <th>Mobile No</th>
+                        <th>Price</th>
+                        <th>Order From</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -127,11 +153,16 @@ const ManageOrders = () => {
                           <tr key={index}>
                             <td>{order.orderId || order.orderNo}</td>
                             <td>{order.totalQuantity || order.qty}</td>
-                            <td>{order.orderDate || order.date}</td>
-                            <td>{order.customerName || order.customer}</td>
-                            <td>{order.mobile}</td>
                             <td>
-                              <button className="btn btn-sm btn-outline-primary">
+                              {order.orderDate || order.date
+                                ? new Date(order.orderDate || order.date).toLocaleDateString('en-GB')
+                                : ''}
+                            </td>
+
+                            <td>{order.price ||''}</td>
+                            <td>{order.orderFrom}</td>
+                            <td>
+                              <button className="btn btn-sm btn-outline-primary" onClick={() => handleViewOrder(order.id || order.orderNo)}>
                                 <FaEye /> View
                               </button>
                             </td>
@@ -154,6 +185,7 @@ const ManageOrders = () => {
 
               </div>
             </div>
+
           </div>
         </div>
 

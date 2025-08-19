@@ -2,20 +2,24 @@ import {
   PLACE_ORDER_REQUEST,
   PLACE_ORDER_SUCCESS,
   PLACE_ORDER_FAILURE,
-    FETCH_ORDERS_REQUEST,
+  FETCH_ORDERS_REQUEST,
   FETCH_ORDERS_SUCCESS,
   FETCH_ORDERS_FAILURE,
   FETCH_ADMINORDERS_REQUEST,
   FETCH_ADMINORDERS_SUCCESS,
   FETCH_ADMINORDERS_FAILURE,
+  FETCH_ORDER_BY_ID_REQUEST,
+  FETCH_ORDER_BY_ID_SUCCESS,
+  FETCH_ORDER_BY_ID_FAILURE,
 } from '../actions/orderAction';
 
 const initialState = {
   loading: false,
   order: null,
-  adminOrder:[],
+  orderById: null,
+  adminOrder: [],
   error: null,
-   pagination: {
+  pagination: {
     total: 0,
     page: 1,
     pageSize: 10,
@@ -31,13 +35,13 @@ const orderReducer = (state = initialState, action) => {
       return { ...state, loading: false, order: action.payload };
     case PLACE_ORDER_FAILURE:
       return { ...state, loading: false, error: action.payload };
-       case FETCH_ORDERS_REQUEST:
+    case FETCH_ORDERS_REQUEST:
       return { ...state, loading: true, error: null };
     case FETCH_ORDERS_SUCCESS:
       return { ...state, loading: false, orders: action.payload };
     case FETCH_ORDERS_FAILURE:
       return { ...state, loading: false, error: action.payload };
-       case FETCH_ADMINORDERS_REQUEST:
+    case FETCH_ADMINORDERS_REQUEST:
       return { ...state, loading: true };
     case FETCH_ADMINORDERS_SUCCESS:
       return {
@@ -48,6 +52,24 @@ const orderReducer = (state = initialState, action) => {
       };
     case FETCH_ADMINORDERS_FAILURE:
       return { ...state, loading: false, error: action.payload };
+    case FETCH_ORDER_BY_ID_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case FETCH_ORDER_BY_ID_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        orderById: action.payload,
+      };
+    case FETCH_ORDER_BY_ID_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
     default:
       return state;
   }

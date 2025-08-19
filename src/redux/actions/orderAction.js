@@ -15,6 +15,10 @@ export const FETCH_ADMINORDERS_REQUEST = 'FETCH_ADMINORDERS_REQUEST';
 export const FETCH_ADMINORDERS_SUCCESS = 'FETCH_ADMINORDERS_SUCCESS';
 export const FETCH_ADMINORDERS_FAILURE = 'FETCH_ADMINORDERS_FAILURE';
 
+export const FETCH_ORDER_BY_ID_REQUEST = 'FETCH_ORDER_BY_ID_REQUEST';
+export const FETCH_ORDER_BY_ID_SUCCESS = 'FETCH_ORDER_BY_ID_SUCCESS';
+export const FETCH_ORDER_BY_ID_FAILURE = 'FETCH_ORDER_BY_ID_FAILURE';
+
 export const placeOrder = (orderData) => async (dispatch) => {
   dispatch({ type: PLACE_ORDER_REQUEST });
   try {
@@ -59,38 +63,17 @@ export const fetchOrders = () => async (dispatch) => {
 
 export const fetchAdminOrders = (filters = {}) => async (dispatch) => {
   dispatch({ type: FETCH_ADMINORDERS_REQUEST });
-
-  const {
-    status = 'DELIVERED',
-    orderId = '',
-    dateFrom = '',
-    dateTo = '',
-    active = true,
-    orderFrom = 'web',
-    page = 1,
-    pageSize = 10,
-  } = filters;
-
   try {
      const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/orders`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    
+     const response = await axios.get(`${BASE_URL}/orders`,{
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-      {
       params: {
-        status,
-        orderId,
-        dateFrom,
-        dateTo,
-        active,
-        orderFrom,
-        page,
-        pageSize,
+        ...filters,
       },
-    });
-
+    } );
     dispatch({
       type: FETCH_ADMINORDERS_SUCCESS,
       payload: response.data,
@@ -99,6 +82,28 @@ export const fetchAdminOrders = (filters = {}) => async (dispatch) => {
     dispatch({
       type: FETCH_ADMINORDERS_FAILURE,
       payload: error.message,
+    });
+  }
+};
+
+export const fetchOrderById = (orderId) => async (dispatch) => {
+  try {
+     const token = localStorage.getItem('token');
+    dispatch({ type: FETCH_ORDER_BY_ID_REQUEST });
+
+    const response = await axios.get(`${BASE_URL}/orders/${orderId}`,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    dispatch({
+      type: FETCH_ORDER_BY_ID_SUCCESS,
+      payload: response.data,
+    });
+  } catch (error) {
+    dispatch({
+      type: FETCH_ORDER_BY_ID_FAILURE,
+      payload: error.response?.data?.message || error.message,
     });
   }
 };

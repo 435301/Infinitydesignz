@@ -78,6 +78,7 @@ import { isLoggedIn } from './utils/auth.js';
 import { fetchCart } from './redux/actions/cartAction.js';
 import { fetchProfile } from './redux/actions/profileAction.js';
 import AdminRoute from './components/adminRoute.jsx';
+import OrderDetailsPage from './components/orderDetails.jsx';
 
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
@@ -171,6 +172,7 @@ function App() {
           <Route path='/admin/edit-product-filters' element={<AdminRoute><EditProductFilters /></AdminRoute>}></Route>
           <Route path='/admin/edit-product-images' element={<AdminRoute><EditProductImages /></AdminRoute>}></Route>
           <Route path='/products' element={<ProductsPage />}></Route>
+           <Route path="/admin/orders/:orderId" element={<OrderDetailsPage/>} />
         </Routes>
         <Routes>
           <Route element={<AdminLayout />}>

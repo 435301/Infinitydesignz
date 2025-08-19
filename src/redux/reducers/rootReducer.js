@@ -58,6 +58,7 @@ const rootReducer = combineReducers({
   sliders:slidersReducer,
   rightSliders: slidersReducer,
   ordersState:orderReducer,
+  orderByIdState:orderReducer,
   productState: productReducer,
 });
 
