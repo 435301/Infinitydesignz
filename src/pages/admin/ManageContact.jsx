@@ -1,16 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Search, ArrowRepeat, PencilSquare, Trash } from 'react-bootstrap-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { getContacts } from '../../redux/actions/contactAction';
+import moment from 'moment';
 
 function ManageContact() {
+    const dispatch = useDispatch();
+    const { contacts = [], loading } = useSelector((state) => state.contact);
+    console.log('contact', contacts)
+    useEffect(() => {
+        dispatch(getContacts());
+    }, [dispatch]);
+
+
     return (
         <div className="sidebar-mini fixed">
             <div className="wrapper">
-          <HeaderAdmin />
+                <HeaderAdmin />
                 <aside className="main-sidebar hidden-print">
                     <Sidebar />
                 </aside>
@@ -58,12 +68,14 @@ function ManageContact() {
                                             <div className="col-lg-6">
                                                 <h5>Manage Contact</h5>
                                             </div>
+                                            
                                             <div className="col-md-6 text-right pt">
                                                 <button className="btn btn-success me-2">Active</button>
                                                 <button className="btn btn-default me-2">Inactive</button>
                                                 <button className="btn btn-danger">Delete</button>
                                             </div>
                                         </div>
+
 
                                         <div className="row">
                                             <div className="col-sm-12 table-responsive">
@@ -80,15 +92,31 @@ function ManageContact() {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
-                                                            <td>1</td>
-                                                            <td>Mehul Galiyawala</td>
-                                                            <td>Sales@styleelifestyle.com</td>
-                                                            <td>9081117788</td>
-                                                            <td>Business Proposal</td>
-                                                            <td>Stylee Lifestyle # Business</td>
-                                                            <td>29-04-2025</td>
-                                                        </tr>
+                                                        {loading ? (
+                                                            <tr>
+                                                                <td colSpan="7">Loading...</td>
+                                                            </tr>
+                                                        ) : contacts.length === 0 ? (
+                                                            <tr>
+                                                                <td colSpan="7">No contacts found.</td>
+                                                            </tr>
+                                                        ) : (
+                                                            contacts.map((contact, index) => {
+                                                                return (
+                                                                    <tr key={contact.id}>
+                                                                        <td>{index + 1}</td>
+                                                                        <td>{contact.name}</td>
+                                                                        <td>{contact.email}</td>
+                                                                        <td>{contact.mobile}</td>
+                                                                        <td>{contact.subject}</td>
+                                                                        <td>{contact.description}</td>
+                                                                        <td>
+                                                                            {moment(contact.created_at).format("DD-MM-YYYY")}
+                                                                        </td>
+                                                                    </tr>
+                                                                )
+                                                            })
+                                                        )}
                                                     </tbody>
                                                 </table>
                                             </div>
