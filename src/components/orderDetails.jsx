@@ -5,18 +5,20 @@ import '../css/admin/icofont.css';
 import HeaderAdmin from '../includes/headerAdmin';
 import Sidebar from '../includes/sidebar';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchOrderById } from '../redux/actions/orderAction';
+import { cancelOrderItem, cancelOrderItemAdmin, fetchAdminOrders, fetchOrderById } from '../redux/actions/orderAction';
 import BASE_URL from '../config/config';
 import CancelOrderModal from '../modals/cancelOrderModal';
+import { toast } from 'react-toastify';
 
 const OrderDetailsPage = () => {
     const dispatch = useDispatch();
     const { orderId } = useParams();
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-    const [showCancelModal, setShowCancelModal] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [selectedItemId, setSelectedItemId] = useState(null);
     const [selectedOrderId, setSelectedOrderId] = useState(null);
-    const { orderById: order, loading, error } = useSelector((state) => state.orderByIdState);
 
+    const { orderById: order, loading, error } = useSelector((state) => state.orderByIdState);
 
 
     useEffect(() => {
@@ -36,18 +38,27 @@ const OrderDetailsPage = () => {
     const address = order.address || {};
     const payment = order.payment || {};
     const priceSummary = order.priceSummary || {};
-
-    const handleCancelClick = (orderId) => {
+    const handleCancel = (itemId, orderId) => {
+        setSelectedItemId(itemId);
         setSelectedOrderId(orderId);
-        setShowCancelModal(true);
+        setSnackbarOpen(true);
     };
 
-    const handleCancelConfirm = () => {
-        if (selectedOrderId) {
-            //   dispatch(cancelOrderById(selectedOrderId));
-        }
-        setShowCancelModal(false);
-        setSelectedOrderId(null);
+    const handleNoteSubmit = (status, note) => {
+        dispatch(cancelOrderItemAdmin(selectedItemId, selectedOrderId, note,status)).then(() => {
+        dispatch(fetchOrderById(orderId)); 
+        // dispatch(fetchAdminOrders());
+    });
+        setSnackbarOpen(false);
+    };
+
+    const handleApprove = (itemId, orderId) => {
+        setSelectedItemId(itemId);
+        setSelectedOrderId(orderId);
+        dispatch(cancelOrderItemAdmin(itemId, orderId, "Approved by admin", "APPROVED")).then(() => {
+            dispatch(fetchOrderById(orderId));
+            // dispatch(fetchAdminOrders());
+        });
     };
 
     return (
@@ -152,18 +163,34 @@ const OrderDetailsPage = () => {
                                                         <td>₹{item.total}</td>
                                                         <td>09-Oct-2023</td>
                                                         <td>
-                                                            <span>Order Placed</span>
+                                                            <span>
+                                                                {/* {item.status === 'CANCELLED'
+                                                                    ? 'Cancelled'
+                                                                    : item.status === 'APPROVED'
+                                                                        ? 'Approved'
+                                                                        : 'Order Placed'} */}
+                                                                        {item.status}
+                                                            </span>
+
                                                             <div className="action-buttons">
-                                                                <button type="button" className="action-btn approve-btn action-rounded">
-                                                                    <i className="ti-check"></i> Approve
-                                                                </button>
-                                                                <button
-                                                                    type="button"
-                                                                    className="action-btn cancel-btn action-rounded"
-                                                                    onClick={() => handleCancelClick(order.id)}
-                                                                >
-                                                                    <i className="ti-close"></i> Cancel Order
-                                                                </button>
+                                                                {item.status !== 'CANCELLED' && item.status !== 'APPROVED' && (
+                                                                    <>
+                                                                        <button
+                                                                            type="button"
+                                                                            className="action-btn approve-btn action-rounded"
+                                                                            onClick={() => handleApprove(item.id, order.id)}
+                                                                        >
+                                                                            <i className="ti-check"></i> Approve
+                                                                        </button>
+
+                                                                        <button
+                                                                            className="action-btn cancel-btn action-rounded"
+                                                                            onClick={() => handleCancel(item.id, order.id)}
+                                                                        >
+                                                                            <i className="ti-close"></i> Cancel Order
+                                                                        </button>
+                                                                    </>
+                                                                )}
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -178,12 +205,12 @@ const OrderDetailsPage = () => {
                                 </table>
                             </div>
                         </div>
+                        <CancelOrderModal
+                            show={snackbarOpen}
+                            handleClose={() => setSnackbarOpen(false)}
+                            handleSubmit={handleNoteSubmit}
+                        />
                     </div>
-                    <CancelOrderModal
-                        show={showCancelModal}
-                        onHide={() => setShowCancelModal(false)}
-                        onConfirm={handleCancelConfirm}
-                    />
                 </div>
             </div>
         </div>

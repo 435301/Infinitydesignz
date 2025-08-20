@@ -19,6 +19,15 @@ export const FETCH_ORDER_BY_ID_REQUEST = 'FETCH_ORDER_BY_ID_REQUEST';
 export const FETCH_ORDER_BY_ID_SUCCESS = 'FETCH_ORDER_BY_ID_SUCCESS';
 export const FETCH_ORDER_BY_ID_FAILURE = 'FETCH_ORDER_BY_ID_FAILURE';
 
+export const CANCEL_ORDER_ITEM_REQUEST ='CANCEL_ORDER_ITEM_REQUEST';
+export const CANCEL_ORDER_ITEM_SUCCESS ='CANCEL_ORDER_ITEM_SUCCESS';
+export const CANCEL_ORDER_ITEM_FAILURE ='CANCEL_ORDER_ITEM_FAILURE';
+
+export const CANCEL_ADMINORDER_ITEM_REQUEST = "CANCEL_ADMINORDER_ITEM_REQUEST";
+export const CANCEL_ADMINORDER_ITEM_SUCCESS = "CANCEL_ADMINORDER_ITEM_SUCCESS";
+export const CANCEL_ADMINORDER_ITEM_FAILURE = "CANCEL_ADMINORDER_ITEM_FAILURE";
+
+
 export const placeOrder = (orderData) => async (dispatch) => {
   dispatch({ type: PLACE_ORDER_REQUEST });
   try {
@@ -107,3 +116,68 @@ export const fetchOrderById = (orderId) => async (dispatch) => {
     });
   }
 };
+
+export const cancelOrderItem = (itemId, note,orderId) => async (dispatch) => {
+    try {
+        dispatch({ type: CANCEL_ORDER_ITEM_REQUEST });
+
+        const response = await axios.patch(`${BASE_URL}/orders/items/${itemId}/request-cancel`, {
+          orderId,
+            note,
+        },{
+          headers:{
+            Authorization: `Bearer ${getToken()}`,
+          }
+        }
+      );
+
+        dispatch({
+            type: CANCEL_ORDER_ITEM_SUCCESS,
+            payload: response.data,
+        });
+        toast.success("Cancellation request sent successfully");
+        dispatch(fetchOrderById(orderId)); 
+        return response.data;
+    } catch (error) {
+        dispatch({
+            type: CANCEL_ORDER_ITEM_FAILURE,
+            payload: error.response?.data?.message || error.message,
+        });
+        toast.error(error.response?.data?.message || 'Error cancelling order item');
+    }
+};
+
+export const cancelOrderItemAdmin = (itemId, orderId, note,status) => async (dispatch) => {
+  try {
+           const token = localStorage.getItem('token');
+    dispatch({ type: CANCEL_ADMINORDER_ITEM_REQUEST });
+
+    const response = await axios.patch(`${BASE_URL}/orders/items/${itemId}`, {
+      status,
+      orderId,
+      note,
+    },{
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    });
+
+    dispatch({
+      type: CANCEL_ADMINORDER_ITEM_SUCCESS,
+      payload: response.data,
+    });
+     if (status === "APPROVED") {
+      toast.success("Order item approved successfully");
+    } else if (status === "CANCELLED") {
+      toast.success("Order item cancelled successfully");
+    }
+    dispatch(fetchAdminOrders());
+  } catch (error) {
+    dispatch({
+      type: CANCEL_ADMINORDER_ITEM_FAILURE,
+      payload:
+        error.response?.data?.message || "Something went wrong while cancelling",
+    });
+  }
+};
+

@@ -9,9 +9,10 @@ import Footer from "../../includes/footer";
 import { Link } from "react-router-dom";
 import RelatedProductsCarousel from "../users/RelatedProductsCarousel";
 import BASE_URL from "../../config/config";
-import { fetchOrders } from "../../redux/actions/orderAction";
+import { cancelOrderItem, fetchOrders } from "../../redux/actions/orderAction";
 import { useDispatch, useSelector } from "react-redux";
 import { getToken } from "../../utils/auth";
+import CancelOrderModal from "../../modals/cancelOrderModal";
 // Replace with your footer component
 
 
@@ -61,6 +62,9 @@ const MyOrdersPage = () => {
   const { orders = [], loading, error } = useSelector((state) => state.order);
   const latestOrder = orders.length > 0 ? orders[0] : null;
   const [latestOrderDetails, setLatestOrderDetails] = useState(null);
+  const [cancelModalShow, setCancelModalShow] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+
 
   useEffect(() => {
     dispatch(fetchOrders());
@@ -92,6 +96,43 @@ const MyOrdersPage = () => {
 
     fetchFullOrder();
   }, [orders]);
+
+  const handleCancelItem = (item, orderId) => {
+    setSelectedItem({ itemId: item.id, orderId });
+    setCancelModalShow(true);
+  };
+
+  const submitCancelRequest = async (note) => {
+    if (!selectedItem) return;
+    try {
+      await dispatch(cancelOrderItem(selectedItem.itemId, note.trim(), selectedItem.orderId));
+
+      // Optimistically update the item status within latestOrderDetails
+      setLatestOrderDetails((prev) => {
+        if (!prev) return prev;
+
+        const updatedItems = prev.items.map((item) =>
+          item.id === selectedItem.itemId
+            ? { ...item, status: "CANCEL_REQUESTED", moderationNote: note }
+            : item
+        );
+
+        return {
+          ...prev,
+          items: updatedItems
+        };
+      });
+
+
+    } catch (err) {
+
+    } finally {
+      setCancelModalShow(false);
+    }
+  };
+
+
+
 
   return (
     <>
@@ -174,36 +215,37 @@ const MyOrdersPage = () => {
                               <span>
                                 Status:{" "}
                                 <span
-                                  className={`status ${latestOrderDetails?.payment?.status?.toLowerCase()}`}
+                                  className={`status ${latestOrderDetails?.status?.toLowerCase()}`}
                                 >
-                                  {latestOrderDetails?.payment?.status || "N/A"}
+                                  {latestOrderDetails?.status || "N/A"}
+                                </span>
+                                <span>
+                                  Item Status:{" "}
+                                  <span className={`status ${item?.status?.toLowerCase()}`}>
+                                    {item?.status === "CANCEL_REQUESTED"
+                                      ? "Cancellation Requested"
+                                      : item?.status || "N/A"}
+                                  </span>
                                 </span>
                               </span>
                             </div>
-
-                            {latestOrderDetails?.payment?.status === "Pending" && (
-                              <button className="action-btn">Cancel Order</button>
-                            )}
-
-                            {latestOrderDetails?.payment?.status === "Delivered" && (
-                              <div className="rate-review">
-                                <span>Rate & Review:</span>
-                                <div className="stars">
-                                  {[...Array(5)].map((_, i) => (
-                                    <i key={i} className="bi bi-star"></i>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-
-                            {/* 
+                            {latestOrderDetails?.status === "PENDING" &&
+                              item.status !== "CANCEL_REQUESTED" && (
+                                <button
+                                  className="action-btn"
+                                  onClick={() => handleCancelItem(item, latestOrderDetails.id)}
+                                >
+                                  Cancel Item
+                                </button>
+                              )}
+                            {/*                             
                 {latestOrderDetails?.payment?.status === "Delivered" && order.deliveryDate && (
                   <p className="delivery-date">On {order.deliveryDate}</p>
                 )}
                 {latestOrderDetails?.payment?.status === "Cancelled" && order.refundedDate && (
                   <p className="refunded">Refunded on: {order.refundedDate}</p>
-                )} 
-                */}
+                )}  */}
+
                           </div>
                         </div>
                       </div>
@@ -252,6 +294,11 @@ const MyOrdersPage = () => {
               </div>
             </aside>
           </div>
+          <CancelOrderModal
+            show={cancelModalShow}
+            handleClose={() => setCancelModalShow(false)}
+            handleSubmit={submitCancelRequest}
+          />
         </div>
       </section>
       <Footer />
