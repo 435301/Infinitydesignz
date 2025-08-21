@@ -13,6 +13,8 @@ import ProfilePage from './pages/users/profile.jsx';
 import WishlistPage from './pages/users/wishlist.jsx';
 import CartItem from './pages/users/cart.jsx';
 import CheckoutPage from './pages/users/checkout.jsx';
+import OrderSuccess from './pages/users/OrderSuccess.jsx';
+import OrderFailure from './pages/users/OrderFailure.jsx';
 
 import MyOrdersPage from './pages/users/orders.jsx';
 import LoginPage from './pages/admin/login.jsx';
@@ -79,7 +81,6 @@ import { fetchCart } from './redux/actions/cartAction.js';
 import { fetchProfile } from './redux/actions/profileAction.js';
 import AdminRoute from './components/adminRoute.jsx';
 import OrderDetailsPage from './components/orderDetails.jsx';
-
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
     <div className="content">{children}</div>
@@ -119,8 +120,11 @@ function App() {
           <Route path='/checkout' element={< CheckoutPage />}></Route>
           <Route path='/cart' element={<CartItem />}></Route>
           <Route path='/orders' element={<MyOrdersPage />}></Route>
+          <Route path='/orders-success' element={<OrderSuccess />}></Route>
+          <Route path='/orders-failure' element={<OrderFailure />}></Route>
+
           <Route path='/admin/login' element={<LoginPage />}></Route>
-          <Route path='/admin/dashboard' element={ <AdminRoute> <Dashboard /> </AdminRoute> }></Route>
+          <Route path='/admin/dashboard' element={<AdminRoute> <Dashboard /> </AdminRoute>}></Route>
           <Route path='/admin/manage-category' element={<AdminRoute><ManageCategories /> </AdminRoute>}></Route>
           <Route path='/admin/manage-subcategory' element={<AdminRoute><ManageSubCategories /></AdminRoute>}></Route>
           <Route path='/admin/list-subcategory' element={<AdminRoute><ListSubCategory /></AdminRoute>}></Route>
@@ -172,7 +176,7 @@ function App() {
           <Route path='/admin/edit-product-filters' element={<AdminRoute><EditProductFilters /></AdminRoute>}></Route>
           <Route path='/admin/edit-product-images' element={<AdminRoute><EditProductImages /></AdminRoute>}></Route>
           <Route path='/products' element={<ProductsPage />}></Route>
-           <Route path="/admin/orders/:orderId" element={<OrderDetailsPage/>} />
+          <Route path="/admin/orders/:orderId" element={<OrderDetailsPage />} />
         </Routes>
         <Routes>
           <Route element={<AdminLayout />}>
