@@ -9,6 +9,9 @@ import {
     REMOVE_COUPON,
     APPLY_COUPON_SUCCESS,
     SET_GUEST_CART,
+    CLEAR_CART_REQUEST,
+  CLEAR_CART_SUCCESS,
+  CLEAR_CART_FAILURE,
 } from '../actions/cartAction';
 
 const initialState = {
@@ -75,6 +78,26 @@ export const cartReducer = (state = initialState, action) => {
                 ...state,
                 items: action.payload,
             };
+      case CLEAR_CART_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+    case CLEAR_CART_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        items: [],
+        priceSummary: {},
+        appliedCoupon: null,
+      };
+    case CLEAR_CART_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+
         default:
             return state;
     }

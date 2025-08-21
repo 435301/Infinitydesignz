@@ -27,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { deleteFromGuestCart, initializeGuestCart, updateGuestCart } from "../../redux/actions/guestCartAction";
-import { getBuyNow } from "../../redux/actions/buyNowAction";
+import { applyCouponBuyNow, getBuyNow } from "../../redux/actions/buyNowAction";
 
 const CartItem = ({
   id,
@@ -147,13 +147,14 @@ const CartItem = ({
   );
 };
 
-const PriceSummary = ({ summary = {} }) => {
+const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [couponCode, setCouponCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { appliedCoupon } = useSelector((state) => state.cart || {});
+  const { coupon: buyNowCoupon } = useSelector((state) => state.buyNow || {});
   const { addresses = [] } = useSelector((state) => state.addressBook || {});
   const selectedAddress = addresses.find((addr) => addr.default) || addresses[0];
   const selectedAddressId = selectedAddress?.id || null;
@@ -163,7 +164,19 @@ const PriceSummary = ({ summary = {} }) => {
     setLoading(true);
     setError("");
     try {
-      await dispatch(applyCoupon(couponCode));
+      if (isBuyNowMode) {
+        await dispatch(
+          applyCouponBuyNow({
+            code: couponCode,
+            productId: buyNowItems[0]?.productId,
+            variantId: buyNowItems[0]?.variantId || null,
+            quantity: buyNowItems[0]?.quantity || 1,
+          })
+        );
+      } else {
+        // Dispatch applyCoupon for regular cart mode
+        await dispatch(applyCoupon(couponCode));
+      }
     } catch (err) {
       setError(err.message || "Failed to apply coupon");
     } finally {
@@ -172,21 +185,29 @@ const PriceSummary = ({ summary = {} }) => {
   };
 
   const handleRemoveCoupon = () => {
-    dispatch(removeCoupon());
+    if (isBuyNowMode) {
+      // Dispatch action to remove coupon for Buy Now mode (if applicable)
+      dispatch({ type: "REMOVE_BUYNOW_COUPON" }); // Adjust based on your buyNowAction
+    } else {
+      dispatch(removeCoupon());
+    }
     setCouponCode("");
   };
 
-const handleClick = () => {
-  if (isLoggedIn()) {
-    navigate("/checkout");
-  } else {
-    dispatch({ type: "SHOW_LOGIN_MODAL" });
-  }
-};
+  const handleClick = () => {
+    if (isLoggedIn()) {
+      navigate("/checkout");
+    } else {
+      dispatch({ type: "SHOW_LOGIN_MODAL" });
+    }
+  };
 
   useEffect(() => {
     dispatch(fetchAddresses());
   }, [dispatch]);
+
+  // Use the appropriate coupon based on mode
+  const coupon = isBuyNowMode ? buyNowCoupon : appliedCoupon;
 
   return (
     <div className="p-3 border cart-page">
@@ -198,10 +219,10 @@ const handleClick = () => {
             className="form-control"
             placeholder="Enter coupon code"
             value={couponCode}
-            disabled={!!appliedCoupon}
+            disabled={!!coupon}
             onChange={(e) => setCouponCode(e.target.value)}
           />
-          {!appliedCoupon ? (
+          {!coupon ? (
             <button
               className="btn btn-apply p-0"
               onClick={handleApplyCoupon}
@@ -216,9 +237,9 @@ const handleClick = () => {
           )}
         </div>
         {error && <div className="text-danger small mt-1">{error}</div>}
-        {appliedCoupon && (
+        {coupon && (
           <div className="text-success small mt-1">
-            Coupon "{appliedCoupon.code}" applied!
+            Coupon "{coupon.code}" applied!
           </div>
         )}
       </div>
@@ -538,7 +559,11 @@ const CartPage = () => {
             )}
           </div>
           <div className="col-lg-4 p-0">
-            {localCart.length > 0 && <PriceSummary summary={dynamicPriceSummary} />}
+            {localCart.length > 0 && <PriceSummary
+              summary={dynamicPriceSummary}
+              isBuyNowMode={isBuyNowMode}
+              buyNowItems={isBuyNowMode ? buyNow?.items || [] : []}
+            />}
           </div>
         </div>
       </div>

@@ -14,6 +14,9 @@ export const APPLY_COUPON_SUCCESS = "APPLY_COUPON_SUCCESS";
 export const REMOVE_COUPON = 'REMOVE_COUPON';
 export const CLEAR_GUEST_CART = 'CLEAR_GUEST_CART';
 export const SET_GUEST_CART = "SET_GUEST_CART";
+export const CLEAR_CART_REQUEST = "CLEAR_CART_REQUEST";
+export const CLEAR_CART_SUCCESS = "CLEAR_CART_SUCCESS";
+export const CLEAR_CART_FAILURE = "CLEAR_CART_FAILURE";
 
 
 export const fetchCart = () => async (dispatch) => {
@@ -165,4 +168,26 @@ export const setGuestCart = (items) => {
     type: SET_GUEST_CART,
     payload: items,
   };
+};
+
+export const clearCart = () => async (dispatch) => {
+  dispatch({ type: CLEAR_CART_REQUEST });
+  try {
+    const response = await axios.delete(`${BASE_URL}/cart/clear`,{
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+    dispatch({
+      type: CLEAR_CART_SUCCESS,
+      payload: response.data,
+    });
+    return response.data;
+  } catch (error) {
+    dispatch({
+      type: CLEAR_CART_FAILURE,
+      payload: error.message || "Failed to clear cart",
+    });
+    throw error;
+  }
 };

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { placeOrder } from '../redux/actions/orderAction';
 import { placeBuyNowOrder } from '../redux/actions/buyNowAction';
+import { clearCart } from '../redux/actions/cartAction';
 
 const PlaceOrderButton = ({
   mode = "cart", // "cart" or "buyNow"
@@ -75,20 +76,25 @@ const PlaceOrderButton = ({
 
     try {
       let result;
-    
       if (mode === "buyNow") {
         result = await dispatch(placeBuyNowOrder(orderData));
       } else {
         result = await dispatch(placeOrder(orderData));
       }
+
       if (result && !result.error) {
+        // Clear the cart only for "cart" mode after successful order
+        if (mode === "cart") {
+          await dispatch(clearCart());
+        }
         navigate(`/orders-success/${result.payload.id}`);
-      }else{
+      } else {
         navigate("/orders-failure");
       }
-      console.log('result',result)
+      console.log("result", result);
     } catch (e) {
-     
+      toast.error("Failed to place order");
+      navigate("/orders-failure");
     }
   };
 
