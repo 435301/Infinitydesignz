@@ -74,14 +74,19 @@ const PlaceOrderButton = ({
     }
 
     try {
+      let result;
       if (mode === "buyNow") {
-        await dispatch(placeBuyNowOrder(orderData));
+        result = await dispatch(placeBuyNowOrder(orderData));
       } else {
-        await dispatch(placeOrder(orderData));
+        result = await dispatch(placeOrder(orderData));
       }
-      navigate('/orders');
+      if (result && !result.error) {
+        navigate(`/order-success/${result.payload.orderId}`);
+      }else{
+        navigate("/order-failure");
+      }
     } catch (e) {
-      // Error already handled in Redux
+     
     }
   };
 

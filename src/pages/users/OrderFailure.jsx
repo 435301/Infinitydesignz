@@ -7,7 +7,7 @@ import "../../css/user/bootstrap-icons.css";
 
 export default function OrderFailure() {
   const handleRetry = () => {
-    window.location.href = "/checkout"; // Adjust route if needed
+    window.location.href = "/checkout";
   };
 
   const handleGoHome = () => {
@@ -46,13 +46,13 @@ export default function OrderFailure() {
               alignItems: "center",
               textAlign: "center"
             }}>
-             
-             <i className="bi bi-exclamation-circle-fill error-icon" style={{
-  fontSize: "50px",
-  color: "#e63946",
-  marginBottom: "20px",
-  animation: "pulse 1.5s infinite"
-}}></i>
+
+              <i className="bi bi-exclamation-circle-fill error-icon" style={{
+                fontSize: "50px",
+                color: "#e63946",
+                marginBottom: "20px",
+                animation: "pulse 1.5s infinite"
+              }}></i>
 
               <h3 style={{
                 fontFamily: "'Poppins', 'Arial', sans-serif",

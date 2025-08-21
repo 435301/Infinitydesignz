@@ -4,8 +4,10 @@ import Footer from "../../includes/footer";
 import Logo from "../../img/logo.svg";
 import "../../css/user/success.css";
 import "../../css/user/bootstrap-icons.css";
+import { useParams } from "react-router-dom";
 
 export default function OrderSuccess() {
+  const {orderId} = useParams();
   const handleContinueShopping = () => {
     window.location.href = "/cart";
   };
@@ -70,7 +72,7 @@ export default function OrderSuccess() {
                 lineHeight: "1.6"
               }}>
                 <p>Thank you for your purchase! Your order has been successfully placed.</p>
-                <p>Order Number: #123456</p>
+                <p>Order Number:  #{orderId}</p>
                 <p>You’ll receive a confirmation email soon.</p>
               </div>
               <button className="btn-shop" onClick={handleContinueShopping} style={{
