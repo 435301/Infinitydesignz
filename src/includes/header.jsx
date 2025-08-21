@@ -100,7 +100,7 @@ const MegaMenuColumn = React.memo(({ parent, children, groupedCategories  }) => 
                         ...(parent?.id && { mainCategoryId: parent.id }),
                         ...(child?.id && { subCategoryId: child.id }),
                         ...(sub?.id && { listSubCatId: sub.id }),
-                        brandId: null,
+                        // brandId: null,
                         searchStr: '',
                         color: '',
                         size: '',

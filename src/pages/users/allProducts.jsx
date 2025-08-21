@@ -30,7 +30,6 @@ const ProductsPage = () => {
 
 useEffect(() => {
   setProducts([]);
-  
   const mainCategoryId = searchParams.get('mainCategoryId');
   const subCategoryId = parseInt(searchParams.get('subCategoryId'));
   const listSubCatId = parseInt(searchParams.get('listSubCatId'));
@@ -45,11 +44,13 @@ useEffect(() => {
   const page = searchParams.get('page') || 1;
   const pageSize = searchParams.get('pageSize') || 24;
 
+  const parsedBrandId = brandId && !isNaN(parseInt(brandId)) && parseInt(brandId) > 0 ? brandId : null;
+
   const queryString = new URLSearchParams({
     ...(mainCategoryId && { mainCategoryId }),
     ...(subCategoryId && { subCategoryId }),
     ...(listSubCatId && { listSubCatId }),
-    ...(brandId && { brandId }),
+    ...(parsedBrandId && { brandId:parsedBrandId }),
     ...(searchStr && { searchStr }),
     ...(color && { color }),
     ...(size && { size }),
