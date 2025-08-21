@@ -75,16 +75,18 @@ const PlaceOrderButton = ({
 
     try {
       let result;
+    
       if (mode === "buyNow") {
         result = await dispatch(placeBuyNowOrder(orderData));
       } else {
         result = await dispatch(placeOrder(orderData));
       }
       if (result && !result.error) {
-        navigate(`/order-success/${result.payload.orderId}`);
+        navigate(`/orders-success/${result.payload.id}`);
       }else{
-        navigate("/order-failure");
+        navigate("/orders-failure");
       }
+      console.log('result',result)
     } catch (e) {
      
     }
