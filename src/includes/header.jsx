@@ -282,15 +282,17 @@ export default function Header() {
               </a>
             </div>
           </div>
-        </div>
+        </div></div>
         {/* </div> */}
+      <div className="container-fluid px-5 py-2  cart wow fadeIn" data-wow-delay="0.1s">
 
         {/* Navbar */}
         <nav className="navbar navbar-expand-lg navbar-dark sticky-top py-lg-0 wow fadeIn" data-wow-delay="0.1s">
           <a href="#" className="navbar-brand ms-3 d-lg-none">MENU</a>
-          <button className="navbar-toggler me-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span className="navbar-toggler-icon"></span>
-          </button>
+        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+  <i className="bi bi-list" style={{ fontSize: '1.5rem' }}></i>
+</button>
+
           <div className="collapse navbar-collapse" id="navbarCollapse">
             <div className="navbar-nav mx-auto p-3 p-lg-0 d-flex justify-content-center">
               <a href="/" className="navbar-brand sticky-logo">

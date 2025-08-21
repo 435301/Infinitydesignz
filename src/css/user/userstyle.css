@@ -17,6 +17,9 @@ body {
   font-family: "Inter" !important;
   background-color: #fff;
 }
+.w-30 {
+  width: 30% !important;
+}
 
 .back-to-top {
   position: fixed;
@@ -41,9 +44,6 @@ a {
   vertical-align: middle;
 }
 
-.w-30 {
-  width: 30%
-}
 
 /*** Spinner ***/
 #spinner {
@@ -174,7 +174,7 @@ ul li {
 }
 
 .navbar-dark .navbar-toggler {
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(18, 17, 17, 0.55);
   border-color: rgb(13 167 158);
 }
 
@@ -826,10 +826,11 @@ footer a:hover {
 }
 
 .footer-middle ul li a {
-  color: #ffffff;
-  opacity: 80%;
-  line-height: 2.2;
-  font-size: 14px;
+    color: #ffffff;
+    opacity: 80%;
+    line-height: 2.2;
+    font-size: 14px;
+    text-decoration: none;
 }
 
 .footer-middle ul li a:hover {
@@ -1898,10 +1899,42 @@ MEGA MENU - Responsive Styles
   left: 0;
   padding: 10px;
   max-height: 500px;
-  /* Fixed height for scrollable area on larger screens */
   overflow-y: auto;
-  /* Vertical scrolling when content overflows on larger screens */
+
+  /* Optional background or borders */
+  background-color: #fff;
 }
+
+/* Chrome, Edge, Safari */
+.thumb-gallery::-webkit-scrollbar {
+  width: 8px;
+}
+
+.product-span span {
+  font-size: 14px;
+  font-weight: 500 !important;
+}
+
+.thumb-gallery::-webkit-scrollbar-track {
+  background: #fff;
+  /* Light gray track */
+  border-radius: 10px;
+}
+
+.thumb-gallery::-webkit-scrollbar-thumb {
+  background-color: #fff;
+  /* Lighter thumb */
+  border-radius: 10px;
+  border: 2px solid #fff;
+  /* creates a gap between thumb and track */
+}
+
+/* Firefox */
+.thumb-gallery {
+  scrollbar-width: thin;
+  scrollbar-color: #fff #fff;
+}
+
 
 .thumb-item {
   cursor: pointer;
@@ -1933,7 +1966,7 @@ MEGA MENU - Responsive Styles
 
 #mainImageContainer {
   position: relative;
-  display:inline;
+  display: inline;
 }
 
 .product-details-page .product-title {
@@ -2089,6 +2122,11 @@ MEGA MENU - Responsive Styles
   white-space: nowrap;
   transition: all 0.3s ease;
   cursor: pointer;
+}
+
+.side-img {
+  height: 139px;
+  object-fit: cover;
 }
 
 /* Add to Cart Button */
@@ -2662,9 +2700,16 @@ CART PAGE
 ------------------------------------------------*/
 
 
+/* .cart-page {
+  border: 1px solid #ccc;
+  padding: 0px 10px;
+  border-right: none;
+} */
 .cart-page {
   border: 1px solid #ccc;
   padding: 0px 10px;
+  border-right: none;
+  border-bottom: none;
 }
 
 .cart-page .border-end {
@@ -2673,10 +2718,10 @@ CART PAGE
 
 .cart-page .product-img {
   width: 100%;
-  max-width: 150px;
+  max-width: 185px;
   border-radius: 8px;
   object-fit: cover;
-  height: 180px;
+  height: 255px;
 }
 
 .cart-page .strike-text {
@@ -3203,9 +3248,8 @@ WishList
 .wishlist-item-img {
   border-radius: 10px;
   width: 100%;
-  height: auto;
+  height: 201px !important;
   max-width: 270px;
-  /* From your modification */
 }
 
 .wishlist-item .details {
@@ -3376,6 +3420,13 @@ WishList
     border-radius: 10px;
   }
 
+  .wishlist-item-img {
+    border-radius: 10px;
+    width: 100%;
+    height: 100% !important;
+    max-width: 270px;
+  }
+
   .wishlist-item {
     flex-direction: column;
     align-items: flex-start;
@@ -3498,9 +3549,9 @@ WishList
 }
 
 .order-item-img {
-  border-radius: 10px;
-  max-width: 200px;
-  height: auto;
+    border-radius: 10px;
+    max-width: 200px;
+    height: 100%;
 }
 
 .order-details {
@@ -5585,8 +5636,13 @@ h3 a {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* otpLoginModal */
@@ -5622,7 +5678,8 @@ h3 a {
 }
 
 .make-default-btn.default-active {
-  background-color: #6c757d !important; /* Bootstrap grey */
+  background-color: #6c757d !important;
+  /* Bootstrap grey */
   color: white !important;
   border: 1px solid #6c757d;
   cursor: default;
@@ -5634,7 +5691,7 @@ h3 a {
   border-radius: 12px;
   padding: 16px;
   max-width: 400px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .result-header {
@@ -5652,11 +5709,8 @@ h3 a {
   font-size: 14px;
   color: #374151;
 }
+
 .result-item .icon {
   width: 20px;
   height: 20px;
 }
-
-
-
-

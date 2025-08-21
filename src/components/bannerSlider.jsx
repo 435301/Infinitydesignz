@@ -25,10 +25,10 @@ const BannerSlider = ({ sliders }) => {
         {sliders.map((slider) => (
           <div key={slider.id}>
             <div
-              className="furniture-banner position-relative overflow-hidden rounded shadow-lg"
+              className="furniture-banner position-relative overflow-hidden rounded"
               style={{
                 background: `url(${BASE_URL}${slider.image_url}) center center / cover no-repeat`,
-                minHeight: '500px', 
+                minHeight: '445px', 
               }}
             >
               <div

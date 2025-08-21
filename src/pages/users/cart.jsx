@@ -69,7 +69,7 @@ const CartItem = ({
 
   return (
     <div className="cart-page">
-      <div className="d-flex flex-column border-bottom flex-md-row gap-4 px-4 pt-3 pb-3">
+      <div className="d-flex flex-column border-bottom flex-md-row gap-4  pt-3 pb-3">
         <img
           src={imageUrl}
           alt="Product"
@@ -196,7 +196,7 @@ const handleClick = () => {
           <input
             type="text"
             className="form-control"
-            placeholder="Enter coupon code"
+            placeholder=""
             value={couponCode}
             disabled={!!appliedCoupon}
             onChange={(e) => setCouponCode(e.target.value)}
@@ -225,24 +225,24 @@ const handleClick = () => {
       <hr />
       <h5 className="text-bold">Price details</h5>
       <div className="d-flex justify-content-between">
-        <span>Total MRP</span>
-        <span>Rs.{summary.totalMRP || 0}</span>
+        <span className="price-detail-label">Total MRP</span>
+        <span className="price-detail-label">Rs.{summary.totalMRP || 0}</span>
       </div>
       <div className="d-flex justify-content-between">
-        <span>Discount on MRP</span>
-        <span className="discount-text">Rs.{summary.discountOnMRP || 0}</span>
+        <span className="price-detail-label">Discount on MRP</span>
+        <span className="discount-text price-detail-label">Rs.{summary.discountOnMRP || 0}</span>
       </div>
       <div className="d-flex justify-content-between">
-        <span>Coupon Discount</span>
-        <span className="discount-text">Rs.{summary.couponDiscount || 0}</span>
+        <span className="price-detail-label">Coupon Discount</span>
+        <span className="discount-text price-detail-label">Rs.{summary.couponDiscount || 0}</span>
       </div>
       <div className="d-flex justify-content-between">
-        <span>Platform fee <small className="know-more">Know More</small></span>
-        <span>Rs.{summary.platformFee || 0}</span>
+        <span className="price-detail-label">Platform fee <small className="know-more">Know More</small></span>
+        <span className="price-detail-label">Rs.{summary.platformFee || 0}</span>
       </div>
       <div className="d-flex justify-content-between mb-3">
-        <span>Shipping fee <small className="know-more">Know More</small></span>
-        <span>Rs.{summary.shippingFee || 0}</span>
+        <span className="price-detail-label">Shipping fee <small className="know-more">Know More</small></span>
+        <span className="price-detail-label">Rs.{summary.shippingFee || 0}</span>
       </div>
       <hr />
       <div className="d-flex justify-content-between total-amount mb-3">

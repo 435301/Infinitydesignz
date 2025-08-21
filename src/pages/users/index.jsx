@@ -337,7 +337,7 @@ export default function HomeBannerSection() {
                   <div className="rounded overflow-hidden">
                     <img
                       src={rightSliders?.image1 ? `${BASE_URL}${rightSliders.image3}` : S1}
-                      className="img-fluid rounded"
+                      className="img-fluid rounded "
                       alt="Sofa 1"
                     />
                   </div>
@@ -358,7 +358,7 @@ export default function HomeBannerSection() {
                   <img
                     src={rightSliders?.image3 ? `${BASE_URL}${rightSliders.image1}` : S4}
                     alt="Sale Banner"
-                    className="w-100"
+                    className="w-100 side-img"
                   />
                 </div>
               </div>

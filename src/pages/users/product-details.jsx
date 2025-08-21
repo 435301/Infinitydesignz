@@ -325,13 +325,13 @@ export default function ProductDetailPage() {
         <section className="bg-light py-3">
           <div className="container">
             <div className="row">
-              <div className="col-lg-12">
+              <div className="col-lg-12 product-span">
                 {breadcrumbItems.map((item, index) => (
                   <span key={index}>
                     {item.link ? (
                       <Link to={item.link}>{item.label}</Link>
                     ) : (
-                      <strong>{item.label}</strong>
+                      <span>{item.label}</span>
                     )}
                     {index < breadcrumbItems.length - 1 && (
                       <span className="mx-2">{'>'}</span>
@@ -347,7 +347,7 @@ export default function ProductDetailPage() {
             <div className="col-md-6">
               <div className="product-main-view">
                 <div className=" gap-2">
-                  <div className="thumb-gallery d-flex flex-column me-2">
+                  <div className="thumb-gallery ">
                     {thumbnails.map((img, index) => (
                       <div
                         key={index}
