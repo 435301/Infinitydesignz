@@ -135,9 +135,7 @@ const CheckoutPage = () => {
       );
     } else {
       dispatch(
-        applyCoupon({
-          code: promoCode,
-        })
+        applyCoupon(promoCode,)
       );
     }
   };

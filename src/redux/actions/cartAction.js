@@ -131,7 +131,7 @@ export const syncGuestCartToUserCart = () => async (dispatch, getState) => {
   }
 };
 
-export const applyCoupon = (couponCode, items) => async (dispatch) => {
+export const applyCoupon = (couponCode) => async (dispatch) => {
     try {
         const response = await axios.post(
             `${BASE_URL}/coupons/apply`,
@@ -140,8 +140,7 @@ export const applyCoupon = (couponCode, items) => async (dispatch) => {
             },
             {
                 headers: {
-                    Authorization: `Bearer ${getToken()}`,
-                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${getToken()}`
                 },
             }
         );
