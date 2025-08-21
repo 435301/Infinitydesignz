@@ -96,7 +96,7 @@ const FilterSidebar = () => {
                 checked={searchParams.get(filterType)?.split(",").includes(item.id?.toString() || item.key) || false}
                 onChange={() => handleFilterChange(filterType, item.id?.toString() || item.key)}
               />
-              {item[labelKey]} {item.count ? `(${item.count})` : ""}
+              {item[labelKey]}
             </label>
           </div>
         ))}
@@ -127,7 +127,7 @@ const FilterSidebar = () => {
                         checked={searchParams.get("filterListIds")?.split(",").includes(option.id.toString()) || false}
                         onChange={() => handleFilterChange("filterListIds", option.id.toString())}
                       />
-                      {option.label} ({option.count})
+                      {option.label} 
                     </label>
                   </div>
                 ))}
@@ -158,7 +158,7 @@ const FilterSidebar = () => {
                     checked={searchParams.get("priceRanges")?.split(",").includes(bucket.key) || false}
                     onChange={() => handleFilterChange("priceRanges", bucket.key)}
                   />
-                  {bucket.label} ({bucket.count})
+                  {bucket.label} 
                 </label>
               </div>
             ) : null
