@@ -12,7 +12,8 @@ export const UPDATE_CART_SUCCESS = "UPDATE_CART_SUCCESS";
 export const DELETE_FROM_CART_SUCCESS = "DELETE_FROM_CART_SUCCESS";
 export const APPLY_COUPON_SUCCESS = "APPLY_COUPON_SUCCESS";
 export const REMOVE_COUPON = 'REMOVE_COUPON';
-export const CLEAR_GUEST_CART = 'CLEAR_GUEST_CART'
+export const CLEAR_GUEST_CART = 'CLEAR_GUEST_CART';
+export const SET_GUEST_CART = "SET_GUEST_CART";
 
 
 export const fetchCart = () => async (dispatch) => {
@@ -135,8 +136,7 @@ export const applyCoupon = (couponCode, items) => async (dispatch) => {
         const response = await axios.post(
             `${BASE_URL}/coupons/apply`,
             {
-                items,
-                coupon: { code: couponCode },
+                code: couponCode,
             },
             {
                 headers: {
@@ -160,3 +160,10 @@ export const applyCoupon = (couponCode, items) => async (dispatch) => {
 export const removeCoupon = () => ({
     type: REMOVE_COUPON,
 });
+
+export const setGuestCart = (items) => {
+  return {
+    type: SET_GUEST_CART,
+    payload: items,
+  };
+};

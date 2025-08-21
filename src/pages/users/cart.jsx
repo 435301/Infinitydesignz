@@ -153,8 +153,8 @@ const PriceSummary = ({ summary = {} }) => {
   const [couponCode, setCouponCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { items, priceSummary, appliedCoupon } = useSelector((state) => state.cart);
-  const { addresses = [] } = useSelector((state) => state.addressBook);
+  const { appliedCoupon } = useSelector((state) => state.cart || {});
+  const { addresses = [] } = useSelector((state) => state.addressBook || {});
   const selectedAddress = addresses.find((addr) => addr.default) || addresses[0];
   const selectedAddressId = selectedAddress?.id || null;
 
@@ -163,9 +163,9 @@ const PriceSummary = ({ summary = {} }) => {
     setLoading(true);
     setError("");
     try {
-      await dispatch(applyCoupon(couponCode, items));
+      await dispatch(applyCoupon(couponCode));
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to apply coupon");
     } finally {
       setLoading(false);
     }
@@ -176,15 +176,17 @@ const PriceSummary = ({ summary = {} }) => {
     setCouponCode("");
   };
 
-  const handleClick = () => {
+const handleClick = () => {
+  if (isLoggedIn()) {
     navigate("/checkout");
-  };
+  } else {
+    dispatch({ type: "SHOW_LOGIN_MODAL" });
+  }
+};
 
   useEffect(() => {
     dispatch(fetchAddresses());
   }, [dispatch]);
-
-  if (!items || items.length === 0) return null;
 
   return (
     <div className="p-3 border cart-page">
@@ -266,8 +268,7 @@ const CartPage = () => {
   const [loading, setLoading] = useState(false);
 
   const params = new URLSearchParams(window.location.search);
-const isBuyNowMode = params.get("buyNow") === "true";
-
+  const isBuyNowMode = params.get("buyNow") === "true";
 
   // Initialize guest cart from localStorage
   useEffect(() => {
@@ -275,121 +276,135 @@ const isBuyNowMode = params.get("buyNow") === "true";
   }, [dispatch]);
 
   // Fetch user cart and wishlist if logged in
- useEffect(() => {
-  if (isBuyNowMode) {
-    dispatch(getBuyNow());
-  } else if (loggedIn) {
-    dispatch(fetchCart());
-    dispatch(fetchWishlist());
-    dispatch(syncGuestCartToUserCart());
-  } else {
-    dispatch(initializeGuestCart());
-  }
-}, [dispatch, loggedIn, isBuyNowMode]);
+  useEffect(() => {
+    if (isBuyNowMode) {
+      dispatch(getBuyNow());
+    } else if (loggedIn) {
+      dispatch(fetchCart());
+      dispatch(fetchWishlist());
+      dispatch(syncGuestCartToUserCart());
+    } else {
+      dispatch(initializeGuestCart());
+    }
+  }, [dispatch, loggedIn, isBuyNowMode]);
 
   // Fetch product details for guest cart items
-useEffect(() => {
-  const loadCartData = async () => {
-    // 1️⃣ Buy Now Mode
-   if (isBuyNowMode && buyNow?.items?.length > 0) {
-  setLocalCart(
-    buyNow.items.map((item) => {
-      const source = item.variant || item.product || {};
-      return {
-        id: item.id,
-        productId: item.productId,
-        variantId: item.variantId || null, // null for products without variants
-        quantity: item.quantity || 1,
-        product: {
-          title: source.title || "Untitled Product",
-          warranty: source.brand || "N/A",
-          price: `Rs.${source.price || 0}`,
-          mrp: `MRP: Rs.${source.mrp || 0}`,
-          sizes: [source.size || "M"],
-          image: source.imageUrl || "/placeholder.jpg",
-          delivery: "13 Aug",
-        },
-      };
-    })
-  );
-  return;
-}
-    // 2️⃣ Logged-in normal cart
-    if (loggedIn) {
-      setLocalCart(
-        userCartItems.map((item) => ({
-          ...item,
-          quantity: item.quantity || 1,
-          product: {
-            title: (item.variant || item.product)?.title,
-            warranty: (item.variant || item.product)?.brand,
-            price: `Rs.${(item.variant || item.product)?.price || 0}`,
-            mrp: `MRP: Rs.${(item.variant || item.product)?.mrp || 0}`,
-            sizes: [(item.variant || item.product)?.size || "M"],
-            image: (item.variant || item.product)?.imageUrl || "/placeholder.jpg",
-            delivery: "13 Aug",
-          },
-        }))
-      );
-      return;
-    }
-
-    // 3️⃣ Guest cart
-    if (!loggedIn && guestCartItems.length > 0) {
-      try {
-        setLoading(true);
-        const itemsWithDetails = await Promise.all(
-          guestCartItems.map(async (item) => {
-            try {
-              const response = await axios.get(
-                `${BASE_URL}/products/${item.productId}${
-                  item.variantId ? `?variantId=${item.variantId}` : ""
-                }`
-              );
-              const productData = response.data;
-              const source = item.variantId ? productData.variant : productData.product;
-              return {
-                ...item,
-                product: {
-                  title: source.title,
-                  warranty: source.brand,
-                  price: `Rs.${source.price || 0}`,
-                  mrp: `MRP: Rs.${source.mrp || 0}`,
-                  sizes: [source.size || "M"],
-                  image: source.imageUrl || "/placeholder.jpg",
-                  delivery: "13 Aug",
-                },
-              };
-            } catch (error) {
-              console.error(`Failed to fetch product ${item.productId}:`, error);
-              return {
-                ...item,
-                product: {
-                  title: "Unknown Product",
-                  warranty: "N/A",
-                  price: "Rs.0",
-                  mrp: "MRP: Rs.0",
-                  sizes: ["M"],
-                  image: "/placeholder.jpg",
-                  delivery: "N/A",
-                },
-              };
-            }
+  useEffect(() => {
+    const loadCartData = async () => {
+      // 1️⃣ Buy Now Mode
+      if (isBuyNowMode && buyNow?.items?.length > 0) {
+        setLocalCart(
+          buyNow.items.map((item) => {
+            const source = item.variant || item.product || {};
+            return {
+              id: item.id,
+              productId: item.productId,
+              variantId: item.variantId || null,
+              quantity: item.quantity || 1,
+              product: {
+                title: source.title || "Untitled Product",
+                warranty: source.brand || "N/A",
+                price: `Rs.${source.price || 0}`,
+                mrp: `MRP: Rs.${source.mrp || 0}`,
+                sizes: [source.size || "M"],
+                image: source.imageUrl || "/placeholder.jpg",
+                delivery: "13 Aug",
+              },
+            };
           })
         );
-        setLocalCart(itemsWithDetails);
-      } catch (error) {
-        console.error("Failed to fetch guest cart details:", error);
-        toast.error("Failed to load guest cart details");
-      } finally {
-        setLoading(false);
+        return;
       }
-    }
-  };
+      // 2️⃣ Logged-in normal cart
+      if (loggedIn) {
+        setLocalCart(
+          userCartItems.map((item) => ({
+            ...item,
+            quantity: item.quantity || 1,
+            product: {
+              title: (item.variant || item.product)?.title,
+              warranty: (item.variant || item.product)?.brand,
+              price: `Rs.${(item.variant || item.product)?.price || 0}`,
+              mrp: `MRP: Rs.${(item.variant || item.product)?.mrp || 0}`,
+              sizes: [(item.variant || item.product)?.size || "M"],
+              image: (item.variant || item.product)?.imageUrl || "/placeholder.jpg",
+              delivery: "13 Aug",
+            },
+          }))
+        );
+        return;
+      }
 
-  loadCartData();
-}, [isBuyNowMode, buyNow, loggedIn, userCartItems, guestCartItems]);
+      // 3️⃣ Guest cart
+      if (!loggedIn && guestCartItems.length > 0) {
+        try {
+          setLoading(true);
+          const itemsWithDetails = await Promise.all(
+            guestCartItems.map(async (item) => {
+              try {
+                const response = await axios.get(
+                  `${BASE_URL}/products/${item.productId}${item.variantId ? `?variantId=${item.variantId}` : ""}`
+                );
+                const productData = response.data;
 
+                let source = productData;
+                if (item.variantId && productData.variants?.length) {
+                  source = productData.variants.find((v) => v.id === item.variantId) || productData;
+                }
+
+                const sizeLabel = source.size?.title || productData.size?.title || "M";
+
+                const variantImage =
+                  productData.images?.variants?.[item.variantId?.toString()]?.main?.url;
+
+                const fallbackImage = productData.images?.main?.url;
+
+                const imageUrl = variantImage || fallbackImage || "/placeholder.jpg";
+
+                return {
+                  ...item,
+                  product: {
+                    title: productData.title,
+                    warranty: productData.brand?.name || "N/A",
+                    price: `Rs.${source.sellingPrice || source.price || 0}`,
+                    mrp: `MRP: Rs.${source.mrp || 0}`,
+                    sizes: [sizeLabel],
+                    image: imageUrl.startsWith("http") ? imageUrl : `${BASE_URL}/Uploads/products/${imageUrl}`,
+                    delivery: "13 Aug",
+                  },
+                };
+              } catch (error) {
+                console.error(`Failed to fetch product ${item.productId}:`, error);
+                return {
+                  ...item,
+                  product: {
+                    title: "Unknown Product",
+                    warranty: "N/A",
+                    price: "Rs.0",
+                    mrp: "MRP: Rs.0",
+                    sizes: ["M"],
+                    image: "/placeholder.jpg",
+                    delivery: "N/A",
+                  },
+                };
+              }
+            })
+          );
+
+          setLocalCart(itemsWithDetails);
+        } catch (error) {
+          console.error("Failed to fetch guest cart details:", error);
+          toast.error("Failed to load guest cart details");
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLocalCart([]);
+      }
+    };
+
+    loadCartData();
+  }, [isBuyNowMode, buyNow, loggedIn, userCartItems, guestCartItems]);
 
   const handleQuantityChange = (id, newQty, productId, variantId) => {
     if (loggedIn) {
@@ -478,7 +493,7 @@ useEffect(() => {
     };
   };
 
-const dynamicPriceSummary = isBuyNowMode ? buyNow?.priceSummary || {}: loggedIn ? priceSummary : calculateSummary();
+  const dynamicPriceSummary = isBuyNowMode ? buyNow?.priceSummary || {} : loggedIn ? priceSummary : calculateSummary();
 
   return (
     <>
@@ -523,7 +538,7 @@ const dynamicPriceSummary = isBuyNowMode ? buyNow?.priceSummary || {}: loggedIn 
             )}
           </div>
           <div className="col-lg-4 p-0">
-            <PriceSummary summary={dynamicPriceSummary} />
+            {localCart.length > 0 && <PriceSummary summary={dynamicPriceSummary} />}
           </div>
         </div>
       </div>

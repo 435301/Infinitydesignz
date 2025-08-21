@@ -7,7 +7,8 @@ import {
     DELETE_FROM_CART_SUCCESS,
     CLEAR_GUEST_CART,
     REMOVE_COUPON,
-     APPLY_COUPON_SUCCESS
+    APPLY_COUPON_SUCCESS,
+    SET_GUEST_CART,
 } from '../actions/cartAction';
 
 const initialState = {
@@ -68,6 +69,11 @@ export const cartReducer = (state = initialState, action) => {
                     couponDiscount: 0,
                     finalPayable: totalMRP - discountOnMRP + platformFee + shippingFee,
                 },
+            };
+        case SET_GUEST_CART:
+            return {
+                ...state,
+                items: action.payload,
             };
         default:
             return state;
