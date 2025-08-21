@@ -108,6 +108,7 @@ export const placeBuyNowOrder = (orderData) => async (dispatch) => {
     });
     dispatch({ type: PLACE_ORDER_BUYNOW_SUCCESS, payload: response.data });
     toast.success(response.data?.message || 'Order placed successfully');
+    return { payload: response.data };
   } catch (error) {
     dispatch({
       type: PLACE_ORDER_BUYNOW_FAILURE,

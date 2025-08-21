@@ -9,7 +9,7 @@ import { useParams } from "react-router-dom";
 export default function OrderSuccess() {
   const {id} = useParams();
   const handleContinueShopping = () => {
-    window.location.href = "/cart";
+    window.location.href = "/";
   };
 
   const handleGoHome = () => {
