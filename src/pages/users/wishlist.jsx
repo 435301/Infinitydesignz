@@ -1,4 +1,4 @@
-import  { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Carousel } from "react-bootstrap";
 import { getToken, isLoggedIn } from "../../utils/auth";
 import BASE_URL from "../../config/config";
@@ -27,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 export default function WishlistPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-    const [wishlistItems, setWishlistItems] = useState([]);
+  const [wishlistItems, setWishlistItems] = useState([]);
   const [quantities, setQuantities] = useState({});
   const [loadingWishlist, setLoadingWishlist] = useState(true);
 
@@ -53,9 +53,9 @@ export default function WishlistPage() {
     fetchWishlist();
   }, [fetchWishlist]);
 
-  useEffect(() => {
-    dispatch(fetchSizes());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchSizes());
+  // }, [dispatch]);
 
   // Only fetch product details if first wishlist item changes
   useEffect(() => {
@@ -86,12 +86,12 @@ export default function WishlistPage() {
   }, []);
 
   const handleProductClick = useCallback((productId, variantId) => {
-  if (variantId) {
-    navigate(`/product-details/${productId}?variantId=${variantId}`);
-  } else {
-    navigate(`/product-details/${productId}`);
-  }
-}, [navigate]);
+    if (variantId) {
+      navigate(`/product-details/${productId}?variantId=${variantId}`);
+    } else {
+      navigate(`/product-details/${productId}`);
+    }
+  }, [navigate]);
 
 
   // Memoize related products
@@ -199,7 +199,7 @@ export default function WishlistPage() {
 
                     return (
                       <div key={item.id || index} className="wishlist-item border-between d-flex"  >
-                        <div className="col-3"  onClick={() => handleProductClick(item.productId, item.variantId)}  style={{cursor:"pointer"}}>
+                        <div className="col-3" onClick={() => handleProductClick(item.productId, item.variantId)} style={{ cursor: "pointer" }}>
                           <img
                             src={imageUrl}
                             alt={imageAlt}
@@ -211,13 +211,15 @@ export default function WishlistPage() {
 
                           <div className="d-flex align-items-center mb-3">
                             <label className="me-2 fw-semibold">Size</label>
-                            <select className="form-select w-auto me-4" value={size} readOnly>
-                              {sizes.map((s) => (
-                                <option key={s.id} value={s.title}>
-                                  {s.title}
-                                </option>
-                              ))}
-                            </select>
+                            {/* <select className="form-select w-auto me-4" value={displayData.size || "N/A"} disabled>
+  <option>{displayData.size || "N/A"}</option>
+</select> */}
+                            <input
+                              type="text"
+                              className="form-control w-auto me-2"
+                              value={displayData.size || "N/A"}
+                              readOnly
+                            />
 
                             <label className="me-2 fw-semibold">Qty</label>
                             <div className="qty-box d-flex align-items-center">
