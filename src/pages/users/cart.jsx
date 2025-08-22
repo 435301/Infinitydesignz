@@ -181,6 +181,7 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
       setError(err.message || "Failed to apply coupon");
     } finally {
       setLoading(false);
+       setError("");
     }
   };
 
@@ -500,8 +501,6 @@ const CartPage = () => {
     } else {
       dispatch(addToWishlist(productId, variantId || null));
     }
-
-    dispatch(fetchWishlist());
   };
 
   const calculateSummary = () => {

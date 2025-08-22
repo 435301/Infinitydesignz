@@ -55,9 +55,8 @@ export const deleteWishlistItem = (wishlistId) => async (dispatch) => {
     };
     const res = await axios.delete(`${BASE_URL}/wishlist/${wishlistId}`, config);
     dispatch({ type: DELETE_WISHLIST_ITEM_SUCCESS, payload: wishlistId });
-    const successMessage = res.message || 'removed from whishlist';
+    const successMessage = res.data?.message || 'removed from whishlist';
     toast.success(successMessage)
-    dispatch(fetchWishlist());
   } catch (error) {
     dispatch({
       type: DELETE_WISHLIST_ITEM_FAILURE,

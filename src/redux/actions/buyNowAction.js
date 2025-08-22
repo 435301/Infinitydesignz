@@ -94,6 +94,7 @@ export const applyCouponBuyNow = (couponData) => async (dispatch) => {
         console.log("applyCouponBuyNow API response", res.data);
         toast.success(res.data?.message || 'Coupon applied successfully');
     } catch (error) {
+        toast.error(error.response?.data?.message || 'Failed to apply coupon');
         dispatch({ type: BUY_NOW_ERROR, payload: error.message });
     }
 };

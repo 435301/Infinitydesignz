@@ -31,7 +31,7 @@ const wishlistReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        wishlistItems: state.wishlistItems.filter(item => item.id !== action.payload),
+        items: state.items.filter(item => item.id !== action.payload),
       };
     case DELETE_WISHLIST_ITEM_FAILURE:
       return { ...state, loading: false, error: action.payload };
