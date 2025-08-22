@@ -27,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { deleteFromGuestCart, initializeGuestCart, updateGuestCart } from "../../redux/actions/guestCartAction";
-import { applyCouponBuyNow, clearBuyNow, getBuyNow } from "../../redux/actions/buyNowAction";
+import { applyCouponBuyNow, clearBuyNow, getBuyNow, updateBuyNow } from "../../redux/actions/buyNowAction";
 
 const CartItem = ({
   id,
@@ -428,7 +428,15 @@ const CartPage = () => {
   }, [isBuyNowMode, buyNow, loggedIn, userCartItems, guestCartItems]);
 
   const handleQuantityChange = (id, newQty, productId, variantId) => {
-    if (loggedIn) {
+     if (isBuyNowMode) {
+    const updateData = {
+      quantity: newQty,
+      productId,
+      variantId: variantId || null,
+    };
+    dispatch(updateBuyNow(updateData));
+  }
+    else if (loggedIn) {
       const itemToUpdate = localCart.find((item) => item.id === id);
       if (itemToUpdate) {
         const updatedItem = {
@@ -454,7 +462,7 @@ const CartPage = () => {
     if (isBuyNowMode) {
       try {
         setLoading(true);
-         dispatch(clearBuyNow());
+        dispatch(clearBuyNow());
       } catch (error) {
         toast.error(error.message || "Failed to remove Buy Now item");
       } finally {
@@ -465,6 +473,7 @@ const CartPage = () => {
     } else {
       dispatch(deleteFromGuestCart(productId, variantId));
     }
+
   };
 
   const isInWishlist = (productId, variantId) => {

@@ -60,7 +60,7 @@ export const updateBuyNow = (updateData) => async (dispatch) => {
                 },
             }
         );
-        dispatch({ type: UPDATE_BUY_NOW, payload: res.data });
+        dispatch({ type: UPDATE_BUY_NOW, payload: res.data.data });
         toast.success("Buy Now item updated successfully");
     } catch (error) {
         dispatch({ type: BUY_NOW_ERROR, payload: error.message });
