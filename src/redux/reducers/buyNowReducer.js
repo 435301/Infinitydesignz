@@ -7,7 +7,8 @@ import {
   BUY_NOW_ERROR,
     PLACE_ORDER_BUYNOW_REQUEST,
   PLACE_ORDER_BUYNOW_SUCCESS,
-  PLACE_ORDER_BUYNOW_FAILURE
+  PLACE_ORDER_BUYNOW_FAILURE,
+  CLEAR_BUY_NOW,
 } from "../actions/buyNowAction";
 
 const initialState = {
@@ -47,7 +48,13 @@ export const buyNowReducer = (state = initialState, action) => {
       return { ...state, loading: false, order: action.payload };
     case PLACE_ORDER_BUYNOW_FAILURE:
       return { ...state, loading: false, error: action.payload };
-      
+      case CLEAR_BUY_NOW:
+      return {
+        ...state,
+        items: [],
+        priceSummary: {},
+        coupon: null,
+      };
     default:
       return state;
   }

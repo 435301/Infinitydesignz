@@ -27,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { deleteFromGuestCart, initializeGuestCart, updateGuestCart } from "../../redux/actions/guestCartAction";
-import { applyCouponBuyNow, getBuyNow } from "../../redux/actions/buyNowAction";
+import { applyCouponBuyNow, clearBuyNow, getBuyNow } from "../../redux/actions/buyNowAction";
 
 const CartItem = ({
   id,
@@ -449,8 +449,18 @@ const CartPage = () => {
     }
   };
 
-  const handleDeleteCartItem = (id, productId, variantId) => {
-    if (loggedIn) {
+
+  const handleDeleteCartItem = async (id, productId, variantId) => {
+    if (isBuyNowMode) {
+      try {
+        setLoading(true);
+         dispatch(clearBuyNow());
+      } catch (error) {
+        toast.error(error.message || "Failed to remove Buy Now item");
+      } finally {
+        setLoading(false);
+      }
+    } else if (loggedIn) {
       dispatch(DeleteFromCart(id));
     } else {
       dispatch(deleteFromGuestCart(productId, variantId));

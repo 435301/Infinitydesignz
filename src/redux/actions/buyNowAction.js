@@ -14,6 +14,7 @@ export const PLACE_ORDER_BUYNOW_REQUEST = 'PLACE_ORDER_BUYNOW_REQUEST';
 export const PLACE_ORDER_BUYNOW_SUCCESS = 'PLACE_ORDER_BUYNOW_SUCCESS';
 export const PLACE_ORDER_BUYNOW_FAILURE = 'PLACE_ORDER_BUYNOW_FAILURE';
 
+export const CLEAR_BUY_NOW = 'CLEAR_BUY_NOW';
 
 // Get Buy Now
 export const getBuyNow = () => async (dispatch) => {
@@ -50,9 +51,9 @@ export const setBuyNow = (buyNowData, navigate) => async (dispatch) => {
 
 
 // Update Buy Now
-export const updateBuyNow = (id, updateData) => async (dispatch) => {
+export const updateBuyNow = (updateData) => async (dispatch) => {
     try {
-        const res = await axios.put(`${BASE_URL}/buy-now/${id}`, updateData,
+        const res = await axios.patch(`${BASE_URL}/buy-now`, updateData,
             {
                 headers: {
                     Authorization: `Bearer ${getToken()}`,
@@ -98,22 +99,39 @@ export const applyCouponBuyNow = (couponData) => async (dispatch) => {
 };
 
 export const placeBuyNowOrder = (orderData) => async (dispatch) => {
-  dispatch({ type: PLACE_ORDER_BUYNOW_REQUEST });
-  try {
-    const response = await axios.post(`${BASE_URL}/orders/buy-now`, orderData, {
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    dispatch({ type: PLACE_ORDER_BUYNOW_SUCCESS, payload: response.data });
-    toast.success(response.data?.message || 'Order placed successfully');
-    return { payload: response.data };
-  } catch (error) {
-    dispatch({
-      type: PLACE_ORDER_BUYNOW_FAILURE,
-      payload: error?.response?.data?.message || error.message,
-    });
-    throw error;
-  }
+    dispatch({ type: PLACE_ORDER_BUYNOW_REQUEST });
+    try {
+        const response = await axios.post(`${BASE_URL}/orders/buy-now`, orderData, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        dispatch({ type: PLACE_ORDER_BUYNOW_SUCCESS, payload: response.data });
+        toast.success(response.data?.message || 'Order placed successfully');
+        return { payload: response.data };
+    } catch (error) {
+        dispatch({
+            type: PLACE_ORDER_BUYNOW_FAILURE,
+            payload: error?.response?.data?.message || error.message,
+        });
+        throw error;
+    }
+};
+
+
+export const clearBuyNow = () => async (dispatch) => {
+    try {
+        const response = await axios.delete(`${BASE_URL}/buy-now`, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`,
+            },
+        });
+        dispatch({ type: CLEAR_BUY_NOW });
+        toast.success(response.data?.message || 'Buy Now cleared successfully');
+        dispatch(getBuyNow());
+        return response.data;
+    } catch (error) {
+        console.log('error', error)
+    }
 };
