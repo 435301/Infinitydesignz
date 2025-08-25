@@ -1,10 +1,59 @@
-import React from 'react';
-import HeaderAdmin from '../../includes/headerAdmin';
-import Sidebar from '../../includes/sidebar';
-import '../../css/admin/style.css';
-import '../../css/admin/icofont.css';
+import React, { useEffect, useState } from "react";
+import HeaderAdmin from "../../includes/headerAdmin";
+import Sidebar from "../../includes/sidebar";
+import "../../css/admin/style.css";
+import "../../css/admin/icofont.css";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteKeyword, fetchKeywords } from "../../redux/actions/searchKeywordsAction";
+import moment from "moment";
+import PaginationComponent from "../../includes/pagination";
+import DeleteModal from '../../modals/deleteModal';
+import { TiTrash } from "react-icons/ti";
 
 function SearchKeywordsList() {
+    const dispatch = useDispatch();
+    const { items, loading, error, page, totalPages } = useSelector(
+        (state) => state.keywords
+    );
+
+    const [searchTerm, setSearchTerm] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [keywordToDelete, setKewywordToDelete] = useState(null);
+
+    useEffect(() => {
+        dispatch(fetchKeywords(currentPage, 10));
+    }, [dispatch, currentPage]);
+
+    const handleSearch = () => {
+        dispatch(fetchKeywords({ page: 1, take: 10, search: searchTerm }));
+    };
+
+    const handleInputChange = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        handleSearch(value);
+    };
+
+    const handleReset = () => {
+        setSearchTerm("");
+        dispatch(fetchKeywords({ page: 1, take: 10, search: "" }));
+    };
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    const handleDeleteClick = (id) => {
+        setKewywordToDelete(id);
+        setShowDeleteModal(true);
+    }
+
+    const handleDelete = () => {
+        dispatch(deleteKeyword(keywordToDelete));
+        setShowDeleteModal(false);
+    }
+
     return (
         <div className="sidebar-mini fixed">
             <div className="wrapper">
@@ -26,25 +75,34 @@ function SearchKeywordsList() {
                                         <div className="row">
                                             <div className="col-md-3">
                                                 <div className="input-group">
-                                                    <input type="text" className="form-control" placeholder="Search By " />
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        placeholder="Search keyword..."
+                                                        value={searchTerm}
+                                                        onChange={handleInputChange}
+                                                    />
                                                 </div>
                                             </div>
 
                                             <div className="col-md-2">
-                                                <button className="btn btn-danger me-2">
+                                                {/* <button
+                                                    className="btn btn-danger me-2"
+                                                    onClick={handleSearch}
+                                                >
                                                     <i className="bi bi-search"></i>
-                                                </button>
-                                                <button className="btn btn-success">
+                                                </button> */}
+                                                <button className="btn btn-success" onClick={handleReset}>
                                                     <i className="bi bi-arrow-clockwise"></i>
                                                 </button>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        {/* Table */}
                         <div className="row">
                             <div className="col-sm-12">
                                 <div className="card">
@@ -57,42 +115,56 @@ function SearchKeywordsList() {
                                                             <th>S.No</th>
                                                             <th>Search Keyword</th>
                                                             <th>Searched On</th>
+                                                            <th>Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr><td>1</td><td>Nino%2Bbonito</td><td>24-Jun-2025</td></tr>
-                                                        <tr><td>2</td><td>Tshirt 12 year chauhan Ji</td><td>03-Jun-2025</td></tr>
-                                                        <tr><td>3</td><td>Filter_products</td><td>22-May-2025</td></tr>
-                                                        <tr><td>4</td><td>Filter_products</td><td>22-May-2025</td></tr>
-                                                        <tr><td>5</td><td>Filter_products</td><td>22-May-2025</td></tr>
-                                                        <tr><td>6</td><td>Filter_products</td><td>22-May-2025</td></tr>
-                                                        <tr><td>7</td><td>Filter_products</td><td>22-May-2025</td></tr>
-                                                        <tr><td>8</td><td>Filter_products</td><td>22-May-2025</td></tr>
-                                                        <tr><td>9</td><td>Filter_products</td><td>22-May-2025</td></tr>
-                                                        <tr><td>10</td><td>Filter_products</td><td>22-May-2025</td></tr>
-                                                        <tr><td>11</td><td>Filter_products</td><td>22-May-2025</td></tr>
+                                                        {items.length === 0 ? (
+                                                            <tr>
+                                                                <td colSpan="3">No keywords found.</td>
+                                                            </tr>
+                                                        ) : (
+                                                            items.map((keyword, index) => (
+                                                                <tr key={keyword.id}>
+                                                                    <td>{(page - 1) * 10 + index + 1}</td>
+                                                                    <td>{keyword.keyword}</td>
+                                                                    <td>
+                                                                        {moment(keyword.createdAt).format("DD-MMM-YYYY")}
+                                                                    </td>
+                                                                    <td>
+                                                                        <button
+                                                                            className="btn btn-light icon-btn m-2"
+                                                                            onClick={() => handleDeleteClick(keyword.id)}
+                                                                        >
+                                                                            <TiTrash style={{ fontSize: '18px', color: '#212529' }} />
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            ))
+                                                        )}
                                                     </tbody>
                                                 </table>
 
-                                                <nav aria-label="Page navigation example">
-                                                    <ul className="pagination justify-content-end">
-                                                        <li className="page-item disabled">
-                                                            <a className="page-link" href="#" tabIndex="-1" aria-disabled="true">Previous</a>
-                                                        </li>
-                                                        <li className="page-item"><a className="page-link" href="#">1</a></li>
-                                                        <li className="page-item"><a className="page-link" href="#">2</a></li>
-                                                        <li className="page-item"><a className="page-link" href="#">3</a></li>
-                                                        <li className="page-item">
-                                                            <a className="page-link" href="#">Next</a>
-                                                        </li>
-                                                    </ul>
-                                                </nav>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <PaginationComponent
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={handlePageChange}
+                        />
+                        {showDeleteModal && (
+                            <DeleteModal
+                                show={showDeleteModal}
+                                onClose={() => setShowDeleteModal(false)}
+                                onConfirm={handleDelete}
+                                message="Are you sure you want to delete this keyword?"
+                            />
+                        )
+                        }
                     </div>
                 </div>
             </div>

@@ -28,6 +28,7 @@ import { buyNowReducer } from './buyNowReducer';
 import slidersReducer from './sliderReducer';
 import contactReducer from './contactReducer';
 import { homeCategoryPromotionsReducer } from './catgeoryPromotionReducer';
+import keywordReducer from './searchKeywordsReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -64,7 +65,8 @@ const rootReducer = combineReducers({
   cancelOrderItem: orderReducer,
   productState: productReducer,
   contact:contactReducer,
-  categoryPromotion: homeCategoryPromotionsReducer
+  categoryPromotion: homeCategoryPromotionsReducer,
+  keywords: keywordReducer,
 });
 
 export default rootReducer;
