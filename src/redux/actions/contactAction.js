@@ -3,6 +3,7 @@
 import BASE_URL from "../../config/config";
 import axios from "axios";
 import { getAdminToken } from "../../utils/adminAuth";
+import { toast } from "react-toastify";
 
 
 export const CREATE_CONTACT_REQUEST = 'CREATE_CONTACT_REQUEST';
@@ -33,12 +34,13 @@ export const SET_CONTACT_STATUS_FAIL = 'SET_CONTACT_STATUS_FAIL';
 export const getContacts = (search = '', status = '', page = 1) => async (dispatch) => {
   try {
     dispatch({ type: GET_CONTACTS_REQUEST });
-    const { data } = await axios.get(`${BASE_URL}/contacts?search=${search}&status=${status}&page=${page}`,{
+    const  response  = await axios.get(`${BASE_URL}/contacts?search=${search}&status=${status}&page=${page}`,{
       headers: {
         Authorization: `Bearer ${getAdminToken()}`,
       },
     });
-    dispatch({ type: GET_CONTACTS_SUCCESS, payload: data });
+
+    dispatch({ type: GET_CONTACTS_SUCCESS, payload: response.data.items });
   } catch (error) {
     dispatch({ type: GET_CONTACTS_FAIL, payload: error.message });
   }
@@ -47,12 +49,14 @@ export const getContacts = (search = '', status = '', page = 1) => async (dispat
 export const createContact = (contactData) => async (dispatch) => {
   try {
     dispatch({ type: CREATE_CONTACT_REQUEST });
-    const { data } = await axios.post(`${BASE_URL}/contacts`, contactData,{
+    const {data} = await axios.post(`${BASE_URL}/contacts`, contactData,{
       headers: {
         Authorization: `Bearer ${getAdminToken()}`,
       },
     });
     dispatch({ type: CREATE_CONTACT_SUCCESS, payload: data });
+    dispatch(getContacts());
+    toast.success(data.message || 'Your message has been sent successfully!');
   } catch (error) {
     dispatch({ type: CREATE_CONTACT_FAIL, payload: error.message });
   }
@@ -68,6 +72,7 @@ export const updateContact = (contactId, contactData) => async (dispatch) => {
       },
     });
     dispatch({ type: UPDATE_CONTACT_SUCCESS, payload: data });
+    dispatch(getContacts());
   } catch (error) {
     dispatch({ type: UPDATE_CONTACT_FAIL, payload: error.message });
   }
@@ -76,12 +81,14 @@ export const updateContact = (contactId, contactData) => async (dispatch) => {
 export const deleteContact = (contactId) => async (dispatch) => {
   try {
     dispatch({ type: DELETE_CONTACT_REQUEST });
-    await axios.delete(`${BASE_URL}/contacts/${contactId}`,{
+   const response =  await axios.delete(`${BASE_URL}/contacts/${contactId}`,{
       headers: {
         Authorization: `Bearer ${getAdminToken()}`,
       },
     });
     dispatch({ type: DELETE_CONTACT_SUCCESS, payload: contactId });
+    dispatch(getContacts());
+    toast.success(response.data.message || 'Contact deleted successfully');
   } catch (error) {
     dispatch({ type: DELETE_CONTACT_FAIL, payload: error.message });
   }

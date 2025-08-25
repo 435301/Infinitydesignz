@@ -6,32 +6,46 @@ import Header from "../../includes/header";
 import Footer from "../../includes/footer";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
+import { createContact } from "../../redux/actions/contactAction";
 
 const ContactPage = () => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    mobile: "",
     subject: "",
-    message: "",
+    description: "",
   });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.email || !formData.message) {
+    if (!formData.name || !formData.email || !formData.description || !formData.mobile) {
       toast.error("Please fill all required fields");
       return;
     }
+    try {
+      await dispatch(
+        createContact({
+          name: formData.name,
+          email: formData.email,
+          mobile: formData.mobile,
+          subject: formData.subject,
+          description: formData.description,
+        })
+      );
+      setFormData({ name: "", email: "", mobile: "", subject: "", message: "" });
 
-    // 👉 Here you can integrate API call to backend
-    console.log("Contact form submitted:", formData);
+    } catch (error) {
+      console.log(error);
+    }
 
-    toast.success("Your message has been sent successfully!");
-    setFormData({ name: "", email: "", subject: "", message: "" });
   };
 
   return (
@@ -51,72 +65,72 @@ const ContactPage = () => {
           <div className="col-lg-6">
             <div className="card shadow-sm p-4 h-100">
               <h5 className="mb-3">Send us a Message</h5>
-            <form onSubmit={handleSubmit}>
-  <div className="row">
-    <div className="col-md-6 mb-3">
-      <label className="form-label">Name *</label>
-      <input
-        type="text"
-        name="name"
-        className="form-control"
-        value={formData.name}
-        onChange={handleChange}
-        placeholder="Your Name"
-      />
-    </div>
-    <div className="col-md-6 mb-3">
-      <label className="form-label">Email *</label>
-      <input
-        type="email"
-        name="email"
-        className="form-control"
-        value={formData.email}
-        onChange={handleChange}
-        placeholder="Your Email"
-      />
-    </div>
-  </div>
+              <form onSubmit={handleSubmit}>
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">Name <span className="text-danger">*</span></label>
+                    <input
+                      type="text"
+                      name="name"
+                      className="form-control"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="Your Name"
+                    />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">Email <span className="text-danger">*</span></label>
+                    <input
+                      type="email"
+                      name="email"
+                      className="form-control"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="Your Email"
+                    />
+                  </div>
+                </div>
 
-  <div className="mb-3">
-    <label className="form-label">Mobile Number *</label>
-    <input
-      type="number"
-      name="mobile"
-      className="form-control"
-      value={formData.mobile}
-      onChange={handleChange}
-      placeholder="Your Mobile Number"
-    />
-  </div>
+                <div className="mb-3">
+                  <label className="form-label">Mobile Number <span className="text-danger">*</span></label>
+                  <input
+                    type="number"
+                    name="mobile"
+                    className="form-control"
+                    value={formData.mobile}
+                    onChange={handleChange}
+                    placeholder="Your Mobile Number"
+                  />
+                </div>
 
-  <div className="mb-3">
-    <label className="form-label">Subject</label>
-    <input
-      type="text"
-      name="subject"
-      className="form-control"
-      value={formData.subject}
-      onChange={handleChange}
-      placeholder="Subject"
-    />
-  </div>
+                <div className="mb-3">
+                  <label className="form-label">Subject</label>
+                  <input
+                    type="text"
+                    name="subject"
+                    className="form-control"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    placeholder="Subject"
+                  />
+                </div>
 
-  <div className="mb-3">
-    <label className="form-label">Message *</label>
-    <textarea
-      name="message"
-      className="form-control"
-      rows="4"
-      value={formData.message}
-      onChange={handleChange}
-      placeholder="Your Message"
-    ></textarea>
-  </div>
+                <div className="mb-3">
+                  <label className="form-label">Description <span className="text-danger">*</span></label>
+                  <textarea
+                    name="description"
+                    className="form-control"
+                    rows="4"
+                    value={formData.description}
+                    onChange={handleChange}
+                    placeholder="Your Desccription"
+                  ></textarea>
+                </div>
 
-  <button type="submit" className="btn btn-success w-100">
-    Send Message
-  </button>
-</form>
+                <button type="submit" className="btn btn-success w-100">
+                  Send Message
+                </button>
+              </form>
 
             </div>
           </div>
@@ -125,6 +139,8 @@ const ContactPage = () => {
           <div className="col-lg-6">
             <div className="card shadow-sm p-4 h-100">
               <h5 className="mb-3">Contact Information</h5>
+
+
               <p>
                 <i className="bi bi-geo-alt-fill me-2"></i>
                 123 Main Street, Your City, Country
@@ -137,6 +153,7 @@ const ContactPage = () => {
                 <i className="bi bi-envelope-fill me-2"></i>
                 support@example.com
               </p>
+
               <hr />
               <h6>Find us on Map</h6>
               <div className="map-container rounded shadow-sm overflow-hidden" style={{ height: "250px" }}>
