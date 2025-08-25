@@ -27,6 +27,7 @@ import { profileReducer } from './profileReducer';
 import { buyNowReducer } from './buyNowReducer';
 import slidersReducer from './sliderReducer';
 import contactReducer from './contactReducer';
+import { homeCategoryPromotionsReducer } from './catgeoryPromotionReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -63,6 +64,7 @@ const rootReducer = combineReducers({
   cancelOrderItem: orderReducer,
   productState: productReducer,
   contact:contactReducer,
+  categoryPromotion: homeCategoryPromotionsReducer
 });
 
 export default rootReducer;
