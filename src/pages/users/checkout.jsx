@@ -39,17 +39,19 @@ const CheckoutPage = () => {
       ? reduxCartPriceSummary
       : (cart?.priceSummary || {}));
 
-  // const cartCoupon = useSelector((state) => state.cart.appliedCoupon);
-  // const Buynowcoupon = useSelector((state) => state.buyNow.coupon);
   const cartCoupon = useSelector(state => state.cart.appliedCoupon);
   const buyNowCoupon = useSelector(state => state.buyNow.coupon);
 
   const coupon = isBuyNow ? buyNowCoupon : cartCoupon;
 
+  useEffect(() => {
+    if (coupon?.code) {
+      setPromoCode(coupon.code);
+    } else {
+      setPromoCode("");
+    }
+  }, [coupon]);
 
-
-  console.log('cartCoupon', cartCoupon)
-  console.log('Buynowcoupon', buyNowCoupon)
 
   // Fetch initial data
   useEffect(() => {
@@ -135,7 +137,7 @@ const CheckoutPage = () => {
       );
     } else {
       dispatch(
-        applyCoupon(promoCode,)
+        applyCoupon( promoCode)
       );
     }
   };

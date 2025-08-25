@@ -246,12 +246,10 @@ export default function ProductDetailPage() {
     const wishlistAction = async () => {
       if (wishlistItem?.id) {
         await dispatch(deleteWishlistItem(wishlistItem.id));
-        toast.success("Removed from wishlist successfully");
         setLocalWishlisted(false);
       } else {
         const res = await dispatch(addToWishlist(parsedProductId, parsedVariantId));
         if (res?.payload?.id) {
-          toast.success("Added to wishlist successfully");
           setLocalWishlisted(true);
         } else {
           // toast.error("Failed to add to wishlist");

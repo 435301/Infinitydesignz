@@ -21,7 +21,7 @@ import { toast } from "react-toastify";
 import { addToCart } from "../../redux/actions/cartAction";
 import { addToGuestCart } from "../../redux/actions/guestCartAction";
 import Loader from "../../includes/loader";
-
+ 
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { useNavigate } from "react-router-dom";
 export default function WishlistPage() {
@@ -30,11 +30,11 @@ export default function WishlistPage() {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [quantities, setQuantities] = useState({});
   const [loadingWishlist, setLoadingWishlist] = useState(true);
-
+ 
   // Memoized selectors for redux state
   const sizes = useSelector((state) => state.sizes?.sizes || [], shallowEqual);
   const { product, loading } = useSelector((state) => state.userProductDetails, shallowEqual);
-
+ 
   // Fetch wishlist only once
   const fetchWishlist = useCallback(async () => {
     setLoadingWishlist(true);
@@ -48,15 +48,15 @@ export default function WishlistPage() {
       setLoadingWishlist(false);
     }
   }, []);
-
+ 
   useEffect(() => {
     fetchWishlist();
   }, [fetchWishlist]);
-
-  useEffect(() => {
-    dispatch(fetchSizes());
-  }, [dispatch]);
-
+ 
+  // useEffect(() => {
+  //   dispatch(fetchSizes());
+  // }, [dispatch]);
+ 
   // Only fetch product details if first wishlist item changes
   useEffect(() => {
     if (wishlistItems.length > 0) {
@@ -67,7 +67,7 @@ export default function WishlistPage() {
       }
     }
   }, [wishlistItems, dispatch]);
-
+ 
   // Memoize increment/decrement handlers
   const increment = useCallback((item) => {
     const key = `${item.productId}-${item.variantId || 'null'}`;
@@ -76,7 +76,7 @@ export default function WishlistPage() {
       [key]: Math.min((prev[key] || 1) + 1, 99),
     }));
   }, []);
-
+ 
   const decrement = useCallback((item) => {
     const key = `${item.productId}-${item.variantId || 'null'}`;
     setQuantities((prev) => ({
@@ -84,7 +84,7 @@ export default function WishlistPage() {
       [key]: Math.max((prev[key] || 1) - 1, 1),
     }));
   }, []);
-
+ 
   const handleProductClick = useCallback((productId, variantId) => {
     if (variantId) {
       navigate(`/product-details/${productId}?variantId=${variantId}`);
@@ -92,8 +92,8 @@ export default function WishlistPage() {
       navigate(`/product-details/${productId}`);
     }
   }, [navigate]);
-
-
+ 
+ 
   // Memoize related products
   const relatedProducts = useMemo(() => [
     {
@@ -113,20 +113,20 @@ export default function WishlistPage() {
       rating: "4.7 | 10K"
     }
   ], []);
-
+ 
   // Memoize handleCart to avoid re-creation
   const handleCart = useCallback(async (item) => {
     const productId = item?.productId;
     const variantId = item?.variantId || null;
     const key = `${productId}-${variantId || 'null'}`;
     const qty = quantities[key] || 1;
-
+ 
     const cartItem = {
       productId,
       variantId,
       quantity: qty,
     };
-
+ 
     try {
       if (isLoggedIn()) {
         await dispatch(addToCart(cartItem));
@@ -140,14 +140,14 @@ export default function WishlistPage() {
       toast.error("Failed to move to cart.");
     }
   }, [dispatch, quantities]);
-
+ 
   // Memoize delete handler
   const handleDelete = useCallback(async (itemId) => {
     await dispatch(deleteWishlistItem(itemId));
     fetchWishlist();
     toast.success("Removed from wishlist successfully");
   }, [dispatch, fetchWishlist]);
-
+ 
   return (
     <>
       <Header wishlistCount={wishlistItems.length} />
@@ -170,110 +170,110 @@ export default function WishlistPage() {
               <a href="/addressbook">Address book</a>
             </div>
             <div className="col-md-7">
-              <div className="wishlist-container">
-
-                <div className="wishlist-header">
-                  <h2 className="m-0">Wishlist</h2>
-                </div>
-                {loadingWishlist ? (
-                  <Loader />
-                ) : (
-                  wishlistItems.length > 0 ? (
-                    wishlistItems.map((item, index) => {
-                      const displayData = item.variantId && item.variant
-                        ? item.variant
-                        : (!item.variantId && item.productId && item.product ? item.product : null);
-
-                      if (!displayData) return null;
-
-                      const imageUrl = displayData.imageUrl
-                        ? (displayData.imageUrl.startsWith("http")
-                          ? displayData.imageUrl
-                          : `${BASE_URL}${displayData.imageUrl}`)
-                        : Sofa;
-
-                      const imageAlt = displayData.imageAlt || displayData.title || "Product Image";
-                      const title = displayData.title || "No Title";
-                      const price = displayData.price || 0;
-                      const mrp = displayData.mrp || 0;
-                      const size = displayData.size || "N/A";
-                      const key = `${item.productId}-${item.variantId || 'null'}`;
-
-                      return (
-                        <div key={item.id || index} className="wishlist-item border-between d-flex"  >
-                          <div className="col-3" onClick={() => handleProductClick(item.productId, item.variantId)} style={{ cursor: "pointer" }}>
-                            <img
-                              src={imageUrl}
-                              alt={imageAlt}
-                              className="wishlist-item-img img-fluid"
+              <div className="wishlist-header">
+                <h2 className="m-0">Wishlist</h2>
+              </div>
+              {loadingWishlist ? (
+                <Loader />
+              ) : (
+                wishlistItems.length > 0 ? (
+                  wishlistItems.map((item, index) => {
+                    const displayData = item.variantId && item.variant
+                      ? item.variant
+                      : (!item.variantId && item.productId && item.product ? item.product : null);
+ 
+                    if (!displayData) return null;
+ 
+                    const imageUrl = displayData.imageUrl
+                      ? (displayData.imageUrl.startsWith("http")
+                        ? displayData.imageUrl
+                        : `${BASE_URL}${displayData.imageUrl}`)
+                      : Sofa;
+ 
+                    const imageAlt = displayData.imageAlt || displayData.title || "Product Image";
+                    const title = displayData.title || "No Title";
+                    const price = displayData.price || 0;
+                    const mrp = displayData.mrp || 0;
+                    const size = displayData.size || "N/A";
+                    const key = `${item.productId}-${item.variantId || 'null'}`;
+ 
+                    return (
+                      <div key={item.id || index} className="wishlist-item border-between d-flex"  >
+                        <div className="col-3" onClick={() => handleProductClick(item.productId, item.variantId)} style={{ cursor: "pointer" }}>
+                          <img
+                            src={imageUrl}
+                            alt={imageAlt}
+                            className="wishlist-item-img img-fluid"
+                          />
+                        </div>
+                        <div className="details ms-3">
+                          <h5 style={{ cursor: "pointer" }} onClick={() => handleProductClick(item.productId, item.variantId)}>{title}</h5>
+ 
+                          <div className="d-flex align-items-center mb-3">
+                            <label className="me-2 fw-semibold">Size</label>
+                            {/* <select className="form-select w-auto me-4" value={displayData.size || "N/A"} disabled>
+  <option>{displayData.size || "N/A"}</option>
+</select> */}
+                            <input
+                              type="text"
+                              className="form-control w-auto me-2"
+                              value={displayData.size || "N/A"}
+                              readOnly
                             />
+ 
+                            <label className="me-2 fw-semibold">Qty</label>
+                            <div className="qty-box d-flex align-items-center">
+                              <button className="btn-qty" onClick={() => decrement(item)}>-</button>
+                              <input
+                                type="text"
+                                className="qty-input text-center"
+                                value={(quantities[key] || 1).toString().padStart(2, '0')}
+                                readOnly
+                              />
+                              <button className="btn-qty" onClick={() => increment(item)}>+</button>
+                            </div>
                           </div>
-                          <div className="details ms-3">
-                            <h5 style={{ cursor: "pointer" }} onClick={() => handleProductClick(item.productId, item.variantId)}>{title}</h5>
-
-                            <div className="d-flex align-items-center mb-3">
-                              <label className="me-2 fw-semibold">Size</label>
-                              <select className="form-select w-30 me-4" value={size} readOnly>
-                                {sizes.map((s) => (
-                                  <option key={s.id} value={s.title}>
-                                    {s.title}
-                                  </option>
-                                ))}
-                              </select>
-
-                              <label className="me-2 fw-semibold">Qty</label>
-                              <div className="qty-box d-flex align-items-center">
-                                <button className="btn-qty" onClick={() => decrement(item)}>-</button>
-                                <input
-                                  type="text"
-                                  className="qty-input text-center"
-                                  value={(quantities[key] || 1).toString().padStart(2, '0')}
-                                  readOnly
-                                />
-                                <button className="btn-qty" onClick={() => increment(item)}>+</button>
-                              </div>
-                            </div>
-
-                            <div className="price">
-                              <span className="currency">₹</span>{price}{" "}
-                              <small>MRP: <span className="currency">₹</span>{mrp}</small>
-                            </div>
-
-                            <div className="icons">
-                              <span>
-                                <i className="bi bi-arrow-return-right icon-return"></i> Easy 14 days return & exchange
-                              </span>
-                              <span>
-                                <i className="bi bi-truck icon-delivery"></i> Estimated delivery by 13 Aug
-                              </span>
-                            </div>
-
-                            <div className="actions mt-3">
-                              <button className="btn me-2" onClick={() => handleCart(item)}>
-                                <i className="bi bi-cart"></i> Move to cart
-                              </button>
-                              <button
-                                className="btn"
-                                onClick={() => handleDelete(item.id)}
-                              >
-                                <i className="bi bi-trash"></i> Delete
-                              </button>
-                            </div>
+ 
+                          <div className="price">
+                            <span className="currency">₹</span>{price}{" "}
+                            <small>MRP: <span className="currency">₹</span>{mrp}</small>
+                          </div>
+ 
+                          <div className="icons">
+                            <span>
+                              <i className="bi bi-arrow-return-right icon-return"></i> Easy 14 days return & exchange
+                            </span>
+                            <span>
+                              <i className="bi bi-truck icon-delivery"></i> Estimated delivery by 13 Aug
+                            </span>
+                          </div>
+ 
+                          <div className="actions mt-3">
+                            <button className="btn me-2" onClick={() => handleCart(item)}>
+                              <i className="bi bi-cart"></i> Move to cart
+                            </button>
+                            <button
+                              className="btn"
+                              onClick={() => handleDelete(item.id)}
+                            >
+                              <i className="bi bi-trash"></i> Delete
+                            </button>
                           </div>
                         </div>
-                      );
-                    })
-                  ) : (
-                    <p className="text-center">Your wishlist is empty.</p>
-                  )
-                )}
-              </div></div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="text-center">Your wishlist is empty.</p>
+                )
+              )}
+            </div>
             {/* Related Products Section */}
             <div className="col-md-3">
               <div className="ad-banner mb-4">
                 <img src={AdBanner} alt="Special Sale" className="img-fluid" />
               </div>
-
+ 
               <div className="related-products py-4">
                 <h4>Related Products</h4>
                 <Carousel controls indicators={false}>
@@ -317,3 +317,4 @@ export default function WishlistPage() {
     </>
   );
 }
+ 

@@ -155,6 +155,7 @@ export const applyCoupon = (couponCode) => async (dispatch) => {
             },
         });
     } catch (error) {
+      toast.error(error.response?.data?.message || "Invalid coupon code");
         throw new Error(error.response?.data?.message || "Invalid coupon code");
     }
 };

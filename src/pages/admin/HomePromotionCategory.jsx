@@ -1,71 +1,88 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
 import { Search, ArrowRepeat, PencilSquare, Trash } from 'react-bootstrap-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
+import { deleteHomeCategoryPromotion, fetchHomeCategoryPromotions } from '../../redux/actions/categoryPromotionAction';
+import BASE_URL from '../../config/config';
+import PaginationComponent from '../../includes/pagination';
+import { BsArrowClockwise, BsEye, BsTrash } from 'react-icons/bs';
+import HomeScreenCreatePromotionModal from '../../components/homeScreenCreatePromotion';
+import HomeScreenEditPromotionModal from '../../components/homeEditPromotionModal';
+import DeleteModal from '../../modals/deleteModal';
+import HomeScreenViewPromotionModal from '../../components/viewHomePromotionModal';
 
 const HomePromotionCategory = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-
   const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [editData, setEditData] = useState({ title: '', displayCount: '' });
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [viewData, setViewData] = useState(null);
+  const [categoryPromotionToDelete, setCategoryPromotionToDelete] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState("");
 
-  const promotions = [
-    {
-      id: 1,
-      title: 'Modern Sofa Set',
-      image: '../../img/avatar-1.png',
-      position: 1,
-      displayCount: 12,
-      priority: 1,
-      status: 'Active',
-    },
-    {
-      id: 2,
-      title: 'Wooden Dining Table',
-      image: '../../img/avatar-1.png',
-      position: 2,
-      displayCount: 8,
-      priority: 1,
-      status: 'Active',
-    },
-    {
-      id: 3,
-      title: 'Recliner Chair',
-      image: '../../img/avatar-1.png',
-      position: 3,
-      displayCount: 10,
-      priority: 2,
-      status: 'Active',
-    },
-    {
-      id: 4,
-      title: 'Bookshelf',
-      image: '../../img/avatar-1.png',
-      position: 4,
-      displayCount: 6,
-      priority: 2,
-      status: 'Inactive',
-    },
-  ];
+  const rowsPerPage = 10;
+
+  const dispatch = useDispatch();
+  const { items: promotions, loading, error } = useSelector(
+    (state) => state.categoryPromotion
+  );
+  console.log('status123', promotions);
+
+  useEffect(() => {
+    dispatch(fetchHomeCategoryPromotions());
+  }, [dispatch]);
+
+  const filteredPromotions = promotions.filter((promotion) => {
+    const title = promotion.title || "";
+    const matchesTitle = title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter
+      ? (statusFilter === "active" ? promotion.status : !promotion.status)
+      : true;
+    return matchesTitle && matchesStatus;
+  });
+
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredPromotions.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(filteredPromotions.length / rowsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
+
+
   const handleEditClick = (promotion) => {
-    setEditData({ title: promotion.title, displayCount: promotion.displayCount });
-    setShowModal(true);
+    setEditData(promotion);
+    setShowEditModal(true);
   };
 
-  const handleModalClose = () => {
-    setShowModal(false);
-    setEditData({ title: '', displayCount: '' });
+  const handleDeleteClick = (id) => {
+    setCategoryPromotionToDelete(id);
+    setShowDeleteModal(true);
   };
 
-  const handleModalSave = () => {
-    console.log('Saving changes:', editData);
-    setShowModal(false);
-    setEditData({ title: '', displayCount: '' });
+  const handleDelete = async () => {
+    await dispatch(deleteHomeCategoryPromotion(categoryPromotionToDelete));
+    setShowDeleteModal(false);
+    setCategoryPromotionToDelete(null);
+  };
+
+  const handleViewClick = (promotion) => {
+    setViewData(promotion);
+    setShowViewModal(true);
   };
 
   return (
@@ -76,12 +93,20 @@ const HomePromotionCategory = () => {
           <Sidebar isCollapsed={isSidebarCollapsed} />
         </aside>
 
-        <div className="content-wrapper mb-4" style={{ marginLeft: isSidebarCollapsed ? '60px' : '272px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease', }}>
-
+        <div
+          className="content-wrapper mb-4"
+          style={{
+            marginLeft: isSidebarCollapsed ? '60px' : '272px',
+            padding: '20px',
+            flex: 1,
+            transition: 'margin-left 0.3s ease',
+          }}
+        >
           <div className="main-header" style={{ marginTop: '0px' }}>
             <h4>Home Promotion Category</h4>
           </div>
           <div className="container-fluid manage">
+            {/* Search + Filters */}
             <div className="row mb-2">
               <div className="col-md-12">
                 <div className="card">
@@ -89,231 +114,142 @@ const HomePromotionCategory = () => {
                     <div className="row">
                       <div className="col-md-3">
                         <div className="input-group">
-                          <input type="text" className="form-control" placeholder="Search By" />
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search By Title"
+                            value={searchTerm}
+                            onChange={(e) => {
+                              setSearchTerm(e.target.value);
+                              setCurrentPage(1);
+                            }}
+                          />
                         </div>
                       </div>
                       <div className="col-md-3">
-                        <select className="form-control">
+                        <select
+                          className="form-control"
+                          value={statusFilter}
+                          onChange={(e) => setStatusFilter(e.target.value)}
+                        >
                           <option value="">- Select Status -</option>
                           <option value="active">Active</option>
-                          <option value="inactive">In Active</option>
+                          <option value="inactive">Inactive</option>
                         </select>
                       </div>
                       <div className="col-md-2">
-                        <button className="btn btn-danger me-2">
-                          <Search />
+                        <button className="btn btn-success me-2"
+                          onClick={() => {
+                            setSearchTerm('');
+                            setStatusFilter('');
+                          }}>
+                          <BsArrowClockwise />
                         </button>
-                        <button className="btn btn-success">
-                          <ArrowRepeat />
-                        </button>
+
                       </div>
                       <div className="col-md-4 text-end">
-                        <a href="/admin/add-home-promotions-category" className="btn btn-primary">
+                        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
                           + Add New
-                        </a>
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Table */}
             <div className="row">
               <div className="col-sm-12">
                 <div className="card">
                   <div className="card-block">
-                    <div className="row mb-2">
-                      <div className="col-lg-6"></div>
-                      <div className="col-md-6 text-end pt pt pt">
-                        <button className="btn btn-success me-2">Active</button>
-                        <button className="btn btn-default me-2">In Active</button>
-                        <button className="btn btn-danger">Update Priority</button>
-                      </div>
-                    </div>
                     <div className="row">
                       <div className="col-sm-12 table-responsive">
-                        <table className="table-lg table-striped align-middle mb-0 table table-hover">
-                          <thead>
-                            <tr>
-                              <th>
-                                <input type="checkbox" id="select-all" />
-                              </th>
-                              <th>S.no</th>
-                              <th>Title</th>
-                              <th>Image</th>
-                              <th>Position</th>
-                              <th>Display Count</th>
-                              <th>Priority</th>
-                              <th>Status</th>
-                              <th>Action</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {promotions.map((promotion, index) => (
-                              <tr key={promotion.id}>
-                                <td>
-                                  <input type="checkbox" className="row-checkbox" />
-                                </td>
-                                <td>{index + 1}</td>
-                                <td>{promotion.title}</td>
-                                <td>
-                                  <img
-                                    src={promotion.image}
-                                    alt={promotion.title}
-                                    className="rounded-circle"
-                                    width="25"
-                                    height="25"
-                                  />
-                                </td>
-                                <td>{promotion.position}</td>
-                                <td>{promotion.displayCount}</td>
-                                <td>{promotion.priority}</td>
-                                <td>
-                                  <span
-                                    className={`badge ${promotion.status === 'Active'
-                                        ? 'text-light-primary'
-                                        : 'text-light-danger'
-                                      }`}
-                                    style={{
-                                      backgroundColor:
-                                        promotion.status === 'Active' ? '#d4f7f2' : '#f8d7da',
-                                      color: promotion.status === 'Active' ? '#28a745' : '#dc3545',
-                                    }}
-                                  >
-                                    {promotion.status}
-                                  </span>
-                                </td>
-                                <td>
-                                  <button
+                        {loading ? (
+                          <p>Loading...</p>
+                        ) : error ? (
+                          <p className="text-danger">{error}</p>
+                        ) : (
+                          <table className="table-lg table-striped align-middle mb-0 table table-hover">
+                            <thead>
+                              <tr>
+                                <th><input type="checkbox" id="select-all" /></th>
+                                <th>S.no</th>
+                                <th>Title</th>
+                                <th>Image</th>
+                                <th>Display Count</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {currentRows.map((promotion, index) => (
+                                <tr key={promotion.id}>
+                                  <td><input type="checkbox" className="row-checkbox" /></td>
+                                  <td>{indexOfFirstRow + index + 1}</td>
+                                  <td>{promotion.title}</td>
+                                  <td>
+                                    <img
+                                      src={`${BASE_URL}${promotion.image_url}`}
+                                      alt={promotion.title}
+                                      className="rounded-circle"
+                                      width="25"
+                                      height="25"
+                                    />
+                                  </td>
+                                  <td>{promotion.display_count}</td>
+                                  <td>{promotion.priority}</td>
+                                  <td>
+                                    {promotion.status ? (
+                                      <span className="badge bg-success">Active</span>
+                                    ) : (
+                                      <span className="badge bg-danger">Inactive</span>
+                                    )}
+                                  </td>
+                                
+                                  <td>
+                                    <button
+                                      type="button"
+                                      className="btn btn-light icon-btn b-r-4 me-2"
+                                      onClick={() => handleEditClick(promotion)}
+                                    >
+                                      <PencilSquare style={{ color: '#dc3545' }} />
+                                    </button>
+                                     <button
                                     type="button"
                                     className="btn btn-light icon-btn b-r-4 me-2"
-                                    onClick={() => handleEditClick(promotion)}
+                                    onClick={() => handleViewClick(promotion)}
                                   >
-                                    <PencilSquare style={{ color: '#dc3545' }} />
+                                    <BsEye />
                                   </button>
-                                  <button
-                                    type="button"
-                                    className="btn btn-light icon-btn b-r-4"
-                                  >
-                                    <Trash style={{ color: '#dc3545' }} />
-                                  </button>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                        <nav aria-label="Page navigation example">
-                          <ul className="pagination justify-content-end mt-3">
-                            <li className="page-item disabled">
-                              <a className="page-link" href="#" tabIndex="-1" aria-disabled="true">
-                                Previous
-                              </a>
-                            </li>
-                            <li className="page-item">
-                              <a className="page-link" href="#">
-                                1
-                              </a>
-                            </li>
-                            <li className="page-item">
-                              <a className="page-link" href="#">
-                                2
-                              </a>
-                            </li>
-                            <li className="page-item">
-                              <a className="page-link" href="#">
-                                3
-                              </a>
-                            </li>
-                            <li className="page-item">
-                              <a className="page-link" href="#">
-                                Next
-                              </a>
-                            </li>
-                          </ul>
-                        </nav>
+                                    <button className="btn btn-sm btn-outline-danger" title="Delete"
+                                      onClick={() => handleDeleteClick(promotion.id)}
+                                    >
+                                      <BsTrash />
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Modal */}
-      <div
-        className={`modal fade ${showModal ? 'show d-block' : ''}`}
-        id="editPopupModal"
-        tabIndex="-1"
-        role="dialog"
-        aria-labelledby="editPopupModalLabel"
-        aria-hidden={!showModal}
-      >
-        <div className="modal-dialog modal-dialog-centered" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="editPopupModalLabel">
-                Update Promotion Category
-              </h5>
-              <button
-                type="button"
-                className="close"
-                onClick={handleModalClose}
-                aria-label="Close"
-              >
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            <div className="modal-body">
-              <form className="row">
-                <div className="form-group col-md-6">
-                  <label htmlFor="editTitle">Title</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="editTitle"
-                    placeholder="Enter Title"
-                    value={editData.title}
-                    onChange={(e) =>
-                      setEditData({ ...editData, title: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="form-group col-md-6">
-                  <label htmlFor="editDisplayCount">Display Count*</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="editDisplayCount"
-                    placeholder="Enter Display Count"
-                    value={editData.displayCount}
-                    onChange={(e) =>
-                      setEditData({ ...editData, displayCount: e.target.value })
-                    }
-                  />
-                </div>
-              </form>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={handleModalClose}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="btn btn-success"
-                onClick={handleModalSave}
-              >
-                Save Changes
-              </button>
+              <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+              <HomeScreenCreatePromotionModal show={showModal} handleClose={() => setShowModal(false)} />
+              {showEditModal && <HomeScreenEditPromotionModal show={showEditModal} handleClose={() => setShowEditModal(false)} editData={editData} />}
+              {showDeleteModal && (
+                <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category promotion?"  />)}
+                {showViewModal && <HomeScreenViewPromotionModal show={showViewModal} handleClose={() => setShowViewModal(false)} viewData={viewData} />}
             </div>
           </div>
         </div>
       </div>
-      {showModal && <div className="modal-backdrop fade show"></div>}
     </div>
   );
 };

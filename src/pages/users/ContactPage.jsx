@@ -1,569 +1,156 @@
-import React, { useState, useEffect } from "react";
-import "../../css/user/cart.css";
+// src/pages/user/ContactPage.jsx
+import React, { useState } from "react";
 import "../../css/user/userstyle.css";
 import "../../css/user/bootstrap-icons.css";
 import Header from "../../includes/header";
 import Footer from "../../includes/footer";
-import { useDispatch, useSelector } from "react-redux";
-import { isLoggedIn } from "../../utils/auth";
-import {
-  applyCoupon,
-  DeleteFromCart,
-  fetchCart,
-  removeCoupon,
-  UpdateToCart,
-  addToGuestCart,
-  syncGuestCartToUserCart,
-} from "../../redux/actions/cartAction";
-import BASE_URL from "../../config/config";
-import {
-  addToWishlist,
-  deleteWishlistItem,
-  fetchWishlist,
-} from "../../redux/actions/whishlistAction";
-import Loader from "../../includes/loader";
-import { fetchAddresses } from "../../redux/actions/addressAction";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
-import { deleteFromGuestCart, initializeGuestCart, updateGuestCart } from "../../redux/actions/guestCartAction";
-import { applyCouponBuyNow, getBuyNow } from "../../redux/actions/buyNowAction";
+import "react-toastify/dist/ReactToastify.css";
 
-const CartItem = ({
-  id,
-  product = {},
-  quantity = 1,
-  variantId,
-  productId,
-  onWishlistToggle,
-  inWishlist,
-  onDeleteCartItem,
-  loadingWishlist,
-  onQuantityChange,
-}) => {
-  const navigate = useNavigate();
+const ContactPage = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
 
-  const handleProductClick = () => {
-    if (variantId) {
-      navigate(`/product-details/${productId}?variantId=${variantId}`);
-    } else {
-      navigate(`/product-details/${productId}`);
-    }
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const increment = () => {
-    const newQty = quantity + 1;
-    onQuantityChange?.(newQty);
-  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  const decrement = () => {
-    const newQty = quantity > 1 ? quantity - 1 : 1;
-    onQuantityChange?.(newQty);
-  };
-
-  const imageUrl = product.image
-    ? product.image.startsWith("http")
-      ? product.image
-      : `${BASE_URL}${product.image}`
-    : "/placeholder.jpg";
-
-  return (
-    <div className="cart-page">
-      <div className="d-flex flex-column border-bottom flex-md-row gap-4  pt-3 pb-3">
-        <img
-          src={imageUrl}
-          alt="Product"
-          className="product-img"
-          style={{ cursor: "pointer" }}
-          onClick={handleProductClick}
-        />
-        <div className="flex-grow-1">
-          <h4
-            className="text-bold product-info"
-            style={{ cursor: "pointer" }}
-            onClick={handleProductClick}
-          >
-            {product.title || "Untitled Product"}
-          </h4>
-          <p className="mb-1 product-info-p">{product.warranty || "No warranty info"}</p>
-          <div className="d-flex align-items-center mb-3 gap-4 w-100">
-            <div className="d-flex align-items-center">
-              <label className="me-2 fw-semibold">Size</label>
-              <select className="form-select w-100 me-2">
-                {(product.sizes || ["M"]).map((size) => (
-                  <option key={size}>{size}</option>
-                ))}
-              </select>
-            </div>
-            <div className="d-flex align-items-center">
-              <label className="me-2 fw-semibold">Qty</label>
-              <div className="qty-box">
-                <button className="btn-qty" onClick={decrement}>-</button>
-                <input
-                  type="text"
-                  className="qty-input"
-                  value={quantity.toString().padStart(2, "0")}
-                  readOnly
-                />
-                <button className="btn-qty" onClick={increment}>+</button>
-              </div>
-            </div>
-          </div>
-          <div className="d-flex align-items-center gap-3 mb-3">
-            <h4 className="mb-0 price">{product.price || "Rs.0"}</h4>
-            <span className="strike-text">{product.mrp || "MRP: Rs.0"}</span>
-          </div>
-          <div className="d-flex gap-2 mb-3">
-            <small>
-              <i className="bi bi-arrow-counterclockwise me-2"></i> Easy 14 days return
-            </small>
-            <small>
-              <i className="bi bi-calendar me-2"></i> Delivery by {product.delivery || "N/A"}
-            </small>
-          </div>
-          <div className="d-flex gap-3">
-            <button
-              className="btn btn-outline-secondary btn-sm"
-              onClick={() => onWishlistToggle(productId, variantId)}
-              disabled={loadingWishlist}
-            >
-              {loadingWishlist ? (
-                <Loader size={16} />
-              ) : (
-                <i className={`bi ${inWishlist ? "bi-heart-fill" : "bi-heart"} me-2`}></i>
-              )}
-              {inWishlist ? "Wishlisted" : "Wishlist"}
-            </button>
-            <button
-              className="btn btn-outline-secondary btn-sm"
-              onClick={onDeleteCartItem}
-            >
-              <i className="bi bi-trash me-2"></i> Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [couponCode, setCouponCode] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const { appliedCoupon } = useSelector((state) => state.cart || {});
-  const { coupon: buyNowCoupon } = useSelector((state) => state.buyNow || {});
-  const { addresses = [] } = useSelector((state) => state.addressBook || {});
-  const selectedAddress = addresses.find((addr) => addr.default) || addresses[0];
-  const selectedAddressId = selectedAddress?.id || null;
-
-  const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) return;
-    setLoading(true);
-    setError("");
-    try {
-      if (isBuyNowMode) {
-        await dispatch(
-          applyCouponBuyNow({
-            code: couponCode,
-            productId: buyNowItems[0]?.productId,
-            variantId: buyNowItems[0]?.variantId || null,
-            quantity: buyNowItems[0]?.quantity || 1,
-          })
-        );
-      } else {
-        // Dispatch applyCoupon for regular cart mode
-        await dispatch(applyCoupon(couponCode));
-      }
-    } catch (err) {
-      setError(err.message || "Failed to apply coupon");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRemoveCoupon = () => {
-    if (isBuyNowMode) {
-      // Dispatch action to remove coupon for Buy Now mode (if applicable)
-      dispatch({ type: "REMOVE_BUYNOW_COUPON" }); // Adjust based on your buyNowAction
-    } else {
-      dispatch(removeCoupon());
-    }
-    setCouponCode("");
-  };
-
-  const handleClick = () => {
-    if (isLoggedIn()) {
-      navigate("/checkout");
-    } else {
-      dispatch({ type: "SHOW_LOGIN_MODAL" });
-    }
-  };
-
-  useEffect(() => {
-    dispatch(fetchAddresses());
-  }, [dispatch]);
-
-  // Use the appropriate coupon based on mode
-  const coupon = isBuyNowMode ? buyNowCoupon : appliedCoupon;
-
-  return (
-    <div className="p-3 border cart-page">
-      <div className="mb-3">
-        <h5 className="text-bold mt-1">Coupon</h5>
-        <div className="coupon-section">
-          <input
-            type="text"
-            className="form-control"
-            placeholder=""
-            value={couponCode}
-            disabled={!!coupon}
-            onChange={(e) => setCouponCode(e.target.value)}
-          />
-          {!coupon ? (
-            <button
-              className="btn btn-apply p-0"
-              onClick={handleApplyCoupon}
-              disabled={loading}
-            >
-              {loading ? "Applying..." : "Apply"}
-            </button>
-          ) : (
-            <button className="coupon-section__remove" onClick={handleRemoveCoupon}>
-              <i className="bi bi-trash"></i>
-            </button>
-          )}
-        </div>
-        {error && <div className="text-danger small mt-1">{error}</div>}
-        {coupon && (
-          <div className="text-success small mt-1">
-            Coupon "{coupon.code}" applied!
-          </div>
-        )}
-      </div>
-      <hr />
-      <h5 className="text-bold">Price details</h5>
-      <div className="d-flex justify-content-between">
-        <span className="price-detail-label">Total MRP</span>
-        <span className="price-detail-label">Rs.{summary.totalMRP || 0}</span>
-      </div>
-      <div className="d-flex justify-content-between">
-        <span className="price-detail-label">Discount on MRP</span>
-        <span className="discount-text price-detail-label">Rs.{summary.discountOnMRP || 0}</span>
-      </div>
-      <div className="d-flex justify-content-between">
-        <span className="price-detail-label">Coupon Discount</span>
-        <span className="discount-text price-detail-label">Rs.{summary.couponDiscount || 0}</span>
-      </div>
-      <div className="d-flex justify-content-between">
-        <span className="price-detail-label">Platform fee <small className="know-more">Know More</small></span>
-        <span className="price-detail-label">Rs.{summary.platformFee || 0}</span>
-      </div>
-      <div className="d-flex justify-content-between mb-3">
-        <span className="price-detail-label">Shipping fee <small className="know-more">Know More</small></span>
-        <span className="price-detail-label">Rs.{summary.shippingFee || 0}</span>
-      </div>
-      <hr />
-      <div className="d-flex justify-content-between total-amount mb-3">
-        <span>Total Amount</span>
-        <span>Rs.{summary.finalPayable || 0}</span>
-      </div>
-      <button className="btn btn-place-order w-100" onClick={handleClick}>
-        Checkout
-      </button>
-    </div>
-  );
-};
-
-const CartPage = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { items: userCartItems = [], priceSummary = {} } = useSelector((state) => state.cart || {});
-  const { items: guestCartItems = [] } = useSelector((state) => state.guestCart || {});
-  const { items: wishlistItems = [] } = useSelector((state) => state.whishlist || {});
-  const { buyNow = null } = useSelector((state) => state.buyNow || {});
-  const loggedIn = isLoggedIn();
-  const [localCart, setLocalCart] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const params = new URLSearchParams(window.location.search);
-  const isBuyNowMode = params.get("buyNow") === "true";
-
-  // Initialize guest cart from localStorage
-  useEffect(() => {
-    dispatch(initializeGuestCart());
-  }, [dispatch]);
-
-  // Fetch user cart and wishlist if logged in
-  useEffect(() => {
-    if (isBuyNowMode) {
-      dispatch(getBuyNow());
-    } else if (loggedIn) {
-      dispatch(fetchCart());
-      dispatch(fetchWishlist());
-      dispatch(syncGuestCartToUserCart());
-    } else {
-      dispatch(initializeGuestCart());
-    }
-  }, [dispatch, loggedIn, isBuyNowMode]);
-
-  // Fetch product details for guest cart items
-  useEffect(() => {
-    const loadCartData = async () => {
-      // 1️⃣ Buy Now Mode
-      if (isBuyNowMode && buyNow?.items?.length > 0) {
-        setLocalCart(
-          buyNow.items.map((item) => {
-            const source = item.variant || item.product || {};
-            return {
-              id: item.id,
-              productId: item.productId,
-              variantId: item.variantId || null,
-              quantity: item.quantity || 1,
-              product: {
-                title: source.title || "Untitled Product",
-                warranty: source.brand || "N/A",
-                price: `Rs.${source.price || 0}`,
-                mrp: `MRP: Rs.${source.mrp || 0}`,
-                sizes: [source.size || "M"],
-                image: source.imageUrl || "/placeholder.jpg",
-                delivery: "13 Aug",
-              },
-            };
-          })
-        );
-        return;
-      }
-      // 2️⃣ Logged-in normal cart
-      if (loggedIn) {
-        setLocalCart(
-          userCartItems.map((item) => ({
-            ...item,
-            quantity: item.quantity || 1,
-            product: {
-              title: (item.variant || item.product)?.title,
-              warranty: (item.variant || item.product)?.brand,
-              price: `Rs.${(item.variant || item.product)?.price || 0}`,
-              mrp: `MRP: Rs.${(item.variant || item.product)?.mrp || 0}`,
-              sizes: [(item.variant || item.product)?.size || "M"],
-              image: (item.variant || item.product)?.imageUrl || "/placeholder.jpg",
-              delivery: "13 Aug",
-            },
-          }))
-        );
-        return;
-      }
-
-      // 3️⃣ Guest cart
-      if (!loggedIn && guestCartItems.length > 0) {
-        try {
-          setLoading(true);
-          const itemsWithDetails = await Promise.all(
-            guestCartItems.map(async (item) => {
-              try {
-                const response = await axios.get(
-                  `${BASE_URL}/products/${item.productId}${item.variantId ? `?variantId=${item.variantId}` : ""}`
-                );
-                const productData = response.data;
-
-                let source = productData;
-                if (item.variantId && productData.variants?.length) {
-                  source = productData.variants.find((v) => v.id === item.variantId) || productData;
-                }
-
-                const sizeLabel = source.size?.title || productData.size?.title || "M";
-
-                const variantImage =
-                  productData.images?.variants?.[item.variantId?.toString()]?.main?.url;
-
-                const fallbackImage = productData.images?.main?.url;
-
-                const imageUrl = variantImage || fallbackImage || "/placeholder.jpg";
-
-                return {
-                  ...item,
-                  product: {
-                    title: productData.title,
-                    warranty: productData.brand?.name || "N/A",
-                    price: `Rs.${source.sellingPrice || source.price || 0}`,
-                    mrp: `MRP: Rs.${source.mrp || 0}`,
-                    sizes: [sizeLabel],
-                    image: imageUrl.startsWith("http") ? imageUrl : `${BASE_URL}/Uploads/products/${imageUrl}`,
-                    delivery: "13 Aug",
-                  },
-                };
-              } catch (error) {
-                console.error(`Failed to fetch product ${item.productId}:`, error);
-                return {
-                  ...item,
-                  product: {
-                    title: "Unknown Product",
-                    warranty: "N/A",
-                    price: "Rs.0",
-                    mrp: "MRP: Rs.0",
-                    sizes: ["M"],
-                    image: "/placeholder.jpg",
-                    delivery: "N/A",
-                  },
-                };
-              }
-            })
-          );
-
-          setLocalCart(itemsWithDetails);
-        } catch (error) {
-          console.error("Failed to fetch guest cart details:", error);
-          toast.error("Failed to load guest cart details");
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setLocalCart([]);
-      }
-    };
-
-    loadCartData();
-  }, [isBuyNowMode, buyNow, loggedIn, userCartItems, guestCartItems]);
-
-  const handleQuantityChange = (id, newQty, productId, variantId) => {
-    if (loggedIn) {
-      const itemToUpdate = localCart.find((item) => item.id === id);
-      if (itemToUpdate) {
-        const updatedItem = {
-          quantity: newQty,
-          productId: itemToUpdate.productId,
-          variantId: itemToUpdate.variantId || null,
-        };
-        dispatch(UpdateToCart(id, updatedItem));
-      }
-    } else {
-      dispatch(
-        updateGuestCart(id, {
-          productId,
-          variantId: variantId || null,
-          quantity: newQty,
-        })
-      );
-    }
-  };
-
-  const handleDeleteCartItem = (id, productId, variantId) => {
-    if (loggedIn) {
-      dispatch(DeleteFromCart(id));
-    } else {
-      dispatch(deleteFromGuestCart(productId, variantId));
-    }
-  };
-
-  const isInWishlist = (productId, variantId) => {
-    return wishlistItems.some(
-      (item) =>
-        item.productId === productId &&
-        (item.variantId === variantId || (!item.variantId && !variantId))
-    );
-  };
-
-  const handleWishlistToggle = (productId, variantId) => {
-    if (!loggedIn) {
-      toast.error("Please log in to manage your wishlist");
+    if (!formData.name || !formData.email || !formData.message) {
+      toast.error("Please fill all required fields");
       return;
     }
-    const item = wishlistItems.find(
-      (item) =>
-        item.productId === productId &&
-        (item.variantId === variantId || (!item.variantId && !variantId))
-    );
 
-    if (item) {
-      dispatch(deleteWishlistItem(item.id));
-    } else {
-      dispatch(addToWishlist(productId, variantId || null));
-    }
+    // 👉 Here you can integrate API call to backend
+    console.log("Contact form submitted:", formData);
 
-    dispatch(fetchWishlist());
+    toast.success("Your message has been sent successfully!");
+    setFormData({ name: "", email: "", subject: "", message: "" });
   };
-
-  const calculateSummary = () => {
-    let totalMRP = 0;
-    let discountOnMRP = 0;
-    const couponDiscount = priceSummary.couponDiscount || 0;
-    const platformFee = priceSummary.platformFee || 20;
-    const shippingFee = priceSummary.shippingFee || 80;
-
-    localCart.forEach((item) => {
-      const source = item.variant || item.product || {};
-      const qty = item.quantity || 1;
-      const price = parseFloat(source.price?.replace("Rs.", "") || 0);
-      const mrp = parseFloat(source.mrp?.replace("MRP: Rs.", "") || 0);
-      totalMRP += mrp * qty;
-      discountOnMRP += (mrp - price) * qty;
-    });
-
-    const totalAfterDiscount = totalMRP - discountOnMRP - couponDiscount;
-    const finalPayable = totalAfterDiscount + platformFee + shippingFee;
-
-    return {
-      totalMRP,
-      discountOnMRP,
-      couponDiscount,
-      platformFee,
-      shippingFee,
-      finalPayable,
-    };
-  };
-
-  const dynamicPriceSummary = isBuyNowMode ? buyNow?.priceSummary || {} : loggedIn ? priceSummary : calculateSummary();
 
   return (
     <>
       <Header />
-      <div className="container py-4">
-        {loading && <Loader />}
-        <div className="row">
-          <div className="col-lg-8 p-0 border-end">
-            {localCart.length > 0 ? (
-              localCart.map((item) => {
-                const source = item.variant || item.product || {};
-                const productId = item.productId;
-                const variantId = item.variantId || null;
-
-                return (
-                  <CartItem
-                    key={item.id || `${productId}-${variantId}`}
-                    id={item.id || `${productId}-${variantId}`}
-                    productId={productId}
-                    variantId={variantId}
-                    quantity={item.quantity}
-                    product={{
-                      title: source.title,
-                      warranty: source.warranty || source.brand,
-                      price: source.price || "Rs.0",
-                      mrp: source.mrp || "MRP: Rs.0",
-                      sizes: source.sizes || [source.size || "M"],
-                      image: source.image || source.imageUrl || "/placeholder.jpg",
-                      delivery: source.delivery || "13 Aug",
-                    }}
-                    onWishlistToggle={handleWishlistToggle}
-                    inWishlist={isInWishlist(productId, variantId)}
-                    onDeleteCartItem={() => handleDeleteCartItem(item.id, productId, variantId)}
-                    onQuantityChange={(newQty) =>
-                      handleQuantityChange(item.id || `${productId}-${variantId}`, newQty, productId, variantId)
-                    }
-                  />
-                );
-              })
-            ) : (
-              <div className="p-3">No items in cart.</div>
-            )}
+      <div className="container py-5">
+        <div className="row mb-4">
+          <div className="col text-center">
+            <h2 className="fw-bold">Contact Us</h2>
+            <p className="text-muted">
+              Have questions? Get in touch with us!
+            </p>
           </div>
-          <div className="col-lg-4 p-0">
-            {localCart.length > 0 && <PriceSummary
-              summary={dynamicPriceSummary}
-              isBuyNowMode={isBuyNowMode}
-              buyNowItems={isBuyNowMode ? buyNow?.items || [] : []}
-            />}
+        </div>
+        <div className="row g-4">
+          {/* Contact Form */}
+          <div className="col-lg-6">
+            <div className="card shadow-sm p-4 h-100">
+              <h5 className="mb-3">Send us a Message</h5>
+            <form onSubmit={handleSubmit}>
+  <div className="row">
+    <div className="col-md-6 mb-3">
+      <label className="form-label">Name *</label>
+      <input
+        type="text"
+        name="name"
+        className="form-control"
+        value={formData.name}
+        onChange={handleChange}
+        placeholder="Your Name"
+      />
+    </div>
+    <div className="col-md-6 mb-3">
+      <label className="form-label">Email *</label>
+      <input
+        type="email"
+        name="email"
+        className="form-control"
+        value={formData.email}
+        onChange={handleChange}
+        placeholder="Your Email"
+      />
+    </div>
+  </div>
+
+  <div className="mb-3">
+    <label className="form-label">Mobile Number *</label>
+    <input
+      type="number"
+      name="mobile"
+      className="form-control"
+      value={formData.mobile}
+      onChange={handleChange}
+      placeholder="Your Mobile Number"
+    />
+  </div>
+
+  <div className="mb-3">
+    <label className="form-label">Subject</label>
+    <input
+      type="text"
+      name="subject"
+      className="form-control"
+      value={formData.subject}
+      onChange={handleChange}
+      placeholder="Subject"
+    />
+  </div>
+
+  <div className="mb-3">
+    <label className="form-label">Message *</label>
+    <textarea
+      name="message"
+      className="form-control"
+      rows="4"
+      value={formData.message}
+      onChange={handleChange}
+      placeholder="Your Message"
+    ></textarea>
+  </div>
+
+  <button type="submit" className="btn btn-success w-100">
+    Send Message
+  </button>
+</form>
+
+            </div>
+          </div>
+
+          {/* Contact Info */}
+          <div className="col-lg-6">
+            <div className="card shadow-sm p-4 h-100">
+              <h5 className="mb-3">Contact Information</h5>
+              <p>
+                <i className="bi bi-geo-alt-fill me-2"></i>
+                123 Main Street, Your City, Country
+              </p>
+              <p>
+                <i className="bi bi-telephone-fill me-2"></i>
+                +91 98765 43210
+              </p>
+              <p>
+                <i className="bi bi-envelope-fill me-2"></i>
+                support@example.com
+              </p>
+              <hr />
+              <h6>Find us on Map</h6>
+              <div className="map-container rounded shadow-sm overflow-hidden" style={{ height: "250px" }}>
+                <iframe
+                  title="map"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3915.3643046811407!2d76.99481287481204!3d11.08169408909224!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba857f69b1d2cb5%3A0x8d2a52f9474afef!2sCoimbatore%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1691234567890!5m2!1sen!2sin"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen=""
+                  loading="lazy"
+                ></iframe>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -572,4 +159,4 @@ const CartPage = () => {
   );
 };
 
-export default CartPage;
+export default ContactPage;

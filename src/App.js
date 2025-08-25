@@ -81,6 +81,7 @@ import { fetchCart } from './redux/actions/cartAction.js';
 import { fetchProfile } from './redux/actions/profileAction.js';
 import AdminRoute from './components/adminRoute.jsx';
 import OrderDetailsPage from './components/orderDetails.jsx';
+import ContactPage from './pages/users/ContactPage.jsx';
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
     <div className="content">{children}</div>
@@ -116,13 +117,14 @@ function App() {
           <Route path='/users/address-book' element={<AddressBook />}></Route>
           <Route path='/profile' element={<ProfilePage />}></Route>
           <Route path='/wishlist' element={<WishlistPage />}></Route>
+          <Route path='/contact-us' element={<ContactPage />}></Route>
+
           <Route path='/addressbook' element={< AddressBook />}></Route>
           <Route path='/checkout' element={< CheckoutPage />}></Route>
           <Route path='/cart' element={<CartItem />}></Route>
           <Route path='/orders' element={<MyOrdersPage />}></Route>
           <Route path='/orders-success/:id' element={<OrderSuccess />}></Route>
           <Route path='/orders-failure' element={<OrderFailure />}></Route>
-
           <Route path='/admin/login' element={<LoginPage />}></Route>
           <Route path='/admin/dashboard' element={<AdminRoute> <Dashboard /> </AdminRoute>}></Route>
           <Route path='/admin/manage-category' element={<AdminRoute><ManageCategories /> </AdminRoute>}></Route>
