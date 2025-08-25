@@ -39,6 +39,7 @@ export const placeOrder = (orderData) => async (dispatch) => {
     });
     dispatch({ type: PLACE_ORDER_SUCCESS, payload: response.data });
     toast.success(response.data?.message || 'Order placed successfully');
+        return { payload: response.data };
   } catch (error) {
     dispatch({
       type: PLACE_ORDER_FAILURE,

@@ -1,101 +1,86 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import '../../css/user/userstyle.css';
-import '../../css/admin/icofont.css';
-import Header from '../../includes/header';
-import Footer from '../../includes/footer';
-import ProductCard from '../../components/productCard';
-import axios from 'axios';
-import BASE_URL from '../../config/config';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import "../../css/user/userstyle.css";
+import "../../css/admin/icofont.css";
+import Header from "../../includes/header";
+import Footer from "../../includes/footer";
+import ProductCard from "../../components/productCard";
+import axios from "axios";
+import BASE_URL from "../../config/config";
+import { useSelector } from "react-redux";
+import FilterSidebar from "../../components/filterSideBar";
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [searchParams] = useSearchParams();
   const categories = useSelector((state) => state.categories.categories || []);
-  const mainCategoryId = parseInt(searchParams.get('mainCategoryId'));
-  const subCategoryId = parseInt(searchParams.get('subCategoryId'));
-  const listSubCatId = parseInt(searchParams.get('listSubCatId'));
-
+  const mainCategoryId = parseInt(searchParams.get("mainCategoryId"));
+const subCategoryId = searchParams.get('subCategoryId')? parseInt(searchParams.get('subCategoryId'), 10): null;
+const listSubCatId = searchParams.get('listSubCatId') ? parseInt(searchParams.get('listSubCatId'), 10): null;
 
   const getCategoryTitle = (id) =>
-    categories.find((cat) => cat.id === id)?.title;
+    categories.find((cat) => cat.id === id)?.title || "Unknown";
 
   const breadcrumbItems = [
-    { label: 'Home', link: '/' },
+    { label: "Home", link: "/" },
     ...(mainCategoryId ? [{ label: getCategoryTitle(mainCategoryId) }] : []),
     ...(subCategoryId ? [{ label: getCategoryTitle(subCategoryId) }] : []),
     ...(listSubCatId ? [{ label: getCategoryTitle(listSubCatId) }] : []),
   ];
 
-useEffect(() => {
-  setProducts([]);
-  
-  const mainCategoryId = searchParams.get('mainCategoryId');
-  const subCategoryId = parseInt(searchParams.get('subCategoryId'));
-  const listSubCatId = parseInt(searchParams.get('listSubCatId'));
-  const brandId = searchParams.get('brandId') || null;
-  const searchStr = searchParams.get('searchStr') || '';
-  const color = searchParams.get('color') || '';
-  const size = searchParams.get('size') || '';
-  const filterListIds = searchParams.get('filterListIds') || '';
-  const minPrice = searchParams.get('minPrice') || '';
-  const maxPrice = searchParams.get('maxPrice') || '';
-  const sort = searchParams.get('sort') || '';
-  const page = searchParams.get('page') || 1;
-  const pageSize = searchParams.get('pageSize') || 24;
+  useEffect(() => {
+    setProducts([]);
+    const queryString = new URLSearchParams({
+      ...(searchParams.get("mainCategoryId") && { mainCategoryId: searchParams.get("mainCategoryId") }),
+      ...(searchParams.get("subCategoryId") && { subCategoryId: searchParams.get("subCategoryId") }),
+      ...(searchParams.get("listSubCatId") && { listSubCatId: searchParams.get("listSubCatId") }),
+      ...(searchParams.get("brandId") && { brandId: searchParams.get("brandId") }),
+      ...(searchParams.get("searchStr") && { searchStr: searchParams.get("searchStr") }),
+      ...(searchParams.get("color") && { color: searchParams.get("color") }),
+      ...(searchParams.get("size") && { size: searchParams.get("size") }),
+      ...(searchParams.get("filterListIds") && { filterListIds: searchParams.get("filterListIds") }),
+      ...(searchParams.get("minPrice") && { minPrice: searchParams.get("minPrice") }),
+      ...(searchParams.get("maxPrice") && { maxPrice: searchParams.get("maxPrice") }),
+      ...(searchParams.get("sort") && { sort: searchParams.get("sort") }),
+      ...(searchParams.get("page") && { page: searchParams.get("page") }),
+      ...(searchParams.get("pageSize") && { pageSize: searchParams.get("pageSize") }),
+    }).toString();
 
-  const queryString = new URLSearchParams({
-    ...(mainCategoryId && { mainCategoryId }),
-    ...(subCategoryId && { subCategoryId }),
-    ...(listSubCatId && { listSubCatId }),
-    ...(brandId && { brandId }),
-    ...(searchStr && { searchStr }),
-    ...(color && { color }),
-    ...(size && { size }),
-    ...(filterListIds && { filterListIds }),
-    ...(minPrice && { minPrice }),
-    ...(maxPrice && { maxPrice }),
-    ...(sort && { sort }),
-    ...(page && { page }),
-    ...(pageSize && { pageSize }),
-  }).toString();
+    axios
+      .get(`${BASE_URL}/products/search?${queryString}`)
+      .then((res) => {
+        const rawProducts = res.data?.items || [];
 
-  axios
-    .get(`${BASE_URL}/products/search?${queryString}`)
-    .then((res) => {
-      const rawProducts = res.data?.items || [];
+        const filteredProducts = listSubCatId
+          ? rawProducts.filter((p) => p.category?.id === listSubCatId)
+          : subCategoryId
+            ? rawProducts.filter((p) => p.category?.parentId === subCategoryId)
+            : rawProducts;
 
-      const filteredProducts = listSubCatId
-        ? rawProducts.filter((p) => p.category?.id === listSubCatId)
-        : subCategoryId
-        ? rawProducts.filter((p) => p.category?.parentId === subCategoryId)
-        : rawProducts;
+        const combinedProducts = filteredProducts.flatMap((product) => {
+          const mainProductEntry = { ...product, isVariant: false };
+          const variantEntries = (product.variants || []).map((variant) => ({
+            ...product,
+            variantId: variant.id,
+            isVariant: true,
+            _variant: variant,
+            mrp: variant.mrp,
+            sellingPrice: variant.sellingPrice,
+          }));
+          return [mainProductEntry, ...variantEntries];
+        });
 
-      const combinedProducts = filteredProducts.flatMap((product) => {
-        const mainProductEntry = { ...product, isVariant: false };
-        const variantEntries = (product.variants || []).map((variant) => ({
-          ...product,
-          variantId: variant.id,
-          isVariant: true,
-          _variant: variant,
-          mrp: variant.mrp,
-          sellingPrice: variant.sellingPrice,
-        }));
-        return [mainProductEntry, ...variantEntries];
+        setProducts(combinedProducts);
+      })
+      .catch((err) => {
+        console.error("GET: Failed to fetch products", err);
       });
-
-      setProducts(combinedProducts);
-    })
-    .catch((err) => {
-      console.error('GET: Failed to fetch products', err);
-    });
-}, [searchParams]);
+  }, [searchParams]);
 
   const groupByListSubCategory = (products) => {
     const grouped = {};
     products.forEach((product) => {
-      const key = product?.category?.title || 'Others';
+      const key = product?.category?.title || "Others";
       if (!grouped[key]) grouped[key] = [];
       grouped[key].push(product);
     });
@@ -118,7 +103,7 @@ useEffect(() => {
                       <strong>{item.label}</strong>
                     )}
                     {index < breadcrumbItems.length - 1 && (
-                      <span className="mx-2">{'>'}</span>
+                      <span className="mx-2">{">"}</span>
                     )}
                   </span>
                 ))}
@@ -133,21 +118,22 @@ useEffect(() => {
           <h2>Products</h2>
           {subCategoryId && (
             <div className="mb-3">
-              {/* <h5>
-                {getCategoryTitle(subCategoryId)} ({products.length} item
-                {products.length !== 1 ? 's' : ''})
-              </h5> */}
               <h5>
-  {listSubCatId
-    ? getCategoryTitle(listSubCatId)
-    : getCategoryTitle(subCategoryId)} ({products.length} item{products.length !== 1 ? 's' : ''})
-</h5>
-
+                {listSubCatId
+                  ? getCategoryTitle(listSubCatId)
+                  : getCategoryTitle(subCategoryId)}{" "}
+                ({products.length} item{products.length !== 1 ? "s" : ""})
+              </h5>
             </div>
           )}
           <div className="row">
-            <div className="col-lg-3"></div>
-            <div className="col-lg-9 mb-3 sg">
+            {listSubCatId !==null && (
+              <div className="col-lg-3">
+                <FilterSidebar />
+              </div>
+            )}
+
+            <div className={listSubCatId ? "col-lg-9 mb-3 sg" : "col-lg-12 mb-3 sg"}>
               <div className="Fabric pb-4">
                 {products.length > 0 ? (
                   subCategoryId && !listSubCatId ? (

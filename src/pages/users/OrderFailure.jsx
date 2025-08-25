@@ -6,53 +6,53 @@ import "../../css/user/success.css";
 import "../../css/user/bootstrap-icons.css";
 
 export default function OrderFailure() {
-    const handleRetry = () => {
-        window.location.href = "/checkout"; // Adjust route if needed
-    };
+  const handleRetry = () => {
+    window.location.href = "/checkout";
+  };
 
     const handleGoHome = () => {
         window.location.href = "/";
     };
 
-    return (
-        <>
-            <Header />
-            <section className="error-section" style={{
-                background: "linear-gradient(to bottom, #f9f9f9, #e8f0f0)",
-                padding: "40px 0",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center"
+  return (
+    <>
+      <Header />
+      <section className="error-section" style={{
+        background: "linear-gradient(to bottom, #f9f9f9, #e8f0f0)",
+        padding: "40px 0",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
+      }}>
+        <div className="error-container" style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "20px",
+          width: "100%"
+        }}>
+          <div className="error-card" style={{
+            background: "#ffffff",
+            borderRadius: "25px",
+            boxShadow: "0 12px 40px rgba(0, 0, 0, 0.15)",
+            border: "1px solid #e0e7e7",
+            width: "100%",
+            maxWidth: "600px",
+            padding: "40px"
+          }}>
+            <div className="content-section" style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center"
             }}>
-                <div className="error-container" style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    padding: "20px",
-                    width: "100%"
-                }}>
-                    <div className="error-card" style={{
-                        background: "#ffffff",
-                        borderRadius: "25px",
-                        boxShadow: "0 12px 40px rgba(0, 0, 0, 0.15)",
-                        border: "1px solid #e0e7e7",
-                        width: "100%",
-                        maxWidth: "600px",
-                        padding: "40px"
-                    }}>
-                        <div className="content-section" style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            textAlign: "center"
-                        }}>
 
-                            <i className="bi bi-exclamation-circle-fill error-icon" style={{
-                                fontSize: "50px",
-                                color: "#e63946",
-                                marginBottom: "20px",
-                                animation: "pulse 1.5s infinite"
-                            }}></i>
+              <i className="bi bi-exclamation-circle-fill error-icon" style={{
+                fontSize: "50px",
+                color: "#e63946",
+                marginBottom: "20px",
+                animation: "pulse 1.5s infinite"
+              }}></i>
 
                             <h3 style={{
                                 fontFamily: "'Poppins', 'Arial', sans-serif",
