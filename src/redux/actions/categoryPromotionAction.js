@@ -55,6 +55,7 @@ export const createHomeCategoryPromotion = (promotionData) => async (dispatch) =
       type: CREATE_HOME_CATEGORY_PROMOTION_FAILURE,
       payload: error.response?.data?.message || error.message,
     });
+    toast.error(error.response?.message || 'Error creating category promotion');
   }
 };
 
@@ -76,6 +77,7 @@ export const updateHomeCategoryPromotion = (id, promotionData) => async (dispatc
       type: UPDATE_HOME_CATEGORY_PROMOTION_FAILURE,
       payload: error.response?.data?.message || error.message,
     });
+    toast.error(error.response?.message || 'Error updating category promotion');
   }
 };
 
@@ -97,5 +99,7 @@ export const deleteHomeCategoryPromotion = (id) => async (dispatch) => {
       type: DELETE_HOME_CATEGORY_PROMOTION_FAILURE,
       payload: error.response?.data?.message || error.message,
     });
+    toast.error(error.response?.message || 'Error deleting category promotion');
+
   }
 };

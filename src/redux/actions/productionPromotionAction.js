@@ -62,6 +62,7 @@ export const createProductPromotion = (promotionData) => async (dispatch) => {
       type: CREATE_PRODUCT_PROMOTION_FAILURE,
       payload: error.response?.data || error.message,
     });
+    toast.error(error.response?.message || 'error creating product promotion');
   }
 };
 
@@ -88,6 +89,8 @@ export const updateProductPromotion = (id, priority) => async (dispatch) => {
       type: UPDATE_PRODUCT_PROMOTION_FAILURE,
       payload: error.response?.data || error.message,
     });
+    toast.error(error.response?.message || 'error updating product promotion');
+
   }
 };
 
@@ -114,6 +117,7 @@ export const deleteProductPromotion = (id) => async (dispatch) => {
       type: DELETE_PRODUCT_PROMOTION_FAILURE,
       payload: error.response?.data || error.message,
     });
+    toast.error(error.response?.message || 'error deleting product promotion');
   }
 };
 
@@ -136,6 +140,6 @@ export const bulkUpdateProductPromotionStatus = (ids,status) => async (dispatch)
   } catch (error) {
       toast.error(error?.response?.data?.message || 'Failed to update promotion status');
     console.error(error);
-    toast.error(error?.response?.data?.message || 'Failed to update promotion status.');
+    toast.error(error.response?.message || 'Failed to update promotion status.');
   }
 };

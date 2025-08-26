@@ -14,31 +14,54 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
         priority: "",
         status: false,
     });
+    const [errors, setErrors] = useState({});
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-         if (!name) return;
+        if (!name) return;
+        let finalValue = value;
+        if (name === "status") {
+            finalValue = value === "true";
+        }
         setFormData((prev) => ({ ...prev, [name]: value }));
+        setErrors((prev) => ({ ...prev, [name]: "" }));
     };
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         setFormData((prev) => ({ ...prev, image: file }));
+        setErrors((prev) => ({ ...prev, image: "" }));
+    };
+
+    const validateForm = () => {
+        let newErrors = {};
+        if (!formData.title.trim()) newErrors.title = "Title is required";
+        if (!formData.displayCount) newErrors.displayCount = "Display count is required";
+        if (!formData.priority) newErrors.priority = "Priority is required";
+        if (formData.status === "" || formData.status === null) {
+            newErrors.status = "Status is required";
+        }
+        return newErrors;
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const validationErrors = validateForm();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
         const data = new FormData();
         data.append("title", formData.title);
         data.append("display_count", formData.displayCount);
         data.append("image", formData.image);
         data.append("priority", formData.priority);
-        data.append("status", formData.status); 
-    console.log('FormData:', Object.fromEntries(data)); 
-    dispatch(createHomeCategoryPromotion(data)).then(() => {
-        dispatch(fetchHomeCategoryPromotions());
-        handleClose();
-    });
+        data.append("status", formData.status);
+        console.log('FormData:', Object.fromEntries(data));
+        dispatch(createHomeCategoryPromotion(data)).then(() => {
+            dispatch(fetchHomeCategoryPromotions());
+            handleClose();
+        });
     };
 
     return (
@@ -61,11 +84,12 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
                                 id="title"
                                 name="title"
                                 placeholder="Title"
-                                className="form-control"
+                                className={`form-control ${errors.title ? "is-invalid" : ""}`}
                                 type="text"
                                 value={formData.title}
                                 onChange={handleInputChange}
                             />
+                            {errors.title && <div className="invalid-feedback">{errors.title}</div>}
                         </div>
                         <div className="col-lg-4 mb-3">
                             <label htmlFor="display_count" className="form-label">
@@ -75,13 +99,14 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
                                 id="display_count"
                                 name="displayCount"
                                 placeholder="Display count"
-                                className="form-control"
+                                className={`form-control ${errors.displayCount ? "is-invalid" : ""}`}
                                 type="text"
                                 value={formData.displayCount}
                                 onChange={handleInputChange}
                             />
+                            {errors.displayCount && <div className="invalid-feedback">{errors.displayCount}</div>}
                         </div>
-                       
+
                         <div className="col-lg-6 mb-3">
                             <label htmlFor="images" className="form-label">
                                 Image
@@ -97,36 +122,36 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
                         </div>
                         <div className="col-lg-6 mb-3">
                             <label htmlFor="images" className="form-label">
-                                Priority
+                                Priority<span className="text-danger">*</span>
                             </label>
                             <input
                                 id="priority"
                                 name="priority"
-                                className="form-control"
+                                className={`form-control ${errors.priority ? "is-invalid" : ""}`}
                                 type="number"
                                 placeholder="Priority"
                                 value={formData.priority}
                                 onChange={handleInputChange}
                                 style={{ maxWidth: "100px" }}
                             />
+                            {errors.priority && <div className="invalid-feedback">{errors.priority}</div>}
                         </div>
                         <div className="col-lg-6 mb-3">
                             <label htmlFor="status" className="form-label">
-                                Status
+                                Status<span className="text-danger">*</span>
                             </label>
                             <select
                                 id="status"
                                 name="status"
-                                className="form-control"
+                                className={`form-control ${errors.status ? "is-invalid" : ""}`}
                                 value={formData.status}
                                 onChange={handleInputChange}
                             >
-                                <option value="" disabled>
-                                    - Select Status -
-                                </option>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
+                                <option value="">- Select Status -</option>
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
                             </select>
+                            {errors.status && <div className="invalid-feedback">{errors.status}</div>}
                         </div>
                     </div>
                     <div className="text-center my-3">
