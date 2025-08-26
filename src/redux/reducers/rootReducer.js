@@ -31,6 +31,7 @@ import { homeCategoryPromotionsReducer } from './catgeoryPromotionReducer';
 import keywordReducer from './searchKeywordsReducer';
 import subscribersReducer from './subscribersReducer';
 import productPromotionReducer from './productPromotionReducer';
+import { adminUserReducer } from './adminUserReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -71,6 +72,7 @@ const rootReducer = combineReducers({
   keywords: keywordReducer,
   subscribers: subscribersReducer,
   productPromotions:productPromotionReducer,
+  adminUsers: adminUserReducer,
 });
 
 export default rootReducer;

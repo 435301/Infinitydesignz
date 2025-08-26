@@ -3,40 +3,31 @@ import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import '../../css/admin/style.css';
-import '../../css/admin/icofont.css'; // Keep only if still using any icons from here
+import '../../css/admin/icofont.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { bulkUpdateAdminUserStatus, deleteAdminUser, fetchAdminUsers } from '../../redux/actions/adminUsersAction';
+import moment from 'moment';
+import { BsTrash } from 'react-icons/bs';
+import DeleteModal from '../../modals/deleteModal';
+import EditAdminUserModal from '../../components/editAdminUserModal';
+import PaginationComponent from '../../includes/pagination';
+import { toast } from 'react-toastify';
 
-const ManageUsers = () => {
+const ManageUsers = ({ handleUpdate }) => {
+  const dispatch = useDispatch();
+  const { users, loading, error, page, totalPages } = useSelector((state) => state.adminUsers);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [adminUserToDelete, setadminUserToDelete] = useState(null);
+  const [showEdit, setShowEdit] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
 
-  const users = [
-    {
-      id: 1,
-      name: 'Amit Sharma',
-      gender: 'Male',
-      email: 'amit.sharma@example.in',
-      mobile: '+91-98765-43210',
-      regDate: '2025-01-15',
-      status: 'Active',
-    },
-    {
-      id: 2,
-      name: 'Priya Patel',
-      gender: 'Female',
-      email: 'priya.patel@example.in',
-      mobile: '+91-87654-32109',
-      regDate: '2025-02-20',
-      status: 'Inactive',
-    },
-    {
-      id: 3,
-      name: 'Rahul Verma',
-      gender: 'Male',
-      email: 'rahul.verma@example.in',
-      mobile: '+91-76543-21098',
-      regDate: '2025-03-10',
-      status: 'Active',
-    },
-  ];
+  useEffect(() => {
+    dispatch(fetchAdminUsers({ page: 1, take: 10 }));
+  }, [dispatch]);
 
   const handleEdit = (id) => {
     console.log('Edit user with ID:', id);
@@ -45,10 +36,51 @@ const ManageUsers = () => {
     setIsSidebarCollapsed(collapsed);
   };
 
-  const handleDelete = (id) => {
-    console.log('Delete user with ID:', id);
+  const handleDeleteClick = (id) => {
+    setadminUserToDelete(id);
+    setShowDeleteModal(true);
   };
 
+  const handleDelete = async () => {
+    await dispatch(deleteAdminUser(adminUserToDelete));
+    setShowDeleteModal(false);
+    setadminUserToDelete(null);
+  };
+
+  const handleEditClick = (user) => {
+    setSelectedUser(user);
+    setShowEdit(true);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedRows([]);
+    } else {
+      setSelectedRows(users.map((user) => user.id));
+    }
+    setSelectAll(!selectAll);
+  };
+
+
+  const handleRowCheckboxChange = (id) => {
+    setSelectedRows((prev) =>
+      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+    );
+  };
+
+  const handleBulkStatusUpdate = async (newStatus) => {
+    if (selectedRows.length === 0) {
+      toast.warning("Please select at least one brand.");
+      return;
+    }
+
+    await dispatch(bulkUpdateAdminUserStatus(selectedRows, newStatus));
+    setSelectedRows([]);
+  };
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
@@ -58,13 +90,11 @@ const ManageUsers = () => {
         </aside>
 
         <div className="content-wrapper mb-4" style={{ marginLeft: isSidebarCollapsed ? '60px' : '272px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease', }}>
-        
-        
+
+
           <div className="main-header mt-0">
             <h4>Users</h4>
-            <ol className="breadcrumb breadcrumb-title breadcrumb-arrow">
-              <li className="breadcrumb-item"><a href="#">Manage</a></li>
-            </ol>
+
           </div>
 
           <div className="container-fluid manage">
@@ -77,9 +107,20 @@ const ManageUsers = () => {
                         <h5>Manage Users</h5>
                       </div>
                       <div className="col-md-6 text-end pt pt">
-                        <button className="btn btn-success me-2">Active</button>
-                        <button className="btn btn-secondary me-2">Inactive</button>
-                        <button className="btn btn-danger">Delete</button>
+                        <button
+                          className="btn btn-success me-1"
+                          disabled={selectedRows.length === 0}
+                          onClick={() => handleBulkStatusUpdate(true)}
+                        >
+                          Active
+                        </button>
+                        <button
+                          className="btn btn-danger"
+                          disabled={selectedRows.length === 0}
+                          onClick={() => handleBulkStatusUpdate(false)}
+                        >
+                          In Active
+                        </button>
                       </div>
                     </div>
 
@@ -88,13 +129,18 @@ const ManageUsers = () => {
                         <table className="table table-striped table-hover ">
                           <thead className="table-light">
                             <tr>
-                              <th><input type="checkbox" /></th>
+                              <input
+                                type="checkbox"
+                                checked={selectedRows.length === users.length && users.length > 0}
+                                onChange={handleSelectAll}
+                              />
                               <th>S.No</th>
                               <th>Name</th>
                               <th>Gender</th>
                               <th>Email ID</th>
                               <th>Mobile No</th>
-                              <th>Registration Date</th>
+                              <th> DOB</th>
+                              <th>Role</th>
                               <th>Status</th>
                               <th>Action</th>
                             </tr>
@@ -102,30 +148,34 @@ const ManageUsers = () => {
                           <tbody>
                             {users.map((user, index) => (
                               <tr key={user.id}>
-                                <td><input type="checkbox" /></td>
+                                <td><input
+                                  type="checkbox"
+                                  checked={selectedRows.includes(user.id)}
+                                  onChange={() => handleRowCheckboxChange(user.id)}
+                                /></td>
                                 <td>{index + 1}</td>
-                                <td>{user.name}</td>
-                                <td>{user.gender}</td>
-                                <td>{user.email}</td>
-                                <td>{user.mobile}</td>
-                                <td>{user.regDate}</td>
+                                <td>{user.name || '-'}</td>
+                                <td>{user.gender || '-'}</td>
+                                <td>{user.email || '-'}</td>
+                                <td>{user.phone || '-'}</td>
+                                <td> {moment(user.dateOfBirth).format("DD-MM-YYYY") || '-'}</td>
+                                <td>{user.role || '-'}</td>
                                 <td>
-                                  <span className={`badge bg-${user.status === 'Active' ? 'primary' : 'danger'}`}>
-                                    {user.status}
+                                  <span className={`badge ${user.status === true ? 'badge-active' : 'badge-inactive'}`}>
+                                    {user.status === true ? 'Active' : 'Inactive'}
                                   </span>
                                 </td>
                                 <td>
                                   <button
                                     className="btn btn-sm btn-outline-success me-2"
-                                    onClick={() => handleEdit(user.id)}
+                                    onClick={() => handleEditClick(user)}
                                   >
-                                    <FaEdit /> Edit
+                                    <FaEdit />
                                   </button>
-                                  <button
-                                    className="btn btn-sm btn-outline-danger"
-                                    onClick={() => handleDelete(user.id)}
+                                  <button className="btn btn-sm btn-outline-danger" title="Delete"
+                                    onClick={() => handleDeleteClick(user.id)}
                                   >
-                                    <FaTrash /> Delete
+                                    <BsTrash />
                                   </button>
                                 </td>
                               </tr>
@@ -139,6 +189,14 @@ const ManageUsers = () => {
                 </div>
               </div>
             </div>
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+            {showDeleteModal && (
+              <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this user?" />)}
+            <EditAdminUserModal show={showEdit} handleClose={() => setShowEdit(false)} userData={selectedUser} onUpdate={handleUpdate} />
           </div>
         </div >
       </div>
