@@ -126,7 +126,7 @@ export const bulkUpdateProductPromotionStatus = (ids,status) => async (dispatch)
     await axios.patch(
       `${BASE_URL}/common/bulk-update-status`,
       {
-        entity: 'promotions', 
+        entity: 'product-promotions', 
         ids,
         status
       },
