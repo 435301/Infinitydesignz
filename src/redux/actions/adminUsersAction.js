@@ -64,13 +64,14 @@ export const updateAdminUser = (id, userData) => async (dispatch) => {
 
 export const deleteAdminUser = (id) => async (dispatch) => {
   try {
-    await axios.delete(`${BASE_URL}/admin/users/${id}`, {
+   const response =  await axios.delete(`${BASE_URL}/admin/users/${id}`, {
       headers: {
         Authorization: `Bearer ${getAdminToken()}`,
       },
     });
     dispatch({ type: DELETE_ADMIN_USER_SUCCESS, payload: id });
     dispatch(fetchAdminUsers());
+    toast.success(response.data.message)
   } catch (error) {
     console.error(error);
     toast.error(error.response.data.message || 'error deleting user')
