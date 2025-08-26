@@ -7,6 +7,10 @@ export const SEARCH_KEYWORDS_REQUEST = "SEARCH_KEYWORDS_REQUEST";
 export const SEARCH_KEYWORDS_SUCCESS = "SEARCH_KEYWORDS_SUCCESS";
 export const SEARCH_KEYWORDS_FAILURE = "SEARCH_KEYWORDS_FAILURE";
 
+export const ADD_KEYWORD_REQUEST = "ADD_KEYWORD_REQUEST";
+export const ADD_KEYWORD_SUCCESS = "ADD_KEYWORD_SUCCESS";
+export const ADD_KEYWORD_FAILURE = "ADD_KEYWORD_FAILURE";
+
 export const fetchKeywords =
   ({ page = 1, take = 10, search = "", userId = "" }) =>
   async (dispatch) => {
@@ -36,5 +40,26 @@ export const fetchKeywords =
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Failed to delete keyword.');
     console.error(error);
+  }
+};
+
+export const addKeyword = (keyword) => async (dispatch) => {
+  try {
+    dispatch({ type: ADD_KEYWORD_REQUEST });
+
+    const response = await axios.post(
+      `${BASE_URL}/keywords`,
+      { keyword },
+    );
+
+    dispatch({
+      type: ADD_KEYWORD_SUCCESS,
+      payload: response.data, 
+    });
+  } catch (error) {
+    dispatch({
+      type: ADD_KEYWORD_FAILURE,
+      payload: error.response?.data?.message || error.message,
+    });
   }
 };

@@ -2,6 +2,9 @@ import {
   SEARCH_KEYWORDS_REQUEST,
   SEARCH_KEYWORDS_SUCCESS,
   SEARCH_KEYWORDS_FAILURE,
+   ADD_KEYWORD_REQUEST,
+  ADD_KEYWORD_SUCCESS,
+  ADD_KEYWORD_FAILURE,
 } from "../actions/searchKeywordsAction";
 
 const initialState={
@@ -38,7 +41,16 @@ const keywordReducer = (state = initialState, action) => {
 
     case SEARCH_KEYWORDS_FAILURE:
       return { ...state, loading: false, error: action.payload };
-
+ case ADD_KEYWORD_REQUEST:
+      return { ...state, loading: true };
+    case ADD_KEYWORD_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        keywords: [...state.keywords, action.payload], 
+      };
+    case ADD_KEYWORD_FAILURE:
+      return { ...state, loading: false, error: action.payload };
     default:
       return state;
   }

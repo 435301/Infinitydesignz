@@ -18,6 +18,7 @@ import axios from "axios";
 import BASE_URL from "../config/config";
 import { getToken, isLoggedIn } from "../utils/auth";
 import { fetchWishlist } from "../redux/actions/whishlistAction";
+import { fetchKeywords } from "../redux/actions/searchKeywordsAction";
 
 const SUGGESTIONS_LIST = [
   "4 Door Wardrobes",
@@ -139,21 +140,25 @@ export default function Header() {
   const [query, setQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const inputRef = useRef(null);
+  
+  const  keywords  = useSelector((state) => state.keywords.items);
+  console.log('keywords', keywords);
+  const filteredSuggestions = keywords.map((k) => k.keyword);
 
   useEffect(() => {
     dispatch(fetchCategories());
-    // dispatch(fetchWishlist());
+    dispatch(fetchKeywords({ page: 1, take: 10, search: "" }));
   }, [dispatch]);
 
   useOutsideClick(inputRef, () => setShowSuggestions(false));
 
-  const filteredSuggestions = React.useMemo(
-    () =>
-      SUGGESTIONS_LIST.filter((item) =>
-        item.toLowerCase().includes(query.toLowerCase())
-      ),
-    [query]
-  );
+  // const filteredSuggestions = React.useMemo(
+  //   () =>
+  //     SUGGESTIONS_LIST.filter((item) =>
+  //       item.toLowerCase().includes(query.toLowerCase())
+  //     ),
+  //   [query]
+  // );
 
   const groupedCategories = React.useMemo(() => groupCategories(categories), [categories]);
 
@@ -176,6 +181,7 @@ export default function Header() {
     e.preventDefault();
     if (query.trim()) {
       navigate(`/search?query=${encodeURIComponent(query.trim())}`);
+      setShowSuggestions(false);
     }
   };
 
