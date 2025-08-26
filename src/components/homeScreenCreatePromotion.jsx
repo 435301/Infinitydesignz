@@ -12,7 +12,7 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
         displayCount: "",
         image: null,
         priority: "",
-        status: "active",
+        status: false,
     });
 
     const handleInputChange = (e) => {

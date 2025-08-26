@@ -17,7 +17,7 @@ const HomeScreenViewPromotionModal = ({ show, handleClose, viewData }) => {
               <strong>Title:</strong> {viewData.title}
             </div>
             <div className="col-md-6">
-              <strong>Display Count:</strong> {viewData.display_count}
+              <strong>Display Count:</strong> {viewData.displayCount}
             </div>
           </div>
             <div className="col-md-6">
@@ -35,9 +35,9 @@ const HomeScreenViewPromotionModal = ({ show, handleClose, viewData }) => {
             <div className="col-md-6">
               <strong>Image:</strong>
               <br />
-              {viewData.image_url && (
+              {viewData.imageUrl && (
                 <img
-                  src={`${BASE_URL}${viewData.image_url}`}
+                  src={`${BASE_URL}${viewData.imageUrl}`}
                   alt={viewData.title}
                   style={{ maxWidth: "120px", borderRadius: "6px" }}
                 />

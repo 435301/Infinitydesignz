@@ -191,23 +191,23 @@ const HomePromotionCategory = () => {
                                   <td>{promotion.title}</td>
                                   <td>
                                     <img
-                                      src={`${BASE_URL}${promotion.image_url}`}
+                                      src={`${BASE_URL}${promotion.imageUrl}`}
                                       alt={promotion.title}
                                       className="rounded-circle"
                                       width="25"
                                       height="25"
                                     />
                                   </td>
-                                  <td>{promotion.display_count}</td>
+                                  <td>{promotion.displayCount}</td>
                                   <td>{promotion.priority}</td>
                                   <td>
-                                    {promotion.status ? (
-                                      <span className="badge bg-success">Active</span>
-                                    ) : (
-                                      <span className="badge bg-danger">Inactive</span>
-                                    )}
+                                    <span
+                                      className={`badge ${promotion.status ? 'text-light-primary' : 'text-light-danger'}`}
+                                    >
+                                      {promotion.status ? 'Active' : 'Inactive'}
+                                    </span>
                                   </td>
-                                
+
                                   <td>
                                     <button
                                       type="button"
@@ -216,13 +216,13 @@ const HomePromotionCategory = () => {
                                     >
                                       <PencilSquare style={{ color: '#dc3545' }} />
                                     </button>
-                                     <button
-                                    type="button"
-                                    className="btn btn-light icon-btn b-r-4 me-2"
-                                    onClick={() => handleViewClick(promotion)}
-                                  >
-                                    <BsEye />
-                                  </button>
+                                    <button
+                                      type="button"
+                                      className="btn btn-light icon-btn b-r-4 me-2"
+                                      onClick={() => handleViewClick(promotion)}
+                                    >
+                                      <BsEye />
+                                    </button>
                                     <button className="btn btn-sm btn-outline-danger" title="Delete"
                                       onClick={() => handleDeleteClick(promotion.id)}
                                     >
@@ -244,8 +244,8 @@ const HomePromotionCategory = () => {
               <HomeScreenCreatePromotionModal show={showModal} handleClose={() => setShowModal(false)} />
               {showEditModal && <HomeScreenEditPromotionModal show={showEditModal} handleClose={() => setShowEditModal(false)} editData={editData} />}
               {showDeleteModal && (
-                <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category promotion?"  />)}
-                {showViewModal && <HomeScreenViewPromotionModal show={showViewModal} handleClose={() => setShowViewModal(false)} viewData={viewData} />}
+                <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category promotion?" />)}
+              {showViewModal && <HomeScreenViewPromotionModal show={showViewModal} handleClose={() => setShowViewModal(false)} viewData={viewData} />}
             </div>
           </div>
         </div>

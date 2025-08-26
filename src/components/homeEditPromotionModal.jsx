@@ -14,17 +14,17 @@ const HomeScreenEditPromotionModal = ({ show, handleClose, editData }) => {
     displayCount: "",
     image: null,
     priority: "",
-    status: "active",
+    status: false,
   });
 
   useEffect(() => {
     if (editData) {
       setFormData({
         title: editData.title || "",
-        displayCount: editData.display_count || "",
+        displayCount: editData.displayCount || "",
         image: null, 
         priority: editData.priority || "",
-        status: editData.status ? "active" : "inactive",
+        status: editData.status ? true : false,
       });
     }
   }, [editData, show]);
@@ -46,7 +46,7 @@ const HomeScreenEditPromotionModal = ({ show, handleClose, editData }) => {
 
     const data = new FormData();
     data.append("title", formData.title);
-    data.append("display_count", formData.displayCount);
+    data.append("displayCount", formData.displayCount);
     if (formData.image) data.append("image", formData.image);
     data.append("priority", formData.priority);
     data.append("status", formData.status);
@@ -101,9 +101,9 @@ const HomeScreenEditPromotionModal = ({ show, handleClose, editData }) => {
                 accept="image/*"
                 onChange={handleFileChange}
               />
-              {editData?.image_url && (
+              {editData?.imageUrl && (
                 <img
-                  src={`${BASE_URL}${editData.image_url}`}
+                  src={`${BASE_URL}${editData.imageUrl}`}
                   alt="Preview"
                   style={{ width: "50px", height: "50px", marginTop: "8px" }}
                 />
