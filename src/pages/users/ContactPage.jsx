@@ -19,15 +19,49 @@ const ContactPage = () => {
     description: "",
   });
 
+  const [errors, setErrors] = useState({});
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+  };
+
+  const validateForm = () => {
+    let newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (formData.name.length < 3) {
+      newErrors.name = "Name must be at least 3 characters";
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Enter a valid email address";
+    }
+
+    if (!formData.mobile.trim()) {
+      newErrors.mobile = "Mobile number is required";
+    } else if (!/^[0-9]{10}$/.test(formData.mobile)) {
+      newErrors.mobile = "Enter a valid 10-digit mobile number";
+    }
+
+    if (!formData.description.trim()) {
+      newErrors.description = "Description is required";
+    } else if (formData.description.length < 10) {
+      newErrors.description = "Description must be at least 10 characters";
+    }
+
+    return newErrors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.email || !formData.description || !formData.mobile) {
-      toast.error("Please fill all required fields");
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
     try {
@@ -40,7 +74,7 @@ const ContactPage = () => {
           description: formData.description,
         })
       );
-      setFormData({ name: "", email: "", mobile: "", subject: "", message: "" });
+      setFormData({ name: "", email: "", mobile: "", subject: "", description: "" });
 
     } catch (error) {
       console.log(error);
@@ -72,22 +106,24 @@ const ContactPage = () => {
                     <input
                       type="text"
                       name="name"
-                      className="form-control"
+                      className={`form-control ${errors.name ? "is-invalid" : ""}`}
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="Your Name"
                     />
+                    {errors.name && <div className="invalid-feedback">{errors.name}</div>}
                   </div>
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Email <span className="text-danger">*</span></label>
                     <input
                       type="email"
                       name="email"
-                      className="form-control"
+                      className={`form-control ${errors.email ? "is-invalid" : ""}`}
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="Your Email"
                     />
+                    {errors.email && <div className="invalid-feedback">{errors.email}</div>}
                   </div>
                 </div>
 
@@ -96,11 +132,12 @@ const ContactPage = () => {
                   <input
                     type="number"
                     name="mobile"
-                    className="form-control"
+                    className={`form-control ${errors.mobile ? "is-invalid" : ""}`}
                     value={formData.mobile}
                     onChange={handleChange}
                     placeholder="Your Mobile Number"
                   />
+                  {errors.mobile && <div className="invalid-feedback">{errors.mobile}</div>}
                 </div>
 
                 <div className="mb-3">
@@ -119,12 +156,13 @@ const ContactPage = () => {
                   <label className="form-label">Description <span className="text-danger">*</span></label>
                   <textarea
                     name="description"
-                    className="form-control"
+                    className={`form-control ${errors.description ? "is-invalid" : ""}`}
                     rows="4"
                     value={formData.description}
                     onChange={handleChange}
                     placeholder="Your Desccription"
                   ></textarea>
+                  {errors.description && <div className="invalid-feedback">{errors.description}</div>}
                 </div>
 
                 <button type="submit" className="btn btn-success w-100">

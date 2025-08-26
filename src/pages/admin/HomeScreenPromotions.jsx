@@ -172,8 +172,7 @@ const HomeScreenPromotions = () => {
                           />
                         </div>
                       </div>
-                      <div className="col-lg-2 mt-1 pt-1 ">
-
+                      <div className="col-lg-2 ">
                         <button className="btn btn-success me-2"
                           onClick={() => { handleReset() }}>
                           <BsArrowClockwise />

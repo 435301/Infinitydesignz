@@ -59,6 +59,7 @@ export const createContact = (contactData) => async (dispatch) => {
     toast.success(data.message || 'Your message has been sent successfully!');
   } catch (error) {
     dispatch({ type: CREATE_CONTACT_FAIL, payload: error.message });
+    toast.error(error.message || 'error creating contact');
   }
 };
 
@@ -75,6 +76,7 @@ export const updateContact = (contactId, contactData) => async (dispatch) => {
     dispatch(getContacts());
   } catch (error) {
     dispatch({ type: UPDATE_CONTACT_FAIL, payload: error.message });
+    toast.error(error.message || 'error updating contact');
   }
 };
 
@@ -91,6 +93,7 @@ export const deleteContact = (contactId) => async (dispatch) => {
     toast.success(response.data.message || 'Contact deleted successfully');
   } catch (error) {
     dispatch({ type: DELETE_CONTACT_FAIL, payload: error.message });
+    toast.error(error.message || 'error deleting contact');
   }
 };
 
@@ -105,6 +108,7 @@ export const setContactStatus = (contactId, status) => async (dispatch) => {
     dispatch({ type: SET_CONTACT_STATUS_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: SET_CONTACT_STATUS_FAIL, payload: error.message });
+    toast.error(error.message || 'error setting contact status');
   }
 };
 
