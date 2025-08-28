@@ -151,18 +151,18 @@ export const bulkUpdateProductPromotionStatus = (ids,status) => async (dispatch)
 
 export const fetchFrontendPromotions = (productsLimit = 8) => async (dispatch) => {
   try {
-    dispatch({ type: FETCH_FRONTEND_PROMOTIONS_REQUEST });
+    await dispatch({ type: FETCH_FRONTEND_PROMOTIONS_REQUEST });
 
     const response = await axios.get(
       `${BASE_URL}/frontend/promotions?productsLimit=${productsLimit}`
     );
 
-    dispatch({
+    await dispatch({
       type: FETCH_FRONTEND_PROMOTIONS_SUCCESS,
       payload: response.data, 
     });
   } catch (error) {
-    dispatch({
+    await dispatch({
       type: FETCH_FRONTEND_PROMOTIONS_FAILURE,
       payload: error.response?.data || error.message,
     });
