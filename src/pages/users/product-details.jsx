@@ -44,6 +44,7 @@ export default function ProductDetailPage() {
   const [showLogin, setShowLogin] = useState(false);
   const [postLoginAction, setPostLoginAction] = useState(null);
   const [checked, setChecked] = useState(false);
+   const { title, brand, description, mrp, sellingPrice, stock, size, productDetails, variants, selectedVariant } = product;
 
   // Memoize category hierarchy to avoid recalculation
   const getCategoryHierarchy = useCallback((categoryId, allCategories) => {
@@ -75,39 +76,44 @@ export default function ProductDetailPage() {
     dispatch(fetchWishlist());
   }, [dispatch, productId, variantIdFromURL]);
 
-  useEffect(() => {
-    if (product) {
-      const variantId = parseInt(variantIdFromURL);
-      const allVariantImages = product.images?.variantImages || [];
-      const additional = product.images?.additional || [];
+useEffect(() => {
+  if (!product) return;
 
-      setSelectedSizeId(product.selectedVariant?.sizeId || '');
-      setSelectedColorId(product.selectedVariant?.colorId || '');
+  const allVariantImages = product.images?.variantImages || [];
+  const additional = product.images?.additional || [];
 
-      let selectedImages = [];
+  let selectedImages = [];
 
-      if (!isNaN(variantId)) {
-        selectedImages = allVariantImages.filter(
-          (img) => parseInt(img.variantId) === variantId
-        );
+  if (selectedVariant) {
+    // ✅ If a variant is selected, show its images
+    selectedImages = allVariantImages.filter(
+      (img) => parseInt(img.variantId) === selectedVariant.id
+    );
+
+    if (selectedImages.length > 0) {
+      const mainVariantImg =
+        selectedImages.find((img) => img.isMain) || selectedImages[0];
+
+      setMainImage(`${BASE_URL}/uploads/products/${mainVariantImg.url}`);
+      setThumbnails(selectedImages.map((img) => ({ url: img.url })));
+    } else {
+      // If variant exists but no special images → fallback
+      const mainImgUrl = product.images?.main?.url;
+      if (mainImgUrl) {
+        setMainImage(`${BASE_URL}/uploads/products/${mainImgUrl}`);
       }
-
-      if (selectedImages.length > 0) {
-        const mainVariantImg = selectedImages.find((img) => img.isMain) || selectedImages[0];
-        setMainImage(`${BASE_URL}/uploads/products/${mainVariantImg.url}`);
-        setThumbnails(selectedImages.map((img) => ({ url: img.url })));
-      } else {
-        const mainImgUrl = product.images?.main?.url;
-        if (mainImgUrl) {
-          setMainImage(`${BASE_URL}/uploads/products/${mainImgUrl}`);
-        }
-        setThumbnails([
-          { url: product.images?.main?.url, isMain: true },
-          ...additional,
-        ]);
-      }
+      setThumbnails([{ url: product.images?.main?.url, isMain: true }, ...additional]);
     }
-  }, [product, variantIdFromURL]);
+  } else {
+    // ✅ If no variant selected → show product default images
+    const mainImgUrl = product.images?.main?.url;
+    if (mainImgUrl) {
+      setMainImage(`${BASE_URL}/uploads/products/${mainImgUrl}`);
+    }
+    setThumbnails([{ url: product.images?.main?.url, isMain: true }, ...additional]);
+  }
+}, [product, selectedVariant]);  // <-- 👈 runs when variant changes
+
 
   // Memoize zoom handlers to avoid unnecessary re-creation
   useEffect(() => {
@@ -227,20 +233,6 @@ export default function ProductDetailPage() {
     return true;
   }, []);
 
-  // const handleWishlist = useCallback(() => {
-  //    if (!isLoggedIn()) {
-  //     setShowLogin(true);
-  //     return;
-  //   }
-
-  //   if (wishlistItem?.id) {
-  //     dispatch(deleteWishlistItem(wishlistItem?.id));
-  //     toast.success("Removed from wishlist successfully");
-  //     setLocalWishlisted(false);
-  //   } else {
-  //     dispatch(addToWishlist(parsedProductId, parsedVariantId));
-  //   }
-  // }, [dispatch, wishlistItem, parsedProductId, parsedVariantId]);
 
   const handleWishlist = useCallback(async () => {
     const wishlistAction = async () => {
@@ -314,7 +306,7 @@ export default function ProductDetailPage() {
   if (loading) return <Loader />;
   if (!product) return <div className="container my-5">Loading...</div>;
 
-  const { title, brand, description, mrp, sellingPrice, stock, size, productDetails, variants, selectedVariant } = product;
+ 
 
   return (
     <>

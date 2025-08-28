@@ -34,6 +34,7 @@ import {
   FETCH_ALLPRODUCTS_REQUEST,
   FETCH_ALLPRODUCTS_SUCCESS,
   FETCH_ALLPRODUCTS_FAILURE,
+  SET_SELECTED_VARIANT,
 } from '../actions/productAction';
 
 const initialState = {
@@ -50,6 +51,7 @@ const initialState = {
     totalPages: 0,
     sort: 'recommended',
   },
+   selectedVariant: null,
 };
 
 const productReducer = (state = initialState, action) => {
@@ -159,7 +161,11 @@ const productReducer = (state = initialState, action) => {
         loading: false,
         error: action.payload,
       };
-
+ case SET_SELECTED_VARIANT:
+      return {
+        ...state,
+        selectedVariant: action.payload,
+      };
     default:
       return state;
   }
