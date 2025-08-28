@@ -11,11 +11,15 @@ import {
   DELETE_PRODUCT_PROMOTION_REQUEST,
   DELETE_PRODUCT_PROMOTION_SUCCESS,
   DELETE_PRODUCT_PROMOTION_FAILURE,
+   FETCH_FRONTEND_PROMOTIONS_REQUEST,
+  FETCH_FRONTEND_PROMOTIONS_SUCCESS,
+  FETCH_FRONTEND_PROMOTIONS_FAILURE
 } from "../actions/productionPromotionAction";
 
 const initialState = {
   items: [],
   categories:[],
+  promotions: [],
   total: 0,
   loading: false,
   error: null,
@@ -81,6 +85,15 @@ const productPromotionReducer = (state = initialState, action) => {
     case DELETE_PRODUCT_PROMOTION_FAILURE:
       return { ...state, loading: false, error: action.payload };
 
+      case FETCH_FRONTEND_PROMOTIONS_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case FETCH_FRONTEND_PROMOTIONS_SUCCESS:
+      return { ...state, loading: false, promotions: action.payload.items };
+
+    case FETCH_FRONTEND_PROMOTIONS_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+      
     default:
       return state;
   }

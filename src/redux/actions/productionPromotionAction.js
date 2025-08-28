@@ -19,6 +19,11 @@ export const DELETE_PRODUCT_PROMOTION_REQUEST = "DELETE_PRODUCT_PROMOTION_REQUES
 export const DELETE_PRODUCT_PROMOTION_SUCCESS = "DELETE_PRODUCT_PROMOTION_SUCCESS";
 export const DELETE_PRODUCT_PROMOTION_FAILURE = "DELETE_PRODUCT_PROMOTION_FAILURE";
 
+export const FETCH_FRONTEND_PROMOTIONS_REQUEST = "FETCH_FRONTEND_PROMOTIONS_REQUEST";
+export const FETCH_FRONTEND_PROMOTIONS_SUCCESS = "FETCH_FRONTEND_PROMOTIONS_SUCCESS";
+export const FETCH_FRONTEND_PROMOTIONS_FAILURE = "FETCH_FRONTEND_PROMOTIONS_FAILURE";
+
+
 
 export const fetchProductPromotions = (page = 1, limit = 20) => async (dispatch) => {
   try {
@@ -55,7 +60,7 @@ export const createProductPromotion = (promotionData) => async (dispatch) => {
       payload: response.data,
     });
 
-    dispatch(fetchProductPromotions()); 
+    await dispatch(fetchProductPromotions()); 
     toast.success(response.data?.message || 'Product promotion created successfully')
   } catch (error) {
     dispatch({
@@ -82,7 +87,7 @@ export const updateProductPromotion = (id, priority) => async (dispatch) => {
       payload: response.data,
     });
 
-    dispatch(fetchProductPromotions()); 
+   await  dispatch(fetchProductPromotions()); 
     toast.success(response.data?.message || 'Product promotion updated successfully')
   } catch (error) {
     dispatch({
@@ -110,7 +115,7 @@ export const deleteProductPromotion = (id) => async (dispatch) => {
       payload: id,
     });
 
-    dispatch(fetchProductPromotions()); 
+    await dispatch(fetchProductPromotions()); 
     toast.success(response.data?.message || 'Product promotion disabled')
   } catch (error) {
     dispatch({
@@ -136,10 +141,30 @@ export const bulkUpdateProductPromotionStatus = (ids,status) => async (dispatch)
         },
       }
     );
-    dispatch(fetchProductPromotions()); 
+    await dispatch(fetchProductPromotions()); 
   } catch (error) {
       toast.error(error?.response?.data?.message || 'Failed to update promotion status');
     console.error(error);
     toast.error(error.response?.message || 'Failed to update promotion status.');
+  }
+};
+
+export const fetchFrontendPromotions = (productsLimit = 8) => async (dispatch) => {
+  try {
+    dispatch({ type: FETCH_FRONTEND_PROMOTIONS_REQUEST });
+
+    const response = await axios.get(
+      `${BASE_URL}/frontend/promotions?productsLimit=${productsLimit}`
+    );
+
+    dispatch({
+      type: FETCH_FRONTEND_PROMOTIONS_SUCCESS,
+      payload: response.data, 
+    });
+  } catch (error) {
+    dispatch({
+      type: FETCH_FRONTEND_PROMOTIONS_FAILURE,
+      payload: error.response?.data || error.message,
+    });
   }
 };

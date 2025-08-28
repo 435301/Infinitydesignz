@@ -15,6 +15,7 @@ const HomeScreenEditPromotionModal = ({ show, handleClose, editData }) => {
     image: null,
     priority: "",
     status: false,
+    showTitle: false,
   });
   const [errors, setErrors] = useState({});
 
@@ -26,6 +27,7 @@ const HomeScreenEditPromotionModal = ({ show, handleClose, editData }) => {
         image: null,
         priority: editData.priority || "",
         status: editData.status ? true : false,
+        showTitle: editData.showTitle ? true : false,
       });
     }
   }, [editData, show]);
@@ -55,6 +57,9 @@ const HomeScreenEditPromotionModal = ({ show, handleClose, editData }) => {
     if (formData.status === "" || formData.status === null) {
       newErrors.status = "Status is required";
     }
+    if (formData.showTitle === "" || formData.showTitle === null) {
+      newErrors.showTitle = "Show Title is required";
+    }
     return newErrors;
   };
 
@@ -73,6 +78,7 @@ const HomeScreenEditPromotionModal = ({ show, handleClose, editData }) => {
     if (formData.image) data.append("image", formData.image);
     data.append("priority", formData.priority);
     data.append("status", formData.status);
+    data.append("showTitle", formData.showTitle);
     dispatch(updateHomeCategoryPromotion(editData.id, data));
     handleClose();
   };
@@ -92,12 +98,12 @@ const HomeScreenEditPromotionModal = ({ show, handleClose, editData }) => {
               <input
                 id="title"
                 name="title"
-               className={`form-control ${errors.title ? "is-invalid" : ""}`}
+                className={`form-control ${errors.title ? "is-invalid" : ""}`}
                 type="text"
                 value={formData.title}
                 onChange={handleInputChange}
               />
-                {errors.title && <div className="invalid-feedback">{errors.title}</div>}
+              {errors.title && <div className="invalid-feedback">{errors.title}</div>}
             </div>
             <div className="col-lg-4 mb-3">
               <label htmlFor="display_count" className="form-label">
@@ -111,7 +117,7 @@ const HomeScreenEditPromotionModal = ({ show, handleClose, editData }) => {
                 value={formData.displayCount}
                 onChange={handleInputChange}
               />
-               {errors.displayCount && <div className="invalid-feedback">{errors.displayCount}</div>}
+              {errors.displayCount && <div className="invalid-feedback">{errors.displayCount}</div>}
             </div>
 
             <div className="col-lg-6 mb-3">
@@ -142,14 +148,14 @@ const HomeScreenEditPromotionModal = ({ show, handleClose, editData }) => {
               <input
                 id="priority"
                 name="priority"
-                 className={`form-control ${errors.priority ? "is-invalid" : ""}`}
+                className={`form-control ${errors.priority ? "is-invalid" : ""}`}
                 type="number"
                 placeholder="Priority"
                 value={formData.priority}
                 onChange={handleInputChange}
                 style={{ maxWidth: "100px" }}
               />
-               {errors.priority && <div className="invalid-feedback">{errors.priority}</div>}
+              {errors.priority && <div className="invalid-feedback">{errors.priority}</div>}
             </div>
 
             <div className="col-lg-6 mb-3">
@@ -168,6 +174,23 @@ const HomeScreenEditPromotionModal = ({ show, handleClose, editData }) => {
                 <option value="false">Inactive</option>
               </select>
               {errors.status && <div className="invalid-feedback">{errors.status}</div>}
+            </div>
+            <div className="col-lg-6 mb-3">
+              <label htmlFor="status" className="form-label">
+                Show Title<span className="text-danger">*</span>
+              </label>
+              <select
+                id="showTitle"
+                name="showTitle"
+                className={`form-control ${errors.showTitle ? "is-invalid" : ""}`}
+                value={formData.showTitle}
+                onChange={handleInputChange}
+              >
+                <option value="">- Select Status -</option>
+                <option value="true">True</option>
+                <option value="false">False</option>
+              </select>
+              {errors.showTitle && <div className="invalid-feedback">{errors.showTitle}</div>}
             </div>
           </div>
 

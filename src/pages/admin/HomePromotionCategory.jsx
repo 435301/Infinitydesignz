@@ -190,13 +190,17 @@ const HomePromotionCategory = () => {
                                   <td>{indexOfFirstRow + index + 1}</td>
                                   <td>{promotion.title}</td>
                                   <td>
-                                    <img
-                                      src={`${BASE_URL}${promotion.imageUrl}`}
-                                      alt={promotion.title}
-                                      className="rounded-circle"
-                                      width="25"
-                                      height="25"
-                                    />
+                                    {promotion.imageUrl ? (
+                                      <img
+                                        src={`${BASE_URL}${promotion.imageUrl}`}
+                                        alt={promotion.title}
+                                        className="rounded-circle"
+                                        width="25"
+                                        height="25"
+                                      />
+                                    ) : (
+                                      <span className="text-muted">N/A</span>
+                                    )}
                                   </td>
                                   <td>{promotion.displayCount}</td>
                                   <td>{promotion.priority}</td>

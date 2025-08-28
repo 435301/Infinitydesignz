@@ -13,6 +13,7 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
         image: null,
         priority: "",
         status: false,
+        showTitle:false,
     });
     const [errors, setErrors] = useState({});
 
@@ -41,6 +42,9 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
         if (formData.status === "" || formData.status === null) {
             newErrors.status = "Status is required";
         }
+         if (formData.showTitle === "" || formData.showTitle === null) {
+            newErrors.showTitle = "Show Title is required";
+        }
         return newErrors;
     };
 
@@ -57,6 +61,7 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
         data.append("image", formData.image);
         data.append("priority", formData.priority);
         data.append("status", formData.status);
+        data.append("showTitle", formData.showTitle);
         console.log('FormData:', Object.fromEntries(data));
         dispatch(createHomeCategoryPromotion(data)).then(() => {
             dispatch(fetchHomeCategoryPromotions());
@@ -152,6 +157,23 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
                                 <option value="false">Inactive</option>
                             </select>
                             {errors.status && <div className="invalid-feedback">{errors.status}</div>}
+                        </div>
+                         <div className="col-lg-6 mb-3">
+                            <label htmlFor="status" className="form-label">
+                                Show Title<span className="text-danger">*</span>
+                            </label>
+                            <select
+                                id="showTitle"
+                                name="showTitle"
+                                className={`form-control ${errors.showTitle ? "is-invalid" : ""}`}
+                                value={formData.showTitle}
+                                onChange={handleInputChange}
+                            >
+                                <option value="">- Select Status -</option>
+                                <option value="true">True</option>
+                                <option value="false">False</option>
+                            </select>
+                            {errors.showTitle && <div className="invalid-feedback">{errors.showTitle}</div>}
                         </div>
                     </div>
                     <div className="text-center my-3">

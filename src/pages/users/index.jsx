@@ -68,6 +68,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchRightSliders, fetchSliders } from '../../redux/actions/slidersAction';
 import BASE_URL from '../../config/config';
 import BannerSlider from '../../components/bannerSlider';
+import { fetchFrontendPromotions } from '../../redux/actions/productionPromotionAction';
+import FrontendPromotionsSection from '../../components/frontendPromotionSection';
 
 const waitAndShowModal = () =>
   new Promise((resolve) => {
@@ -82,12 +84,14 @@ export default function HomeBannerSection() {
   const location = useLocation();
   const { sliders } = useSelector((state) => state.sliders);
   const { rightSliders } = useSelector((state) => state.rightSliders);
-
+  const { promotions, loading, error } = useSelector((state) => state.frontendPromotions);
+console.log('promotionIndex', promotions)
   console.log("sliders", rightSliders);
 
   useEffect(() => {
     dispatch(fetchSliders());
     dispatch(fetchRightSliders());
+    dispatch(fetchFrontendPromotions(8));
   }, [dispatch]);
 
   useQuery({
@@ -124,8 +128,6 @@ export default function HomeBannerSection() {
 
   ];
 
-  const imgs = [Img1, Img2, Img3];
-
   const tabs = [
     { id: 'living', label: 'Living Room', icon: CounterTops },
     { id: 'kitchen', label: 'Kitchen', icon: KingBed },
@@ -134,77 +136,6 @@ export default function HomeBannerSection() {
     { id: 'garden', label: 'Garden', icon: OuterGarden }
   ];
 
-  const products = [
-    {
-      title: "Andres Fabric 3 Seater Sofa In Sandy Brown Colour",
-      price: "₹37,999",
-      originalPrice: "MRP ₹48,999",
-      discount: "22% off",
-      image: Img1,
-      wishlistIcon: Icon,
-      starIcon: Star,
-      halfStarIcon: Star1,
-      rating: "4.4 | 24K",
-      emiInfo: [
-        "36-Month Warranty Available",
-        "EMI starting from ₹1,825/month",
-        "Express Shipping in 1 day"
-      ],
-      link: "product-details.php"
-    },
-    {
-      title: "Stylish Wingback Chair in Grey Fabric",
-      price: "₹21,999",
-      originalPrice: "MRP ₹28,999",
-      discount: "18% off",
-      image: Img2,
-      wishlistIcon: Icon,
-      starIcon: Star,
-      halfStarIcon: Star1,
-      rating: "4.7 | 10K",
-      emiInfo: [
-        "12-Month Warranty",
-        "EMI from ₹1,200/month",
-        "Ships in 2 days"
-      ],
-      link: "product-details.php"
-    },
-    {
-      title: "Andres Fabric 3 Seater Sofa In Sandy Brown Colour",
-      price: "₹37,999",
-      originalPrice: "MRP ₹48,999",
-      discount: "22% off",
-      image: Img3,
-      wishlistIcon: Icon,
-      starIcon: Star,
-      halfStarIcon: Star1,
-      rating: "4.4 | 24K",
-      emiInfo: [
-        "36-Month Warranty Available",
-        "EMI starting from ₹1,825/month",
-        "Express Shipping in 1 day"
-      ],
-      link: "product-details.php"
-    },
-    {
-      title: "Andres Fabric 3 Seater Sofa In Sandy Brown Colour",
-      price: "₹37,999",
-      originalPrice: "MRP ₹48,999",
-      discount: "22% off",
-      image: Img1,
-      wishlistIcon: Icon,
-      starIcon: Star,
-      halfStarIcon: Star1,
-      rating: "4.4 | 24K",
-      emiInfo: [
-        "36-Month Warranty Available",
-        "EMI starting from ₹1,825/month",
-        "Express Shipping in 1 day"
-      ],
-      link: "product-details.php"
-    },
-
-  ];
 
   const helpItems = [
     { image: Sofa, title: "Sofa", alt: "Sofa" },
@@ -370,7 +301,7 @@ export default function HomeBannerSection() {
 
       {/* <!-- -------SALE OFFER START's---------- --> */}
 
-      <SaleCarousel />
+      {/* <SaleCarousel /> */}
 
       {/* <!-- -------SALE OFFER END's---------- --> */}
 
@@ -391,7 +322,6 @@ export default function HomeBannerSection() {
 
       <FurnitureTabs tabs={tabs} images={images} />
 
-      <NewArrivalsSection title="New Arrivals" cards={cards} />
 
       {/* <ProductGrid products={products} /> */}
 
@@ -419,38 +349,10 @@ export default function HomeBannerSection() {
           </div>
         </div>
       </div>
+      <FrontendPromotionsSection promotions={promotions} />
 
-      <div className="container py-5">
-        <div className="row">
-          <div className="col-lg-12 mb-2 text-start">
-            <h2 className='h2_heading'>Deals of the Day</h2>
-          </div>
-          <div className="col-lg-12 mb-2">
-            <img src={One} className="w-100" alt="Deals of the Day 1" />
-          </div>
-          <div className="col-lg-12">
-            <img src={Two} className="w-100" alt="Deals of the Day 2" />
-          </div>
-        </div>
-      </div>
 
-      {/* <ProductGrid products={products} /> */}
 
-      <PromoSection heading="Trending" promos={promoData} />
-
-      <div className="container mb-4">
-        <div className="row">
-          <div className="col-md-4">
-            <img src={F1} alt="f1" className="w-100" />
-          </div>
-          <div className="col-md-4">
-            <img src={F2} alt="f2" className="w-100" />
-          </div>
-          <div className="col-md-4">
-            <img src={F3} alt="f3" className="w-100" />
-          </div>
-        </div>
-      </div>
 
       {/* <ProductGrid products={products} /> */}
 
