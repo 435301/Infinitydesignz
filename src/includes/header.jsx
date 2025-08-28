@@ -18,7 +18,7 @@ import axios from "axios";
 import BASE_URL from "../config/config";
 import { getToken, isLoggedIn } from "../utils/auth";
 import { fetchWishlist } from "../redux/actions/whishlistAction";
-import { fetchKeywords } from "../redux/actions/searchKeywordsAction";
+import { addKeyword, fetchKeywords } from "../redux/actions/searchKeywordsAction";
 
 const SUGGESTIONS_LIST = [
   "4 Door Wardrobes",
@@ -180,7 +180,8 @@ export default function Header() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (query.trim()) {
-      navigate(`/search?query=${encodeURIComponent(query.trim())}`);
+    dispatch(addKeyword(query.trim()));
+      // navigate(`/search?query=${encodeURIComponent(query.trim())}`);
       setShowSuggestions(false);
     }
   };

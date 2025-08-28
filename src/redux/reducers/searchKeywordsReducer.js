@@ -47,7 +47,7 @@ const keywordReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        keywords: [...state.keywords, action.payload], 
+        items : [...state.items , action.payload], 
       };
     case ADD_KEYWORD_FAILURE:
       return { ...state, loading: false, error: action.payload };
