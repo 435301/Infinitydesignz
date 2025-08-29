@@ -149,10 +149,6 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
                                     {errors.title && <div className="invalid-feedback">{errors.title}</div>}
                                 </div>
 
-                                <ImageUpload label="App Icon" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />
-                                <ImageUpload label="Web Icon" image={webIcon} onChange={handleFileChange(setWebIcon)} onRemove={removeImage(setWebIcon)} />
-                                <ImageUpload label="Main Image" image={mainImage} onChange={handleFileChange(setMainImage)} onRemove={removeImage(setMainImage)} />
-
                                 <div className="col-lg-4 mb-3">
                                     <label className="form-label">SEO Title</label>
                                     <input className="form-control" name="seoTitle" value={form.seoTitle} onChange={handleChange} />
@@ -167,6 +163,22 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
                                     <label className="form-label">SEO Keywords</label>
                                     <input className="form-control" name="seoKeywords" value={form.seoKeywords} onChange={handleChange} />
                                 </div>
+                                 <div className="col-lg-4 mb-3">
+                                    <label className="form-label">Need Help Section</label>
+                                    <select
+                                        className={`form-control`}
+                                    >
+                                        <option>Select Need Help Section</option>
+                                        <option>Yes</option>
+                                        <option>No</option>
+                                        
+                                    </select>
+                                </div>
+
+                                  <ImageUpload label="App Icon" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />
+                                <ImageUpload label="Web Icon" image={webIcon} onChange={handleFileChange(setWebIcon)} onRemove={removeImage(setWebIcon)} />
+                                <ImageUpload label="Main Image" image={mainImage} onChange={handleFileChange(setMainImage)} onRemove={removeImage(setMainImage)} />
+                               
 
                                 <div className="form-check ps-4 m-4">
                                     <input className="form-check-input" type="checkbox" name="status" checked={form.status} onChange={handleChange} />
