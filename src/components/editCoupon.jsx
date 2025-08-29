@@ -190,7 +190,7 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
                     </div>
 
                     <div className="text-center mt-4">
-                        <Button variant="secondary" onClick={onHide}>Cancel</Button>{' '}
+                        <Button variant="danger" onClick={onHide}>Close</Button>{' '}
                         <Button type="submit" variant="primary">Update</Button>
                     </div>
                 </form>

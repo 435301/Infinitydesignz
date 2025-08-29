@@ -12,6 +12,7 @@ import PaginationComponent from '../../includes/pagination';
 import { toast } from 'react-toastify';
 import DeleteModal from '../../modals/deleteModal';
 import ViewPromotionModal from '../../modals/viewPromotionModal';
+import LazyLoad from 'react-lazyload';
 
 
 const HomeScreenPromotions = () => {
@@ -255,7 +256,7 @@ const HomeScreenPromotions = () => {
                                   <td>{index + 1}</td>
                                   <td>{promotion.title}</td>
                                   <td>
-                                    <img
+                                      <img
                                       src={`${BASE_URL}${promotion.imageUrl}`}
                                       alt={promotion.title}
                                       className="rounded-circle"

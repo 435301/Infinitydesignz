@@ -218,7 +218,7 @@ const CheckoutPage = () => {
             {/* RIGHT COLUMN */}
             <div className="col-lg-4">
               <div className="cart-details">
-                <h3>Order Summary</h3>
+                <h3 className="cart-header">Order Summary</h3>
                 {displayItems.length > 0 && (
                   <>
                     {displayItems.map((item) => (

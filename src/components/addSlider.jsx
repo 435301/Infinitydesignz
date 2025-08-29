@@ -161,7 +161,7 @@ const handlePriorityChange = (e) => {
                         </div>
                         <div className="modal-footer">
                             <button type="submit" className="btn btn-success">Submit</button>
-                            <button type="button" className="btn btn-secondary" onClick={onClose}>Close</button>
+                            <button type="button" className="btn btn-danger" onClick={onClose}>Close</button>
                         </div>
                     </form>
                 </div>

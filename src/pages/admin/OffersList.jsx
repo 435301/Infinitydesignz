@@ -151,7 +151,7 @@ const OffersList = () => {
                       </div>
                       <div className="col-md-4 text-end">
                         <button className="btn btn-primary" onClick={() => setShowCouponModal(true)}>
-                          + Create New Coupon
+                        + Add New 
                         </button>
 
                       </div>

@@ -292,7 +292,7 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
 
                         <div className="modal-footer justify-content-center">
                             <button type="submit" className="btn btn-success px-5">SUBMIT</button>
-                            <button type="button" className="btn btn-danger px-5" onClick={() => setShow(false)}>BACK</button>
+                            <button type="button" className="btn btn-danger px-5" onClick={() => setShow(false)}>CLOSE</button>
                         </div>
                     </form>
                 </div>

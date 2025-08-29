@@ -20,8 +20,10 @@ const HomeScreenViewPromotionModal = ({ show, handleClose, viewData }) => {
               <strong>Display Count:</strong> {viewData.displayCount}
             </div>
           </div>
+          <div className="row mb-3">
             <div className="col-md-6">
               <strong>Priority:</strong> {viewData.priority}
+            </div>
           </div>
           <div className="row mb-3">
             <div className="col-md-6">

@@ -334,7 +334,7 @@ const handleListSubMenuChange = (e) => {
                                                 </div>
 
                                                 <div className="col-lg-12 text-center my-4">
-                                                    <button type="submit" className="btn btn-danger py-2 px-5">SUBMIT</button>
+                                                    <button type="submit" className="btn btn-danger py-2 px-5 mx-1">SUBMIT</button>
                                                     <button type="button" className="btn btn-success py-2 px-5" onClick={() => window.history.back()}>BACK</button>
                                                 </div>
                                             </div>

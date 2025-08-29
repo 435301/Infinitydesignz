@@ -87,7 +87,7 @@ const OrderDetailsPage = () => {
                                 {/* Shipping Address */}
                                 <div className="p-2 border-right" style={{ width: '33%' }}>
                                     <h6>SHIPPING ADDRESS</h6>
-                                    <p>
+                                    <p className='order-p text-secondary'>
                                         {address.name}<br />
                                         {address.flatNumber}, {address.buildingName}<br />
                                         {address.addressLine1}, {address.addressLine2}<br />
@@ -99,7 +99,7 @@ const OrderDetailsPage = () => {
                                 {/* Payment Method */}
                                 <div className="p-2 border-right" style={{ width: '33%' }}>
                                     <h6>PAYMENT METHOD</h6>
-                                    <p>
+                                    <p className='order-p text-secondary'>
                                         {payment.method}<br />
                                         Status: {payment.status}<br />
                                         Transaction ID: {payment.transactionId || 'N/A'}
@@ -109,13 +109,13 @@ const OrderDetailsPage = () => {
                                 {/* Price Summary */}
                                 <div className="p-2" style={{ width: '33%' }}>
                                     <h6>ORDER SUMMARY</h6>
-                                    <p>
+                                    <p className='order-p text-secondary'>
                                         Total MRP: ₹{priceSummary.totalMRP}<br />
                                         Discount on MRP: ₹{priceSummary.discountOnMRP}<br />
                                         Coupon Discount: ₹{priceSummary.couponDiscount}<br />
                                         Platform Fee: ₹{priceSummary.platformFee}<br />
                                         Shipping Fee: ₹{priceSummary.shippingFee}<br />
-                                        <strong>Final Payable: ₹{priceSummary.finalPayable}</strong>
+                                        <strong>Total Payable Amount: ₹{priceSummary.finalPayable}</strong>
                                     </p>
                                 </div>
                             </div>

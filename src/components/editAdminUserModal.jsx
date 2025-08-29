@@ -106,11 +106,11 @@ const EditAdminUserModal = ({ show, handleClose, userData, onUpdate }) => {
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
+          <Button variant="danger" onClick={handleClose}>
+            Close
           </Button>
           <Button type="submit" variant="primary">
-            Save Changes
+            Update
           </Button>
         </Modal.Footer>
       </Form>

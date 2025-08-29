@@ -16,6 +16,7 @@ import ViewSubCategoryModal from '../../modals/viewSubCategoryModal';
 import { Pagination } from 'react-bootstrap';
 import PaginationComponent from '../../includes/pagination';
 import BASE_URL from '../../config/config';
+import LazyLoad from 'react-lazyload';
 
 
 const ManageSubCategories = () => {
@@ -289,22 +290,20 @@ const ManageSubCategories = () => {
                                     checked={selectedRows.includes(item.id)}
                                     onChange={() => handleRowCheckboxChange(item.id)}
                                   />
-
-
                                 </td>
                                 <td>{index + 1}</td>
                                 <td>{item.category}</td>
                                 <td>{item.title}</td>
                                 <td>
                                   {(item?.appIcon) ? (
-                                    <img
-                                      src={`${BASE_URL}${item?.appIcon}`}
-                                      alt={`${item.title} App Icon`}
-                                      className="rounded-circle"
-                                      width="50"
-                                      height="50"
-                                      loading='lazy'
-                                    />
+                                    <LazyLoad height={50} offset={50} once>
+                                      <img
+                                        src={`${BASE_URL}${item?.appIcon}`}
+                                        alt={`${item.title} App Icon`}
+                                        className="rounded-circle"
+                                        width="50"
+                                        height="50"
+                                      /></LazyLoad>
                                   ) : (
                                     <span>N/A</span>
                                   )}
@@ -312,28 +311,30 @@ const ManageSubCategories = () => {
                                 </td>
                                 <td>
                                   {(item?.webImage) ? (
-                                    <img
-                                      src={`${BASE_URL}${item?.webImage}`}
-                                      alt={`${item.title} Web Icon`}
-                                      className="rounded-circle"
-                                      width="50"
-                                      height="50"
-                                      loading='lazy'
-                                    />
+                                    <LazyLoad height={50} offset={50} once>
+                                      <img
+                                        src={`${BASE_URL}${item?.webImage}`}
+                                        alt={`${item.title} Web Icon`}
+                                        className="rounded-circle"
+                                        width="50"
+                                        height="50"
+                                      />
+                                    </LazyLoad>
                                   ) : (
                                     <span>N/A</span>
                                   )}
                                 </td>
                                 <td>
                                   {(item?.mainImage) ? (
-                                    <img
-                                      src={`${BASE_URL}${item?.mainImage}`}
-                                      alt={`${item.title} Main Image`}
-                                      className="rounded-circle"
-                                      width="50"
-                                      height="50"
-                                      loading='lazy'
-                                    />
+                                    <LazyLoad height={50} offset={50} once>
+                                      <img
+                                        src={`${BASE_URL}${item?.mainImage}`}
+                                        alt={`${item.title} Main Image`}
+                                        className="rounded-circle"
+                                        width="50"
+                                        height="50"
+                                      />
+                                    </LazyLoad>
                                   ) : (
                                     <span>N/A</span>
                                   )}
