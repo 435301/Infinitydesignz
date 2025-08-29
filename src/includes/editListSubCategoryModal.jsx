@@ -164,11 +164,11 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
                                     <input className="form-control" name="seoKeywords" value={form.seoKeywords} onChange={handleChange} />
                                 </div>
                                  <div className="col-lg-4 mb-3">
-                                    <label className="form-label">Need Help Section</label>
+                                    <label className="form-label">Need Help Frontend Display </label>
                                     <select
                                         className={`form-control`}
                                     >
-                                        <option>Select Need Help Section</option>
+                                        <option>Select Need Help </option>
                                         <option>Yes</option>
                                         <option>No</option>
                                         

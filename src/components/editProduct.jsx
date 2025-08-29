@@ -50,6 +50,8 @@ const EditProduct = ({ onClose, onProductCreated }) => {
     const [createdProductId, setCreatedProductId] = useState(null);
     const [createdVariantIds, setCreatedVariantIds] = useState('');
     const [updatedVariantIds, setUpdatedVariantIds] = useState([]);
+    const [selectedDisplay, setSelectedDisplay] = useState([]);
+    const frontEndDisplay = ["New Arrivals", "Deals of the Day", "Trending",];
 
     const initialFormState = {
         sku: '',
@@ -133,7 +135,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                 title: product.title || '',
                 weight: product.productDetails?.weight || '',
                 model: product.productDetails?.model || '',
-                sla: product.productDetails?.sla ?? '',   
+                sla: product.productDetails?.sla ?? '',
                 deliveryCharges: product.productDetails?.deliveryCharges || '',
                 description: product.description || '',
                 status: product.status ? 'enable' : 'disable',
@@ -347,6 +349,14 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         setVariants(updatedVariants);
     };
 
+    const handleCheckboxChange = (display) => {
+        setSelectedDisplay((prev) =>
+            prev.includes(display)
+                ? prev.filter((c) => c !== display)
+                : [...prev, display]
+        );
+    };
+
     return (
         <div className="container-fluid">
             <div className="row">
@@ -520,7 +530,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
 
                                             <div className="col-lg-6 mb-3">
                                                 <label className="form-label">
-                                                  Comma Separated Search Keywords<span className="text-danger">*</span>
+                                                    Comma Separated Search Keywords<span className="text-danger">*</span>
                                                 </label>
                                                 <input
                                                     type="text"
@@ -537,6 +547,22 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                 {errors.searchKeywords && (
                                                     <div className="invalid-feedback">{errors.searchKeywords}</div>
                                                 )}
+                                            </div>
+                                            <div className="col-lg-6 mb-3">
+                                                <label className="form-label">
+                                                    Front End Display
+                                                </label>
+                                                {frontEndDisplay.map((display) => (
+                                                    <label key={display} style={{ display: "block" }}>
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={selectedDisplay.includes(display)}
+                                                            onChange={() => handleCheckboxChange(display)}
+                                                            className='mb-3 me-2'
+                                                        />
+                                                        {display}
+                                                    </label>
+                                                ))}
                                             </div>
                                         </div>
                                     </div>
@@ -725,7 +751,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                                 onChange={(e) => handleChange(index, 'mrp', e.target.value)}
                                                                 placeholder="MRP"
                                                             />
-                                                             {variant.error && <div className="text-danger small mt-1">{variant.error}</div>}
+                                                            {variant.error && <div className="text-danger small mt-1">{variant.error}</div>}
                                                         </td>
                                                         <td>
                                                             <input
