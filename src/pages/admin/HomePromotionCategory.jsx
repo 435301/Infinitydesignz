@@ -13,7 +13,6 @@ import HomeScreenCreatePromotionModal from '../../components/homeScreenCreatePro
 import HomeScreenEditPromotionModal from '../../components/homeEditPromotionModal';
 import DeleteModal from '../../modals/deleteModal';
 import HomeScreenViewPromotionModal from '../../components/viewHomePromotionModal';
-import LazyLoad from 'react-lazyload';
 
 const HomePromotionCategory = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -191,15 +190,13 @@ const HomePromotionCategory = () => {
                                   <td>{indexOfFirstRow + index + 1}</td>
                                   <td>{promotion.title}</td>
                                   <td>
-                                    {promotion.imageUrl ? (
-                                      <LazyLoad height={50} offset={50}>  <img
+                                    {promotion.imageUrl ? ( <img
                                         src={`${BASE_URL}${promotion.imageUrl}`}
                                         alt={promotion.title}
                                         className="rounded-circle"
                                         width="25"
                                         height="25"
-                                      /></LazyLoad>
-                                    
+                                      />
                                     ) : (
                                       <span className="text-muted">N/A</span>
                                     )}

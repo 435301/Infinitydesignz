@@ -14,7 +14,6 @@ import { TiTrash } from "react-icons/ti";
 import ViewListSubCategoryModal from '../../modals/viewListCategoryModal';
 import PaginationComponent from '../../includes/pagination';
 import BASE_URL from '../../config/config';
-import LazyLoad from 'react-lazyload';
 
 const ListSubCategory = () => {
   const [showModal, setShowModal] = useState(false);
@@ -267,7 +266,7 @@ const ListSubCategory = () => {
                                 <td>{item.title}</td>
                                 <td>
                                   {(item?.appIcon) ? (
-                                     <LazyLoad height={50} offset={50} once>
+                                  
                                     <img
                                       src={`${BASE_URL}${item?.appIcon}`}
                                       alt={`${item.title} App Icon`}
@@ -275,14 +274,14 @@ const ListSubCategory = () => {
                                       width="50"
                                       height="50"
                                     />
-                                     </LazyLoad>
+                                   
                                   ) : (
                                     <span>N/A</span>
                                   )}
                                 </td>
                                 <td>
                                   {(item?.webImage) ? (
-                                    <LazyLoad height={50} offset={50} once>
+                                   
                                       <img
                                         src={`${BASE_URL}${item?.webImage}`}
                                         alt={`${item.title} Web Icon`}
@@ -290,14 +289,14 @@ const ListSubCategory = () => {
                                         width="50"
                                         height="50"
                                       />
-                                    </LazyLoad>
+                                  
                                   ) : (
                                     <span>N/A</span>
                                   )}
                                 </td>
                                 <td>
                                   {(item?.mainImage) ? (
-                                     <LazyLoad height={50} offset={50} once>
+                                    
                                        <img
                                       src={`${BASE_URL}${item?.mainImage}`}
                                       alt={`${item.title} Main Image`}
@@ -305,7 +304,7 @@ const ListSubCategory = () => {
                                       width="50"
                                       height="50"
                                     />
-                                     </LazyLoad>
+                                     
                                   ) : (
                                     <span>N/A</span>
                                   )}

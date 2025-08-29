@@ -13,7 +13,6 @@ import DeleteModal from '../../modals/deleteModal';
 import ViewSliderModal from '../../modals/viewSliderModal';
 import PaginationComponent from '../../includes/pagination';
 import { toast } from 'react-toastify';
-import LazyLoad from 'react-lazyload';
 
 const ManageSliders = () => {
   const { sliders, loading, error } = useSelector((state) => state.sliders);
@@ -170,7 +169,7 @@ const ManageSliders = () => {
                             <td>{index + 1}</td>
                             <td>{slider?.title}</td>
                             <td>
-                              <LazyLoad> <img src={`${BASE_URL}${slider?.image_url}`} alt={slider?.title} width="80" /></LazyLoad>
+                               <img src={`${BASE_URL}${slider?.image_url}`} alt={slider?.title} width="80" />
                             </td>
                             <td>
                               <a href={slider?.link} target="_blank" rel="noopener noreferrer">

@@ -16,8 +16,6 @@ import ViewSubCategoryModal from '../../modals/viewSubCategoryModal';
 import { Pagination } from 'react-bootstrap';
 import PaginationComponent from '../../includes/pagination';
 import BASE_URL from '../../config/config';
-import LazyLoad from 'react-lazyload';
-
 
 const ManageSubCategories = () => {
   const [showModal, setShowModal] = useState(false);
@@ -296,14 +294,13 @@ const ManageSubCategories = () => {
                                 <td>{item.title}</td>
                                 <td>
                                   {(item?.appIcon) ? (
-                                    <LazyLoad height={50} offset={50} once>
                                       <img
                                         src={`${BASE_URL}${item?.appIcon}`}
                                         alt={`${item.title} App Icon`}
                                         className="rounded-circle"
                                         width="50"
                                         height="50"
-                                      /></LazyLoad>
+                                      />
                                   ) : (
                                     <span>N/A</span>
                                   )}
@@ -311,7 +308,6 @@ const ManageSubCategories = () => {
                                 </td>
                                 <td>
                                   {(item?.webImage) ? (
-                                    <LazyLoad height={50} offset={50} once>
                                       <img
                                         src={`${BASE_URL}${item?.webImage}`}
                                         alt={`${item.title} Web Icon`}
@@ -319,14 +315,12 @@ const ManageSubCategories = () => {
                                         width="50"
                                         height="50"
                                       />
-                                    </LazyLoad>
                                   ) : (
                                     <span>N/A</span>
                                   )}
                                 </td>
                                 <td>
                                   {(item?.mainImage) ? (
-                                    <LazyLoad height={50} offset={50} once>
                                       <img
                                         src={`${BASE_URL}${item?.mainImage}`}
                                         alt={`${item.title} Main Image`}
@@ -334,7 +328,7 @@ const ManageSubCategories = () => {
                                         width="50"
                                         height="50"
                                       />
-                                    </LazyLoad>
+                               
                                   ) : (
                                     <span>N/A</span>
                                   )}

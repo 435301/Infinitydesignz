@@ -15,7 +15,6 @@ import { useNavigate } from 'react-router-dom';
 import BASE_URL from '../../config/config';
 import { toast } from 'react-toastify';
 import ViewProductModal from '../../modals/viewProductModal';
-import LazyLoad from 'react-lazyload';
 
 
 const ManageProducts = () => {
@@ -238,12 +237,12 @@ const ManageProducts = () => {
                                                                 /></td>
                                                                 <td>
                                                                     {product.images?.main?.url ? (
-                                                                        <LazyLoad> <img
+                                                                       <img
                                                                             src={`${BASE_URL}/uploads/products/${product.images.main.url}`}
                                                                             alt={product.title}
                                                                             style={{ width: '50px', height: 'auto' }}
                                                                           
-                                                                        /></LazyLoad>
+                                                                        />
                                                                     ) : (
                                                                         '-'
                                                                     )}

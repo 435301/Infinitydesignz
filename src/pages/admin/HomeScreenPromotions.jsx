@@ -12,7 +12,6 @@ import PaginationComponent from '../../includes/pagination';
 import { toast } from 'react-toastify';
 import DeleteModal from '../../modals/deleteModal';
 import ViewPromotionModal from '../../modals/viewPromotionModal';
-import LazyLoad from 'react-lazyload';
 
 
 const HomeScreenPromotions = () => {
