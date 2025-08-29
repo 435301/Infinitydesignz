@@ -44,7 +44,6 @@ export default function ProductDetailPage() {
   const [showLogin, setShowLogin] = useState(false);
   const [postLoginAction, setPostLoginAction] = useState(null);
   const [checked, setChecked] = useState(false);
-   const { title, brand, description, mrp, sellingPrice, stock, size, productDetails, variants, selectedVariant } = product;
 
   // Memoize category hierarchy to avoid recalculation
   const getCategoryHierarchy = useCallback((categoryId, allCategories) => {
@@ -76,44 +75,39 @@ export default function ProductDetailPage() {
     dispatch(fetchWishlist());
   }, [dispatch, productId, variantIdFromURL]);
 
-useEffect(() => {
-  if (!product) return;
+  useEffect(() => {
+    if (product) {
+      const variantId = parseInt(variantIdFromURL);
+      const allVariantImages = product.images?.variantImages || [];
+      const additional = product.images?.additional || [];
 
-  const allVariantImages = product.images?.variantImages || [];
-  const additional = product.images?.additional || [];
+      setSelectedSizeId(product.selectedVariant?.sizeId || '');
+      setSelectedColorId(product.selectedVariant?.colorId || '');
 
-  let selectedImages = [];
+      let selectedImages = [];
 
-  if (selectedVariant) {
-    // ✅ If a variant is selected, show its images
-    selectedImages = allVariantImages.filter(
-      (img) => parseInt(img.variantId) === selectedVariant.id
-    );
-
-    if (selectedImages.length > 0) {
-      const mainVariantImg =
-        selectedImages.find((img) => img.isMain) || selectedImages[0];
-
-      setMainImage(`${BASE_URL}/uploads/products/${mainVariantImg.url}`);
-      setThumbnails(selectedImages.map((img) => ({ url: img.url })));
-    } else {
-      // If variant exists but no special images → fallback
-      const mainImgUrl = product.images?.main?.url;
-      if (mainImgUrl) {
-        setMainImage(`${BASE_URL}/uploads/products/${mainImgUrl}`);
+      if (!isNaN(variantId)) {
+        selectedImages = allVariantImages.filter(
+          (img) => parseInt(img.variantId) === variantId
+        );
       }
-      setThumbnails([{ url: product.images?.main?.url, isMain: true }, ...additional]);
-    }
-  } else {
-    // ✅ If no variant selected → show product default images
-    const mainImgUrl = product.images?.main?.url;
-    if (mainImgUrl) {
-      setMainImage(`${BASE_URL}/uploads/products/${mainImgUrl}`);
-    }
-    setThumbnails([{ url: product.images?.main?.url, isMain: true }, ...additional]);
-  }
-}, [product, selectedVariant]);  // <-- 👈 runs when variant changes
 
+      if (selectedImages.length > 0) {
+        const mainVariantImg = selectedImages.find((img) => img.isMain) || selectedImages[0];
+        setMainImage(`${BASE_URL}/uploads/products/${mainVariantImg.url}`);
+        setThumbnails(selectedImages.map((img) => ({ url: img.url })));
+      } else {
+        const mainImgUrl = product.images?.main?.url;
+        if (mainImgUrl) {
+          setMainImage(`${BASE_URL}/uploads/products/${mainImgUrl}`);
+        }
+        setThumbnails([
+          { url: product.images?.main?.url, isMain: true },
+          ...additional,
+        ]);
+      }
+    }
+  }, [product, variantIdFromURL]);
 
   // Memoize zoom handlers to avoid unnecessary re-creation
   useEffect(() => {
@@ -233,6 +227,20 @@ useEffect(() => {
     return true;
   }, []);
 
+  // const handleWishlist = useCallback(() => {
+  //    if (!isLoggedIn()) {
+  //     setShowLogin(true);
+  //     return;
+  //   }
+
+  //   if (wishlistItem?.id) {
+  //     dispatch(deleteWishlistItem(wishlistItem?.id));
+  //     toast.success("Removed from wishlist successfully");
+  //     setLocalWishlisted(false);
+  //   } else {
+  //     dispatch(addToWishlist(parsedProductId, parsedVariantId));
+  //   }
+  // }, [dispatch, wishlistItem, parsedProductId, parsedVariantId]);
 
   const handleWishlist = useCallback(async () => {
     const wishlistAction = async () => {
@@ -306,7 +314,7 @@ useEffect(() => {
   if (loading) return <Loader />;
   if (!product) return <div className="container my-5">Loading...</div>;
 
- 
+  const { title, brand, description, mrp, sellingPrice, stock, size, productDetails, variants, selectedVariant } = product;
 
   return (
     <>
@@ -547,44 +555,45 @@ useEffect(() => {
                 <h5>Product Details</h5>
                 <h6 className="mb-0">Description :</h6>
                 <p className="mb-0 mt-0" dangerouslySetInnerHTML={{ __html: description }} />
-                <div className="multi-column mt-2">
-                  <div className="mb-2">
-                    <h6>Size</h6>
-                    <p>{selectedVariant?.size?.title || product.size?.title || "N/A"}</p>
-                  </div>
-                  <div className="mb-2">
-                    <h6>Color</h6>
-                    <p>{selectedVariant?.color?.label || product.color?.label || "N/A"}</p>
-                  </div>
-                  <div className="mb-2">
-                    <h6>Dimensions (in inches)</h6>
-                    <p>
-                      {product.height ? `H ${product.height}` : 'H N/A'} ×{' '}
-                      {product.width ? `W ${product.width}` : 'W N/A'} ×{' '}
-                      {product.length ? `L ${product.length}` : 'L N/A'}
-                    </p>
-                  </div>
-                  <div>
-                    <h6>SKU</h6>
-                    <p>{selectedVariant?.sku || product?.sku}</p>
-                  </div>
-                  <div>
-                    <h6>Weight</h6>
-                    <p>{productDetails?.weight} gms</p>
-                  </div>
-                  <div>
-                    <h6>Stock</h6>
-                    <p>{selectedVariant?.stock ?? product?.stock}</p>
-                  </div>
-                  <div>
-                    <h6>Delivery Charges</h6>
-                    <p>₹{productDetails?.deliveryCharges}</p>
-                  </div>
-                  <div>
-                    <h6>SLA</h6>
-                    <p>{productDetails?.sla} Days</p>
-                  </div>
-                </div>
+               <div className="multi-column mt-2">
+  <div className="mb-2">
+    <h6>Size</h6>
+    <p>{selectedVariant?.size?.title || product.size?.title || "N/A"}</p>
+  </div>
+  <div className="mb-2">
+    <h6>Color</h6>
+    <p>{selectedVariant?.color?.label || product.color?.label || "N/A"}</p>
+  </div>
+  <div className="mb-2">
+    <h6>Dimensions (in inches)</h6>
+    <p>
+      {(selectedVariant?.height || product.height) ? `H ${selectedVariant?.height || product.height}` : 'H N/A'} ×{' '}
+      {(selectedVariant?.width || product.width) ? `W ${selectedVariant?.width || product.width}` : 'W N/A'} ×{' '}
+      {(selectedVariant?.length || product.length) ? `L ${selectedVariant?.length || product.length}` : 'L N/A'}
+    </p>
+  </div>
+  <div>
+    <h6>SKU</h6>
+    <p>{selectedVariant?.sku || product?.sku}</p>
+  </div>
+  <div>
+    <h6>Weight</h6>
+    <p>{selectedVariant?.weight ?? productDetails?.weight} gms</p>
+  </div>
+  <div>
+    <h6>Stock</h6>
+    <p>{selectedVariant?.stock ?? product?.stock}</p>
+  </div>
+  <div>
+    <h6>Delivery Charges</h6>
+    <p>₹{selectedVariant?.deliveryCharges ?? productDetails?.deliveryCharges}</p>
+  </div>
+  <div>
+    <h6>SLA</h6>
+    <p>{selectedVariant?.sla ?? productDetails?.sla} Days</p>
+  </div>
+</div>
+
                 <div className="view-more">
                   <a href="#">View More Details</a>
                 </div>

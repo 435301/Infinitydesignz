@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import "../css/user/filterSidebar.css";
 import BASE_URL from "../config/config";
 
@@ -50,7 +50,7 @@ const FilterSidebar = () => {
         );
         const minPrice = Math.min(...selectedBuckets.map((b) => b.min));
         const maxPrice = Math.max(...selectedBuckets.map((b) => b.max));
-        currentParams.set("priceRanges", updatedValues.join(",")); 
+        currentParams.set("priceRanges", updatedValues.join(","));
         currentParams.set("minPrice", minPrice);
         currentParams.set("maxPrice", maxPrice);
       }
@@ -86,11 +86,11 @@ const FilterSidebar = () => {
   const renderFilterSection = (title, items, filterType, labelKey = "label") => {
     if (!items || items.length === 0) return null;
     return (
-      <div className="filter-section mt-4">
+      <div className="filter-section">
         <h6>{title}</h6>
         {items.map((item) => (
           <div key={item.id || item.key} className="filter-option">
-            <label>
+            <label className="checkbox-label">
               <input
                 type="checkbox"
                 checked={searchParams.get(filterType)?.split(",").includes(item.id?.toString() || item.key) || false}
@@ -107,27 +107,30 @@ const FilterSidebar = () => {
   return (
     <div className="filter-sidebar">
       {/* Clear Filters Button */}
-      <button className="btn btn-secondary mb-3" onClick={clearFilters}>
-        Clear Filters
-      </button>
+      <div class="filter-header px-3 pt-3">
+        <h4 className="text-dark">Filter</h4>
+        <a  className=" mb-3" onClick={clearFilters}>
+          Clear Filters
+        </a>                        </div>
+
 
       {/* Sidebar filters (category-specific like Size, Dimensions) */}
       {filters.sidebar?.length > 0 &&
         filters.sidebar.map((group) => (
-          <div key={group.id} className="filter-section mt-4">
-            <h6>{group.name}</h6>
+          <div key={group.id} className="filter-section">
+            <h5>{group.name}</h5>
             {group.sets.map((set) => (
               <div key={set.id} className="filter-subgroup">
-                <strong>{set.title}</strong>
+                <h5>{set.title}</h5>
                 {set.lists.map((option) => (
                   <div key={option.id} className="filter-option">
-                    <label>
+                    <label className="checkbox-label">
                       <input
                         type="checkbox"
                         checked={searchParams.get("filterListIds")?.split(",").includes(option.id.toString()) || false}
                         onChange={() => handleFilterChange("filterListIds", option.id.toString())}
                       />
-                      {option.label} 
+                      {option.label}
                     </label>
                   </div>
                 ))}
@@ -152,13 +155,13 @@ const FilterSidebar = () => {
           {filters.price.buckets.map((bucket) =>
             bucket.count > 0 ? (
               <div key={bucket.key} className="filter-option">
-                <label>
+                <label className="checkbox-label">
                   <input
                     type="checkbox"
                     checked={searchParams.get("priceRanges")?.split(",").includes(bucket.key) || false}
                     onChange={() => handleFilterChange("priceRanges", bucket.key)}
                   />
-                  {bucket.label} 
+                  {bucket.label}
                 </label>
               </div>
             ) : null
