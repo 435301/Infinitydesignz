@@ -12,6 +12,7 @@ import {
   BsListUl,
   BsDot,
   BsTag,
+  BsBag,
 } from 'react-icons/bs';
 
 const Sidebar = ({ isCollapsed, onClose }) => {
@@ -40,7 +41,7 @@ const Sidebar = ({ isCollapsed, onClose }) => {
     users: ['/admin/manage-users'],
     orders: ['/admin/orders'],
     offers: ['/admin/offers', '/create-coupon'],
-    sliders: [ '/admin/manage-sliders'],
+    sliders: ['/admin/manage-sliders'],
     others: ['/admin/contact', '/admin/keywords', '/admin/subscriberslist'],
     promotions: [
       '/admin/home-screen-promotion-category',
@@ -53,6 +54,7 @@ const Sidebar = ({ isCollapsed, onClose }) => {
     webPromotion: ['/admin/home-screen-promotion-category', '/admin/home-screen-create-promotion'],
     appPromotion: ['/admin/menu-promotion-category', '/admin/menu-create-promotion'],
     appHomePromotions: ['/admin/sub-menu-promotion-category', '/admin/sub-menu-create-promotion'],
+    shopNow: ['/admin/shop-now'],
   };
 
   const childToParent = {
@@ -338,6 +340,17 @@ const Sidebar = ({ isCollapsed, onClose }) => {
               >
                 <BsListUl style={mainIconStyle(isCollapsed)} />
                 <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Sliders</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/admin/shop-now"
+                className={({ isActive }) => (isActive ? 'active' : '')}
+                style={navLinkStyle(isCollapsed)}
+                onClick={() => window.innerWidth <= 767 && onClose()}
+              >
+                <BsBag style={mainIconStyle(isCollapsed)} />
+                <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Shop Now</span>
               </NavLink>
             </li>
             <li>

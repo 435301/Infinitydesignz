@@ -82,6 +82,7 @@ import { fetchProfile } from './redux/actions/profileAction.js';
 import AdminRoute from './components/adminRoute.jsx';
 import OrderDetailsPage from './components/orderDetails.jsx';
 import ContactPage from './pages/users/ContactPage.jsx';
+import ShopNow from './pages/admin/shopNow.jsx';
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
     <div className="content">{children}</div>
@@ -179,6 +180,7 @@ function App() {
           <Route path='/admin/edit-product-images' element={<AdminRoute><EditProductImages /></AdminRoute>}></Route>
           <Route path='/products' element={<ProductsPage />}></Route>
           <Route path="/admin/orders/:orderId" element={<OrderDetailsPage />} />
+          <Route path='/admin/shop-now' element={<ShopNow/>}></Route>
         </Routes>
         <Routes>
           <Route element={<AdminLayout />}>
