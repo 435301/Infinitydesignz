@@ -48,13 +48,26 @@ const FilterSidebar = () => {
         const selectedBuckets = filters.price.buckets.filter((bucket) =>
           updatedValues.includes(bucket.key)
         );
-        const minPrice = Math.min(...selectedBuckets.map((b) => b.min));
-        const maxPrice = Math.max(...selectedBuckets.map((b) => b.max));
+
+        const minPrice = Math.min(
+          ...selectedBuckets.map((b) => b.min).filter((v) => v != null && !isNaN(v))
+        );
+
+        const maxValues = selectedBuckets
+          .map((b) => b.max)
+          .filter((v) => v != null && !isNaN(v));
+
         currentParams.set("priceRanges", updatedValues.join(","));
         currentParams.set("minPrice", minPrice);
-        currentParams.set("maxPrice", maxPrice);
+
+        if (maxValues.length > 0) {
+          currentParams.set("maxPrice", Math.max(...maxValues));
+        } else {
+          currentParams.delete("maxPrice");
+        }
       }
-    } else {
+    }
+    else {
       const currentValues = currentParams.get(filterType)?.split(",").filter(Boolean) || [];
       if (currentValues.includes(value)) {
         const updatedValues = currentValues.filter((v) => v !== value);
@@ -109,7 +122,7 @@ const FilterSidebar = () => {
       {/* Clear Filters Button */}
       <div class="filter-header px-3 pt-3">
         <h4 className="text-dark">Filter</h4>
-        <a  className=" mb-3" onClick={clearFilters}>
+        <a className=" mb-3" onClick={clearFilters}>
           Clear Filters
         </a>                        </div>
 

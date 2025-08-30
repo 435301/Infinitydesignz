@@ -15,8 +15,8 @@ const ProductsPage = () => {
   const [searchParams] = useSearchParams();
   const categories = useSelector((state) => state.categories.categories || []);
   const mainCategoryId = parseInt(searchParams.get("mainCategoryId"));
-const subCategoryId = searchParams.get('subCategoryId')? parseInt(searchParams.get('subCategoryId'), 10): null;
-const listSubCatId = searchParams.get('listSubCatId') ? parseInt(searchParams.get('listSubCatId'), 10): null;
+  const subCategoryId = searchParams.get('subCategoryId') ? parseInt(searchParams.get('subCategoryId'), 10) : null;
+  const listSubCatId = searchParams.get('listSubCatId') ? parseInt(searchParams.get('listSubCatId'), 10) : null;
 
   const getCategoryTitle = (id) =>
     categories.find((cat) => cat.id === id)?.title || "Unknown";
@@ -44,37 +44,79 @@ const listSubCatId = searchParams.get('listSubCatId') ? parseInt(searchParams.ge
       ...(searchParams.get("sort") && { sort: searchParams.get("sort") }),
       ...(searchParams.get("page") && { page: searchParams.get("page") }),
       ...(searchParams.get("pageSize") && { pageSize: searchParams.get("pageSize") }),
+      ...(searchParams.get("discountPctMin") && { discountPctMin: searchParams.get("discountPctMin") }),
+      ...(searchParams.get("discountPctMax") && { discountPctMax: searchParams.get("discountPctMax") }),
+
     }).toString();
 
     axios
       .get(`${BASE_URL}/products/search?${queryString}`)
       .then((res) => {
         const rawProducts = res.data?.items || [];
+        const filteredProducts = rawProducts.flatMap((product) => {
+          const minPrice = parseFloat(searchParams.get("minPrice")) || 0;
+          const maxPrice = parseFloat(searchParams.get("maxPrice")) || Infinity;
+          const discountMin = parseFloat(searchParams.get("discountPctMin")) || 0;
+          const discountMax = parseFloat(searchParams.get("discountPctMax")) || Infinity;
 
-        const filteredProducts = listSubCatId
-          ? rawProducts.filter((p) => p.category?.id === listSubCatId)
-          : subCategoryId
-            ? rawProducts.filter((p) => p.category?.parentId === subCategoryId)
-            : rawProducts;
+          // ✅ use productDiscountPercent from API
+          const productDiscount = product.productDiscountPercent || 0;
 
-        const combinedProducts = filteredProducts.flatMap((product) => {
-          const mainProductEntry = { ...product, isVariant: false };
-          const variantEntries = (product.variants || []).map((variant) => ({
-            ...product,
-            variantId: variant.id,
-            isVariant: true,
-            _variant: variant,
-            mrp: variant.mrp,
-            sellingPrice: variant.sellingPrice,
-          }));
-          return [mainProductEntry, ...variantEntries];
+          const isInRange = (sellingPrice, discountPct) => {
+            return (
+              sellingPrice >= minPrice &&
+              sellingPrice <= maxPrice &&
+              discountPct >= discountMin &&
+              discountPct <= discountMax
+            );
+          };
+
+          // Check product
+          const productInRange = isInRange(product.sellingPrice, productDiscount);
+
+          // Check variants → assume API provides badgeDiscountPercent per variant
+          const variantsInRange = (product.variants || []).filter((variant) =>
+            isInRange(variant.sellingPrice, variant.badgeDiscountPercent || 0)
+          );
+
+          if (productInRange && variantsInRange.length > 0) {
+            const mainProductEntry = {
+              ...product,
+              isVariant: false,
+              discountPct: productDiscount,
+            };
+            const variantEntries = variantsInRange.map((variant) => ({
+              ...product,
+              variantId: variant.id,
+              isVariant: true,
+              _variant: variant,
+              mrp: variant.mrp,
+              sellingPrice: variant.sellingPrice,
+              discountPct: variant.badgeDiscountPercent || 0,
+            }));
+            return [mainProductEntry, ...variantEntries];
+          } else if (!productInRange && variantsInRange.length > 0) {
+            return variantsInRange.map((variant) => ({
+              ...product,
+              variantId: variant.id,
+              isVariant: true,
+              _variant: variant,
+              mrp: variant.mrp,
+              sellingPrice: variant.sellingPrice,
+              discountPct: variant.badgeDiscountPercent || 0,
+            }));
+          } else if (productInRange && variantsInRange.length === 0) {
+            return [{ ...product, isVariant: false, discountPct: productDiscount }];
+          }
+          return [];
         });
 
-        setProducts(combinedProducts);
+        setProducts(filteredProducts);
       })
       .catch((err) => {
         console.error("GET: Failed to fetch products", err);
       });
+
   }, [searchParams]);
 
   const groupByListSubCategory = (products) => {
@@ -127,7 +169,7 @@ const listSubCatId = searchParams.get('listSubCatId') ? parseInt(searchParams.ge
             </div>
           )}
           <div className="row">
-            {listSubCatId !==null && (
+            {listSubCatId !== null && (
               <div className="col-lg-3">
                 <FilterSidebar />
               </div>
