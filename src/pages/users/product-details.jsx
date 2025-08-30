@@ -39,7 +39,7 @@ export default function ProductDetailPage() {
   const [pincode, setPincode] = useState("");
   const [result, setResult] = useState(null);
   const wishlistItems = useSelector((state) => state.whishlist.items);
-  console.log('wishlistItems', wishlistItems)
+  console.log('wishlistItems', wishlistItems);
   const [localWishlisted, setLocalWishlisted] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [postLoginAction, setPostLoginAction] = useState(null);
@@ -60,12 +60,12 @@ export default function ProductDetailPage() {
   const breadcrumbItems = useMemo(() => (
     product
       ? [
-        { label: 'Home' },
-        ...getCategoryHierarchy(product.category?.id, categories).map(cat => ({
-          label: cat.title,
-        })),
-        { label: product.title }
-      ]
+          { label: 'Home' },
+          ...getCategoryHierarchy(product.category?.id, categories).map(cat => ({
+            label: cat.title,
+          })),
+          { label: product.title }
+        ]
       : [{ label: 'Home' }]
   ), [product, categories, getCategoryHierarchy]);
 
@@ -75,41 +75,139 @@ export default function ProductDetailPage() {
     dispatch(fetchWishlist());
   }, [dispatch, productId, variantIdFromURL]);
 
-  useEffect(() => {
-    if (product) {
-      const variantId = parseInt(variantIdFromURL);
-      const allVariantImages = product.images?.variantImages || [];
-      const additional = product.images?.additional || [];
+  // useEffect(() => {
+  //   if (!product) return;
 
-      setSelectedSizeId(product.selectedVariant?.sizeId || '');
-      setSelectedColorId(product.selectedVariant?.colorId || '');
+  //   console.log('Image selection useEffect triggered:', {
+  //     variantIdFromURL,
+  //     selectedVariant: product.selectedVariant,
+  //     variantImages: product.images?.variants,
+  //     flatVariantImages: product.variantImages,
+  //   });
 
-      let selectedImages = [];
+  //   // Prioritize selectedVariant from Redux, fallback to variantIdFromURL
+  //   const variantId = product.selectedVariant?.id
+  //     ? parseInt(product.selectedVariant.id)
+  //     : parseInt(variantIdFromURL) || null;
 
-      if (!isNaN(variantId)) {
-        selectedImages = allVariantImages.filter(
-          (img) => parseInt(img.variantId) === variantId
-        );
-      }
+  //   console.log('Selected variantId:', variantId);
 
-      if (selectedImages.length > 0) {
-        const mainVariantImg = selectedImages.find((img) => img.isMain) || selectedImages[0];
-        setMainImage(`${BASE_URL}/uploads/products/${mainVariantImg.url}`);
-        setThumbnails(selectedImages.map((img) => ({ url: img.url })));
-      } else {
-        const mainImgUrl = product.images?.main?.url;
-        if (mainImgUrl) {
-          setMainImage(`${BASE_URL}/uploads/products/${mainImgUrl}`);
-        }
-        setThumbnails([
-          { url: product.images?.main?.url, isMain: true },
-          ...additional,
-        ]);
-      }
-    }
-  }, [product, variantIdFromURL]);
+  //   let selectedImages = [];
+
+  //   if (variantId) {
+  //     // Check structured variant images (product.images.variants)
+  //     const variantImagesObj = product.images?.variants?.[variantId];
+  //     if (variantImagesObj) {
+  //       const mainImg = variantImagesObj.main;
+  //       const additionalImgs = variantImagesObj.additional || [];
+  //       selectedImages = [
+  //         ...(mainImg ? [{ url: mainImg.url, isMain: true }] : []),
+  //         ...additionalImgs.map((img) => ({ url: img.url, isMain: img.isMain })),
+  //       ];
+  //       console.log('Using structured variant images:', selectedImages);
+  //     } else {
+  //       // Fallback to flat variantImages array
+  //       const variantImagesFlat = product.variantImages?.filter(
+  //         (img) => parseInt(img.variantId) === variantId
+  //       ) || [];
+  //       selectedImages = variantImagesFlat.map((img) => ({ url: img.url, isMain: img.isMain }));
+  //       console.log('Using flat variant images:', selectedImages);
+  //     }
+  //   }
+
+  //   if (selectedImages.length > 0) {
+  //     const mainVariantImg = selectedImages.find((img) => img.isMain) || selectedImages[0];
+  //     setMainImage(`${BASE_URL}/Uploads/products/${mainVariantImg.url}`);
+  //     setThumbnails(selectedImages);
+  //     console.log('Setting main image:', mainVariantImg.url);
+  //   } else {
+  //     // Fallback to product-level images
+  //     const mainImgUrl = product.images?.main?.url;
+  //     const additional = product.images?.additional || [];
+  //     console.log('Falling back to main product image:', mainImgUrl);
+  //     if (mainImgUrl) {
+  //       setMainImage(`${BASE_URL}/Uploads/products/${mainImgUrl}`);
+  //     }
+  //     setThumbnails([
+  //       ...(mainImgUrl ? [{ url: mainImgUrl, isMain: true }] : []),
+  //       ...additional.map((img) => ({ url: img.url, isMain: img.isMain })),
+  //     ]);
+  //   }
+
+  //   // Update size and color selections based on selectedVariant
+  //   setSelectedSizeId(product.selectedVariant?.sizeId || '');
+  //   setSelectedColorId(product.selectedVariant?.colorId || '');
+  // }, [product, variantIdFromURL, product?.selectedVariant]);
 
   // Memoize zoom handlers to avoid unnecessary re-creation
+useEffect(() => {
+  if (!product) {
+    console.log('No product data available');
+    return;
+  }
+
+  console.log('Image selection useEffect triggered:', {
+    variantIdFromURL,
+    selectedVariant: product.selectedVariant,
+    variantImages: product.images?.variants,
+    flatVariantImages: product.variantImages,
+  });
+
+  // Use selectedVariant.id if available, otherwise fallback to variantIdFromURL
+  const variantId = product.selectedVariant?.id
+    ? parseInt(product.selectedVariant.id)
+    : parseInt(variantIdFromURL) || null;
+
+  console.log('Selected variantId:', variantId);
+
+  let selectedImages = [];
+
+  if (variantId) {
+    // Try structured variant images (product.images.variants)
+    const variantImagesObj = product.images?.variants?.[variantId];
+    if (variantImagesObj) {
+      const mainImg = variantImagesObj.main;
+      const additionalImgs = variantImagesObj.additional || [];
+      selectedImages = [
+        ...(mainImg ? [{ url: mainImg.url, isMain: true }] : []),
+        ...additionalImgs.map((img) => ({ url: img.url, isMain: img.isMain })),
+      ];
+      console.log('Using structured variant images:', selectedImages);
+    } else {
+      // Fallback to flat variantImages array
+      const variantImagesFlat = (product.variantImages || []).filter(
+        (img) => parseInt(img.variantId) === variantId
+      );
+      selectedImages = variantImagesFlat.map((img) => ({ url: img.url, isMain: img.isMain }));
+      console.log('Using flat variant images:', selectedImages);
+    }
+  }
+
+  // Only update images if we have valid selectedImages or need to fallback
+  if (selectedImages.length > 0) {
+    const mainVariantImg = selectedImages.find((img) => img.isMain) || selectedImages[0];
+    setMainImage(`${BASE_URL}/Uploads/products/${mainVariantImg.url}`);
+    setThumbnails(selectedImages);
+    console.log('Setting main image:', mainVariantImg.url);
+  } else {
+    // Fallback to product-level images
+    const mainImgUrl = product.images?.main?.url;
+    const additional = product.images?.additional || [];
+    console.log('Falling back to main product image:', mainImgUrl);
+    if (mainImgUrl) {
+      setMainImage(`${BASE_URL}/Uploads/products/${mainImgUrl}`);
+    }
+    setThumbnails([
+      ...(mainImgUrl ? [{ url: mainImgUrl, isMain: true }] : []),
+      ...additional.map((img) => ({ url: img.url, isMain: img.isMain })),
+    ]);
+  }
+
+  // Sync size and color selections
+  setSelectedSizeId(product.selectedVariant?.sizeId?.toString() || '');
+  setSelectedColorId(product.selectedVariant?.colorId?.toString() || '');
+}, [product, variantIdFromURL, product?.selectedVariant]);
+
   useEffect(() => {
     const mainImg = document.getElementById("mainImage");
     const zoomResult = document.getElementById("zoomResult");
@@ -201,7 +299,6 @@ export default function ProductDetailPage() {
     }
   }, [dispatch, productId, variantIdFromURL, qty]);
 
-
   const parsedProductId = parseInt(productId);
   const parsedVariantId = variantIdFromURL ? parseInt(variantIdFromURL) : null;
 
@@ -211,7 +308,7 @@ export default function ProductDetailPage() {
       (!parsedVariantId || item.variantId === parsedVariantId)
   );
   const isWishlisted = Boolean(wishlistItem);
-  console.log('wishlistItem', wishlistItem?.id)
+  console.log('wishlistItem', wishlistItem?.id);
 
   useEffect(() => {
     setLocalWishlisted(isWishlisted);
@@ -227,21 +324,6 @@ export default function ProductDetailPage() {
     return true;
   }, []);
 
-  // const handleWishlist = useCallback(() => {
-  //    if (!isLoggedIn()) {
-  //     setShowLogin(true);
-  //     return;
-  //   }
-
-  //   if (wishlistItem?.id) {
-  //     dispatch(deleteWishlistItem(wishlistItem?.id));
-  //     toast.success("Removed from wishlist successfully");
-  //     setLocalWishlisted(false);
-  //   } else {
-  //     dispatch(addToWishlist(parsedProductId, parsedVariantId));
-  //   }
-  // }, [dispatch, wishlistItem, parsedProductId, parsedVariantId]);
-
   const handleWishlist = useCallback(async () => {
     const wishlistAction = async () => {
       if (wishlistItem?.id) {
@@ -251,8 +333,6 @@ export default function ProductDetailPage() {
         const res = await dispatch(addToWishlist(parsedProductId, parsedVariantId));
         if (res?.payload?.id) {
           setLocalWishlisted(true);
-        } else {
-          // toast.error("Failed to add to wishlist");
         }
       }
     };
@@ -277,8 +357,6 @@ export default function ProductDetailPage() {
     }
   }, [dispatch, navigate, productId, variantIdFromURL, qty, triggerLogin]);
 
-
-
   const handlePincodeCheck = async () => {
     if (!pincode) {
       return;
@@ -290,15 +368,14 @@ export default function ProductDetailPage() {
       return;
     }
     try {
-
       setResult(null);
       const res = await axios.get(`${BASE_URL}/pincode/${pincode}`);
       setResult(res.data);
-        setChecked(true);
+      setChecked(true);
     } catch (err) {
+      console.error('Pincode check failed:', err);
     }
   };
-
 
   // Memoize dropdown options
   const sizeOptions = useMemo(() => {
@@ -344,13 +421,13 @@ export default function ProductDetailPage() {
           <div className="row">
             <div className="col-md-6">
               <div className="product-main-view">
-                <div className=" gap-2">
-                  <div className="thumb-gallery ">
+                <div className="gap-2">
+                  <div className="thumb-gallery">
                     {thumbnails.map((img, index) => (
                       <div
                         key={index}
                         className="thumb-item mb-2"
-                        onClick={() => setMainImage(`${BASE_URL}/uploads/products/${img.url}`)}
+                        onClick={() => setMainImage(`${BASE_URL}/Uploads/products/${img.url}`)}
                         style={{
                           cursor: "pointer",
                           border: mainImage.includes(img.url) ? "2px solid #007bff" : "1px solid #ddd",
@@ -358,7 +435,7 @@ export default function ProductDetailPage() {
                         }}
                       >
                         <img
-                          src={`${BASE_URL}/uploads/products/${img.url}`}
+                          src={`${BASE_URL}/Uploads/products/${img.url}`}
                           alt={`Thumbnail ${index + 1}`}
                           className="img-fluid"
                           style={{ width: "70px", height: "85px", objectFit: "cover" }}
@@ -421,58 +498,60 @@ export default function ProductDetailPage() {
               <div className="dropdown-container mb-3">
                 <div className="row">
                   {/* Size Dropdown */}
-                  <div className="col-md-6 mb-2">
-                    <label className="dropdown-label">Select Size</label>
-                    <select
-                      className="form-select1 size-dropdown w-100"
-                      value={selectedSizeId}
-                      onChange={(e) => {
-                        const newSizeId = parseInt(e.target.value);
-                        setSelectedSizeId(newSizeId);
+                 <div className="col-md-6 mb-2">
+  <label className="dropdown-label">Select Size</label>
+  <select
+    className="form-select1 size-dropdown w-100"
+    value={selectedSizeId}
+    onChange={(e) => {
+      const newSizeId = parseInt(e.target.value);
+      setSelectedSizeId(newSizeId.toString());
 
-                        const matchedVariant = variants.find(
-                          (v) =>
-                            parseInt(v.size?.id) === newSizeId &&
-                            (!selectedColorId || v.color?.id === parseInt(selectedColorId))
-                        );
-                        dispatch(setSelectedVariant(matchedVariant || null));
-                      }}
-                    >
-                      <option value="">Select</option>
-                      {sizeOptions.map(size => (
-                        <option key={size.id} value={size.id}>
-                          {size.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+      const matchedVariant = variants.find(
+        (v) =>
+          parseInt(v.size?.id) === newSizeId &&
+          (!selectedColorId || parseInt(v.color?.id) === parseInt(selectedColorId))
+      );
+      console.log('Size changed:', { newSizeId, selectedColorId, matchedVariant });
+      dispatch(setSelectedVariant(matchedVariant || null));
+    }}
+  >
+    <option value="">Select</option>
+    {sizeOptions.map(size => (
+      <option key={size.id} value={size.id}>
+        {size.title}
+      </option>
+    ))}
+  </select>
+</div>
 
                   {/* Color Dropdown */}
-                  <div className="col-md-6 mb-2">
-                    <label className="dropdown-label">Select Color</label>
-                    <select
-                      className="form-select1 color-dropdown w-100"
-                      value={selectedColorId}
-                      onChange={(e) => {
-                        const newColorId = parseInt(e.target.value);
-                        setSelectedColorId(newColorId);
+                 <div className="col-md-6 mb-2">
+  <label className="dropdown-label">Select Color</label>
+  <select
+    className="form-select1 color-dropdown w-100"
+    value={selectedColorId}
+    onChange={(e) => {
+      const newColorId = parseInt(e.target.value);
+      setSelectedColorId(newColorId.toString());
 
-                        const matchedVariant = variants.find(
-                          (v) =>
-                            parseInt(v.color?.id) === newColorId &&
-                            (!selectedSizeId || v.size?.id === parseInt(selectedSizeId))
-                        );
-                        dispatch(setSelectedVariant(matchedVariant || null));
-                      }}
-                    >
-                      <option value="">Select</option>
-                      {colorOptions.map(color => (
-                        <option key={color.id} value={color.id}>
-                          {color.label || "N/A"}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+      const matchedVariant = variants.find(
+        (v) =>
+          parseInt(v.color?.id) === newColorId &&
+          (!selectedSizeId || parseInt(v.size?.id) === parseInt(selectedSizeId))
+      );
+      console.log('Color changed:', { newColorId, selectedSizeId, matchedVariant });
+      dispatch(setSelectedVariant(matchedVariant || null));
+    }}
+  >
+    <option value="">Select</option>
+    {colorOptions.map(color => (
+      <option key={color.id} value={color.id}>
+        {color.label || "N/A"}
+      </option>
+    ))}
+  </select>
+</div>
                 </div>
               </div>
 
@@ -492,7 +571,8 @@ export default function ProductDetailPage() {
                 <button
                   className="add-to-wishlist-btn"
                   onClick={handleWishlist}
-                  title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"} >
+                  title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+                >
                   <i className={`bi ${localWishlisted ? "bi-heart-fill" : "bi-heart"}`}></i>{" "}
                   {isWishlisted ? "Wishlisted" : "Add to Wishlist"}
                 </button>
@@ -511,7 +591,6 @@ export default function ProductDetailPage() {
                   <button className="check-btn" onClick={handlePincodeCheck}>
                     {checked ? "Uncheck" : "Check"}
                   </button>
-
                 </div>
                 {checked && result && (
                   <div style={{ marginTop: "10px" }}>
@@ -555,44 +634,44 @@ export default function ProductDetailPage() {
                 <h5>Product Details</h5>
                 <h6 className="mb-0">Description :</h6>
                 <p className="mb-0 mt-0" dangerouslySetInnerHTML={{ __html: description }} />
-               <div className="multi-column mt-2">
-  <div className="mb-2">
-    <h6>Size</h6>
-    <p>{selectedVariant?.size?.title || product.size?.title || "N/A"}</p>
-  </div>
-  <div className="mb-2">
-    <h6>Color</h6>
-    <p>{selectedVariant?.color?.label || product.color?.label || "N/A"}</p>
-  </div>
-  <div className="mb-2">
-    <h6>Dimensions (in inches)</h6>
-    <p>
-      {(selectedVariant?.height || product.height) ? `H ${selectedVariant?.height || product.height}` : 'H N/A'} ×{' '}
-      {(selectedVariant?.width || product.width) ? `W ${selectedVariant?.width || product.width}` : 'W N/A'} ×{' '}
-      {(selectedVariant?.length || product.length) ? `L ${selectedVariant?.length || product.length}` : 'L N/A'}
-    </p>
-  </div>
-  <div>
-    <h6>SKU</h6>
-    <p>{selectedVariant?.sku || product?.sku}</p>
-  </div>
-  <div>
-    <h6>Weight</h6>
-    <p>{selectedVariant?.weight ?? productDetails?.weight} gms</p>
-  </div>
-  <div>
-    <h6>Stock</h6>
-    <p>{selectedVariant?.stock ?? product?.stock}</p>
-  </div>
-  <div>
-    <h6>Delivery Charges</h6>
-    <p>₹{selectedVariant?.deliveryCharges ?? productDetails?.deliveryCharges}</p>
-  </div>
-  <div>
-    <h6>SLA</h6>
-    <p>{selectedVariant?.sla ?? productDetails?.sla} Days</p>
-  </div>
-</div>
+                <div className="multi-column mt-2">
+                  <div className="mb-2">
+                    <h6>Size</h6>
+                    <p>{selectedVariant?.size?.title || product.size?.title || "N/A"}</p>
+                  </div>
+                  <div className="mb-2">
+                    <h6>Color</h6>
+                    <p>{selectedVariant?.color?.label || product.color?.label || "N/A"}</p>
+                  </div>
+                  <div className="mb-2">
+                    <h6>Dimensions (in inches)</h6>
+                    <p>
+                      {(selectedVariant?.height || product.height) ? `H ${selectedVariant?.height || product.height}` : 'H N/A'} ×{' '}
+                      {(selectedVariant?.width || product.width) ? `W ${selectedVariant?.width || product.width}` : 'W N/A'} ×{' '}
+                      {(selectedVariant?.length || product.length) ? `L ${selectedVariant?.length || product.length}` : 'L N/A'}
+                    </p>
+                  </div>
+                  <div>
+                    <h6>SKU</h6>
+                    <p>{selectedVariant?.sku || product?.sku}</p>
+                  </div>
+                  <div>
+                    <h6>Weight</h6>
+                    <p>{selectedVariant?.weight ?? productDetails?.weight} gms</p>
+                  </div>
+                  <div>
+                    <h6>Stock</h6>
+                    <p>{selectedVariant?.stock ?? product?.stock}</p>
+                  </div>
+                  <div>
+                    <h6>Delivery Charges</h6>
+                    <p>₹{selectedVariant?.deliveryCharges ?? productDetails?.deliveryCharges}</p>
+                  </div>
+                  <div>
+                    <h6>SLA</h6>
+                    <p>{selectedVariant?.sla ?? productDetails?.sla} Days</p>
+                  </div>
+                </div>
 
                 <div className="view-more">
                   <a href="#">View More Details</a>
@@ -621,7 +700,7 @@ export default function ProductDetailPage() {
             <RelatedProducts products={product.relatedProducts} />
           </div>
         </div>
-      </section >
+      </section>
       <Footer />
     </>
   );
