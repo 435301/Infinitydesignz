@@ -74,6 +74,7 @@ const rootReducer = combineReducers({
   productPromotions:productPromotionReducer,
   adminUsers: adminUserReducer,
   frontendPromotions:productPromotionReducer,
+   help: categoryReducer,
 });
 
 export default rootReducer;

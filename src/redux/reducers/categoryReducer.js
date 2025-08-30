@@ -24,15 +24,19 @@ import {
   FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS,
   DELETE_CATEGORY_SUCCESS,
   DELETE_SUBCATEGORY_SUCCESS,
-  DELETE_LISTSUBCATEGORY_SUCCESS
+  DELETE_LISTSUBCATEGORY_SUCCESS,
+  FETCH_NEED_HELP_REQUEST,
+  FETCH_NEED_HELP_SUCCESS,
+  FETCH_NEED_HELP_FAILURE,
 } from '../actions/categoryAction';
 
 const initialState = {
   loading: false,
   categories: [],
   error: null,
-   subCategory: null,
-   
+  subCategory: null,
+  items: [],
+
 };
 
 const categoryReducer = (state = initialState, action) => {
@@ -55,39 +59,45 @@ const categoryReducer = (state = initialState, action) => {
       return { ...state, loading: false };
     case ADD_SUBCATEGORY_FAILURE:
       return { ...state, loading: false, error: action.payload };
-       case LIST_SUBCATEGORY_REQUEST:
+    case LIST_SUBCATEGORY_REQUEST:
       return { ...state, loading: true };
     case LIST_SUBCATEGORY_SUCCESS:
       return { ...state, loading: false };
     case LIST_SUBCATEGORY_FAILURE:
       return { ...state, loading: false, error: action.payload };
-      case EDIT_CATEGORY_REQUEST:
+    case EDIT_CATEGORY_REQUEST:
       return { ...state, loading: true };
-      case EDIT_CATEGORY_SUCCESS:
+    case EDIT_CATEGORY_SUCCESS:
       return { ...state, loading: true };
-      case EDIT_CATEGORY_FAILURE:
-      return { ...state, loading: true , error: action.payload };
-       case EDIT_SUBCATEGORY_REQUEST:
+    case EDIT_CATEGORY_FAILURE:
+      return { ...state, loading: true, error: action.payload };
+    case EDIT_SUBCATEGORY_REQUEST:
       return { ...state, loading: true };
-      case EDIT_SUBCATEGORY_SUCCESS:
-      return { ...state, loading: true , subCategory: action.payload };
-      case   EDIT_SUBCATEGORY_FAILURE:
-      return { ...state, loading: true , error: action.payload };
-       case FETCH_SUBCATEGORY_BY_ID_SUCCESS:
+    case EDIT_SUBCATEGORY_SUCCESS:
+      return { ...state, loading: true, subCategory: action.payload };
+    case EDIT_SUBCATEGORY_FAILURE:
+      return { ...state, loading: true, error: action.payload };
+    case FETCH_SUBCATEGORY_BY_ID_SUCCESS:
       return { ...state, subCategory: action.payload };
-       case EDIT_LISTSUBCATEGORY_SUCCESS:
-      return { ...state, loading: true , singleCategory: action.payload };
-      case   EDIT_LISTSUBCATEGORY_FAILURE:
-      return { ...state, loading: true , error: action.payload };
-       case FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS:
+    case EDIT_LISTSUBCATEGORY_SUCCESS:
+      return { ...state, loading: true, singleCategory: action.payload };
+    case EDIT_LISTSUBCATEGORY_FAILURE:
+      return { ...state, loading: true, error: action.payload };
+    case FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS:
       return { ...state, loading: false, singleCategory: action.payload };
-      case DELETE_CATEGORY_SUCCESS:
+    case DELETE_CATEGORY_SUCCESS:
       return { ...state, loading: false, categories: state.categories.filter(category => category.id !== action.payload) };
-      case DELETE_SUBCATEGORY_SUCCESS:
+    case DELETE_SUBCATEGORY_SUCCESS:
       return { ...state, loading: false, subCategory: state.subCategory.filter(sub => sub.id !== action.payload) };
-      case DELETE_LISTSUBCATEGORY_SUCCESS:
-        return { ...state, loading: false, singleCategory: state.singleCategory.filter(item => item.id !== action.payload) }; 
-       default:
+    case DELETE_LISTSUBCATEGORY_SUCCESS:
+      return { ...state, loading: false, singleCategory: state.singleCategory.filter(item => item.id !== action.payload) };
+    case FETCH_NEED_HELP_REQUEST:
+      return { ...state, loading: true, error: null };
+    case FETCH_NEED_HELP_SUCCESS:
+      return { ...state, loading: false, items: action.payload };
+    case FETCH_NEED_HELP_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+    default:
       return state;
   }
 };

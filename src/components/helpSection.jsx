@@ -1,18 +1,32 @@
-import React from "react";
+import React, { useEffect } from "react";
 import '../../src/css/user/userstyle.css';
 import '../../src/css/user/bootstrap-icons.css';
 import '../css/user/bootstrap.min.css';
+import { useDispatch, useSelector } from "react-redux";
+import { fetchNeedHelpItems } from "../redux/actions/categoryAction";
+import BASE_URL from "../config/config";
 
-const HelpSection = ({ title, items }) => {
+const HelpSection = ({ title }) => {
+  const dispatch = useDispatch();
+  const { items, loading, error } = useSelector((state) => state.help);
+  console.log('items',items)
+
+    useEffect(() => {
+    dispatch(fetchNeedHelpItems());
+  }, [dispatch]);
+
+    if (loading) return <p>Loading help items...</p>;
+  if (error) return <p>Error: {error}</p>;
+
   return (
     <section className="help-section">
       <div className="container">
         <h2 className="help-title text-start">{title}</h2>
         <div className="help-grid">
-          {items.map((item, index) => (
-            <div className="help-card" key={`help-${index}`}>
+         {items.map((item) => (
+            <div className="help-card" key={item.id}>
               <div className="help-card-img-wrapper">
-                <img src={item.image} alt={item.alt} />
+                <img  src={`${BASE_URL}${item.mainImage || item.appIcon || item.webImage}`}  alt={item.title} />
                 <div className="help-card-overlay">
                   <div className="help-card-title">{item.title}</div>
                 </div>

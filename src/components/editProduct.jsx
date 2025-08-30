@@ -17,6 +17,7 @@ import { addVariants, editVariants } from '../redux/actions/variantsAction';
 import axios from 'axios';
 import BASE_URL from '../config/config';
 import { toast } from 'react-toastify';
+import { fetchHomeCategoryPromotions } from '../redux/actions/categoryPromotionAction';
 
 const EditProduct = ({ onClose, onProductCreated }) => {
     const dispatch = useDispatch();
@@ -51,7 +52,8 @@ const EditProduct = ({ onClose, onProductCreated }) => {
     const [createdVariantIds, setCreatedVariantIds] = useState('');
     const [updatedVariantIds, setUpdatedVariantIds] = useState([]);
     const [selectedDisplay, setSelectedDisplay] = useState([]);
-    const frontEndDisplay = ["New Arrivals", "Deals of the Day", "Trending",];
+    const frontEndDisplay = ["New Arrivals", "Deals of the Day", "Trending"];
+    const { items: categoryPromotions, loading, error } = useSelector((state) => state.categoryPromotion);
 
     const initialFormState = {
         sku: '',
@@ -72,6 +74,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         sizeId: '',
         colorId: '',
         brandId: '',
+        mainCategoryPromotionIds: [],
     };
 
     const [formData, setFormData] = useState(initialFormState);
@@ -95,6 +98,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         dispatch(fetchColors());
         dispatch(fetchSizes());
         dispatch(fetchBrands());
+        dispatch(fetchHomeCategoryPromotions());
     }, [dispatch]);
 
     const { product } = useSelector(state => state.products);
@@ -125,6 +129,14 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                 }
             }
 
+            // Normalize mainCategoryPromotionIds to ensure it's an array
+            let mainCategoryPromotionIds = product.mainCategoryPromotionIds || [];
+            if (typeof mainCategoryPromotionIds === 'string') {
+                mainCategoryPromotionIds = mainCategoryPromotionIds.split(',').map(id => id.trim());
+            } else if (!Array.isArray(mainCategoryPromotionIds)) {
+                mainCategoryPromotionIds = [];
+            }
+
             console.log('Setting Menu:', menuId, 'SubMenu:', subMenuId, 'ListSubMenu:', listSubMenuId);
 
             setSelectedMenu(menuId);
@@ -149,6 +161,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                 sizeId: product.sizeId || '',
                 colorId: product.colorId || '',
                 brandId: product.brandId || '',
+                mainCategoryPromotionIds,
             });
             setVariants(
                 Array.isArray(product.variants) && product.variants.length
@@ -192,6 +205,8 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         else if (isNaN(formData.sla)) newErrors.sla = 'SLA must be a number';
         else if (isNaN(formData.deliveryCharges))
             newErrors.deliveryCharges = 'Delivery Charges must be a number';
+        if (!formData.mainCategoryPromotionIds.length)
+            newErrors.mainCategoryPromotionIds = 'At least one Main Category Promotion is required';
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -236,6 +251,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
             featureType: featureType,
             filterTypeId: selectedFilterTypeId,
             filterType: filterType,
+            mainCategoryPromotionIds: formData.mainCategoryPromotionIds.map(id => parseInt(id)),
             productDetails: {
                 model: formData.model,
                 weight: parseFloat(formData.weight),
@@ -259,10 +275,8 @@ const EditProduct = ({ onClose, onProductCreated }) => {
             console.log('Product updated successfully:', response.data);
             toast.success('Product updated successfully');
 
-            // Re-fetch the updated product to ensure state consistency
             dispatch(fetchProductById(id));
 
-            // Update created product ID
             setCreatedProductId(response.data.id);
 
             if (onProductCreated) {
@@ -272,6 +286,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                     featureType: featureType,
                     filterTypeId: selectedFilterTypeId,
                     filterType: filterType,
+                    mainCategoryPromotionIds: formData.mainCategoryPromotionIds,
                 });
             }
 
@@ -286,16 +301,11 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         }
     };
 
-
     const handleReset = (e) => {
         e.preventDefault();
         setFormData(initialFormState);
         setDescription('');
         setVariants([{ sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' }]);
-        // Optionally preserve category selections
-        // setSelectedMenu('');
-        // setSelectedSubMenu('');
-        // setSelectedListSubMenu('');
     };
 
     useEffect(() => {
@@ -304,21 +314,13 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         console.log('List SubMenu Options:', listSubMenuOptions);
     }, [menuOptions, subMenuOptions, listSubMenuOptions]);
 
-    // Variants
     const [variants, setVariants] = useState([
         { sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' },
     ]);
 
-    // const handleChange = (index, field, value) => {
-    //     const updatedVariants = [...variants];
-    //     updatedVariants[index][field] = value;
-    //     setVariants(updatedVariants);
-    // };
-
     const handleChange = (index, field, value) => {
         const updatedVariants = [...variants];
 
-        // Ensure only numeric input (optional, but good practice for prices)
         if (['mrp', 'sellingPrice'].includes(field)) {
             value = value.replace(/[^\d.]/g, '');
         }
@@ -336,6 +338,33 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         setVariants(updatedVariants);
     };
 
+    const handleCategoryChange = (e) => {
+        const { name, value, type, checked, files } = e.target;
+        let fieldValue;
+
+        if (type === "checkbox" && name === 'mainCategoryPromotionIds') {
+            // Convert value to string to match formData.mainCategoryPromotionIds type
+            const stringValue = String(value);
+            fieldValue = formData.mainCategoryPromotionIds.includes(stringValue)
+                ? formData.mainCategoryPromotionIds.filter(id => id !== stringValue)
+                : [...formData.mainCategoryPromotionIds, stringValue];
+        } else if (type === "checkbox") {
+            fieldValue = checked;
+        } else if (type === "file") {
+            fieldValue = files && files.length > 0 ? files[0] : null;
+        } else {
+            fieldValue = value;
+        }
+
+        setFormData((prev) => ({
+            ...prev,
+            [name]: fieldValue,
+        }));
+        setErrors((prev) => ({
+            ...prev,
+            [name]: "",
+        }));
+    };
 
     const addRow = () => {
         setVariants([
@@ -449,6 +478,29 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                     <div className="invalid-feedback">{errors.selectedListSubMenu}</div>
                                                 )}
                                             </div>
+                                            <div className="col-lg-12 mb-3">
+                                                <label className="form-label">
+                                                    Display Position<span className="text-danger">*</span>
+                                                </label>
+                                                <div className={`form-control ${errors.mainCategoryPromotionIds ? 'is-invalid' : ''}`}>
+                                                    {categoryPromotions.map((promotion) => (
+                                                        <div key={promotion.id} className="form-check form-check-inline">
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="checkbox"
+                                                                name="mainCategoryPromotionIds"
+                                                                value={promotion.id}
+                                                                checked={formData.mainCategoryPromotionIds.includes(String(promotion.id))}
+                                                                onChange={handleCategoryChange}
+                                                            />
+                                                            <label className="form-check-label">{promotion.title}</label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                {errors.mainCategoryPromotionIds && (
+                                                    <div className="invalid-feedback">{errors.mainCategoryPromotionIds}</div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
 
@@ -509,8 +561,6 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                     <div className="invalid-feedback">{errors.description}</div>
                                                 )}
                                             </div>
-
-
                                             <div className="col-lg-6 mb-3">
                                                 <label className="form-label">
                                                     Product Status<span className="text-danger">*</span>
@@ -527,7 +577,6 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                     <div className="invalid-feedback">{errors.status}</div>
                                                 )}
                                             </div>
-
                                             <div className="col-lg-6 mb-3">
                                                 <label className="form-label">
                                                     Comma Separated Search Keywords<span className="text-danger">*</span>
@@ -548,22 +597,29 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                     <div className="invalid-feedback">{errors.searchKeywords}</div>
                                                 )}
                                             </div>
-                                            <div className="col-lg-6 mb-3">
-                                                <label className="form-label">
-                                                    Front End Display
-                                                </label>
-                                                {frontEndDisplay.map((display) => (
-                                                    <label key={display} style={{ display: "block" }}>
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={selectedDisplay.includes(display)}
-                                                            onChange={() => handleCheckboxChange(display)}
-                                                            className='mb-3 me-2'
-                                                        />
-                                                        {display}
-                                                    </label>
-                                                ))}
-                                            </div>
+                                            {/* <div className="col-lg-4 mb-3">
+                                                <label className="form-label">Display Position <span className="text-danger">*</span></label>
+                                                <select
+                                                    name="display_position"
+                                                    className={`form-control`}
+                                                    onChange={(e) => {
+                                                        const { name, selectedOptions } = e.target;
+                                                        const values = Array.from(selectedOptions, (option) => option.value);
+                                                        handleCategoryChange({
+                                                            target: { name, value: values },
+                                                        });
+                                                    }}
+                                                >
+                                                    <option value="">--Choose--</option>
+                                                    {categoryPromotions &&
+                                                        categoryPromotions.map((promotion) => (
+                                                            <option key={promotion.id} value={promotion.id}>
+                                                                {promotion.title}
+                                                            </option>
+                                                        ))}
+                                                </select>
+                                                {errors.display_position && <div className="invalid-feedback">{errors.display_position}</div>}
+                                            </div> */}
                                         </div>
                                     </div>
 
@@ -590,12 +646,11 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                                 let value = e.target.value;
 
                                                                 if (field === 'stock') {
-                                                                    value = value.replace(/\D/g, '').slice(0, 4); // Only digits, max 4
+                                                                    value = value.replace(/\D/g, '').slice(0, 4);
                                                                 }
 
                                                                 const updatedForm = { ...formData, [field]: value };
 
-                                                                // Check if sellingPrice > mrp
                                                                 if (field === 'sellingPrice') {
                                                                     const mrp = parseFloat(updatedForm['mrp']);
                                                                     const sp = parseFloat(value);
@@ -618,8 +673,6 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                     </div>
                                                 );
                                             })}
-
-
                                             <div className="col-lg-3 mb-3">
                                                 <label className="form-label">
                                                     Brand
@@ -645,7 +698,6 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                     <div className="invalid-feedback">{errors.brandId}</div>
                                                 )}
                                             </div>
-
                                             <div className="col-lg-3 mb-3">
                                                 <label className="form-label">
                                                     Size
@@ -671,7 +723,6 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                     <div className="invalid-feedback">{errors.sizeId}</div>
                                                 )}
                                             </div>
-
                                             <div className="col-lg-3 mb-3">
                                                 <label className="form-label">
                                                     Color
@@ -741,7 +792,6 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                                 }}
                                                                 placeholder="Stock"
                                                             />
-
                                                         </td>
                                                         <td>
                                                             <input
@@ -764,7 +814,6 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                             {variant.error && (
                                                                 <div className="text-danger small mt-1">{variant.error}</div>
                                                             )}
-
                                                         </td>
                                                         <td>
                                                             <select
@@ -794,7 +843,6 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                                 ))}
                                                             </select>
                                                         </td>
-
                                                         <td>
                                                             {index === variants.length - 1 ? (
                                                                 <button

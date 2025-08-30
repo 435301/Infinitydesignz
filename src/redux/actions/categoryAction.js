@@ -27,6 +27,10 @@ export const FETCH_LISTSUBCATEGORY_BY_ID_SUCCESS = 'FETCH_LISTSUBCATEGORY_BY_ID_
 export const DELETE_CATEGORY_SUCCESS = 'DELETE_CATEGORY_SUCCESS';
 export const DELETE_SUBCATEGORY_SUCCESS = 'DELETE_SUBCATEGORY_SUCCESS';
 export const DELETE_LISTSUBCATEGORY_SUCCESS = 'DELETE_LISTSUBCATEGORY_SUCCESS';
+export const FETCH_NEED_HELP_REQUEST = "FETCH_NEED_HELP_REQUEST";
+export const FETCH_NEED_HELP_SUCCESS = "FETCH_NEED_HELP_SUCCESS";
+export const FETCH_NEED_HELP_FAILURE = "FETCH_NEED_HELP_FAILURE";
+
 
 export const fetchCategories = () => {
 
@@ -251,3 +255,21 @@ export const deleteListSubCategory = (id) => async (dispatch) => {
     toast.error("Failed to delete ListSubcategory.");
   }
 }
+
+export const fetchNeedHelpItems = () => async (dispatch) => {
+  try {
+    dispatch({ type: FETCH_NEED_HELP_REQUEST });
+
+    const response = await axios.get(`${BASE_URL}/categories/need-help-buying`);
+
+    dispatch({
+      type: FETCH_NEED_HELP_SUCCESS,
+      payload: response.data,
+    });
+  } catch (error) {
+    dispatch({
+      type: FETCH_NEED_HELP_FAILURE,
+      payload: error.message,
+    });
+  }
+};

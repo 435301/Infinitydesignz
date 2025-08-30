@@ -97,12 +97,12 @@ console.log('promotionIndex', promotions)
   useQuery({
     queryKey: ["show-login-modal"],
     queryFn: waitAndShowModal,
-    enabled: location.pathname === "/", // only run on `/`
+    enabled: location.pathname === "/", 
     onSuccess: () => {
       setShowLoginModal(true);
     },
     staleTime: Infinity,
-    cacheTime: 0, // don't cache it, run fresh each time
+    cacheTime: 0, 
   });
 
   const handleCloseModal = () => {
@@ -356,7 +356,7 @@ console.log('promotionIndex', promotions)
 
       {/* <ProductGrid products={products} /> */}
 
-      <HelpSection title="Need Help Buying?" items={helpItems} />
+      <HelpSection title="Need Help Buying?" />
 
       <div className="container my-5">
         <div className="callback-container d-flex flex-column flex-md-row justify-content-between align-items-center">

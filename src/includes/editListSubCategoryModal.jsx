@@ -15,6 +15,7 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
         seoDescription: '',
         seoKeywords: '',
         status: true,
+        showInNeedHelpBuying: true,
     });
 
     const [appIcon, setAppIcon] = useState(null);
@@ -101,6 +102,7 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
         if (appIcon?.file) data.append('appIcon', appIcon.file);
         if (webIcon?.file) data.append('webImage', webIcon.file);
         if (mainImage?.file) data.append('mainImage', mainImage.file);
+        data.append('showInNeedHelpBuying', form.showInNeedHelpBuying);
 
         await dispatch(updateListSubCategory(subCategoryId, data));
         refetchCategories();
@@ -163,22 +165,30 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
                                     <label className="form-label">SEO Keywords</label>
                                     <input className="form-control" name="seoKeywords" value={form.seoKeywords} onChange={handleChange} />
                                 </div>
-                                 <div className="col-lg-4 mb-3">
-                                    <label className="form-label">Need Help Frontend Display </label>
+                                <div className="col-lg-4 mb-3">
+                                    <label className="form-label">Need Help Frontend Display</label>
                                     <select
-                                        className={`form-control`}
+                                        name="showInNeedHelpBuying"
+                                        className="form-control"
+                                        value={form.showInNeedHelpBuying ? "true" : "false"}  
+                                        onChange={(e) =>
+                                            handleChange({
+                                                target: {
+                                                    name: "showInNeedHelpBuying",
+                                                    value: e.target.value === "true", 
+                                                },
+                                            })
+                                        }
                                     >
-                                        <option>Select Need Help </option>
-                                        <option>Yes</option>
-                                        <option>No</option>
-                                        
+                                        <option value="true">True</option>
+                                        <option value="false">False</option>
                                     </select>
                                 </div>
 
-                                  <ImageUpload label="App Icon" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />
+                                <ImageUpload label="App Icon" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />
                                 <ImageUpload label="Web Icon" image={webIcon} onChange={handleFileChange(setWebIcon)} onRemove={removeImage(setWebIcon)} />
                                 <ImageUpload label="Main Image" image={mainImage} onChange={handleFileChange(setMainImage)} onRemove={removeImage(setMainImage)} />
-                               
+
 
                                 <div className="form-check ps-4 m-4">
                                     <input className="form-check-input" type="checkbox" name="status" checked={form.status} onChange={handleChange} />
