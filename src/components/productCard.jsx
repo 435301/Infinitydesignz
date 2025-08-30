@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
@@ -19,7 +18,7 @@ const ProductCard = ({ product, variant = null }) => {
   const {
     id,
     title = "No Title",
-    images = [],
+    images = { main: null, additional: [], variants: {} },
     mrp,
     sellingPrice,
     variants = [],
@@ -33,15 +32,14 @@ const ProductCard = ({ product, variant = null }) => {
 
     if (variant) {
       const variantId = variant.id;
+      // Check variant-specific images
+      const variantImages = images.variants[variantId];
       _displayMrp = variant.mrp;
       _displayPrice = variant.sellingPrice;
-      _mainImageObj =
-        images.find((img) => img.variantId === variantId && img.isMain) ||
-        images.find((img) => img.variantId === variantId);
+      _mainImageObj = variantImages?.main || (variantImages?.additional || []).find(img => img.isMain);
     } else {
-      _mainImageObj =
-        images.find((img) => img.variantId === null && img.isMain) ||
-        images.find((img) => img.variantId === null);
+      // Use main product image or additional images
+      _mainImageObj = images.main || (images.additional || []).find(img => img.isMain);
 
       if ((!_displayMrp || !_displayPrice) && variants.length > 0) {
         _displayMrp = variants[0].mrp || 0;
@@ -51,7 +49,7 @@ const ProductCard = ({ product, variant = null }) => {
 
     const _hasImage = !!_mainImageObj?.url;
     const _imageUrl = _hasImage
-      ? `${BASE_URL}/uploads/products/${_mainImageObj.url}`
+      ? `${BASE_URL}/Uploads/products/${_mainImageObj.url}`
       : "";
 
     const _discountPercent =
