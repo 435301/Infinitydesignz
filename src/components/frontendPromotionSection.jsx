@@ -105,9 +105,26 @@ const FrontendPromotionsSection = () => {
                                 {block.productPromotionList?.length > 0 && (
                                     <div className="container Fabric pb-4">
                                         <div className="row row-cols-1 row-cols-md-4  mt-4">
-                                            {block.productPromotionList.map((product) => (
-                                                <ProductCard key={product.id} product={product} />
-                                            ))}
+                                            {block.productPromotionList.map((product) => {
+                                                const mainImage = product.images?.find(img => img.isMain) || product.images?.[0];
+                                                const additionalImages = product.images?.filter(img => !img.isMain) || [];
+                                                return (
+                                                    <ProductCard
+                                                        key={product.id}
+                                                        product={{
+                                                            ...product,
+                                                            images: {
+                                                                main: mainImage ? { url: mainImage.url } : null,
+                                                                additional: additionalImages.map(img => ({ url: img.url })),
+                                                                variants: {},
+                                                            },
+                                                        }}
+                                                    />
+                                                );
+                                            }
+
+
+                                            )}
                                         </div>
                                     </div>
                                 )}
@@ -129,9 +146,23 @@ const FrontendPromotionsSection = () => {
                                 {block.productPromotionList?.length > 0 && (
                                     <div className="container Fabric pb-4">
                                         <div className="row row-cols-1 row-cols-md-4  mt-4">
-                                            {block.productPromotionList.map((product) => (
-                                                <ProductCard key={product.id} product={product} />
-                                            ))}
+                                            {block.productPromotionList.map((product) => {
+                                                const mainImage = product.images?.find(img => img.isMain) || product.images?.[0];
+                                                const additionalImages = product.images?.filter(img => !img.isMain) || [];
+                                                return (
+                                                    <ProductCard
+                                                        key={product.id}
+                                                        product={{
+                                                            ...product,
+                                                            images: {
+                                                                main: mainImage ? { url: mainImage.url } : null,
+                                                                additional: additionalImages.map(img => ({ url: img.url })),
+                                                                variants: {},
+                                                            },
+                                                        }}
+                                                    />
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 )}
@@ -156,9 +187,23 @@ const FrontendPromotionsSection = () => {
                                 {block.productPromotionList?.length > 0 && (
                                     <div className="container Fabric pb-4">
                                         <div className="row row-cols-1 row-cols-md-4  mt-4">
-                                            {block.productPromotionList.map((product) => (
-                                                <ProductCard key={product.id} product={product} />
-                                            ))}
+                                            {block.productPromotionList.map((product) => {
+                                                const mainImage = product.images?.find(img => img.isMain) || product.images?.[0];
+                                                const additionalImages = product.images?.filter(img => !img.isMain) || [];
+                                                return (
+                                                    <ProductCard
+                                                        key={product.id}
+                                                        product={{
+                                                            ...product,
+                                                            images: {
+                                                                main: mainImage ? { url: mainImage.url } : null,
+                                                                additional: additionalImages.map(img => ({ url: img.url })),
+                                                                variants: {},
+                                                            },
+                                                        }}
+                                                    />
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 )}
