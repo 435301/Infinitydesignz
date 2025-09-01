@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../redux/actions/categoryAction";
 import "../../src/css/user/header.css";
@@ -128,6 +128,10 @@ const MegaMenuColumn = React.memo(({ parent, children, groupedCategories  }) => 
 ));
 
 export default function Header() {
+
+  const [searchParams] = useSearchParams();
+  const searchStr = searchParams.get("searchStr"); 
+  console.log(searchStr, 'searchStr');
   const dispatch = useDispatch();
   const { categories = [] } = useSelector((state) => state.categories || {});
   const wishlistItems = useSelector((state) => state.whishlist.items || []);
@@ -181,7 +185,7 @@ export default function Header() {
     e.preventDefault();
     if (query.trim()) {
     dispatch(addKeyword(query.trim()));
-      // navigate(`/search?query=${encodeURIComponent(query.trim())}`);
+     navigate(`/products?searchStr=${query.trim()}`);
       setShowSuggestions(false);
     }
   };
@@ -222,14 +226,14 @@ export default function Header() {
                         className="suggestion-item"
                         onClick={() => {
                           setShowSuggestions(false);
-                          navigate(`/shop.php?query=${encodeURIComponent(item)}`);
+                           navigate(`/products?searchStr=${item}`);
                         }}
                         tabIndex={0}
                         role="button"
                         onKeyDown={e => {
                           if (e.key === 'Enter') {
                             setShowSuggestions(false);
-                            navigate(`/shop.php?query=${encodeURIComponent(item)}`);
+                            navigate(`/products?searchStr=${item}`);
                           }
                         }}
                       >
