@@ -51,10 +51,9 @@ const BannerSlider = ({ sliders }) => {
                 </ul>
                 <div className="Shop align-items-center d-flex">
                   <Link
-                    // to={slider.link?.startsWith('http') ? slider.link : `https://${slider.link}`}
-                    to='/shop'
+                    to={slider.link?.startsWith('http') ? slider.link : `https://${slider.link}`}
                     className="btn btn-light rounded-pill px-4 text-dark"
-                    target="_blank"
+                    target="_self"
                     rel="noopener noreferrer"
                   >
                     Shop Now

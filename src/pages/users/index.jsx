@@ -219,32 +219,7 @@ console.log('promotionIndex', promotions)
     }
   ];
 
-  const cards = [
-    {
-      type: "imageOnly",
-      image: New1,
-      alt: "New Product 1",
-      fullWidth: true
-    },
-    {
-      type: "overlay",
-      image: New2,
-      alt: "Product 2",
-      text: "Lorem Ipsum is simply dummy text of the printing",
-      bgColor: "#ffc107",
-      buttonText: "SHOP NOW",
-      link: "#"
-    },
-    {
-      type: "overlay",
-      image: New3,
-      alt: "Product 3",
-      text: "Lorem Ipsum is simply dummy text of the printing",
-      bgColor: "#00c1b6",
-      buttonText: "SHOP NOW",
-      link: "#"
-    }
-  ];
+
 
   const handleFormSubmit = (data) => {
     alert(`Name: ${data.name}, Mobile: ${data.mobile}`);
@@ -350,9 +325,6 @@ console.log('promotionIndex', promotions)
         </div>
       </div>
       <FrontendPromotionsSection promotions={promotions} />
-
-
-
 
       {/* <ProductGrid products={products} /> */}
 
