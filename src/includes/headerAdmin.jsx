@@ -12,8 +12,15 @@ import {
 } from 'react-icons/bs';
 import logo from '../img/logo.svg';
 import avatar from '../img/avatar-1.png';
+import { useNavigate } from 'react-router-dom';
 
 const HeaderAdmin = ({ onToggleSidebar = () => { } }) => {
+  const navigate = useNavigate();
+   const handleLogout = (e) => {
+    e.preventDefault(); 
+    localStorage.removeItem("token");
+    navigate("/admin/login");
+  };
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(window.innerWidth <= 767);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -234,7 +241,7 @@ const HeaderAdmin = ({ onToggleSidebar = () => { } }) => {
                   <a href="#!" onClick={handleDropdownItemClick} style={linkStyle}><BsLock style={iconStyle} /> Lock Screen</a>
                 </li>
                 <li>
-                  <a href="/login1" onClick={handleDropdownItemClick} style={linkStyle}><BsBoxArrowRight style={iconStyle} /> Logout</a>
+                  <a href="/admin/login" onClick={handleLogout} style={linkStyle}><BsBoxArrowRight style={iconStyle} /> Logout</a>
                 </li>
               </ul>
             </li>
