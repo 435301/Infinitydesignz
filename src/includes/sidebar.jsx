@@ -342,7 +342,7 @@ const Sidebar = ({ isCollapsed, onClose }) => {
                 <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Sliders</span>
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink
                 to="/admin/shop-now"
                 className={({ isActive }) => (isActive ? 'active' : '')}
@@ -352,7 +352,7 @@ const Sidebar = ({ isCollapsed, onClose }) => {
                 <BsBag style={mainIconStyle(isCollapsed)} />
                 <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Shop Now</span>
               </NavLink>
-            </li>
+            </li> */}
             <li>
               <div onClick={() => toggleMenu('others')} style={navLinkStyle(isCollapsed, true)}>
                 <BsBriefcase style={mainIconStyle(isCollapsed)} />
