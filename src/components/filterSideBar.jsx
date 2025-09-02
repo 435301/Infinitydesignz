@@ -156,7 +156,36 @@ const FilterSidebar = () => {
       {renderFilterSection("Discount", filters.discountRanges, "discount")}
 
       {/* Colors */}
-      {renderFilterSection("Colors", filters.colors, "color")}
+      {/* {renderFilterSection("Colors", filters.colors, "color","label")} */}
+      {filters.colors?.length > 0 && (
+        <div className="filter-section">
+          <h6>Colors</h6>
+          {filters.colors.map((color) => (
+            <div key={color.id} className="filter-option">
+              <label className="checkbox-label d-flex align-items-center">
+                <input
+                  type="checkbox"
+                  checked={searchParams.get("color")?.split(",").includes(color.id.toString()) || false}
+                  onChange={() => handleFilterChange("color", color.id.toString())}
+                />
+                <span
+                  style={{
+                    display: "inline-block",
+                    width: "16px",
+                    height: "16px",
+                    backgroundColor: color.hex_code,
+                    border: "1px solid #ccc",
+                    marginRight: "6px",
+                    borderRadius: "50%",
+                  }}
+                ></span>
+                {color.label}
+              </label>
+            </div>
+          ))}
+        </div>
+      )}
+
 
       {/* Materials */}
       {/* {renderFilterSection("Materials", filters.materials, "material")} */}

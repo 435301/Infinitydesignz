@@ -11,7 +11,8 @@ import {
 const initialState = {                                                 
   items: [],
   loading: false,
-  error: null
+  error: null,
+    relatedProducts: [],
 };
 
 const wishlistReducer = (state = initialState, action) => {
@@ -20,7 +21,12 @@ const wishlistReducer = (state = initialState, action) => {
       return { ...state, loading: true };
     case FETCH_WISHLIST_SUCCESS:
       console.log("Reducer received new wishlist:", action.payload);
-      return { ...state, loading: false, items: action.payload };
+      return {
+    ...state,
+    loading: false,
+    items: action.payload.wishlistItems || [],
+    relatedProducts: action.payload.relatedProducts || [] 
+  };
     case FETCH_WISHLIST_FAILURE:
       return { ...state, loading: false, error: action.payload };
     case ADD_TO_WISHLIST_SUCCESS:

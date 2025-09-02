@@ -34,6 +34,7 @@ export default function WishlistPage() {
   // Memoized selectors for redux state
   const sizes = useSelector((state) => state.sizes?.sizes || [], shallowEqual);
   const { product, loading } = useSelector((state) => state.userProductDetails, shallowEqual);
+  const relatedProducts = useSelector((state) => state.whishlist.relatedProducts);
  
   // Fetch wishlist only once
   const fetchWishlist = useCallback(async () => {
@@ -41,7 +42,7 @@ export default function WishlistPage() {
     try {
       const config = { headers: { Authorization: `Bearer ${getToken()}` } };
       const res = await axios.get(`${BASE_URL}/wishlist`, config);
-      setWishlistItems(res.data || []);
+      setWishlistItems(res.data.wishlistItems || []);
     } catch (err) {
       console.error("Failed to load wishlist", err);
     } finally {
@@ -94,25 +95,6 @@ export default function WishlistPage() {
   }, [navigate]);
  
  
-  // Memoize related products
-  const relatedProducts = useMemo(() => [
-    {
-      id: 1,
-      title: "Andres Fabric 3 Seater Sofa In Sandy Brown Colour",
-      price: "₹37,999",
-      originalPrice: "₹48,999",
-      img: Img3,
-      rating: "4.4 | 24K"
-    },
-    {
-      id: 2,
-      title: "Stylish Wingback Chair in Grey Fabric",
-      price: "₹21,999",
-      originalPrice: "₹28,999",
-      img: Img3,
-      rating: "4.7 | 10K"
-    }
-  ], []);
  
   // Memoize handleCart to avoid re-creation
   const handleCart = useCallback(async (item) => {
@@ -269,47 +251,68 @@ export default function WishlistPage() {
               )}
             </div>
             {/* Related Products Section */}
-            <div className="col-md-3">
-              <div className="ad-banner mb-4">
-                <img src={AdBanner} alt="Special Sale" className="img-fluid" />
+           <div className="col-md-3">
+  <div className="ad-banner mb-4">
+    <img src={AdBanner} alt="Special Sale" className="img-fluid" />
+  </div>
+
+  <div className="related-products py-4">
+    <h4>Related Products</h4>
+    <Carousel controls indicators={false}>
+      {(relatedProducts || []).map((product) => {
+        const imgUrl = product.imageUrl?.startsWith("http")
+          ? product.imageUrl
+          : `${BASE_URL}${product.imageUrl}`;
+
+        return (
+          <Carousel.Item key={product.id}>
+            <div className="card h-100 position-relative">
+              {/* Dynamic discount badge */}
+              {product.badgeDiscountPercent && (
+                <div className="discount-badge">
+                  {product.badgeDiscountPercent}% off
+                </div>
+              )}
+
+              <div className="wishlist-icon">
+                <img src={Icon} alt="Wishlist" />
               </div>
- 
-              <div className="related-products py-4">
-                <h4>Related Products</h4>
-                <Carousel controls indicators={false}>
-                  {relatedProducts.map((product) => (
-                    <Carousel.Item key={product.id}>
-                      <div className="card h-100 position-relative">
-                        <div className="discount-badge">22% off</div>
-                        <div className="wishlist-icon">
-                          <img src={Icon} alt="Wishlist" />
-                        </div>
-                        <img src={product.img} className="card-img-top" alt="Product" />
-                        <div className="card-body">
-                          <h6 className="card-title">{product.title}</h6>
-                          <p className="card-text">
-                            <strong>{product.price}</strong>{" "}
-                            <del>{product.originalPrice}</del>
-                          </p>
-                          <div className="rating d-flex align-items-center mb-2">
-                            {[...Array(4)].map((_, i) => (
-                              <img key={i} src={Star} className="me-1" alt="star" />
-                            ))}
-                            <img src={Star1} className="me-1" alt="half-star" />
-                            <span>{product.rating}</span>
-                          </div>
-                          <p className="emi-text">
-                            36-Month Warranty Available<br />
-                            EMI starting from ₹1,825/month<br />
-                            Express Shipping in 1 day
-                          </p>
-                        </div>
-                      </div>
-                    </Carousel.Item>
+
+              {/* Dynamic image */}
+              <img src={imgUrl} className="card-img-top" alt={product.title} />
+
+              <div className="card-body">
+                {/* Dynamic title */}
+                <h6 className="card-title">{product.title}</h6>
+
+                {/* Dynamic price */}
+                <p className="card-text">
+                  <strong>₹{product.sellingPrice}</strong>{" "}
+                  <del>₹{product.mrp}</del>
+                </p>
+
+                {/* Static rating for now, unless your API provides it */}
+                <div className="rating d-flex align-items-center mb-2">
+                  {[...Array(4)].map((_, i) => (
+                    <img key={i} src={Star} className="me-1" alt="star" />
                   ))}
-                </Carousel>
+                  <img src={Star1} className="me-1" alt="half-star" />
+                  <span>4.5</span>
+                </div>
+
+                <p className="emi-text">
+                  36-Month Warranty Available<br />
+                  EMI starting from ₹1,825/month<br />
+                  Express Shipping in 1 day
+                </p>
               </div>
             </div>
+          </Carousel.Item>
+        );
+      })}
+    </Carousel>
+  </div>
+</div>
           </div>
         </div>
       </section>

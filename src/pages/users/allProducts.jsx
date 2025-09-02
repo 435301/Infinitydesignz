@@ -58,9 +58,13 @@ const ProductsPage = () => {
           const maxPrice = parseFloat(searchParams.get("maxPrice")) || Infinity;
           const discountMin = parseFloat(searchParams.get("discountPctMin")) || 0;
           const discountMax = parseFloat(searchParams.get("discountPctMax")) || Infinity;
+          const colorParam = searchParams.get("color")
+            ? searchParams.get("color").split(",").map((c) => parseInt(c))
+            : [];
 
           // ✅ use productDiscountPercent from API
           const productDiscount = product.productDiscountPercent || 0;
+
 
           const isInRange = (sellingPrice, discountPct) => {
             return (
@@ -71,13 +75,27 @@ const ProductsPage = () => {
             );
           };
 
+          const productMatchesColor =
+            colorParam.length === 0 ||
+            colorParam.includes(product.colorId) ||
+            (product.variants || []).some((v) => colorParam.includes(v.colorId));
+
+          if (!productMatchesColor) return []; 
           // Check product
           const productInRange = isInRange(product.sellingPrice, productDiscount);
 
           // Check variants → assume API provides badgeDiscountPercent per variant
-          const variantsInRange = (product.variants || []).filter((variant) =>
-            isInRange(variant.sellingPrice, variant.badgeDiscountPercent || 0)
+          // const variantsInRange = (product.variants || []).filter((variant) =>
+          //   isInRange(variant.sellingPrice, variant.badgeDiscountPercent || 0)
+          // );
+
+          // check variants range
+          const variantsInRange = (product.variants || []).filter(
+            (variant) =>
+              isInRange(variant.sellingPrice, variant.discountPercent || 0) &&
+              (colorParam.length === 0 || colorParam.includes(variant.colorId))
           );
+
 
           if (productInRange && variantsInRange.length > 0) {
             const mainProductEntry = {
