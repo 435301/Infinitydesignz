@@ -127,7 +127,6 @@ export default function WishlistPage() {
   const handleDelete = useCallback(async (itemId) => {
     await dispatch(deleteWishlistItem(itemId));
     fetchWishlist();
-    toast.success("Removed from wishlist successfully");
   }, [dispatch, fetchWishlist]);
  
   return (
