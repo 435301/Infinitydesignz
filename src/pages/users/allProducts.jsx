@@ -1,5 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import "../../css/user/userstyle.css";
 import "../../css/admin/icofont.css";
 import Header from "../../includes/header";
@@ -10,92 +16,238 @@ import BASE_URL from "../../config/config";
 import { useSelector } from "react-redux";
 import FilterSidebar from "../../components/filterSideBar";
 
+const PRODUCTS_FILTERS_KEY = "productsFilters";
+
+// helpers
+const num = (v, def = null) => {
+  if (v === null || v === undefined || v === "") return def;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : def;
+};
+
+// extract ID from "slug-123"
+const extractIdFromSlug = (seg) => {
+  if (!seg) return null;
+  const parts = seg.split("-");
+  const last = parts[parts.length - 1];
+  const n = Number(last);
+  return Number.isFinite(n) ? n : null;
+};
+
 const ProductsPage = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+
   const [searchParams] = useSearchParams();
-  const categories = useSelector((state) => state.categories.categories || []);
-  const mainCategoryId = parseInt(searchParams.get("mainCategoryId"));
-  const subCategoryId = searchParams.get('subCategoryId') ? parseInt(searchParams.get('subCategoryId'), 10) : null;
-  const listSubCatId = searchParams.get('listSubCatId') ? parseInt(searchParams.get('listSubCatId'), 10) : null;
+  const { state: navState } = useLocation();
+  const { main, sub, leaf } = useParams();
+
+  const categories = useSelector((s) => s.categories.categories || []);
+
+  // quick lookup
+  const byId = useMemo(() => {
+    const m = {};
+    categories.forEach((c) => (m[c.id] = c));
+    return m;
+  }, [categories]);
+
+  // extract ids from slugs
+  let mainCategoryId = extractIdFromSlug(main);
+  let subCategoryId = extractIdFromSlug(sub);
+  let listSubCatId = extractIdFromSlug(leaf);
+
+  // derive missing parents from tree
+  if (listSubCatId && byId[listSubCatId]) {
+    const child = byId[listSubCatId];
+    if (!subCategoryId && child.parentId) subCategoryId = child.parentId;
+    if (subCategoryId && byId[subCategoryId] && !mainCategoryId) {
+      const subNode = byId[subCategoryId];
+      if (subNode.parentId) mainCategoryId = subNode.parentId;
+    }
+  } else if (subCategoryId && byId[subCategoryId] && !mainCategoryId) {
+    const subNode = byId[subCategoryId];
+    if (subNode.parentId) mainCategoryId = subNode.parentId;
+  }
+
+  // merge filters
+  const filters = useMemo(() => {
+    const defaults = {
+      searchStr: "",
+      color: "",
+      size: "",
+      filterListIds: "",
+      priceRanges: "",
+      minPrice: "",
+      maxPrice: "",
+      sort: "",
+      page: 1,
+      pageSize: 24,
+      discountPctMin: "",
+      discountPctMax: "",
+    };
+
+    const fromUrl = {};
+    [
+      "brandId",
+      "searchStr",
+      "color",
+      "size",
+      "filterListIds",
+      "priceRanges",
+      "minPrice",
+      "maxPrice",
+      "sort",
+      "page",
+      "pageSize",
+      "discountPctMin",
+      "discountPctMax",
+    ].forEach((k) => {
+      const v = searchParams.get(k);
+      if (v !== null) fromUrl[k] = v;
+    });
+
+    let fromSession = {};
+    try {
+      const raw = sessionStorage.getItem(PRODUCTS_FILTERS_KEY);
+      if (raw) fromSession = JSON.parse(raw) || {};
+    } catch {}
+
+    const fromState = navState || {};
+    const derivedIds = {
+      ...(mainCategoryId ? { mainCategoryId } : {}),
+      ...(subCategoryId ? { subCategoryId } : {}),
+      ...(listSubCatId ? { listSubCatId } : {}),
+    };
+
+    return { ...defaults, ...fromUrl, ...fromSession, ...fromState, ...derivedIds };
+  }, [searchParams, navState, mainCategoryId, subCategoryId, listSubCatId]);
+
+  // updater for sidebar
+  const onChangeFilters = (patch) => {
+    const next = { ...filters, ...patch };
+    try {
+      sessionStorage.setItem(PRODUCTS_FILTERS_KEY, JSON.stringify(next));
+    } catch {}
+    // stay on same slug path
+    const segments = [
+      main,
+      sub,
+      leaf,
+    ].filter(Boolean);
+    navigate(`/products${segments.length ? "/" + segments.join("/") : ""}`, {
+      state: next,
+      replace: true,
+    });
+  };
 
   const getCategoryTitle = (id) =>
-    categories.find((cat) => cat.id === id)?.title || "Unknown";
+    (id ? byId[id]?.title : null) || "Unknown";
 
-  const breadcrumbItems = [
-    { label: "Home", link: "/" },
-    ...(mainCategoryId ? [{ label: getCategoryTitle(mainCategoryId) }] : []),
-    ...(subCategoryId ? [{ label: getCategoryTitle(subCategoryId) }] : []),
-    ...(listSubCatId ? [{ label: getCategoryTitle(listSubCatId) }] : []),
-  ];
+  const breadcrumbItems = useMemo(() => {
+    const items = [{ label: "Home", link: "/" }];
+
+    // If search mode is active → show search breadcrumb
+    if (filters.searchStr && filters.searchStr.trim() !== "") {
+      items.push({ label: "Search" });
+      items.push({ label: filters.searchStr.trim() });
+      return items;
+    }
+
+    // Normal category hierarchy
+    if (mainCategoryId) {
+      const mainSlug = `${(byId[mainCategoryId]?.title || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "-")}-${mainCategoryId}`;
+      items.push({
+        label: getCategoryTitle(mainCategoryId),
+        link: `/products/${mainSlug}`,
+      });
+    }
+
+    if (subCategoryId) {
+      const subSlug = `${(byId[subCategoryId]?.title || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "-")}-${subCategoryId}`;
+      items.push({
+        label: getCategoryTitle(subCategoryId),
+        link: `/products/${(items[1]?.link || "").replace("/products/", "")}/${subSlug}`,
+      });
+    }
+
+    if (listSubCatId) {
+      const leafSlug = `${(byId[listSubCatId]?.title || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "-")}-${listSubCatId}`;
+      items.push({
+        label: getCategoryTitle(listSubCatId),
+        link: `/products/${(items[1]?.link || "").replace("/products/", "")}/${(items[2]?.link || "").replace("/products/", "")}/${leafSlug}`,
+      });
+    }
+
+    return items;
+  }, [filters.searchStr, byId, mainCategoryId, subCategoryId, listSubCatId]);
+
 
   useEffect(() => {
     setProducts([]);
-    const queryString = new URLSearchParams({
-      ...(searchParams.get("mainCategoryId") && { mainCategoryId: searchParams.get("mainCategoryId") }),
-      ...(searchParams.get("subCategoryId") && { subCategoryId: searchParams.get("subCategoryId") }),
-      ...(searchParams.get("listSubCatId") && { listSubCatId: searchParams.get("listSubCatId") }),
-      ...(searchParams.get("brandId") && { brandId: searchParams.get("brandId") }),
-      ...(searchParams.get("searchStr") && { searchStr: searchParams.get("searchStr") }),
-      ...(searchParams.get("color") && { color: searchParams.get("color") }),
-      ...(searchParams.get("size") && { size: searchParams.get("size") }),
-      ...(searchParams.get("filterListIds") && { filterListIds: searchParams.get("filterListIds") }),
-      ...(searchParams.get("minPrice") && { minPrice: searchParams.get("minPrice") }),
-      ...(searchParams.get("maxPrice") && { maxPrice: searchParams.get("maxPrice") }),
-      ...(searchParams.get("sort") && { sort: searchParams.get("sort") }),
-      ...(searchParams.get("page") && { page: searchParams.get("page") }),
-      ...(searchParams.get("pageSize") && { pageSize: searchParams.get("pageSize") }),
-      ...(searchParams.get("discountPctMin") && { discountPctMin: searchParams.get("discountPctMin") }),
-      ...(searchParams.get("discountPctMax") && { discountPctMax: searchParams.get("discountPctMax") }),
 
-    }).toString();
+    const queryString = new URLSearchParams(
+      Object.fromEntries(
+        Object.entries(filters).filter(
+          ([, v]) => v !== "" && v !== null && v !== undefined
+        )
+      )
+    ).toString();
 
     axios
       .get(`${BASE_URL}/products/search?${queryString}`)
       .then((res) => {
         const rawProducts = res.data?.items || [];
-        const filteredProducts = rawProducts.flatMap((product) => {
-          const minPrice = parseFloat(searchParams.get("minPrice")) || 0;
-          const maxPrice = parseFloat(searchParams.get("maxPrice")) || Infinity;
-          const discountMin = parseFloat(searchParams.get("discountPctMin")) || 0;
-          const discountMax = parseFloat(searchParams.get("discountPctMax")) || Infinity;
-          const colorParam = searchParams.get("color")
-            ? searchParams.get("color").split(",").map((c) => parseInt(c))
-            : [];
 
-          // ✅ use productDiscountPercent from API
+        const minPrice = num(filters.minPrice, 0);
+        const maxPrice = num(filters.maxPrice, Infinity);
+        const discMin = num(filters.discountPctMin, 0);
+        const discMax = num(filters.discountPctMax, Infinity);
+        const colorIds = filters.color
+          ? String(filters.color)
+              .split(",")
+              .map((c) => Number(c))
+              .filter((n) => !Number.isNaN(n))
+          : [];
+
+        const inRange = (sellingPrice, discountPct) =>
+          sellingPrice >= minPrice &&
+          sellingPrice <= maxPrice &&
+          discountPct >= discMin &&
+          discountPct <= discMax;
+
+        const filtered = rawProducts.flatMap((product) => {
           const productDiscount = product.productDiscountPercent || 0;
 
-
-          const isInRange = (sellingPrice, discountPct) => {
-            return (
-              sellingPrice >= minPrice &&
-              sellingPrice <= maxPrice &&
-              discountPct >= discountMin &&
-              discountPct <= discountMax
+          const matchesColor =
+            colorIds.length === 0 ||
+            colorIds.includes(product.colorId) ||
+            (product.variants || []).some((v) =>
+              colorIds.includes(v.colorId)
             );
-          };
+          if (!matchesColor) return [];
 
-          const productMatchesColor =
-            colorParam.length === 0 ||
-            colorParam.includes(product.colorId) ||
-            (product.variants || []).some((v) => colorParam.includes(v.colorId));
-
-          if (!productMatchesColor) return []; 
-          // Check product
-          const productInRange = isInRange(product.sellingPrice, productDiscount);
-
-          // Check variants → assume API provides badgeDiscountPercent per variant
-          // const variantsInRange = (product.variants || []).filter((variant) =>
-          //   isInRange(variant.sellingPrice, variant.badgeDiscountPercent || 0)
-          // );
-
-          // check variants range
-          const variantsInRange = (product.variants || []).filter(
-            (variant) =>
-              isInRange(variant.sellingPrice, variant.discountPercent || 0) &&
-              (colorParam.length === 0 || colorParam.includes(variant.colorId))
+          const productInRange = inRange(
+            product.sellingPrice,
+            productDiscount
           );
 
+          const variantsInRange = (product.variants || []).filter(
+            (v) =>
+              inRange(v.sellingPrice, v.discountPercent || 0) &&
+              (colorIds.length === 0 || colorIds.includes(v.colorId))
+          );
 
           if (productInRange && variantsInRange.length > 0) {
             const mainProductEntry = {
@@ -124,25 +276,24 @@ const ProductsPage = () => {
               discountPct: variant.badgeDiscountPercent || 0,
             }));
           } else if (productInRange && variantsInRange.length === 0) {
-            return [{ ...product, isVariant: false, discountPct: productDiscount }];
+            return [
+              { ...product, isVariant: false, discountPct: productDiscount },
+            ];
           }
           return [];
         });
 
-        setProducts(filteredProducts);
+        setProducts(filtered);
       })
-      .catch((err) => {
-        console.error("GET: Failed to fetch products", err);
-      });
+      .catch((err) => console.error("GET: Failed to fetch products", err));
+  }, [filters]);
 
-  }, [searchParams]);
-
-  const groupByListSubCategory = (products) => {
+  const groupByListSubCategory = (items) => {
     const grouped = {};
-    products.forEach((product) => {
-      const key = product?.category?.title || "Others";
+    items.forEach((p) => {
+      const key = p?.category?.title || "Others";
       if (!grouped[key]) grouped[key] = [];
-      grouped[key].push(product);
+      grouped[key].push(p);
     });
     return grouped;
   };
@@ -176,6 +327,7 @@ const ProductsPage = () => {
       <section className="terms-of-service">
         <div className="container">
           <h2>Products</h2>
+
           {subCategoryId && (
             <div className="mb-3">
               <h5>
@@ -186,14 +338,19 @@ const ProductsPage = () => {
               </h5>
             </div>
           )}
+
           <div className="row">
             {listSubCatId !== null && (
               <div className="col-lg-3">
-                <FilterSidebar />
+                <FilterSidebar filters={filters} onChangeFilters={onChangeFilters} />
               </div>
             )}
 
-            <div className={listSubCatId ? "col-lg-9 mb-3 sg" : "col-lg-12 mb-3 sg"}>
+            <div
+              className={
+                listSubCatId ? "col-lg-9 mb-3 sg" : "col-lg-12 mb-3 sg"
+              }
+            >
               <div className="Fabric pb-4">
                 {products.length > 0 ? (
                   subCategoryId && !listSubCatId ? (
@@ -204,7 +361,7 @@ const ProductsPage = () => {
                           <div className="row row-cols-1 row-cols-md-4 g-4">
                             {subProducts.map((product) => (
                               <ProductCard
-                                key={product.id}
+                                key={`${product.id}-${product.variantId || "base"}`}
                                 product={product}
                                 variant={product._variant}
                               />
@@ -217,7 +374,7 @@ const ProductsPage = () => {
                     <div className="row row-cols-1 row-cols-md-4 g-4">
                       {products.map((product) => (
                         <ProductCard
-                          key={product.id}
+                          key={`${product.id}-${product.variantId || "base"}`}
                           product={product}
                           variant={product._variant}
                         />

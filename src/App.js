@@ -179,6 +179,9 @@ function App() {
           <Route path='/admin/edit-product-filters' element={<AdminRoute><EditProductFilters /></AdminRoute>}></Route>
           <Route path='/admin/edit-product-images' element={<AdminRoute><EditProductImages /></AdminRoute>}></Route>
           <Route path='/products' element={<ProductsPage />}></Route>
+          <Route path="/products/:main" element={<ProductsPage />} />
+          <Route path="/products/:main/:sub" element={<ProductsPage />} />
+          <Route path="/products/:main/:sub/:leaf" element={<ProductsPage />} />
           <Route path="/admin/orders/:orderId" element={<OrderDetailsPage />} />
           <Route path='/admin/shop-now' element={<ShopNow/>}></Route>
         </Routes>

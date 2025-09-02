@@ -1,147 +1,211 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import "../css/user/filterSidebar.css";
 import BASE_URL from "../config/config";
 
-const FilterSidebar = () => {
-  const [filters, setFilters] = useState(null);
+/**
+ * Optional props:
+ *  - filters: current filters (source of truth)
+ *  - onChangeFilters(next): update callback (keeps URL clean)
+ * If not provided, falls back to URL params (legacy behavior).
+ */
+const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
+  const [facetData, setFacetData] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const queryString = new URLSearchParams({
-    ...(searchParams.get("mainCategoryId") && { mainCategoryId: searchParams.get("mainCategoryId") }),
-    ...(searchParams.get("subCategoryId") && { subCategoryId: searchParams.get("subCategoryId") }),
-    ...(searchParams.get("listSubCatId") && { listSubCatId: searchParams.get("listSubCatId") }),
-  }).toString();
+  const toStr = (v) =>
+    v === null || v === undefined ? "" : Array.isArray(v) ? v.join(",") : String(v);
+  const toArr = (s) =>
+    (typeof s === "string" ? s.split(",") : [])
+      .map((x) => x.trim())
+      .filter(Boolean);
 
+  // Use category IDs from props when available; else URL
+  const identity = useMemo(() => {
+    const fromProps = {
+      ...(propsFilters?.mainCategoryId && { mainCategoryId: String(propsFilters.mainCategoryId) }),
+      ...(propsFilters?.subCategoryId && { subCategoryId: String(propsFilters.subCategoryId) }),
+      ...(propsFilters?.listSubCatId && { listSubCatId: String(propsFilters.listSubCatId) }),
+    };
+    if (Object.keys(fromProps).length) return fromProps;
+
+    const sp = {};
+    if (searchParams.get("mainCategoryId")) sp.mainCategoryId = searchParams.get("mainCategoryId");
+    if (searchParams.get("subCategoryId")) sp.subCategoryId = searchParams.get("subCategoryId");
+    if (searchParams.get("listSubCatId")) sp.listSubCatId = searchParams.get("listSubCatId");
+    return sp;
+  }, [propsFilters, searchParams]);
+
+  // Current filter values for checked states
+  const current = useMemo(() => {
+    const base = {
+      mainCategoryId: "",
+      subCategoryId: "",
+      listSubCatId: "",
+      brandId: "",
+      searchStr: "",
+      color: "",
+      size: "",
+      filterListIds: "",
+      priceRanges: "",
+      minPrice: "",
+      maxPrice: "",
+      sort: "",
+      page: "",
+      pageSize: "",
+      discountPctMin: "",
+      discountPctMax: "",
+    };
+
+    if (propsFilters) {
+      return {
+        ...base,
+        ...Object.fromEntries(Object.entries(propsFilters).map(([k, v]) => [k, toStr(v)])),
+      };
+    }
+    const out = { ...base };
+    Object.keys(base).forEach((k) => {
+      const v = searchParams.get(k);
+      if (v !== null) out[k] = v;
+    });
+    return out;
+  }, [propsFilters, searchParams]);
+
+  // Fetch facets (colors, price buckets, sidebar sets, discounts)
   useEffect(() => {
-    if (!queryString) return;
-
+    const qs = new URLSearchParams(identity).toString();
+    if (!qs) return;
     axios
-      .get(`${BASE_URL}/filters?${queryString}`)
-      .then((res) => {
-        setFilters(res.data || {});
-      })
-      .catch((err) => {
-        console.error("Failed to fetch filters", err);
-      });
-  }, [queryString]);
+      .get(`${BASE_URL}/filters?${qs}`)
+      .then((res) => setFacetData(res.data || {}))
+      .catch((err) => console.error("Failed to fetch filters", err));
+  }, [identity]);
 
+  // Apply change via props (preferred) or URL fallback
+  const applyChange = (patch) => {
+    if (onChangeFilters) {
+      onChangeFilters({ ...propsFilters, ...patch });
+      return;
+    }
+    const next = new URLSearchParams(searchParams);
+    Object.entries(patch).forEach(([k, v]) => {
+      if (v === "" || v === null || v === undefined) next.delete(k);
+      else next.set(k, Array.isArray(v) ? v.join(",") : String(v));
+    });
+    setSearchParams(next);
+  };
 
   const handleFilterChange = (filterType, value) => {
-    const currentParams = new URLSearchParams(searchParams);
+    const curVals = toArr(current[filterType]);
+    const isSelected = curVals.includes(value);
+
     if (filterType === "priceRanges") {
-      const currentValues = currentParams.get("priceRanges")?.split(",").filter(Boolean) || [];
-      let updatedValues = currentValues;
+      const updated = isSelected ? curVals.filter((v) => v !== value) : [...curVals, value];
+      const buckets = facetData?.price?.buckets || [];
+      const selected = buckets.filter((b) => updated.includes(b.key));
 
-      if (currentValues.includes(value)) {
-        updatedValues = currentValues.filter((v) => v !== value);
+      const patch = {
+        priceRanges: updated.length ? updated.join(",") : "",
+        page: "",
+      };
+
+      if (updated.length === 0) {
+        patch.minPrice = "";
+        patch.maxPrice = "";
       } else {
-        updatedValues.push(value);
-      }
-
-      if (updatedValues.length === 0) {
-        currentParams.delete("priceRanges");
-        currentParams.delete("minPrice");
-        currentParams.delete("maxPrice");
-      } else {
-        const selectedBuckets = filters.price.buckets.filter((bucket) =>
-          updatedValues.includes(bucket.key)
-        );
-
-        const minPrice = Math.min(
-          ...selectedBuckets.map((b) => b.min).filter((v) => v != null && !isNaN(v))
-        );
-
-        const maxValues = selectedBuckets
+        const mins = selected
+          .map((b) => b.min)
+          .filter((v) => v != null && !Number.isNaN(Number(v)))
+          .map(Number);
+        const maxs = selected
           .map((b) => b.max)
-          .filter((v) => v != null && !isNaN(v));
+          .filter((v) => v != null && !Number.isNaN(Number(v)))
+          .map(Number);
+        patch.minPrice = mins.length ? Math.min(...mins) : "";
+        patch.maxPrice = maxs.length ? Math.max(...maxs) : "";
+      }
 
-        currentParams.set("priceRanges", updatedValues.join(","));
-        currentParams.set("minPrice", minPrice);
-
-        if (maxValues.length > 0) {
-          currentParams.set("maxPrice", Math.max(...maxValues));
-        } else {
-          currentParams.delete("maxPrice");
-        }
-      }
-    }else if (filterType === "discountPctMin") {
-      // Transform value to remove "disc_" prefix
-      const numericValue = value.replace(/^disc_/, '');
-      console.log(`Transformed discount value: ${value} -> ${numericValue}`);
-      if (currentParams.get("discountPctMin") === numericValue) {
-        currentParams.delete("discountPctMin");
-      } else {
-        currentParams.set("discountPctMin", numericValue);
-      }
-    }
-    else {
-      const currentValues = currentParams.get(filterType)?.split(",").filter(Boolean) || [];
-      if (currentValues.includes(value)) {
-        const updatedValues = currentValues.filter((v) => v !== value);
-        if (updatedValues.length > 0) {
-          currentParams.set(filterType, updatedValues.join(","));
-        } else {
-          currentParams.delete(filterType);
-        }
-      } else {
-        currentValues.push(value);
-        currentParams.set(filterType, currentValues.join(","));
-      }
+      applyChange(patch);
+      return;
     }
 
-    setSearchParams(currentParams);
+    if (filterType === "discountPctMin") {
+      // value might be "disc_10" or "10" depending on API — normalize to just the number string
+      const numeric = String(value).replace(/^disc_/, "");
+      applyChange({
+        discountPctMin: current.discountPctMin === numeric ? "" : numeric,
+        page: "",
+      });
+      return;
+    }
+
+    // multi-selects: color, size, filterListIds, etc.
+    const nextVals = isSelected ? curVals.filter((v) => v !== value) : [...curVals, value];
+    applyChange({ [filterType]: nextVals.length ? nextVals.join(",") : "", page: "" });
   };
 
   const clearFilters = () => {
-    const currentParams = new URLSearchParams(searchParams);
-    ["color", "size", "filterListIds", "priceRanges", "minPrice", "maxPrice","discountPctMin"].forEach((key) => {
-      currentParams.delete(key);
+    applyChange({
+      color: "",
+      size: "",
+      filterListIds: "",
+      priceRanges: "",
+      minPrice: "",
+      maxPrice: "",
+      discountPctMin: "",
+      discountPctMax: "",
+      page: "",
     });
-    setSearchParams(currentParams);
   };
 
-  if (!filters) return null;
+  if (!facetData) return null;
 
+  const isChecked = (type, k) => toArr(current[type]).includes(String(k));
 
-
-   const renderDiscountFilterSection = (title, items, filterType) => {
+  // ---------- FIXED: discount radio checked state ----------
+  const renderDiscountFilterSection = (title, items, filterType) => {
     if (!items || items.length === 0) return null;
     return (
       <div className="filter-section">
         <h6>{title}</h6>
-        {items.map((item) => (
-          
-          <div key={item.id || item.key} className="filter-option">
-            <label className="radio-label">
-              <input
-                type="radio"
-                name="discountPctMin"
-                checked={searchParams.get(filterType) === String(item.id?? item.key)}
-                onChange={() => handleFilterChange(filterType, String(item.id ?? item.key))}
-              />
-              {item.label}
-            </label>
-          </div>
-        ))}
+        {items.map((item) => {
+          // option could be { key: "disc_10", label: "10% and above" } or { id: 10 }
+          const raw = String(item.id ?? item.key ?? item.value ?? "");
+          const numeric = raw.replace(/^disc_/, ""); // normalize to "10", "20", ...
+          const checked = current[filterType] === numeric;
+
+          return (
+            <div key={raw} className="filter-option">
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="discountPctMin"
+                  checked={checked}
+                  onChange={() => handleFilterChange(filterType, raw)}
+                />
+                {item.label}
+              </label>
+            </div>
+          );
+        })}
       </div>
     );
   };
+  // --------------------------------------------------------
 
   return (
     <div className="filter-sidebar">
-      {/* Clear Filters Button */}
-      <div class="filter-header px-3 pt-3">
+      <div className="filter-header px-3 pt-3">
         <h4 className="text-dark">Filter</h4>
-        <a className=" mb-3" onClick={clearFilters}>
+        <a className="mb-3" onClick={clearFilters} style={{ cursor: "pointer" }}>
           Clear Filters
-        </a>                        </div>
+        </a>
+      </div>
 
-
-      {/* Sidebar filters (category-specific like Size, Dimensions) */}
-      {filters.sidebar?.length > 0 &&
-        filters.sidebar.map((group) => (
+      {/* Category-specific sets */}
+      {facetData.sidebar?.length > 0 &&
+        facetData.sidebar.map((group) => (
           <div key={group.id} className="filter-section">
             <h5>{group.name}</h5>
             {group.sets.map((set) => (
@@ -152,8 +216,10 @@ const FilterSidebar = () => {
                     <label className="checkbox-label">
                       <input
                         type="checkbox"
-                        checked={searchParams.get("filterListIds")?.split(",").includes(option.id.toString()) || false}
-                        onChange={() => handleFilterChange("filterListIds", option.id.toString())}
+                        checked={isChecked("filterListIds", option.id)}
+                        onChange={() =>
+                          handleFilterChange("filterListIds", String(option.id))
+                        }
                       />
                       {option.label}
                     </label>
@@ -164,21 +230,20 @@ const FilterSidebar = () => {
           </div>
         ))}
 
-      {/* Discounts */}
-      {renderDiscountFilterSection("Discount", filters.discountRanges, "discountPctMin")}
+      {/* Discounts as radio */}
+      {renderDiscountFilterSection("Discount", facetData.discountRanges, "discountPctMin")}
 
       {/* Colors */}
-      {/* {renderFilterSection("Colors", filters.colors, "color","label")} */}
-      {filters.colors?.length > 0 && (
+      {facetData.colors?.length > 0 && (
         <div className="filter-section">
           <h6>Colors</h6>
-          {filters.colors.map((color) => (
+          {facetData.colors.map((color) => (
             <div key={color.id} className="filter-option">
               <label className="checkbox-label d-flex align-items-center">
                 <input
                   type="checkbox"
-                  checked={searchParams.get("color")?.split(",").includes(color.id.toString()) || false}
-                  onChange={() => handleFilterChange("color", color.id.toString())}
+                  checked={isChecked("color", color.id)}
+                  onChange={() => handleFilterChange("color", String(color.id))}
                 />
                 <span
                   style={{
@@ -198,22 +263,20 @@ const FilterSidebar = () => {
         </div>
       )}
 
-
-      {/* Materials */}
-      {/* {renderFilterSection("Materials", filters.materials, "material")} */}
-
-      {/* Price Buckets */}
-      {filters.price?.buckets?.some((bucket) => bucket.count > 0) && (
+      {/* Price buckets */}
+      {facetData.price?.buckets?.some((b) => b.count > 0) && (
         <div className="filter-section mt-4">
           <h6>Price</h6>
-          {filters.price.buckets.map((bucket) =>
+          {facetData.price.buckets.map((bucket) =>
             bucket.count > 0 ? (
               <div key={bucket.key} className="filter-option">
                 <label className="checkbox-label">
                   <input
                     type="checkbox"
-                    checked={searchParams.get("priceRanges")?.split(",").includes(bucket.key) || false}
-                    onChange={() => handleFilterChange("priceRanges", bucket.key)}
+                    checked={isChecked("priceRanges", bucket.key)}
+                    onChange={() =>
+                      handleFilterChange("priceRanges", String(bucket.key))
+                    }
                   />
                   {bucket.label}
                 </label>
