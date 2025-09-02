@@ -111,7 +111,7 @@ const FilterSidebar = () => {
     return (
       <div className="filter-section">
         <h6>{title}</h6>
-        {/* {items.map((item) => (
+        {items.map((item) => (
           
           <div key={item.id || item.key} className="filter-option">
             <label className="radio-label">
@@ -124,24 +124,7 @@ const FilterSidebar = () => {
               {item.label}
             </label>
           </div>
-        ))} */}
-         {items.map((item) => {
-        const value = String(item.id ?? item.key); // always string
-        return (
-          <div key={value} className="filter-option">
-            <label className="radio-label">
-              <input
-                type="radio"
-                name="discountPctMin"
-                value={value}
-                checked={searchParams.get(filterType) === value}
-                onChange={() => handleFilterChange(filterType, value)}
-              />
-              {item.label}
-            </label>
-          </div>
-        );
-      })}
+        ))}
       </div>
     );
   };
