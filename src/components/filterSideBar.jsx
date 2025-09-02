@@ -66,6 +66,15 @@ const FilterSidebar = () => {
           currentParams.delete("maxPrice");
         }
       }
+    }else if (filterType === "discountPctMin") {
+      // Transform value to remove "disc_" prefix
+      const numericValue = value.replace(/^disc_/, '');
+      console.log(`Transformed discount value: ${value} -> ${numericValue}`);
+      if (currentParams.get("discountPctMin") === numericValue) {
+        currentParams.delete("discountPctMin");
+      } else {
+        currentParams.set("discountPctMin", numericValue);
+      }
     }
     else {
       const currentValues = currentParams.get(filterType)?.split(",").filter(Boolean) || [];
@@ -85,10 +94,9 @@ const FilterSidebar = () => {
     setSearchParams(currentParams);
   };
 
-  // Clear all filters
   const clearFilters = () => {
     const currentParams = new URLSearchParams(searchParams);
-    ["color", "size", "filterListIds", "priceRanges", "minPrice", "maxPrice"].forEach((key) => {
+    ["color", "size", "filterListIds", "priceRanges", "minPrice", "maxPrice","discountPctMin"].forEach((key) => {
       currentParams.delete(key);
     });
     setSearchParams(currentParams);
@@ -96,23 +104,44 @@ const FilterSidebar = () => {
 
   if (!filters) return null;
 
-  const renderFilterSection = (title, items, filterType, labelKey = "label") => {
+
+
+   const renderDiscountFilterSection = (title, items, filterType) => {
     if (!items || items.length === 0) return null;
     return (
       <div className="filter-section">
         <h6>{title}</h6>
-        {items.map((item) => (
+        {/* {items.map((item) => (
+          
           <div key={item.id || item.key} className="filter-option">
-            <label className="checkbox-label">
+            <label className="radio-label">
               <input
-                type="checkbox"
-                checked={searchParams.get(filterType)?.split(",").includes(item.id?.toString() || item.key) || false}
-                onChange={() => handleFilterChange(filterType, item.id?.toString() || item.key)}
+                type="radio"
+                name="discountPctMin"
+                checked={searchParams.get(filterType) === String(item.id?? item.key)}
+                onChange={() => handleFilterChange(filterType, String(item.id ?? item.key))}
               />
-              {item[labelKey]}
+              {item.label}
             </label>
           </div>
-        ))}
+        ))} */}
+         {items.map((item) => {
+        const value = String(item.id ?? item.key); // always string
+        return (
+          <div key={value} className="filter-option">
+            <label className="radio-label">
+              <input
+                type="radio"
+                name="discountPctMin"
+                value={value}
+                checked={searchParams.get(filterType) === value}
+                onChange={() => handleFilterChange(filterType, value)}
+              />
+              {item.label}
+            </label>
+          </div>
+        );
+      })}
       </div>
     );
   };
@@ -153,7 +182,7 @@ const FilterSidebar = () => {
         ))}
 
       {/* Discounts */}
-      {renderFilterSection("Discount", filters.discountRanges, "discount")}
+      {renderDiscountFilterSection("Discount", filters.discountRanges, "discountPctMin")}
 
       {/* Colors */}
       {/* {renderFilterSection("Colors", filters.colors, "color","label")} */}
