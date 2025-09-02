@@ -322,7 +322,7 @@ console.log('promotionIndex', promotions)
               <IconFeatureGrid features={features} />
 
               <div className="mt-4 text-start">
-                <Link to="/shop" className="btn btn-teal px-7 py-2.5 rounded-pill text-white">Shop Now</Link>
+                <Link to="" className="btn btn-teal px-7 py-2.5 rounded-pill text-white">Shop Now</Link>
               </div>
             </div>
           </div>
