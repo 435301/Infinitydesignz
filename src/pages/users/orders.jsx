@@ -288,10 +288,10 @@ const MyOrdersPage = () => {
               <div className="ad-banner">
                 <img src={AdBanner} alt="Special Sale" />
               </div>
-              <div className="related-products">
+              {/* <div className="related-products">
                 <h4>Related Products</h4>
                 <RelatedProductsCarousel products={sampleProducts} />
-              </div>
+              </div> */}
             </aside>
           </div>
           <CancelOrderModal
