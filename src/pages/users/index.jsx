@@ -70,6 +70,7 @@ import BASE_URL from '../../config/config';
 import BannerSlider from '../../components/bannerSlider';
 import { fetchFrontendPromotions } from '../../redux/actions/productionPromotionAction';
 import FrontendPromotionsSection from '../../components/frontendPromotionSection';
+import { fetchHomeTabs } from '../../redux/actions/homeCategoryAction';
 
 const waitAndShowModal = () =>
   new Promise((resolve) => {
@@ -87,11 +88,14 @@ export default function HomeBannerSection() {
   const { promotions, loading, error } = useSelector((state) => state.frontendPromotions);
 console.log('promotionIndex', promotions)
   console.log("sliders", rightSliders);
+   const { homeTabs } = useSelector(state => state.homeCategories);
+   console.log('homeTabs',homeTabs)
 
   useEffect(() => {
     dispatch(fetchSliders());
     dispatch(fetchRightSliders());
     dispatch(fetchFrontendPromotions(8));
+    dispatch(fetchHomeTabs());
   }, [dispatch]);
 
   useQuery({
@@ -295,7 +299,7 @@ console.log('promotionIndex', promotions)
         </div>
       </div>
 
-      <FurnitureTabs tabs={tabs} images={images} />
+      <FurnitureTabs homecategories={homeTabs} />
 
 
       {/* <ProductGrid products={products} /> */}

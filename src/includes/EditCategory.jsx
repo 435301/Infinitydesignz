@@ -13,8 +13,8 @@ const EditCategoryModal = ({ show, setShow, category }) => {
   const [mainImage, setMainImage] = useState(null);
   const [status, setStatus] = useState(false);
   const [errors, setErrors] = useState({});
+  const [showInHomeTabs, setshowInHomeTabs] = useState(true);
 
-  // ✅ Utility to safely build image URLs
   const buildImageUrl = (path) => {
     if (!path) return null;
     return `${BASE_URL.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
@@ -36,9 +36,12 @@ const EditCategoryModal = ({ show, setShow, category }) => {
   };
 
   const handleChange = (e) => {
-    const { name, type, checked } = e.target;
+    const { name, type, checked, value } = e.target;
     if (name === 'status' && type === 'checkbox') {
       setStatus(checked);
+    }
+    else if (name === "showInHomeTabs") {
+      setshowInHomeTabs(value === "true");
     }
   };
 
@@ -68,6 +71,7 @@ const EditCategoryModal = ({ show, setShow, category }) => {
     const formData = new FormData();
     formData.append('title', categoryTitle);
     formData.append('status', status ? true : false);
+    formData.append('showInHomeTabs', showInHomeTabs ? true : false);
     if (appIcon?.file) formData.append('appIcon', appIcon.file);
     if (webIcon?.file) formData.append('webImage', webIcon.file);
     if (mainImage?.file) formData.append('mainImage', mainImage.file);
@@ -123,6 +127,18 @@ const EditCategoryModal = ({ show, setShow, category }) => {
                   onRemove={removeImage(setMainImage)}
                 />
 
+                <div className="col-lg-4 mb-3">
+                  <label className="form-label">Show in Home tabs</label>
+                  <select
+                    name="showInHomeTabs"
+                    className="form-control"
+                    value={showInHomeTabs ? "true" : "false"}
+                    onChange={handleChange}
+                  >
+                    <option value="true">True</option>
+                    <option value="false">False</option>
+                  </select>
+                </div>
                 <div className="form-check ps-4 m-4">
                   <input
                     className="form-check-input"

@@ -14,6 +14,7 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
     seoDescription: '',
     seoKeywords: '',
     status: true,
+
   });
 
   console.log(form.parentId, 'form')
@@ -93,6 +94,7 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
     if (webIcon?.file) data.append('webImage', webIcon.file);
     if (mainImage?.file) data.append('mainImage', mainImage.file);
 
+
     await dispatch(updateSubCategory(subCategoryId, data));
     refetchCategories();
     setShow(false);
@@ -123,9 +125,9 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
                   <select
                     className={`form-control ${errors.parentId ? 'is-invalid' : ''}`}
                     name="parentId"
-                    value={form.parentId?.toString() || ''} 
+                    value={form.parentId?.toString() || ''}
                     onChange={handleChange}
-                    // required
+                  // required
                   >
                     <option value="">-- Select Parent --</option>
                     {categories.map(cat => (
@@ -140,13 +142,9 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
 
                 <div className="col-lg-4 mb-3">
                   <label className="form-label">Category Title<span className="text-danger">*</span></label>
-                  <input className={`form-control ${errors.title ? 'is-invalid' : ''}`} name="title" value={form.title} onChange={handleChange}  />
+                  <input className={`form-control ${errors.title ? 'is-invalid' : ''}`} name="title" value={form.title} onChange={handleChange} />
                   {errors.title && <div className="invalid-feedback">{errors.title}</div>}
                 </div>
-
-                <ImageUpload label="App Icon" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />
-                <ImageUpload label="Web Icon" image={webIcon} onChange={handleFileChange(setWebIcon)} onRemove={removeImage(setWebIcon)} />
-                <ImageUpload label="Main Image" image={mainImage} onChange={handleFileChange(setMainImage)} onRemove={removeImage(setMainImage)} />
 
                 <div className="col-lg-4 mb-3">
                   <label className="form-label">SEO Title</label>
@@ -162,6 +160,11 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
                   <label className="form-label">SEO Keywords</label>
                   <input className="form-control" name="seoKeywords" value={form.seoKeywords} onChange={handleChange} />
                 </div>
+              
+
+                <ImageUpload label="App Icon" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />
+                <ImageUpload label="Web Icon" image={webIcon} onChange={handleFileChange(setWebIcon)} onRemove={removeImage(setWebIcon)} />
+                <ImageUpload label="Main Image" image={mainImage} onChange={handleFileChange(setMainImage)} onRemove={removeImage(setMainImage)} />
 
                 <div className="form-check ps-4 m-4">
                   <input className="form-check-input" type="checkbox" name="status" checked={form.status} onChange={handleChange} />
