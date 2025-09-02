@@ -21,21 +21,23 @@ import { toast } from "react-toastify";
 import { addToCart } from "../../redux/actions/cartAction";
 import { addToGuestCart } from "../../redux/actions/guestCartAction";
 import Loader from "../../includes/loader";
- 
+
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import ProductCard from "../../components/productCard";
 export default function WishlistPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [wishlistItems, setWishlistItems] = useState([]);
   const [quantities, setQuantities] = useState({});
   const [loadingWishlist, setLoadingWishlist] = useState(true);
- 
+
   // Memoized selectors for redux state
   const sizes = useSelector((state) => state.sizes?.sizes || [], shallowEqual);
   const { product, loading } = useSelector((state) => state.userProductDetails, shallowEqual);
   const relatedProducts = useSelector((state) => state.whishlist.relatedProducts);
- 
+  console.log('relatedProducts', relatedProducts);
+
   // Fetch wishlist only once
   const fetchWishlist = useCallback(async () => {
     setLoadingWishlist(true);
@@ -49,15 +51,15 @@ export default function WishlistPage() {
       setLoadingWishlist(false);
     }
   }, []);
- 
+
   useEffect(() => {
     fetchWishlist();
   }, [fetchWishlist]);
- 
+
   // useEffect(() => {
   //   dispatch(fetchSizes());
   // }, [dispatch]);
- 
+
   // Only fetch product details if first wishlist item changes
   useEffect(() => {
     if (wishlistItems.length > 0) {
@@ -68,7 +70,7 @@ export default function WishlistPage() {
       }
     }
   }, [wishlistItems, dispatch]);
- 
+
   // Memoize increment/decrement handlers
   const increment = useCallback((item) => {
     const key = `${item.productId}-${item.variantId || 'null'}`;
@@ -77,7 +79,7 @@ export default function WishlistPage() {
       [key]: Math.min((prev[key] || 1) + 1, 99),
     }));
   }, []);
- 
+
   const decrement = useCallback((item) => {
     const key = `${item.productId}-${item.variantId || 'null'}`;
     setQuantities((prev) => ({
@@ -85,7 +87,7 @@ export default function WishlistPage() {
       [key]: Math.max((prev[key] || 1) - 1, 1),
     }));
   }, []);
- 
+
   const handleProductClick = useCallback((productId, variantId) => {
     if (variantId) {
       navigate(`/product-details/${productId}?variantId=${variantId}`);
@@ -93,22 +95,22 @@ export default function WishlistPage() {
       navigate(`/product-details/${productId}`);
     }
   }, [navigate]);
- 
- 
- 
+
+
+
   // Memoize handleCart to avoid re-creation
   const handleCart = useCallback(async (item) => {
     const productId = item?.productId;
     const variantId = item?.variantId || null;
     const key = `${productId}-${variantId || 'null'}`;
     const qty = quantities[key] || 1;
- 
+
     const cartItem = {
       productId,
       variantId,
       quantity: qty,
     };
- 
+
     try {
       if (isLoggedIn()) {
         await dispatch(addToCart(cartItem));
@@ -122,13 +124,13 @@ export default function WishlistPage() {
       toast.error("Failed to move to cart.");
     }
   }, [dispatch, quantities]);
- 
+
   // Memoize delete handler
   const handleDelete = useCallback(async (itemId) => {
     await dispatch(deleteWishlistItem(itemId));
     fetchWishlist();
   }, [dispatch, fetchWishlist]);
- 
+
   return (
     <>
       <Header wishlistCount={wishlistItems.length} />
@@ -162,22 +164,22 @@ export default function WishlistPage() {
                     const displayData = item.variantId && item.variant
                       ? item.variant
                       : (!item.variantId && item.productId && item.product ? item.product : null);
- 
+
                     if (!displayData) return null;
- 
+
                     const imageUrl = displayData.imageUrl
                       ? (displayData.imageUrl.startsWith("http")
                         ? displayData.imageUrl
                         : `${BASE_URL}${displayData.imageUrl}`)
                       : Sofa;
- 
+
                     const imageAlt = displayData.imageAlt || displayData.title || "Product Image";
                     const title = displayData.title || "No Title";
                     const price = displayData.price || 0;
                     const mrp = displayData.mrp || 0;
                     const size = displayData.size || "N/A";
                     const key = `${item.productId}-${item.variantId || 'null'}`;
- 
+
                     return (
                       <div key={item.id || index} className="wishlist-item border-between d-flex"  >
                         <div className="col-3" onClick={() => handleProductClick(item.productId, item.variantId)} style={{ cursor: "pointer" }}>
@@ -189,7 +191,7 @@ export default function WishlistPage() {
                         </div>
                         <div className="details ms-3">
                           <h5 style={{ cursor: "pointer" }} onClick={() => handleProductClick(item.productId, item.variantId)}>{title}</h5>
- 
+
                           <div className="d-flex align-items-center mb-3">
                             <label className="me-2 fw-semibold">Size</label>
                             {/* <select className="form-select w-auto me-4" value={displayData.size || "N/A"} disabled>
@@ -201,7 +203,7 @@ export default function WishlistPage() {
                               value={displayData.size || "N/A"}
                               readOnly
                             />
- 
+
                             <label className="me-2 fw-semibold">Qty</label>
                             <div className="qty-box d-flex align-items-center">
                               <button className="btn-qty" onClick={() => decrement(item)}>-</button>
@@ -214,12 +216,12 @@ export default function WishlistPage() {
                               <button className="btn-qty" onClick={() => increment(item)}>+</button>
                             </div>
                           </div>
- 
+
                           <div className="price">
                             <span className="currency">₹</span>{price}{" "}
                             <small>MRP: <span className="currency">₹</span>{mrp}</small>
                           </div>
- 
+
                           <div className="icons">
                             <span>
                               <i className="bi bi-arrow-return-right icon-return"></i> Easy 14 days return & exchange
@@ -228,7 +230,7 @@ export default function WishlistPage() {
                               <i className="bi bi-truck icon-delivery"></i> Estimated delivery by 13 Aug
                             </span>
                           </div>
- 
+
                           <div className="actions mt-3">
                             <button className="btn me-2" onClick={() => handleCart(item)}>
                               <i className="bi bi-cart"></i> Move to cart
@@ -250,68 +252,41 @@ export default function WishlistPage() {
               )}
             </div>
             {/* Related Products Section */}
-           <div className="col-md-3">
-  <div className="ad-banner mb-4">
-    <img src={AdBanner} alt="Special Sale" className="img-fluid" />
-  </div>
-
-  <div className="related-products py-4">
-    <h4>Related Products</h4>
-    <Carousel controls indicators={false}>
-      {(relatedProducts || []).map((product) => {
-        const imgUrl = product.imageUrl?.startsWith("http")
-          ? product.imageUrl
-          : `${BASE_URL}${product.imageUrl}`;
-
-        return (
-          <Carousel.Item key={product.id}>
-            <div className="card h-100 position-relative">
-              {/* Dynamic discount badge */}
-              {product.badgeDiscountPercent && (
-                <div className="discount-badge">
-                  {product.badgeDiscountPercent}% off
-                </div>
-              )}
-
-              <div className="wishlist-icon">
-                <img src={Icon} alt="Wishlist" />
+            <div className="col-md-3">
+              <div className="ad-banner mb-4">
+                <img src={AdBanner} alt="Special Sale" className="img-fluid" />
               </div>
 
-              {/* Dynamic image */}
-              <img src={imgUrl} className="card-img-top" alt={product.title} />
+              <div className="related-products py-4">
+                <h4>Related Products</h4>
+                <div className="carousel-wrapper">
+                    <Carousel controls indicators={false}>
+                  {(relatedProducts || []).map((product) => {
+                    const normalizedProduct = {
+                      ...product,
+                      images: {
+                        main: {
+                          url: product.imageUrl?.startsWith("http")
+                            ? product.imageUrl.replace(`${BASE_URL}/uploads/products/`, "")
+                            : product.imageUrl.replace("/uploads/products/", ""),
+                        },
+                      },
+                      mrp: product.mrp,
+                      sellingPrice: product.sellingPrice,
+                    };
 
-              <div className="card-body">
-                {/* Dynamic title */}
-                <h6 className="card-title">{product.title}</h6>
-
-                {/* Dynamic price */}
-                <p className="card-text">
-                  <strong>₹{product.sellingPrice}</strong>{" "}
-                  <del>₹{product.mrp}</del>
-                </p>
-
-                {/* Static rating for now, unless your API provides it */}
-                <div className="rating d-flex align-items-center mb-2">
-                  {[...Array(4)].map((_, i) => (
-                    <img key={i} src={Star} className="me-1" alt="star" />
-                  ))}
-                  <img src={Star1} className="me-1" alt="half-star" />
-                  <span>4.5</span>
+                    return (
+                      <Carousel.Item key={product.id}>
+                        <ProductCard product={normalizedProduct} />
+                      </Carousel.Item>
+                    );
+                  })}
+                </Carousel>
                 </div>
+              
 
-                <p className="emi-text">
-                  36-Month Warranty Available<br />
-                  EMI starting from ₹1,825/month<br />
-                  Express Shipping in 1 day
-                </p>
               </div>
             </div>
-          </Carousel.Item>
-        );
-      })}
-    </Carousel>
-  </div>
-</div>
           </div>
         </div>
       </section>
@@ -319,4 +294,3 @@ export default function WishlistPage() {
     </>
   );
 }
- 
