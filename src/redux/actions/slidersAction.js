@@ -157,7 +157,6 @@ export const fetchRightSliders = () => {
       dispatch({ type: FETCH_RIGHTSLIDERS_SUCCESS, payload: response.data });
     } catch (error) {
       toast.dismiss();
-      toast.error(error?.response?.data?.message || 'Failed to fetch right sliders');
       dispatch({
         type: FETCH_RIGHTSLIDERS_FAILURE,
         payload: error.response?.data?.message || error.message,
