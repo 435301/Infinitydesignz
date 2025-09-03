@@ -34,7 +34,7 @@ const ManageCategories = () => {
   const [selectAll, setSelectAll] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchCategories());
+    dispatch(fetchCategories('all'));
   }, [dispatch]);
 
   const filteredCategories = categories.filter((cat) => {
@@ -93,7 +93,7 @@ const ManageCategories = () => {
       });
 
       toast.success(`Status updated to ${newStatus ? 'Active' : 'Inactive'}`);
-      dispatch(fetchCategories());
+      dispatch(fetchCategories('all'));
       setSelectedRows([]);
     } catch (error) {
       toast.error(error?.response?.data?.message || 'Bulk status update failed');
@@ -287,7 +287,7 @@ const ManageCategories = () => {
             </div>
 
             {showModal && <AddCategoryModal show={showModal} setShow={setShowModal} />}
-            {showModalEdit && <EditCategoryModal show={showModalEdit} setShow={setShowModalEdit} category={categoryToEdit} refetchCategories={() => dispatch(fetchCategories())} />}
+            {showModalEdit && <EditCategoryModal show={showModalEdit} setShow={setShowModalEdit} category={categoryToEdit} refetchCategories={() => dispatch(fetchCategories('all'))} />}
             {viewModalOpen && <ViewCategoryModal show={viewModalOpen} onClose={() => setViewModalOpen(false)} category={selectedCategory} />}
             {showDeleteModal && <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this category?" />}
             <PaginationComponent currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />

@@ -15,7 +15,7 @@ export const DELETE_SIZE_SUCCESS = 'DELETE_SIZE_SUCCESS';
 export const BULK_UPDATE_SIZE_SUCCESS = 'BULK_UPDATE_SIZE_SUCCESS';
 
 //mycode
-export const fetchSizes = () => {
+export const fetchSizes = (status='') => {
 
   return async (dispatch) => {
 
@@ -29,6 +29,7 @@ export const fetchSizes = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        params: status === "all" ? { status: "all" } : {},
       });
 
       console.log('response', response)
@@ -58,7 +59,7 @@ export const addSizes = (formData) => async (dispatch) => {
     dispatch({ type: 'ADD_SIZES_SUCCESS' });
     const successMessage = response?.message || 'Size created successfully';
     toast.success(successMessage);
-    dispatch(fetchSizes());
+    dispatch(fetchSizes('all'));
   } catch (error) {
       toast.error(error?.response?.data?.message || 'Error adding size');
     dispatch({
@@ -86,7 +87,7 @@ export const editSizes = (payload) => async (dispatch) => {
     dispatch({ type: 'EDIT_SIZES_SUCCESS' });
     const successMessage = response?.message || 'Size updated successfully'
     toast.success(successMessage)
-    dispatch(fetchSizes());
+    dispatch(fetchSizes('all'));
   } catch (error) {
       toast.error(error?.response?.data?.message || 'Error editing size');
     dispatch({
@@ -129,7 +130,7 @@ export const bulkUpdateSizeStatus = (ids, status) => async (dispatch) => {
         },
       }
     );
-    dispatch(fetchSizes());
+    dispatch(fetchSizes('all'));
   } catch (error) {
     console.error(error);
     toast.error(error?.response?.data?.message || 'Failed to update size status.');

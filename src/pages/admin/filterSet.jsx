@@ -51,7 +51,7 @@ const ManageFilterSet = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchFilterSets());
+    dispatch(fetchFilterSets("all"));
   }, [dispatch]);
 
   const handleRowCheckboxChange = (id) => {
@@ -229,7 +229,7 @@ const ManageFilterSet = () => {
                               );
                             }
                           }
-                          dispatch(fetchFilterSets());
+                          dispatch(fetchFilterSets("all"));
                           setEditedPriorities({});
                           setSelectedRows([]);
                         }}

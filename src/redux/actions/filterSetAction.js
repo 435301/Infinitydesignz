@@ -14,7 +14,7 @@ export const EDIT_FILTERSET_FAILURE='EDIT_FILTERSET_FAILURE';
 export const DELETE_FILTERSET_SUCCESS ='DELETE_FILTERSET_SUCCESS'
 
 
-export const fetchFilterSets = () => {
+export const fetchFilterSets = (status = "") => {
 
   return async (dispatch) => {
 
@@ -28,6 +28,7 @@ export const fetchFilterSets = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        params: status === "all" ? { status: "all" } : {},
       });
 
       dispatch({ type: FETCH_FILTERSET_SUCCESS, payload: response.data });

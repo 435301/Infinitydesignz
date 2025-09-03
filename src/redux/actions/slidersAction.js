@@ -16,7 +16,7 @@ export const FETCH_RIGHTSLIDERS_REQUEST = 'FETCH_RIGHTSLIDERS_REQUEST';
 export const FETCH_RIGHTSLIDERS_SUCCESS = 'FETCH_RIGHTSLIDERS_SUCCESS';
 export const FETCH_RIGHTSLIDERS_FAILURE = 'FETCH_RIGHTSLIDERS_FAILURE';
 
-export const fetchSliders = () => {
+export const fetchSliders = (status='') => {
   return async (dispatch) => {
     dispatch({ type: FETCH_SLIDERS_REQUEST });
     try {
@@ -26,6 +26,7 @@ export const fetchSliders = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        params: status === "all" ? { status: "all" } : {},
       });
 
       dispatch({ type: FETCH_SLIDERS_SUCCESS, payload: response.data });
@@ -56,7 +57,7 @@ export const addSliders = (formData) => async (dispatch) => {
 
     const successMessage = response?.data?.message || 'Sliders created successfully';
     toast.success(successMessage);
-    dispatch(fetchSliders());
+    dispatch(fetchSliders('all'));
   } catch (error) {
       toast.error(error?.response?.data?.message || 'Error adding sliders');
     console.error('Error Response', error?.response?.data);
@@ -83,7 +84,7 @@ export const editSliders = (id, formData) => async (dispatch) => {
     const successMessage = response?.data?.message || 'Sliders updated successfully';
     toast.success(successMessage);
 
-    dispatch(fetchSliders());
+    dispatch(fetchSliders('all'));
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Error editing sliders');
     dispatch({
@@ -108,7 +109,7 @@ export const deleteSliders = (id) => async (dispatch) => {
 
     const successMessage = response?.data?.message || 'Sliders deleted successfully';
     toast.success(successMessage);
-    dispatch(fetchSliders(id));
+    dispatch(fetchSliders('all'));
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Failed to delete Sliders.');
     console.error(error);
@@ -135,7 +136,7 @@ export const bulkUpdateSliderStatus = (ids, status) => async (dispatch) => {
     const successMessage = response?.data?.message || 'Status updated successfully';
     toast.success(successMessage);
 
-    dispatch(fetchSliders());
+    dispatch(fetchSliders('all'));
   } catch (error) {
     console.error(error);
     toast.error(error?.response?.data?.message || 'Failed to update status');

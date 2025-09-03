@@ -34,7 +34,7 @@ const ManageSizes = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    dispatch(fetchSizes());
+    dispatch(fetchSizes('all'));
   }, [dispatch]);
 
   const filteredSizes = sizes.filter((size) => {

@@ -34,7 +34,7 @@ const ManageBrands = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    dispatch(fetchBrands());
+    dispatch(fetchBrands('all'));
   }, [dispatch]);
 
   // Filtering brands

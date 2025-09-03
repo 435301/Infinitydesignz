@@ -14,7 +14,7 @@ export const EDIT_BRAND_FAILURE='EDIT_BRAND_FAILURE';
 export const DELETE_BRAND_SUCCESS = 'DELETE_BRAND_SUCCESS';
 export const BULK_UPDATE_BRAND_SUCCESS = 'BULK_UPDATE_BRAND_SUCCESS';
 
-export const fetchBrands = () => {
+export const fetchBrands = (status = '') => {
 
   return async (dispatch) => {
 
@@ -28,6 +28,7 @@ export const fetchBrands = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        params: status === "all" ? { status: "all" } : {},
       });
 
       console.log('response', response)
@@ -57,7 +58,7 @@ export const addBrands = (formData) => async (dispatch) => {
     dispatch({ type: 'ADD_BRAND_SUCCESS' });
      const successMessage = response?.message || 'Brand created successfully';
     toast.success(successMessage);
-    dispatch(fetchBrands());
+    dispatch(fetchBrands('all'));
   } catch (error) {
       toast.error(error?.response?.data?.message || 'Error adding brand');
     dispatch({
@@ -85,7 +86,7 @@ export const editBrands = (payload) => async (dispatch) => {
     dispatch({ type: 'EDIT_BRAND_SUCCESS' });
     const successMessage = response?.message || 'Brand edited successfully';
     toast.success(successMessage);
-    dispatch(fetchBrands());
+    dispatch(fetchBrands('all'));
   } catch (error) {
       toast.error(error?.response?.data?.message || 'Error editing brand');
     dispatch({
@@ -106,7 +107,7 @@ export const deleteBrand = (id) => async (dispatch) => {
       },
     });
 
-    dispatch(fetchBrands(id));
+    dispatch(fetchBrands('all'));
     const deleteMessage = response?.message || 'Brand deleted successfully!'
     toast.success(deleteMessage)
   } catch (error) {
@@ -132,7 +133,7 @@ export const bulkUpdateBrandStatus = (ids,status) => async (dispatch) => {
         },
       }
     );
-    dispatch(fetchBrands()); 
+    dispatch(fetchBrands('all')); 
   } catch (error) {
       toast.error(error?.response?.data?.message || 'Failed to update brand status');
     console.error(error);

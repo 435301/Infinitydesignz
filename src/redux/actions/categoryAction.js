@@ -32,7 +32,7 @@ export const FETCH_NEED_HELP_SUCCESS = "FETCH_NEED_HELP_SUCCESS";
 export const FETCH_NEED_HELP_FAILURE = "FETCH_NEED_HELP_FAILURE";
 
 
-export const fetchCategories = () => {
+export const fetchCategories = (status = '') => {
 
   return async (dispatch) => {
 
@@ -47,6 +47,7 @@ export const fetchCategories = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        params: status === "all" ? { status: "all" } : {},
       });
 
       console.log('response', response)
@@ -77,7 +78,7 @@ export const addCategory = (formData) => async (dispatch) => {
     dispatch({ type: 'ADD_CATEGORY_SUCCESS' });
     const successMessage = response?.message || 'Category created successfully'
      toast.success(successMessage);
-    dispatch(fetchCategories());
+    dispatch(fetchCategories('all'));
   } catch (error) {
      toast.error(error?.response?.data?.message || 'Failed to add category');
     dispatch({
@@ -102,7 +103,7 @@ export const addSubCategory = (formData) => async (dispatch) => {
     dispatch({ type: 'ADD_SUBCATEGORY_SUCCESS' });
      const successMessage = response?.message || 'Subcategory created successfully'
          toast.success(successMessage)
-    dispatch(fetchCategories());
+    dispatch(fetchCategories('all'));
   } catch (error) {
      toast.error(error?.response?.data?.message || 'Failed to add subcategory');
     dispatch({
@@ -128,7 +129,7 @@ export const listSubCategory = (formData) => async (dispatch) => {
     dispatch({ type: 'LIST_SUBCATEGORY_SUCCESS' });
     const successMessage = response?.message || 'List SubCategory Created Sucessfully'
     toast.success(successMessage);
-    dispatch(fetchCategories());
+    dispatch(fetchCategories('all'));
   } catch (error) {
      toast.error(error?.response?.data?.message || 'Failed to add listsubcategory');
     dispatch({
@@ -152,7 +153,7 @@ export const editCategory = (id, formData) => async (dispatch) => {
     dispatch({ type: 'EDIT_CATEGORY_SUCCESS' });
     const successMessage = response?.message || 'Category updated successfully'
          toast.success(successMessage)
-    dispatch(fetchCategories());
+    dispatch(fetchCategories('all'));
   } catch (error) {
      toast.error(error?.response?.data?.message || 'Failed to update category');
     dispatch({
@@ -220,7 +221,7 @@ export const deleteCategory = (id) => async (dispatch) => {
    const response =  await axios.delete(`${BASE_URL}/categories/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    dispatch(fetchCategories());
+    dispatch(fetchCategories('all'));
     const successMessage = response?.message || "Category deleted successfully"
     toast.success(successMessage);
   } catch (err) {
@@ -234,7 +235,7 @@ export const deleteSubCategory = (id) => async (dispatch) => {
    const response =  await axios.delete(`${BASE_URL}/categories/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    dispatch(fetchCategories());
+    dispatch(fetchCategories('all'));
     const successMessage = response?.message || "Subcategory deleted successfully"
     toast.success(successMessage);
   } catch (err) {
@@ -248,7 +249,7 @@ export const deleteListSubCategory = (id) => async (dispatch) => {
    const response =  await axios.delete(`${BASE_URL}/categories/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    dispatch(fetchCategories());
+    dispatch(fetchCategories('all'));
     const successMessage = response?.message || "ListSubcategory deleted successfully"
     toast.success(successMessage);
   } catch (err) {
