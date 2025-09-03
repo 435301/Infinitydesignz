@@ -55,7 +55,23 @@ export const buyNowReducer = (state = initialState, action) => {
         priceSummary: {},
         coupon: null,
       };
+      case "REMOVE_BUYNOW_COUPON":
+      return {
+        ...state,
+        coupon: null,
+        priceSummary: {
+          ...state.priceSummary,
+          couponDiscount: 0,
+          finalPayable:
+            (state.priceSummary.totalMRP || 0) -
+            (state.priceSummary.discountOnMRP || 0) +
+            (state.priceSummary.platformFee || 0) +
+            (state.priceSummary.shippingFee || 0),
+        },
+      };
     default:
       return state;
   }
 };
+
+
