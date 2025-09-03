@@ -214,7 +214,7 @@ const ManageSizes = () => {
                             </td>
                             <td>
                               <button
-                                className="btn btn-light icon-btn mx-1 m-2"
+                                className="btn btn-light icon-btn mx-1 m-2 text-success"
                                 onClick={() => {
                                   setSelectedSize(size);
                                   setEditModalVisible(true);
@@ -223,7 +223,7 @@ const ManageSizes = () => {
                                 <BsPencilSquare  />
                               </button>
                               <button
-                                className="btn btn-light icon-btn mx-1"
+                                className="btn btn-light icon-btn mx-1 text-primary"
                                 onClick={() => {
                                   setViewSize(size);
                                   setShowViewModal(true);
@@ -232,7 +232,7 @@ const ManageSizes = () => {
                                 <BsEye  />
                               </button>
                               <button
-                                className="btn btn-light icon-btn mx-1 m-2"
+                                className="btn btn-light icon-btn mx-1 m-2 text-danger"
                                 onClick={() => handleDeleteClick(size.id)}
                               >
                                 <TiTrash  />

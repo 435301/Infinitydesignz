@@ -289,12 +289,12 @@ const HomeScreenPromotions = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="btn btn-light icon-btn mx-1 b-r-4 me-2"
+                                      className="btn btn-light icon-btn mx-1 b-r-4 me-2 text-primary"
                                       onClick={() => handleView(promotion)}
                                     >
                                       <BsEye />
                                     </button>
-                                    <button className="btn btn-sm btn-outline-danger" title="Delete"
+                                    <button className="btn btn-light icon-btn mx-1 b-r-4 me-2 text-danger" title="Delete"
                                       onClick={() => handleDeleteClick(promotion.id)}
                                     >
                                       <BsTrash />

@@ -285,7 +285,7 @@ const ManageProducts = () => {
                                                                         <BsPencilSquare style={{ fontSize: '18px', color: '#28a745' }} />
                                                                     </button>
                                                                     <button
-                                                                        className="btn btn-light icon-btn mx-1"
+                                                                        className="btn btn-light icon-btn mx-1 text-primary"
                                                                         title="View"
                                                                         onClick={() => {
                                                                             setViewProduct(product);

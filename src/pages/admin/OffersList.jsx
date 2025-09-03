@@ -241,19 +241,19 @@ const OffersList = () => {
                                   </span>
                                 </td>
                                 <td>
-                                  <button type="button" className="btn btn-light-success icon-btn b-r-4 me-2" onClick={() => {
+                                  <button type="button" className="btn btn-light icon-btn mx-1 m-2 text-success" onClick={() => {
                                     setEditModalVisible(true)
                                     setSelectedEditCoupon(coupon);
                                   }}>
                                     <BsPencilSquare className="text-success" />
                                   </button>
-                                  <button type="button" className="btn btn-light-success icon-btn b-r-4 me-2" onClick={() => {
+                                  <button type="button" className="btn btn-light icon-btn mx-1 m-2 text-primary" onClick={() => {
                                     setViewCouponModal(true)
                                     setSelectedViewCoupon(coupon);
                                   }}>
                                     <BsEye className="text-success" />
                                   </button>
-                                  <button type="button" className="btn btn-light icon-btn mx-1 b-r-4 delete-btn" onClick={() => {
+                                  <button type="button" className="btn btn-light icon-btn mx-1 b-r-4 text-primary" onClick={() => {
                                     handleDeleteClick(coupon.id);
                                     setShowDeleteModal(true);
                                   }}>

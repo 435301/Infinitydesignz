@@ -345,14 +345,14 @@ const ManageSubCategories = () => {
                                   </span>
                                 </td>
                                 <td>
-                                  <button className="btn btn-light icon-btn mx-1 me-2" onClick={() => handleEditClick(item.id)}>
+                                  <button className="btn btn-light icon-btn mx-1 me-2 text-success" onClick={() => handleEditClick(item.id)}>
                                     <BsPencilSquare  />
                                   </button>
 
-                                  <button className="btn btn-light icon-btn mx-1">
+                                  <button className="btn btn-light icon-btn mx-1 text-primary">
                                     <BsEye  onClick={() => handleViewClick(item.id)} />
                                   </button>
-                                  <button className="btn btn-light icon-btn mx-1 m-2" >
+                                  <button className="btn btn-light icon-btn mx-1 m-2 text-danger" >
                                     <TiTrash  onClick={() => {
                                       console.log("Delete icon clicked", item.id);
                                       handleDeleteClick(item.id);

@@ -203,7 +203,7 @@ const ManageFeatureType = () => {
                           <td>
                             <button
                               type="button"
-                              className="btn btn-light icon-btn mx-1 edit-btn"
+                              className="btn btn-light icon-btn mx-1 edit-btn text-success"
                               title="Edit"
                               onClick={() => {
                                 setSelectedFeatureType(featureType);
@@ -215,7 +215,7 @@ const ManageFeatureType = () => {
 
                             <button
                               type="button"
-                              className="btn btn-light icon-btn mx-1 view-btn"
+                              className="btn btn-light icon-btn mx-1 text-primary"
                               onClick={() => {
                                 setViewFeatureType(featureType);
                                 setViewModal(true);
@@ -226,7 +226,7 @@ const ManageFeatureType = () => {
 
                             <button
                               type="button"
-                              className="btn btn-light icon-btn mx-1 delete-btn"
+                              className="btn btn-light icon-btn mx-1 text-danger"
                               title="Delete"
                               onClick={() => handleDeleteClick(featureType.id)}
                             >

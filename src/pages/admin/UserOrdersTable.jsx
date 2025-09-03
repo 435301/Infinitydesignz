@@ -123,7 +123,7 @@ function UserOrdersTable() {
                                                                     </td>
                                                                     <td>
                                                                         <button
-                                                                            className="btn btn-light icon-btn mx-1 m-2"
+                                                                            className="btn btn-light icon-btn mx-1 m-2 text-danger"
                                                                             onClick={() => handleDeleteClick(subscriber.email)}
                                                                         >
                                                                             <TiTrash  />

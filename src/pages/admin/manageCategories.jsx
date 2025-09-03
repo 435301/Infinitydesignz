@@ -265,13 +265,13 @@ const ManageCategories = () => {
                               </span>
                             </td>
                             <td>
-                              <button className="btn btn-light icon-btn mx-1 m-2" onClick={() => handleEditClick(cat.id)}>
+                              <button className="btn btn-light icon-btn mx-1 m-2 text-success" onClick={() => handleEditClick(cat.id)}>
                                 <BsPencilSquare  />
                               </button>
-                              <button className="btn btn-light icon-btn mx-1" onClick={() => handleViewClick(cat.id)}>
+                              <button className="btn btn-light icon-btn mx-1 text-primary" onClick={() => handleViewClick(cat.id)}>
                                 <BsEye  />
                               </button>
-                              <button className="btn btn-light icon-btn mx-1 m-2" onClick={() => handleDeleteClick(cat.id)}>
+                              <button className="btn btn-light icon-btn mx-1 m-2 text-danger" onClick={() => handleDeleteClick(cat.id)}>
                                 <TiTrash  />
                               </button>
                             </td>

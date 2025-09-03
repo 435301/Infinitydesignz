@@ -220,7 +220,7 @@ const ManageColors = () => {
                           <td>
                             <button
                               type="button"
-                              className="btn btn-light icon-btn mx-1"
+                              className="btn btn-light icon-btn mx-1 text-success"
                               style={{ marginRight: '5px' }}
                               title="Edit"
                               onClick={() => {
@@ -231,7 +231,7 @@ const ManageColors = () => {
                               <BsPencilSquare style={{ fontSize: '18px', color: '#28a745' }} />
                             </button>
                             <button
-                              className="btn btn-light icon-btn mx-1"
+                              className="btn btn-light icon-btn mx-1 text-primary"
                               onClick={() => {
                                 setViewColor(color);
                                 setShowColorModal(true);
@@ -240,7 +240,7 @@ const ManageColors = () => {
                               <BsEye  />
                             </button>
                             <button
-                              className="btn btn-light icon-btn mx-1 m-2"
+                              className="btn btn-light icon-btn mx-1 m-2 text-danger"
                               onClick={() => handleDeleteClick(color.id)}
                             >
                               <TiTrash  />

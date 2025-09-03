@@ -13,6 +13,8 @@ import DeleteModal from '../../modals/deleteModal';
 import ViewSliderModal from '../../modals/viewSliderModal';
 import PaginationComponent from '../../includes/pagination';
 import { toast } from 'react-toastify';
+import { TiTrash } from 'react-icons/ti';
+import { BsEye, BsPencilSquare } from 'react-icons/bs';
 
 const ManageSliders = () => {
   const { sliders, loading, error } = useSelector((state) => state.sliders);
@@ -185,31 +187,32 @@ const ManageSliders = () => {
                               </span>
                             </td>
                             <td>
-                              <button
-                                className="btn btn-outline-info btn-sm me-2"
-                                onClick={() => {
-                                  setViewSlider(slider);
-                                  setShowViewModal(true);
-                                }}
-                              >
-                                <i className="bi bi-eye"></i>
-                              </button>
-
-                              <button
+                                <button
                                 // onClick={() => {
                                 //   setSelectedSlider(slider);  
                                 //   setEditShowModal(true); 
                                 // }}
                                 onClick={() => handleEdit(slider)}
-                                className="btn btn-outline-success btn-sm me-2"
+                                className="btn btn-light icon-btn mx-1 m-2 text-success"
                               >
-                                <i className="bi bi-pencil"></i>
+                                <BsPencilSquare/>
                               </button>
                               <button
-                                className="btn btn-outline-danger btn-sm"
+                                className="btn btn-light icon-btn mx-1 m-2 text-primary"
+                                onClick={() => {
+                                  setViewSlider(slider);
+                                  setShowViewModal(true);
+                                }}
+                              >
+                                <BsEye/>
+                              </button>
+
+                            
+                              <button
+                                className="btn btn-light icon-btn mx-1 m-2 text-danger"
                                 onClick={() => handleDeleteClick(slider?.id)}
                               >
-                                <i className="bi bi-trash"></i>
+                                <TiTrash/>
                               </button>
 
                             </td>

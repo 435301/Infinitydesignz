@@ -167,12 +167,12 @@ const ManageUsers = ({ handleUpdate }) => {
                                 </td>
                                 <td>
                                   <button
-                                    className="btn btn-sm btn-outline-success me-2"
+                                    className="btn btn-light icon-btn mx-1 m-2 text-success"
                                     onClick={() => handleEditClick(user)}
                                   >
                                     <FaEdit />
                                   </button>
-                                  <button className="btn btn-sm btn-outline-danger" title="Delete"
+                                  <button className="btn btn-light icon-btn mx-1 m-2 text-danger" title="Delete"
                                     onClick={() => handleDeleteClick(user.id)}
                                   >
                                     <BsTrash />

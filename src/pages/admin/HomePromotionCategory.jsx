@@ -214,14 +214,14 @@ const HomePromotionCategory = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="btn btn-light icon-btn mx-1  me-2"
+                                      className="btn btn-light icon-btn mx-1  me-2 text-success"
                                       onClick={() => handleEditClick(promotion)}
                                     >
-                                      <PencilSquare className='text-danger' />
+                                      <PencilSquare  />
                                     </button>
                                     <button
                                       type="button"
-                                      className="btn btn-light icon-btn mx-1 b-r-4 me-2"
+                                      className="btn btn-light icon-btn mx-1 b-r-4 me-2 text-primary"
                                       onClick={() => handleViewClick(promotion)}
                                     >
                                       <BsEye />

@@ -165,7 +165,7 @@ const ManageFilterType = () => {
                                                     <td>
                                                         <button
                                                             type="button"
-                                                            className="btn btn-light icon-btn mx-1"
+                                                            className="btn btn-light icon-btn mx-1 text-success"
                                                             style={{ marginRight: '5px' }}
                                                             title="Edit"
                                                             onClick={() => {
@@ -176,7 +176,7 @@ const ManageFilterType = () => {
                                                             <BsPencilSquare />
                                                         </button>
                                                         <button
-                                                            className="btn btn-light icon-btn mx-1"
+                                                            className="btn btn-light icon-btn mx-1 text-primary"
                                                             onClick={() => {
                                                                 setFilterType(item);
                                                                 setViewModal(true);
