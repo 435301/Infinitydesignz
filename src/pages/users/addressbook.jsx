@@ -108,7 +108,7 @@ export default function AddressBook() {
             {/* Related Products and Advertisement */}
             <div className="col-md-3">
               {/* <img src={Banner} alt="Special Sale" className="img-fluid" /> */}
-              <RelatedProducts />
+              {/* <RelatedProducts /> */}
             </div>
           </div>
         </div>
