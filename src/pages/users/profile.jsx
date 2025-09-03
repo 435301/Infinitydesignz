@@ -166,7 +166,7 @@ export default function ProfilePage() {
               <div className="form-line">
                 <div className="form-field">
                   <label>Mobile Number<span className="text-danger">*</span></label>
-                  <input type="text" name="phone" value={formData.phone}  className={`form-control ${errors.phone ? 'is-invalid' : ''}`} onChange={handleChange} />
+                  <input type="text" name="phone" value={formData.phone}  className={`form-control ${errors.phone ? 'is-invalid' : ''}`} onChange={handleChange} disabled />
                   {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
                 </div>
                 <div className="form-field">
