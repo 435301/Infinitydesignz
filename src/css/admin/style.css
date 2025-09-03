@@ -2153,9 +2153,10 @@ select.form-control:not([size]):not([multiple]) {
 }
 
 .Fabric .card-img-top {
-  object-fit: cover;
-  width: 100%;
-  height: 250px;
+  width: 100%;          /* fixed box width */
+  height: 330px;         /* fixed box height */
+  object-fit: contain;   /* ✅ show full image inside box */
+  object-position: center;
 }
 
 .Fabric .card-title {
@@ -2213,6 +2214,7 @@ select.form-control:not([size]):not([multiple]) {
   font-size: 16px;
   margin-top: 20px;
 }
+
 /* Active Promotion */
 .badge-active {
   background-color: #d4f7f2;
@@ -2516,4 +2518,12 @@ small a {
   margin-bottom: 10px;
   font-weight: bold;
   color: #000;
+}
+
+@media (max-width: 767px) {
+    .Fabric .card-img-top {
+        object-fit: fill;
+        width: 100%;
+        height: 100%;
+    }
 }
