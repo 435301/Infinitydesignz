@@ -250,6 +250,17 @@ const ProductsPage = () => {
           );
 
           if (productInRange && variantsInRange.length > 0) {
+              if (colorIds.length > 0) {
+              return variantsInRange.map((variant) => ({
+                ...product,
+                variantId: variant.id,
+                isVariant: true,
+                _variant: variant,
+                mrp: variant.mrp,
+                sellingPrice: variant.sellingPrice,
+                discountPct: variant.badgeDiscountPercent || 0,
+              }));
+            }
             const mainProductEntry = {
               ...product,
               isVariant: false,
