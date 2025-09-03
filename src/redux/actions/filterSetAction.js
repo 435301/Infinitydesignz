@@ -62,7 +62,7 @@ export const addFilterSet = (formData) => async (dispatch) => {
     });
 
     toast.success(message || 'Filter Set created successfully');
-    dispatch(fetchFilterSets());
+    dispatch(fetchFilterSets("all"));
     return data; // Return the created filter set
   } catch (error) {
     const errMsg = error?.response?.data?.message || 'Error adding filter set';
@@ -91,7 +91,7 @@ export const editFilterSet = (payload) => async (dispatch) => {
 
     dispatch({ type: 'EDIT_FILTERSET_SUCCESS' });
     toast.success('Filter Set updated Successfully')
-    dispatch(fetchFilterSets());
+    dispatch(fetchFilterSets("all"));
   } catch (error) {
       toast.error(error?.response?.data?.message || 'Error editing filter set');
     dispatch({
@@ -130,7 +130,7 @@ export const updateFilterSetPriority = ({ id, priority }) => async (dispatch) =>
       }
     });
 
-    dispatch(fetchFilterSets()); 
+    dispatch(fetchFilterSets("all")); 
   } catch (error) {
       toast.error(error?.response?.data?.message || 'Failed to update priority');
     console.error('Failed to update priority', error);
