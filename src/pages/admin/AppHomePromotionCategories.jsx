@@ -14,14 +14,12 @@ const AppHomePromotionCategories = () => {
 
     const getStatusBadge = (status) => (
         <span
-            className="badge text-light-primary"
-            style={{
-                backgroundColor: status === 'Active' ? '#d4f7f2' : '#f8d7da',
-                color: status === 'Active' ? '#28a745' : '#dc3545',
-            }}
+            className={`badge text-light-primary ${status === "Active" ? "status-active" : "status-inactive"
+                }`}
         >
             {status}
         </span>
+
     );
 
     return (
@@ -110,10 +108,10 @@ const AppHomePromotionCategories = () => {
                                                             <td>{item.priority}</td> {/* Priority */}
                                                             <td>{getStatusBadge(item.status)}</td>
                                                             <td>
-                                                                <button className="btn btn-light icon-btn me-2">
+                                                                <button className="btn btn-light icon-btn mx-1 me-2">
                                                                     <i className="bi bi-pencil text-danger"></i>
                                                                 </button>
-                                                                <button className="btn btn-light icon-btn">
+                                                                <button className="btn btn-light icon-btn mx-1">
                                                                     <i className="bi bi-trash text-danger"></i>
                                                                 </button>
                                                             </td>

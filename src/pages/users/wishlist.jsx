@@ -257,7 +257,7 @@ export default function WishlistPage() {
                 <img src={AdBanner} alt="Special Sale" className="img-fluid" />
               </div>
 
-              <div className="related-products py-4">
+            <div className="col-lg-12">  <div className="related-products py-4">
                 <h4>Related Products</h4>
                 <div className="carousel-wrapper">
                     <Carousel controls indicators={false}>
@@ -285,7 +285,7 @@ export default function WishlistPage() {
                 </div>
               
 
-              </div>
+              </div></div>
             </div>
           </div>
         </div>

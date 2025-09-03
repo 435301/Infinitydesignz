@@ -122,7 +122,7 @@ const ManageCoupons = () => {
                                                                     </a>
                                                                     <button
                                                                         type="button"
-                                                                        className="btn btn-light-danger icon-btn b-r-4"
+                                                                        className="btn btn-light icon-btn mx-1 b-r-4"
                                                                         onClick={() => handleDelete(coupon.id)}
                                                                     >
                                                                         <i className="bi bi-trash text-danger"></i>

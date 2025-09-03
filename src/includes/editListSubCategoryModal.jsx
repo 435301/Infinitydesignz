@@ -123,7 +123,7 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
     const subCategories = categories.filter(isSubCategoryLevel);
 
     return (
-        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div className="modal fade show d-block new-1" tabIndex="-1" >
             <div className="modal-dialog modal-xl">
                 <div className="modal-content">
                     <form onSubmit={handleSubmit} encType="multipart/form-data">

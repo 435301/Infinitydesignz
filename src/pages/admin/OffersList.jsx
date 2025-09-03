@@ -253,7 +253,7 @@ const OffersList = () => {
                                   }}>
                                     <BsEye className="text-success" />
                                   </button>
-                                  <button type="button" className="btn btn-light-danger icon-btn b-r-4 delete-btn" onClick={() => {
+                                  <button type="button" className="btn btn-light icon-btn mx-1 b-r-4 delete-btn" onClick={() => {
                                     handleDeleteClick(coupon.id);
                                     setShowDeleteModal(true);
                                   }}>

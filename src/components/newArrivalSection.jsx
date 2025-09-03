@@ -17,13 +17,10 @@ const NewArrivalsSection = ({ title = "New Arrivals", cards = [] }) => {
               {card.type === "imageOnly" ? (
                 <img src={card.image} alt={card.alt} className="w-100" />
               ) : (
-                <div className="position-relative overflow-hidden rounded-3 mb-3">
+                <div className="card-wrapper position-relative overflow-hidden rounded-3 mb-3">
                   <img src={card.image} className="img-fluid" alt={card.alt} />
-                  <div
-                    className="position-absolute bottom-0 start-0 pb-2 w-100 text-dark"
-                    style={{ backgroundColor: card.bgColor }}
-                  >
-                    <div className="p-3">
+                  <div className={`card-overlay ${card.bgClass || ''}`}>
+                    <div className="overlay-content p-3">
                       <h6 className="lorem-text fw-bold mb-1 text-start">
                         {card.text}
                       </h6>

@@ -1,0 +1,30 @@
+.wishlist-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 8px;
+    z-index: 2;
+}
+
+.wishlist-icon {
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.no-image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    height: 200px;
+    font-size: 1.2rem;
+}
+
+.wishlist-icon {
+    position: absolute;
+    top: 13px;
+    right: 13px;
+    background-color: #fff;
+    border-radius: 50%;
+}

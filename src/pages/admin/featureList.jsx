@@ -152,14 +152,8 @@ const ManageFeatureList = () => {
                           {features.map((feature) => (
                             <div
                               key={feature.id}
-                              className="feature-item d-flex justify-content-between align-items-center"
-                              style={{
-                                backgroundColor: '#2ccfc4',
-                                color: '#fff',
-                                padding: '10px 15px',
-                                borderRadius: '4px',
-                                flex: '0 0 30%',
-                              }}
+                              className="feature-item item-1 d-flex justify-content-between align-items-center"
+                            
                             >
                               <div>
                                 <input
@@ -219,14 +213,8 @@ const ManageFeatureList = () => {
                           ))}
                         </div>
                         <button
-                          className="btn mt-3 set-priority-btn"
-                          style={{
-                            backgroundColor: '#0da79e',
-                            color: '#fff',
-                            border: 'none',
-                            padding: '10px 20px',
-                            fontSize: '16px',
-                          }}
+                          className="btn new-btn mt-3 set-priority-btn"
+                       
                           onClick={async () => {
                             for (let id of selectedRows) {
                               if (editedPriorities[id] !== undefined) {

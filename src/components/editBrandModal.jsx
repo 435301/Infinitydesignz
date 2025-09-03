@@ -49,7 +49,7 @@ const EditBrandModal = ({ show, onClose, brand }) => {
     if (!show) return null;
 
     return (
-        <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div className="modal fade show d-block new-1" >
             <div className="modal-dialog modal-md">
                 <div className="modal-content">
                     <form onSubmit={handleSubmit} className="app-form">

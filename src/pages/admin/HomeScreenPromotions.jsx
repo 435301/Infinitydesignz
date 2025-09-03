@@ -255,7 +255,7 @@ const HomeScreenPromotions = () => {
                                   <td>{index + 1}</td>
                                   <td>{promotion.title}</td>
                                   <td>
-                                      <img
+                                    <img
                                       src={`${BASE_URL}${promotion.imageUrl}`}
                                       alt={promotion.title}
                                       className="rounded-circle"
@@ -279,22 +279,17 @@ const HomeScreenPromotions = () => {
                                   </td>
                                   <td>
                                     <span
-                                      className={`badge ${promotion.status
-                                        ? "text-light-primary"
-                                        : "text-light-danger"
+                                      className={`badge ${promotion.status ? "badge-active" : "badge-inactive"
                                         }`}
-                                      style={{
-                                        backgroundColor: promotion.status ? "#d4f7f2" : "#f8d7da",
-                                        color: promotion.status ? "#28a745" : "#dc3545",
-                                      }}
                                     >
                                       {promotion.status ? "Active" : "Inactive"}
                                     </span>
+
                                   </td>
                                   <td>
                                     <button
                                       type="button"
-                                      className="btn btn-light icon-btn b-r-4 me-2"
+                                      className="btn btn-light icon-btn mx-1 b-r-4 me-2"
                                       onClick={() => handleView(promotion)}
                                     >
                                       <BsEye />
@@ -323,9 +318,9 @@ const HomeScreenPromotions = () => {
             />
             {showDeleteModal && (
               <DeleteModal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} message="Are you sure you want to delete this product promotion?" />)}
-             {showViewModal &&
-              <ViewPromotionModal show={showViewModal} handleClose={() => setShowViewModal(false)} promotion={selectedPromotion}/>
-              }
+            {showViewModal &&
+              <ViewPromotionModal show={showViewModal} handleClose={() => setShowViewModal(false)} promotion={selectedPromotion} />
+            }
           </div>
         </div>
       </div>

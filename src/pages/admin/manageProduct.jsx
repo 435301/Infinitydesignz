@@ -275,7 +275,7 @@ const ManageProducts = () => {
                                                                 <td>
                                                                     <button
                                                                         type="button"
-                                                                        className="btn btn-light icon-btn"
+                                                                        className="btn btn-light icon-btn mx-1"
                                                                         style={{ marginRight: '5px' }}
                                                                         title="Edit"
                                                                         // onClick={() => handleEdit(product.id)}
@@ -285,22 +285,22 @@ const ManageProducts = () => {
                                                                         <BsPencilSquare style={{ fontSize: '18px', color: '#28a745' }} />
                                                                     </button>
                                                                     <button
-                                                                        className="btn btn-light icon-btn"
+                                                                        className="btn btn-light icon-btn mx-1"
                                                                         title="View"
                                                                         onClick={() => {
                                                                             setViewProduct(product);
                                                                             setShowViewModal(true);
                                                                         }}
                                                                     >
-                                                                        <BsEye style={{ fontSize: '18px', color: '#212529' }} />
+                                                                        <BsEye  />
                                                                     </button>
                                                                     <button
                                                                         type="button"
-                                                                        className="btn btn-light icon-btn delete-btn"
+                                                                        className="btn btn-light icon-btn mx-1 delete-btn"
                                                                         title="Delete"
                                                                         onClick={() => handleDeleteClick(product.id)}
                                                                     >
-                                                                        <BsTrash style={{ fontSize: '18px', color: '#dc3545' }} />
+                                                                        <BsTrash  />
                                                                     </button>
                                                                 </td>
                                                             </tr>

@@ -1,0 +1,107 @@
+.success-section {
+  background: linear-gradient(to bottom, #f9f9f9, #e8f0f0);
+  padding: 40px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.success-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  width: 100%;
+}
+
+.success-card {
+  background: #ffffff;
+  border-radius: 25px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e0e7e7;
+  width: 100%;
+  max-width: 600px;
+  overflow: hidden;
+  padding: 40px;
+}
+
+.content-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.success-icon {
+  font-size: 50px;
+  color: #2ecc71;
+  margin-bottom: 20px;
+  animation: pulse 1.5s infinite;
+}
+
+.success-title {
+  font-family: "Poppins", "Arial", sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #1a2e2e;
+  margin-bottom: 20px;
+}
+
+.success-info {
+  font-family: "Open Sans", "Arial", sans-serif;
+  font-size: 16px;
+  color: #1a2e2e;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.btn-shop {
+  background: #2ecc71;
+  border: none;
+  padding: 10px 30px;
+  font-family: "Poppins", "Arial", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 30px;
+  width: 100%;
+  max-width: 250px;
+  color: #fff;
+  transition: all 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.btn-shop:hover {
+  background: #27ae60;
+}
+
+.btn-home {
+  background: transparent;
+  border: 2px solid #2ecc71;
+  color: #2ecc71;
+  padding: 10px 30px;
+  font-family: "Poppins", "Arial", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 30px;
+  width: 100%;
+  max-width: 250px;
+  transition: all 0.3s ease;
+}
+
+.btn-home:hover {
+  background: #2ecc71;
+  color: #fff;
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

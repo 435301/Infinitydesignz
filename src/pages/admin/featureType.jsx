@@ -68,14 +68,14 @@ const ManageFeatureType = () => {
   };
 
   const handleBulkStatusUpdate = async (newStatus) => {
-  if (selectedRows.length === 0) {
-    toast.warning("Please select at least one feature type.");
-    return;
-  }
+    if (selectedRows.length === 0) {
+      toast.warning("Please select at least one feature type.");
+      return;
+    }
 
-  await dispatch(bulkUpdateFeatureTypeStatus(selectedRows, newStatus));
-  setSelectedRows([]);
-};
+    await dispatch(bulkUpdateFeatureTypeStatus(selectedRows, newStatus));
+    setSelectedRows([]);
+  };
 
 
   const handleRowCheckboxChange = (id) => {
@@ -203,34 +203,37 @@ const ManageFeatureType = () => {
                           <td>
                             <button
                               type="button"
-                              className="btn btn-light icon-btn"
-                              style={{ marginRight: '5px' }}
+                              className="btn btn-light icon-btn mx-1 edit-btn"
                               title="Edit"
                               onClick={() => {
                                 setSelectedFeatureType(featureType);
                                 setEditModalVisible(true);
                               }}
                             >
-                              <BsPencilSquare style={{ fontSize: '18px', color: '#28a745' }} />
+                              <BsPencilSquare className="edit-icon" />
                             </button>
+
                             <button
-                              className="btn btn-light icon-btn"
+                              type="button"
+                              className="btn btn-light icon-btn mx-1 view-btn"
                               onClick={() => {
                                 setViewFeatureType(featureType);
                                 setViewModal(true);
                               }}
                             >
-                              <BsEye style={{ fontSize: '18px', color: '#212529' }} />
+                              <BsEye className="view-icon" />
                             </button>
+
                             <button
                               type="button"
-                              className="btn btn-light icon-btn delete-btn"
+                              className="btn btn-light icon-btn mx-1 delete-btn"
                               title="Delete"
                               onClick={() => handleDeleteClick(featureType.id)}
                             >
-                              <BsTrash style={{ fontSize: '18px', color: '#dc3545' }} />
+                              <BsTrash className="delete-icon" />
                             </button>
                           </td>
+
                         </tr>
                       ))}
                       {currentRows.length === 0 && (

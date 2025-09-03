@@ -156,14 +156,8 @@ const ManageFilterList = () => {
                           {filters.map((filter) => (
                             <div
                               key={filter.id}
-                              className="feature-item d-flex justify-content-between align-items-center"
-                              style={{
-                                backgroundColor: '#2ccfc4',
-                                color: '#fff',
-                                padding: '10px 15px',
-                                borderRadius: '4px',
-                                flex: '0 0 30%',
-                              }}
+                              className="feature-item item-1 d-flex justify-content-between align-items-center"
+                             
                             >
                               <div>
                                 <input

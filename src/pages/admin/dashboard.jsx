@@ -103,128 +103,115 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Dashboard Cards */}
-          <div className="row dashboard-header" style={{ padding: '0 10px' }}>
-            {dashboardCards.map((card, index) => (
-              <div className="col-lg-3 col-md-6" key={index} style={{ padding: '10px' }}>
-                <div
-                  className="card dashboard-product"
-                  style={{
-                    backgroundColor: '#fff',
-                    borderRadius: '10px',
-                    padding: '15px',
-                    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '13px', color: '#878a99', fontWeight: '500' }}>
-                      {card.title}
+        {/* Dashboard Cards */}
+<div className="row dashboard-header">
+  {dashboardCards.map((card, index) => (
+    <div className="col-lg-3 col-md-6 dashboard-col" key={index}>
+      <div className="card dashboard-product">
+        <div className="dashboard-card-header">
+          <span className="dashboard-title">{card.title}</span>
+          <div className="dashboard-icon-wrapper" style={{ backgroundColor: card.bg }}>
+            <i className={`bi ${card.icon}`} style={{ color: card.color }}></i>
+          </div>
+        </div>
+        <h2 className="dashboard-value">{card.value}</h2>
+        <div className="dashboard-links">
+          {card.items.map((item, i) => (
+            <a
+              href="#!"
+              key={i}
+              className={`dashboard-link link-${i}`}
+            >
+              {item}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
+{/* Top 5 Products and Vendors */}
+<div className="row">
+  {/* Products Table */}
+  <div className="col-sm-6 mb-3">
+    <div className="card">
+      <div className="card-block custom-card-block">
+        <h5 className="mb-3">Top 5 Selling Products</h5>
+        <div className="table-responsive">
+          <table className="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>S No</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Sold</th>
+                <th>Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((row, i) => (
+                <tr key={i}>
+                  <td>{i + 1}</td>
+                  <td>{row[0]}</td>
+                  <td>{row[1]}</td>
+                  <td>{row[2]}</td>
+                  <td>{row[3]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* Vendors Table */}
+  <div className="col-sm-6">
+    <div className="card">
+      <div className="card-block custom-card-block">
+        <h5 className="mb-3">Top 5 Vendors</h5>
+        <div className="table-responsive">
+          <table className="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>S No</th>
+                <th>Vendor Name</th>
+                <th>Location</th>
+                <th>Products</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {vendors.map((vendor, i) => (
+                <tr key={i}>
+                  <td>{i + 1}</td>
+                  <td>{vendor[0]}</td>
+                  <td>{vendor[1]}</td>
+                  <td>{vendor[2]}</td>
+                  <td>
+                    <span
+                      className={`badge ${
+                        vendor[3] === "Active"
+                          ? "status-active"
+                          : vendor[3] === "Inactive"
+                          ? "status-inactive"
+                          : "status-warning"
+                      }`}
+                    >
+                      {vendor[3]}
                     </span>
-                    <div style={{ backgroundColor: card.bg, padding: '5px' }}>
-                      <i className={`bi ${card.icon}`} style={{ color: card.color, fontSize: '20px' }}></i>
-                    </div>
-                  </div>
-                  <h2 style={{ fontSize: '24px', margin: '10px 0' }}>{card.value}</h2>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    {card.items.map((item, i) => (
-                      <a
-                        href="#!"
-                        key={i}
-                        style={{
-                          fontSize: '14px',
-                          color: ['#a65926', '#118b21', '#e70c0c'][i],
-                          textDecoration: 'none',
-                        }}
-                      >
-                        {item}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-          {/* Top 5 Products and Vendors */}
-          <div className="row">
-            {/* Products Table */}
-            <div className="col-sm-6 mb-3">
-              <div className="card">
-                <div className="card-block" style={{ padding: '15px' }}>
-                  <h5 className="mb-3">Top 5 Selling Products</h5>
-                  <div className="table-responsive">
-                    <table className="table table-striped table-hover ">
-                      <thead>
-                        <tr>
-                          <th>S No</th>
-                          <th>Product Name</th>
-                          <th>Category</th>
-                          <th>Sold</th>
-                          <th>Revenue</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {products.map((row, i) => (
-                          <tr key={i}>
-                            <td>{i + 1}</td>
-                            <td>{row[0]}</td>
-                            <td>{row[1]}</td>
-                            <td>{row[2]}</td>
-                            <td>{row[3]}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Vendors Table */}
-            <div className="col-sm-6">
-              <div className="card">
-                <div className="card-block" style={{ padding: '15px' }}>
-                  <h5 className="mb-3">Top 5 Vendors</h5>
-                  <div className="table-responsive">
-                    <table className="table table-striped table-hover">
-                      <thead>
-                        <tr>
-                          <th>S No</th>
-                          <th>Vendor Name</th>
-                          <th>Location</th>
-                          <th>Products</th>
-                          <th>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {vendors.map((vendor, i) => (
-                          <tr key={i}>
-                            <td>{i + 1}</td>
-                            <td>{vendor[0]}</td>
-                            <td>{vendor[1]}</td>
-                            <td>{vendor[2]}</td>
-                            <td>
-                              <span
-                                className={`badge bg-${
-                                  vendor[3] === 'Active'
-                                    ? 'success'
-                                    : vendor[3] === 'Inactive'
-                                    ? 'danger'
-                                    : 'warning'
-                                }`}
-                              >
-                                {vendor[3]}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
       <Footer />
