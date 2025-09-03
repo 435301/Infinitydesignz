@@ -55,9 +55,9 @@ const LoginPage = () => {
                   />
                 </div>
                 <div className="col-sm-6 col-xs-12 forgot-phone text-right mt-3">
-                  <a href="/forgot-password" className="text-right f-w-600">
+                  {/* <a href="/forgot-password" className="text-right f-w-600">
                     <i className="icon-lock"></i> Forget Password?
-                  </a>
+                  </a> */}
                 </div>
                 {error && (
                   <div className="col-12 text-danger text-center mt-2">{error}</div>
