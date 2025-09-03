@@ -159,7 +159,7 @@ const ProductCard = ({ product, variant = null }) => {
             )}
 
             <div className="wishlist-container">
-              <div className="whishlist_Icon" onClick={handleWishlistClick}>
+              <div className="" onClick={handleWishlistClick}>
                 {isWishlisted ? (
                   <FaHeart
                     className="text-danger wishlist-icon"

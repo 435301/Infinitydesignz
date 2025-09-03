@@ -2153,10 +2153,11 @@ select.form-control:not([size]):not([multiple]) {
 }
 
 .Fabric .card-img-top {
-  width: 100%;          /* fixed box width */
-  height: 330px;         /* fixed box height */
-  object-fit: contain;   /* ✅ show full image inside box */
+  width: 100%;
+  height: 250px;       /* fixed box */
+  object-fit: cover;   /* fills box, crops extra */
   object-position: center;
+  border-radius: 8px;
 }
 
 .Fabric .card-title {

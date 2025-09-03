@@ -20,7 +20,21 @@
     height: 200px;
     font-size: 1.2rem;
 }
-
+.wishlist-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #fff;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex
+;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 5px 3px 4px;
+}
 .wishlist-icon {
     position: absolute;
     top: 13px;
