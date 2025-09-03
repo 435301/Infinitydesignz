@@ -56,18 +56,32 @@ export default function ProductDetailPage() {
     return result;
   }, []);
 
+  const makeSlug = (title, id) =>
+    `${title?.toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-")}-${id}`;
+
   // Memoize breadcrumb items
-  const breadcrumbItems = useMemo(() => (
-    product
-      ? [
-          { label: 'Home' },
-          ...getCategoryHierarchy(product.category?.id, categories).map(cat => ({
-            label: cat.title,
-          })),
-          { label: product.title }
-        ]
-      : [{ label: 'Home' }]
-  ), [product, categories, getCategoryHierarchy]);
+  const breadcrumbItems = useMemo(() => {
+    if (!product) return [{ label: "Home", link: "/" }];
+    const hierarchy = getCategoryHierarchy(product.category?.id, categories);
+    const crumbs = [{ label: "Home", link: "/" }];
+    let pathSegments = [];
+    hierarchy.forEach((cat) => {
+      const slug = makeSlug(cat.title, cat.id);
+      pathSegments.push(slug);
+      crumbs.push({
+        label: cat.title,
+        link: `/products/${pathSegments.join("/")}`,
+      });
+    });
+
+    // finally the product itself (no link)
+    crumbs.push({ label: product.title });
+
+    return crumbs;
+  }, [product, categories, getCategoryHierarchy]);
 
   useEffect(() => {
     dispatch(fetchUserProductDetailsById(productId, variantIdFromURL));
@@ -75,138 +89,75 @@ export default function ProductDetailPage() {
     dispatch(fetchWishlist());
   }, [dispatch, productId, variantIdFromURL]);
 
-  // useEffect(() => {
-  //   if (!product) return;
-
-  //   console.log('Image selection useEffect triggered:', {
-  //     variantIdFromURL,
-  //     selectedVariant: product.selectedVariant,
-  //     variantImages: product.images?.variants,
-  //     flatVariantImages: product.variantImages,
-  //   });
-
-  //   // Prioritize selectedVariant from Redux, fallback to variantIdFromURL
-  //   const variantId = product.selectedVariant?.id
-  //     ? parseInt(product.selectedVariant.id)
-  //     : parseInt(variantIdFromURL) || null;
-
-  //   console.log('Selected variantId:', variantId);
-
-  //   let selectedImages = [];
-
-  //   if (variantId) {
-  //     // Check structured variant images (product.images.variants)
-  //     const variantImagesObj = product.images?.variants?.[variantId];
-  //     if (variantImagesObj) {
-  //       const mainImg = variantImagesObj.main;
-  //       const additionalImgs = variantImagesObj.additional || [];
-  //       selectedImages = [
-  //         ...(mainImg ? [{ url: mainImg.url, isMain: true }] : []),
-  //         ...additionalImgs.map((img) => ({ url: img.url, isMain: img.isMain })),
-  //       ];
-  //       console.log('Using structured variant images:', selectedImages);
-  //     } else {
-  //       // Fallback to flat variantImages array
-  //       const variantImagesFlat = product.variantImages?.filter(
-  //         (img) => parseInt(img.variantId) === variantId
-  //       ) || [];
-  //       selectedImages = variantImagesFlat.map((img) => ({ url: img.url, isMain: img.isMain }));
-  //       console.log('Using flat variant images:', selectedImages);
-  //     }
-  //   }
-
-  //   if (selectedImages.length > 0) {
-  //     const mainVariantImg = selectedImages.find((img) => img.isMain) || selectedImages[0];
-  //     setMainImage(`${BASE_URL}/Uploads/products/${mainVariantImg.url}`);
-  //     setThumbnails(selectedImages);
-  //     console.log('Setting main image:', mainVariantImg.url);
-  //   } else {
-  //     // Fallback to product-level images
-  //     const mainImgUrl = product.images?.main?.url;
-  //     const additional = product.images?.additional || [];
-  //     console.log('Falling back to main product image:', mainImgUrl);
-  //     if (mainImgUrl) {
-  //       setMainImage(`${BASE_URL}/Uploads/products/${mainImgUrl}`);
-  //     }
-  //     setThumbnails([
-  //       ...(mainImgUrl ? [{ url: mainImgUrl, isMain: true }] : []),
-  //       ...additional.map((img) => ({ url: img.url, isMain: img.isMain })),
-  //     ]);
-  //   }
-
-  //   // Update size and color selections based on selectedVariant
-  //   setSelectedSizeId(product.selectedVariant?.sizeId || '');
-  //   setSelectedColorId(product.selectedVariant?.colorId || '');
-  // }, [product, variantIdFromURL, product?.selectedVariant]);
 
   // Memoize zoom handlers to avoid unnecessary re-creation
-useEffect(() => {
-  if (!product) {
-    console.log('No product data available');
-    return;
-  }
+  useEffect(() => {
+    if (!product) {
+      console.log('No product data available');
+      return;
+    }
 
-  console.log('Image selection useEffect triggered:', {
-    variantIdFromURL,
-    selectedVariant: product.selectedVariant,
-    variantImages: product.images?.variants,
-    flatVariantImages: product.variantImages,
-  });
+    console.log('Image selection useEffect triggered:', {
+      variantIdFromURL,
+      selectedVariant: product.selectedVariant,
+      variantImages: product.images?.variants,
+      flatVariantImages: product.variantImages,
+    });
 
-  // Use selectedVariant.id if available, otherwise fallback to variantIdFromURL
-  const variantId = product.selectedVariant?.id
-    ? parseInt(product.selectedVariant.id)
-    : parseInt(variantIdFromURL) || null;
+    // Use selectedVariant.id if available, otherwise fallback to variantIdFromURL
+    const variantId = product.selectedVariant?.id
+      ? parseInt(product.selectedVariant.id)
+      : parseInt(variantIdFromURL) || null;
 
-  console.log('Selected variantId:', variantId);
+    console.log('Selected variantId:', variantId);
 
-  let selectedImages = [];
+    let selectedImages = [];
 
-  if (variantId) {
-    // Try structured variant images (product.images.variants)
-    const variantImagesObj = product.images?.variants?.[variantId];
-    if (variantImagesObj) {
-      const mainImg = variantImagesObj.main;
-      const additionalImgs = variantImagesObj.additional || [];
-      selectedImages = [
-        ...(mainImg ? [{ url: mainImg.url, isMain: true }] : []),
-        ...additionalImgs.map((img) => ({ url: img.url, isMain: img.isMain })),
-      ];
-      console.log('Using structured variant images:', selectedImages);
+    if (variantId) {
+      // Try structured variant images (product.images.variants)
+      const variantImagesObj = product.images?.variants?.[variantId];
+      if (variantImagesObj) {
+        const mainImg = variantImagesObj.main;
+        const additionalImgs = variantImagesObj.additional || [];
+        selectedImages = [
+          ...(mainImg ? [{ url: mainImg.url, isMain: true }] : []),
+          ...additionalImgs.map((img) => ({ url: img.url, isMain: img.isMain })),
+        ];
+        console.log('Using structured variant images:', selectedImages);
+      } else {
+        // Fallback to flat variantImages array
+        const variantImagesFlat = (product.variantImages || []).filter(
+          (img) => parseInt(img.variantId) === variantId
+        );
+        selectedImages = variantImagesFlat.map((img) => ({ url: img.url, isMain: img.isMain }));
+        console.log('Using flat variant images:', selectedImages);
+      }
+    }
+
+    // Only update images if we have valid selectedImages or need to fallback
+    if (selectedImages.length > 0) {
+      const mainVariantImg = selectedImages.find((img) => img.isMain) || selectedImages[0];
+      setMainImage(`${BASE_URL}/Uploads/products/${mainVariantImg.url}`);
+      setThumbnails(selectedImages);
+      console.log('Setting main image:', mainVariantImg.url);
     } else {
-      // Fallback to flat variantImages array
-      const variantImagesFlat = (product.variantImages || []).filter(
-        (img) => parseInt(img.variantId) === variantId
-      );
-      selectedImages = variantImagesFlat.map((img) => ({ url: img.url, isMain: img.isMain }));
-      console.log('Using flat variant images:', selectedImages);
+      // Fallback to product-level images
+      const mainImgUrl = product.images?.main?.url;
+      const additional = product.images?.additional || [];
+      console.log('Falling back to main product image:', mainImgUrl);
+      if (mainImgUrl) {
+        setMainImage(`${BASE_URL}/Uploads/products/${mainImgUrl}`);
+      }
+      setThumbnails([
+        ...(mainImgUrl ? [{ url: mainImgUrl, isMain: true }] : []),
+        ...additional.map((img) => ({ url: img.url, isMain: img.isMain })),
+      ]);
     }
-  }
 
-  // Only update images if we have valid selectedImages or need to fallback
-  if (selectedImages.length > 0) {
-    const mainVariantImg = selectedImages.find((img) => img.isMain) || selectedImages[0];
-    setMainImage(`${BASE_URL}/Uploads/products/${mainVariantImg.url}`);
-    setThumbnails(selectedImages);
-    console.log('Setting main image:', mainVariantImg.url);
-  } else {
-    // Fallback to product-level images
-    const mainImgUrl = product.images?.main?.url;
-    const additional = product.images?.additional || [];
-    console.log('Falling back to main product image:', mainImgUrl);
-    if (mainImgUrl) {
-      setMainImage(`${BASE_URL}/Uploads/products/${mainImgUrl}`);
-    }
-    setThumbnails([
-      ...(mainImgUrl ? [{ url: mainImgUrl, isMain: true }] : []),
-      ...additional.map((img) => ({ url: img.url, isMain: img.isMain })),
-    ]);
-  }
-
-  // Sync size and color selections
-  setSelectedSizeId(product.selectedVariant?.sizeId?.toString() || '');
-  setSelectedColorId(product.selectedVariant?.colorId?.toString() || '');
-}, [product, variantIdFromURL, product?.selectedVariant]);
+    // Sync size and color selections
+    setSelectedSizeId(product.selectedVariant?.sizeId?.toString() || '');
+    setSelectedColorId(product.selectedVariant?.colorId?.toString() || '');
+  }, [product, variantIdFromURL, product?.selectedVariant]);
 
   useEffect(() => {
     const mainImg = document.getElementById("mainImage");
@@ -404,13 +355,11 @@ useEffect(() => {
                 {breadcrumbItems.map((item, index) => (
                   <span key={index}>
                     {item.link ? (
-                      <Link to={item.link}>{item.label}</Link>
+                      <Link to={item.link} className="text-dark text-decoration-none">{item.label}</Link>
                     ) : (
                       <span>{item.label}</span>
                     )}
-                    {index < breadcrumbItems.length - 1 && (
-                      <span className="mx-2">{'>'}</span>
-                    )}
+                    {index < breadcrumbItems.length - 1 && <span className="mx-2">{">"}</span>}
                   </span>
                 ))}
               </div>
@@ -498,60 +447,60 @@ useEffect(() => {
               <div className="dropdown-container mb-3">
                 <div className="row">
                   {/* Size Dropdown */}
-                 <div className="col-md-6 mb-2">
-  <label className="dropdown-label">Select Size</label>
-  <select
-    className="form-select1 size-dropdown w-100"
-    value={selectedSizeId}
-    onChange={(e) => {
-      const newSizeId = parseInt(e.target.value);
-      setSelectedSizeId(newSizeId.toString());
+                  <div className="col-md-6 mb-2">
+                    <label className="dropdown-label">Select Size</label>
+                    <select
+                      className="form-select1 size-dropdown w-100"
+                      value={selectedSizeId}
+                      onChange={(e) => {
+                        const newSizeId = parseInt(e.target.value);
+                        setSelectedSizeId(newSizeId.toString());
 
-      const matchedVariant = variants.find(
-        (v) =>
-          parseInt(v.size?.id) === newSizeId &&
-          (!selectedColorId || parseInt(v.color?.id) === parseInt(selectedColorId))
-      );
-      console.log('Size changed:', { newSizeId, selectedColorId, matchedVariant });
-      dispatch(setSelectedVariant(matchedVariant || null));
-    }}
-  >
-    <option value="">Select</option>
-    {sizeOptions.map(size => (
-      <option key={size.id} value={size.id}>
-        {size.title}
-      </option>
-    ))}
-  </select>
-</div>
+                        const matchedVariant = variants.find(
+                          (v) =>
+                            parseInt(v.size?.id) === newSizeId &&
+                            (!selectedColorId || parseInt(v.color?.id) === parseInt(selectedColorId))
+                        );
+                        console.log('Size changed:', { newSizeId, selectedColorId, matchedVariant });
+                        dispatch(setSelectedVariant(matchedVariant || null));
+                      }}
+                    >
+                      <option value="">Select</option>
+                      {sizeOptions.map(size => (
+                        <option key={size.id} value={size.id}>
+                          {size.title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
                   {/* Color Dropdown */}
-                 <div className="col-md-6 mb-2">
-  <label className="dropdown-label">Select Color</label>
-  <select
-    className="form-select1 color-dropdown w-100"
-    value={selectedColorId}
-    onChange={(e) => {
-      const newColorId = parseInt(e.target.value);
-      setSelectedColorId(newColorId.toString());
+                  <div className="col-md-6 mb-2">
+                    <label className="dropdown-label">Select Color</label>
+                    <select
+                      className="form-select1 color-dropdown w-100"
+                      value={selectedColorId}
+                      onChange={(e) => {
+                        const newColorId = parseInt(e.target.value);
+                        setSelectedColorId(newColorId.toString());
 
-      const matchedVariant = variants.find(
-        (v) =>
-          parseInt(v.color?.id) === newColorId &&
-          (!selectedSizeId || parseInt(v.size?.id) === parseInt(selectedSizeId))
-      );
-      console.log('Color changed:', { newColorId, selectedSizeId, matchedVariant });
-      dispatch(setSelectedVariant(matchedVariant || null));
-    }}
-  >
-    <option value="">Select</option>
-    {colorOptions.map(color => (
-      <option key={color.id} value={color.id}>
-        {color.label || "N/A"}
-      </option>
-    ))}
-  </select>
-</div>
+                        const matchedVariant = variants.find(
+                          (v) =>
+                            parseInt(v.color?.id) === newColorId &&
+                            (!selectedSizeId || parseInt(v.size?.id) === parseInt(selectedSizeId))
+                        );
+                        console.log('Color changed:', { newColorId, selectedSizeId, matchedVariant });
+                        dispatch(setSelectedVariant(matchedVariant || null));
+                      }}
+                    >
+                      <option value="">Select</option>
+                      {colorOptions.map(color => (
+                        <option key={color.id} value={color.id}>
+                          {color.label || "N/A"}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </div>
 
@@ -705,4 +654,3 @@ useEffect(() => {
     </>
   );
 }
-
