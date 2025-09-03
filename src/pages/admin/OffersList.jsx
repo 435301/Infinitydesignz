@@ -30,8 +30,8 @@ const OffersList = () => {
   const [selectedEditCoupon, setSelectedEditCoupon] = useState(null);
   const [couponToDelete, setCouponToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const[viewCouponModal, setViewCouponModal] = useState(false);
-  const[selectedViewCoupon, setSelectedViewCoupon] = useState(null);
+  const [viewCouponModal, setViewCouponModal] = useState(false);
+  const [selectedViewCoupon, setSelectedViewCoupon] = useState(null);
 
   useEffect(() => {
     dispatch(fetchCoupon())
@@ -46,7 +46,7 @@ const OffersList = () => {
       coupon.value.toString().toLowerCase().includes(search) ||
       coupon.minOrderAmount.toString().toLowerCase().includes(search);
     const matchesStatus = statusFilter
-      ? (statusFilter === 'active' ? coupon.isActive === true : coupon.isActive === false)
+      ? (statusFilter === 'active' ? coupon.status === true : coupon.status === false)
       : true;
     return matchesSearch && matchesStatus;
   });
@@ -151,7 +151,7 @@ const OffersList = () => {
                       </div>
                       <div className="col-md-4 text-end">
                         <button className="btn btn-primary" onClick={() => setShowCouponModal(true)}>
-                        + Add New 
+                          + Add New
                         </button>
 
                       </div>
@@ -236,8 +236,8 @@ const OffersList = () => {
                                 })}</td>
                                 <td>{coupon.minOrderAmount}</td>
                                 <td>
-                                  <span className={`badge ${coupon.isActive ? 'text-light-primary' : 'text-light-danger'}`}>
-                                    {coupon.isActive ? 'Active' : 'Inactive'}
+                                  <span className={`badge ${coupon.status ? 'text-light-primary' : 'text-light-danger'}`}>
+                                    {coupon.status ? 'Active' : 'Inactive'}
                                   </span>
                                 </td>
                                 <td>

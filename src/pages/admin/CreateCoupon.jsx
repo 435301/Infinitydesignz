@@ -15,6 +15,7 @@ const CreateCouponModal = ({ show, onHide }) => {
   const [selectedSubMenu, setSelectedSubMenu] = useState('');
   const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
   const [errors, setErrors] = useState({});
+  const [status, setStatus] = useState(false);
 
   const menuOptions = categories.filter((cat) => cat.parentId === null);
   const subMenuOptions = categories.filter((cat) => cat.parentId === parseInt(selectedMenu));
@@ -46,6 +47,7 @@ const CreateCouponModal = ({ show, onHide }) => {
       minOrderAmount: parseFloat(form.min_price?.value) || 0,
       fromDate: new Date(form.from_date?.value).toISOString(),
       toDate: new Date(form.to_date?.value).toISOString(),
+      status: status,
     };
 
     if (couponType === 'list_submenu' || couponType === 'brand') {
@@ -365,6 +367,19 @@ const CreateCouponModal = ({ show, onHide }) => {
               {renderCouponDetailsSection()}
             </>
           )}
+
+          <div className="col-lg-12 mb-3 form-check m-4">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="status"
+              checked={status}
+              onChange={(e) => setStatus(e.target.checked)}
+            />
+            <label className="form-check-label ms-2" htmlFor="status">
+              Active
+            </label>
+          </div>
 
 
 

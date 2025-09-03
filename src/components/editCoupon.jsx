@@ -15,6 +15,7 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
     const [selectedSubMenu, setSelectedSubMenu] = useState('');
     const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
     const [formValues, setFormValues] = useState({});
+  const [status, setStatus] = useState(false);
 
     useEffect(() => {
         dispatch(fetchBrands());
@@ -38,6 +39,7 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
                 priceRange: coupon.priceRange || '',
                 brandId: coupon.brandId?.toString() || '',
             });
+             setStatus(coupon.isActive ?? false);
         }
     }, [coupon]);
 
@@ -58,6 +60,7 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
             minOrderAmount: parseFloat(formValues.minOrderAmount),
             fromDate: new Date(formValues.fromDate).toISOString(),
             toDate: new Date(formValues.toDate).toISOString(),
+             isActive: status,
         };
 
         if (couponType === 'list_submenu' || couponType === 'brand') {
@@ -186,6 +189,17 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
                         <div className="form-group col-md-4">
                             <label>Min Order Amount</label>
                             <input name="minOrderAmount" value={formValues.minOrderAmount} onChange={handleChange} className="form-control" />
+                        </div>
+                         <div className="form-group col-md-4">
+                            <label>Status</label>
+                            <select
+                                className="form-control"
+                                value={status ? "true" : "false"}
+                                onChange={(e) => setStatus(e.target.value === "true")}
+                            >
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
                         </div>
                     </div>
 
