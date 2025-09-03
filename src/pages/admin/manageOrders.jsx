@@ -111,14 +111,14 @@ const ManageOrders = () => {
                     <label htmlFor="toDate" className="form-label">To Date</label>
                     <input type="date" className="form-control" id="toDate" />
                   </div>
-                  <div className="col-md-3">
+                  {/* <div className="col-md-3">
                     <label htmlFor="status" className="form-label">Status</label>
                     <select id="status" className="form-select default-select">
                       <option value="PENDING">PENDING</option>
                       <option value="DELIVERED">DELIVERED</option>
                       <option value="CANCELLED">CANCELLED</option>
                     </select>
-                  </div>
+                  </div> */}
                   <div className="col-md-3 d-flex gap-2">
                     <button type="submit" className="btn btn-danger"><i className="ti-search me-1"></i> Search</button>
                     <button type="reset" className="btn btn-success" onClick={handleReset}><i className="icon-refresh me-1"></i> Reset</button>
