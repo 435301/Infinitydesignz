@@ -30,7 +30,7 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
         }
     }, [dispatch, subCategoryId]);
 
-    useEffect(() => {
+ useEffect(() => {
         if (singleCategory && singleCategory.id === subCategoryId) {
             setForm({
                 title: singleCategory.title || '',
@@ -39,6 +39,7 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
                 seoDescription: singleCategory.seoDescription || '',
                 seoKeywords: singleCategory.seoKeywords || '',
                 status: !!singleCategory.status,
+                showInNeedHelpBuying: !!singleCategory.showInNeedHelpBuying,
             });
 
             // Prefill image previews if needed (optional enhancement)
@@ -53,6 +54,7 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
             }
         }
     }, [singleCategory, subCategoryId]);
+
 
 
     const handleFileChange = (setter) => (e) => {
