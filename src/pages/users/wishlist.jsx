@@ -154,7 +154,7 @@ export default function WishlistPage() {
             </div>
             <div className="col-md-7">
               <div className="wishlist-header">
-                <h2 className="m-0">Wishlist</h2>
+                <h2 className="m-0">WISHLIST</h2>
               </div>
               {loadingWishlist ? (
                 <Loader />

@@ -13,48 +13,7 @@ import { cancelOrderItem, fetchOrders } from "../../redux/actions/orderAction";
 import { useDispatch, useSelector } from "react-redux";
 import { getToken } from "../../utils/auth";
 import CancelOrderModal from "../../modals/cancelOrderModal";
-// Replace with your footer component
 
-
-
-const sampleProducts = [
-  {
-    title: "Andres Fabric 3 Seater Sofa In Sandy Brown Colour",
-    price: "₹37,999",
-    originalPrice: "MRP ₹48,999",
-    discount: "22% off",
-    image: require('../../img/img3.png'),
-    rating: "4.4",
-    reviews: "24K",
-    warranty: "36-Month Warranty Available",
-    emi: "EMI starting from ₹1,825/month",
-    shipping: "Express Shipping in 1 day"
-  },
-  {
-    title: "Andres Fabric 3 Seater Sofa In Sandy Brown Colour",
-    price: "₹37,999",
-    originalPrice: "MRP ₹48,999",
-    discount: "22% off",
-    image: require('../../img/img3.png'),
-    rating: "4.4",
-    reviews: "24K",
-    warranty: "36-Month Warranty Available",
-    emi: "EMI starting from ₹1,825/month",
-    shipping: "Express Shipping in 1 day"
-  },
-  {
-    title: "Andres Fabric 3 Seater Sofa In Sandy Brown Colour",
-    price: "₹37,999",
-    originalPrice: "MRP ₹48,999",
-    discount: "22% off",
-    image: require('../../img/img3.png'),
-    rating: "4.4",
-    reviews: "24K",
-    warranty: "36-Month Warranty Available",
-    emi: "EMI starting from ₹1,825/month",
-    shipping: "Express Shipping in 1 day"
-  },
-];
 
 
 const MyOrdersPage = () => {
@@ -154,6 +113,9 @@ const MyOrdersPage = () => {
             </aside>
 
             <main className="col-md-7">
+              <div className="wishlist-header">
+                <h2 className="m-0">ORDERS</h2>
+              </div>
               {latestOrderDetails ? (
                 <div key={latestOrderDetails.id} className="order-block">
                   {latestOrderDetails.items.map((item) => {
