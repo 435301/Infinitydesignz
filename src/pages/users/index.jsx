@@ -334,7 +334,7 @@ console.log('promotionIndex', promotions)
 
       <HelpSection title="Need Help Buying?" />
 
-      <div className="container my-5 d-none d-block">
+      <div className="container my-5 d-none d-md-block">
         <div className="callback-container d-flex flex-column flex-md-row justify-content-between align-items-center">
           <div className="info-block mb-4 mb-md-0">
             <h2 className="callback-heading">Lorem Ipsum is simply</h2>
