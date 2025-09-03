@@ -321,14 +321,14 @@ const ListSubCategory = () => {
                                   <button className="btn btn-light icon-btn mx-1 me-2 text-success" onClick={() => handleEditClick(item.id)}>
                                     <BsPencilSquare  />
                                   </button>
-                                  <button className="btn btn-light icon-btn mx-1 text-primary">
-                                    <BsEye  onClick={() => handleViewClick(item.id)} />
+                                  <button className="btn btn-light icon-btn mx-1 text-primary" onClick={() => handleViewClick(item.id)}>
+                                    <BsEye   />
                                   </button>
-                                  <button className="btn btn-light icon-btn mx-1 m-2 text-danger" >
-                                    <TiTrash  onClick={() => {
+                                  <button className="btn btn-light icon-btn mx-1 m-2 text-danger" onClick={() => {
                                       console.log("Delete icon clicked", item.id);
                                       handleDeleteClick(item.id);
-                                    }} />
+                                    }} >
+                                    <TiTrash   />
                                   </button>
                                 </td>
                               </tr>

@@ -28,7 +28,11 @@ const EditAdminUserModal = ({ show, handleClose, userData, onUpdate }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+   setFormData((prev) => ({
+    ...prev,
+    [name]:
+      name === "status" ? value === "true" : value 
+  }));
   };
 
   const handleSubmit = (e) => {
@@ -87,8 +91,8 @@ const EditAdminUserModal = ({ show, handleClose, userData, onUpdate }) => {
               onChange={handleChange}
             >
               <option value="">Select status</option>
-              <option value={true}>Active</option>
-              <option value={false}>Inactive</option>
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
             </Form.Select>
           </Form.Group>
 
