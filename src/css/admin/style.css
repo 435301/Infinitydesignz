@@ -1386,6 +1386,131 @@ td.description-cell {
   margin: 3px 00 0;
 }
 
+.new-1 {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.status-active {
+  background-color: #d4f7f2;
+  color: #28a745;
+  font-weight: 500;
+}
+
+.status-inactive {
+  background-color: #f8d7da;
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.delete-btn svg {
+  color: #dc3545;
+}
+
+/* Dashboard Section */
+.dashboard-header {
+  padding: 0 10px;
+}
+
+.dashboard-col {
+  padding: 10px;
+}
+
+.dashboard-product {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-title {
+  font-size: 13px;
+  color: #878a99;
+  font-weight: 500;
+}
+
+.dashboard-icon-wrapper {
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.dashboard-icon-wrapper i {
+  font-size: 20px;
+}
+
+.dashboard-value {
+  font-size: 24px;
+  margin: 10px 0;
+}
+
+.dashboard-links {
+  display: flex;
+  justify-content: space-between;
+}
+
+.dashboard-link {
+  font-size: 14px;
+  text-decoration: none;
+}
+
+/* Specific link colors */
+.dashboard-link.link-0 {
+  color: #a65926;
+}
+
+.dashboard-link.link-1 {
+  color: #118b21;
+}
+
+.dashboard-link.link-2 {
+  color: #e70c0c;
+}
+
+/* Card block padding */
+.custom-card-block {
+  padding: 15px;
+}
+
+/* Vendor status badges */
+.status-active {
+  background-color: #d4f7f2 !important;
+  color: #28a745 !important;
+}
+
+.status-inactive {
+  background-color: #f8d7da !important;
+  color: #dc3545 !important;
+}
+
+.status-warning {
+  background-color: #fff3cd !important;
+  color: #856404 !important;
+}
+
+/* Feature row container */
+.feature-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+/* Label styling */
+.feature-label {
+  min-width: 120px;
+  margin-right: 10px;
+  margin-bottom: 0;
+}
+
+/* Input takes remaining space */
+.feature-input {
+  flex: 1;
+}
+
 /* New Css  */
 .row {
   margin-left: -15px;
@@ -2079,6 +2204,37 @@ select.form-control:not([size]):not([multiple]) {
   height: auto;
   width: 100%;
 }
+
+.new-btn {
+  background-color: #0da79e !important;
+  color: #fff !important;
+  border: none;
+  padding: 10px 20px !important;
+  font-size: 16px;
+  margin-top: 20px;
+}
+/* Active Promotion */
+.badge-active {
+  background-color: #d4f7f2;
+  color: #28a745;
+  font-weight: 500;
+}
+
+/* Inactive Promotion */
+.badge-inactive {
+  background-color: #f8d7da;
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.item-1 {
+  background-color: #2ccfc4 !important;
+  color: #fff !important;
+  padding: 10px 15px;
+  border-radius: 4px;
+  flex: 0 0 30%;
+}
+
 
 .image-preview img {
   width: 100%;

@@ -86,7 +86,7 @@ const CreatePromotionModal = ({ show, handleClose }) => {
               <select name="sub_menu" className="form-control" onChange={handleChange}>
                 <option value="">--Choose Sub Menu--</option>
               </select>
-              <div className="mt-1" style={{ fontSize: '10px' }}>
+              <div className="mt-1 menus-1" style={{ fontSize: '10px' }}>
                 <a href="#">Create Sub Menu</a> | <a href="#">Create Brand</a>
               </div>
             </div>

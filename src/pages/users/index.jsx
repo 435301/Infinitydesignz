@@ -304,7 +304,7 @@ console.log('promotionIndex', promotions)
 
       {/* <ProductGrid products={products} /> */}
 
-      <div className="container-fluid py-5" style={{ backgroundColor: "#eaf8ff" }}>
+      <div className="container-fluid py-5 bg-2" >
         <div className="container">
           <div className="row align-items-center">
             <div className="col-md-5 mb-4 mb-md-0">
@@ -334,9 +334,9 @@ console.log('promotionIndex', promotions)
 
       <HelpSection title="Need Help Buying?" />
 
-      <div className="container my-5">
+      <div className="container my-5 d-none d-block">
         <div className="callback-container d-flex flex-column flex-md-row justify-content-between align-items-center">
-          <div className="info-block mb-4 mb-md-0" style={{ maxWidth: "40%" }}>
+          <div className="info-block mb-4 mb-md-0">
             <h2 className="callback-heading">Lorem Ipsum is simply</h2>
             <p className="callback-text text-start">
               Lorem Ipsum is simply dummy text of <br /> the printing and typesetting industry.

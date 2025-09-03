@@ -216,15 +216,8 @@ const ManageFilterSet = () => {
                         ))}
                       </div>
                       <button
-                        className="btn"
-                        style={{
-                          backgroundColor: '#0da79e',
-                          color: '#fff',
-                          border: 'none',
-                          padding: '10px 20px',
-                          fontSize: '16px',
-                          marginTop: '20px',
-                        }}
+                        className="btn new-btn"
+                       
                         onClick={async () => {
                           for (let id of selectedRows) {
                             if (editedPriorities[id] !== undefined) {

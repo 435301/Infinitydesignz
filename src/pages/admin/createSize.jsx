@@ -214,28 +214,28 @@ const ManageSizes = () => {
                             </td>
                             <td>
                               <button
-                                className="btn btn-light icon-btn m-2"
+                                className="btn btn-light icon-btn mx-1 m-2"
                                 onClick={() => {
                                   setSelectedSize(size);
                                   setEditModalVisible(true);
                                 }}
                               >
-                                <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
+                                <BsPencilSquare  />
                               </button>
                               <button
-                                className="btn btn-light icon-btn"
+                                className="btn btn-light icon-btn mx-1"
                                 onClick={() => {
                                   setViewSize(size);
                                   setShowViewModal(true);
                                 }}
                               >
-                                <BsEye style={{ fontSize: '18px', color: '#212529' }} />
+                                <BsEye  />
                               </button>
                               <button
-                                className="btn btn-light icon-btn m-2"
+                                className="btn btn-light icon-btn mx-1 m-2"
                                 onClick={() => handleDeleteClick(size.id)}
                               >
-                                <TiTrash style={{ fontSize: '18px', color: '#212529' }} />
+                                <TiTrash  />
                               </button>
                             </td>
                           </tr>

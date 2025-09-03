@@ -5,7 +5,7 @@ const ViewSliderModal = ({ isOpen, onClose, slider }) => {
   if (!isOpen || !slider) return null;
 
   return (
-    <div className="modal d-block fade show" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+    <div className="modal d-block fade show" tabIndex="-1" >
       <div className="modal-dialog modal-md">
         <div className="modal-content">
           <div className="modal-header">

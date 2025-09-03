@@ -116,7 +116,7 @@ if (!slider || !slider.id) {
     if (!isOpen) return null;
 
     return (
-        <div className="modal d-block fade show" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div className="modal d-block fade show" tabIndex="-1" >
             <div className="modal-dialog modal-lg">
                 <div className="modal-content">
                     <form className="app-form" encType="multipart/form-data" onSubmit={handleSubmit}>

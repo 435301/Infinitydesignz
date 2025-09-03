@@ -133,10 +133,10 @@ function SearchKeywordsList() {
                                                                     </td>
                                                                     <td>
                                                                         <button
-                                                                            className="btn btn-light icon-btn m-2"
+                                                                            className="btn btn-light icon-btn mx-1 m-2"
                                                                             onClick={() => handleDeleteClick(keyword.id)}
                                                                         >
-                                                                            <TiTrash style={{ fontSize: '18px', color: '#212529' }} />
+                                                                            <TiTrash  />
                                                                         </button>
                                                                     </td>
                                                                 </tr>

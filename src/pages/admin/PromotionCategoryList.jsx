@@ -137,10 +137,10 @@ const PromotionCategoryList = () => {
 
 
                                                             <td>
-                                                                <button className="btn btn-light icon-btn b-r-4 me-2" onClick={openModal}>
+                                                                <button className="btn btn-light icon-btn mx-1 b-r-4 me-2" onClick={openModal}>
                                                                     <i className="bi bi-pencil text-danger"></i> {/* Bootstrap pencil/edit icon */}
                                                                 </button>
-                                                                <button className="btn btn-light icon-btn b-r-4">
+                                                                <button className="btn btn-light icon-btn mx-1 b-r-4">
                                                                     <i className="bi bi-trash text-danger"></i> {/* Bootstrap trash/delete icon */}
                                                                 </button>
                                                             </td>

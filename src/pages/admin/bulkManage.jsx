@@ -99,7 +99,7 @@ const BulkUpload = () => {
 
                             <button
                               type="button"
-                              className="btn btn-light-danger icon-btn b-r-4"
+                              className="btn btn-light icon-btn mx-1 b-r-4"
                               // onClick={() => handleDelete(item.id)} 
                             >
                               <i className="bi bi-trash text-danger"></i>
@@ -132,7 +132,7 @@ const BulkUpload = () => {
 
           {/* Modal Component Placeholder */}
           {showEditModal && (
-            <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+            <div className="modal fade show d-block new-1" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
               <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                   <div className="modal-header">

@@ -32,6 +32,38 @@ body {
 a {
   text-decoration: none;
 }
+.card-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.card-overlay {
+  position: absolute;
+  bottom: 0;
+  start: 0;
+  width: 100%;
+  padding-bottom: 0.5rem;
+  color: #000;
+}
+
+.card-overlay .overlay-content {
+  padding: 1rem;
+}
+
+.card-overlay .btn {
+  font-weight: 700;
+}
+
+/* Example background color classes */
+.bg-dark-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.bg-light-overlay {
+  background-color: rgba(255, 255, 255, 0.7);
+}
 
 .fs-5 {
   font-size: 1.25rem !important;
@@ -3158,12 +3190,29 @@ Wish List
 WishList
 ----------------------------------------*/
 
-.wishlist-container {
+/* .wishlist-container {
   border: 1px solid #EFEFEF;
   border-radius: 10px;
   background-color: #fff;
+} */
+.Create-sub a{
+  font-size: 10px !important;
 }
-
+.info-block{
+  max-width: 40% ;
+}
+.account-icon{
+  width: 15px !important;
+}
+.related-products .col-lg-4{
+  width: 100%;
+}
+.main-container{
+  height: 250px !important;
+}
+.bg-2{
+background-color: #eaf8ff !important;
+}
 .wishlist-header {
   display: flex;
   justify-content: space-between;
@@ -4332,7 +4381,7 @@ Profile Section
 
   .terms-of-service .container {
     padding: 20px;
-    margin: 15px;
+    margin: 0px;
   }
 
   .terms-of-service .contact-info {
@@ -5469,7 +5518,20 @@ CHECKOUT PAGE
   .top-section {
     padding: 24px 0;
   }
-
+  .help-section{
+    margin-bottom: 12px;
+  }
+  .wishlist-item .d-flex{
+    display: block !important;
+  }
+.h2_heading {
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 27px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    vertical-align: middle;
+}
   .main-wrapper .checkout-form,
   .main-wrapper .cart-details {
     padding: 12px;

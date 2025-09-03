@@ -20,13 +20,8 @@ const PRODUCTS_FILTERS_KEY = "productsFilters";
 const saveProductsFilters = (filters) => { try { sessionStorage.setItem(PRODUCTS_FILTERS_KEY, JSON.stringify(filters)); } catch {} };
 export const clearProductsFilters = () => { try { sessionStorage.removeItem(PRODUCTS_FILTERS_KEY); } catch {} };
 
-// --- NEW: slug helper ---
 const slugify = (str = "") =>
-  str
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-");
+  str.toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-");
 
 function useOutsideClick(ref, handler) {
   useEffect(() => {
@@ -53,7 +48,7 @@ const PromoColumn = React.memo(({ parentTitle }) => (
   <div className="col-md-3 col-lg-2 d-none d-md-block promo-column">
     <h3 className="promo-heading">Sink Into Comfort</h3>
     <p className="promo-subheading">Explore {parentTitle}</p>
-    <img src={MenuImg} className="w-100" alt="Promo" loading="lazy" />
+    <img src={MenuImg} className="w-100 promo-img" alt="Promo" loading="lazy" />
   </div>
 ));
 
@@ -67,7 +62,6 @@ const MegaMenuColumn = React.memo(({ parent, children, groupedCategories }) => (
         <div className="row">
           {children.map((child) => {
             const subChildren = groupedCategories[child.id] || [];
-
             const baseFilters = {
               ...(parent?.id && { mainCategoryId: parent.id }),
               ...(child?.id && { subCategoryId: child.id }),
@@ -81,11 +75,9 @@ const MegaMenuColumn = React.memo(({ parent, children, groupedCategories }) => (
               page: 1,
               pageSize: 24,
             };
-
             return (
               <div className="col-md-3 col-lg-2 col-6" key={child.id}>
                 <h3>
-                  {/* Child link becomes /products/{parent-slug}/{child-slug}-{childId} */}
                   <Link
                     to={`/products/${slugify(parent.title)}/${slugify(child.title)}-${child.id}`}
                     state={baseFilters}
@@ -96,13 +88,9 @@ const MegaMenuColumn = React.memo(({ parent, children, groupedCategories }) => (
                   </Link>
                 </h3>
 
-                {/* Sub-children as /products/{parent-slug}/{child-slug}/{sub-slug}-{subId} */}
                 {subChildren.length > 0 &&
                   subChildren.map((sub) => {
-                    const subFilters = {
-                      ...baseFilters,
-                      ...(sub?.id && { listSubCatId: sub.id }),
-                    };
+                    const subFilters = { ...baseFilters, ...(sub?.id && { listSubCatId: sub.id }) };
                     return (
                       <Link
                         key={sub.id}
@@ -126,7 +114,7 @@ const MegaMenuColumn = React.memo(({ parent, children, groupedCategories }) => (
 ));
 
 export default function Header() {
-  const [searchParams] = useSearchParams(); // (kept; used elsewhere if needed)
+  const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
   const { categories = [] } = useSelector((state) => state.categories || {});
   const wishlistItems = useSelector((state) => state.whishlist?.items || []);
@@ -179,7 +167,29 @@ export default function Header() {
 
   return (
     <>
-      {/* Top Section */}
+      <style>
+        {`
+          .badge-custom {
+            background-color: rgb(212, 14, 0);
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+          }
+          .suggestions-dropdown {
+            display: block;
+          }
+          .search-input {
+            /* add more styling as needed */
+          }
+          .promo-img {
+            width: 100%;
+            height: auto;
+          }
+        `}
+      </style>
+
       <div className="container-fluid px-5 py-2 border-bottom cart wow fadeIn" data-wow-delay="0.1s">
         <div className="container">
           <div className="row align-items-center top-bar">
@@ -201,12 +211,12 @@ export default function Header() {
                   aria-label="Search"
                 />
                 <button className="btn btn-light" type="submit" aria-label="Search">
-                  <img src={Search} style={{ height: 25 }} alt="search" loading="lazy" />
+                  <img src={Search} className="search-btn-img" alt="search" loading="lazy" />
                 </button>
               </form>
 
               {showSuggestions && filteredSuggestions.length > 0 && (
-                <div className="suggestions-dropdown" id="suggestions" style={{ display: "block" }}>
+                <div className="suggestions-dropdown" id="suggestions">
                   <div className="suggestions-header">Popular Searches</div>
                   <div className="suggestions-grid" id="suggestionsGrid">
                     {filteredSuggestions.map((item, idx) => (
@@ -240,30 +250,19 @@ export default function Header() {
 
             <div className="col-lg-4 Wishlist col-md-8 text-end d-flex justify-content-end align-items-center gap-4">
               <a href="/wishlist" className="text-decoration-none text-dark">
-                <span style={{ position: "relative", display: "inline-block" }}>
+                <span className="position-relative">
                   <img src={Favourite} alt="wishlist" loading="lazy" />
-                  {wishlistCount > 0 && (
-                    <span
-                      className="badge rounded-pill text-white"
-                      style={{ backgroundColor: "rgb(212, 14, 0)", position: "absolute", top: -8, right: -8, fontSize: "0.65rem", padding: "2px 6px" }}
-                    >
-                      {wishlistCount}
-                    </span>
-                  )}
+                  {wishlistCount > 0 && <span className="badge badge-custom">{wishlistCount}</span>}
                 </span>
                 Wishlist
               </a>
               <a href="/profile" className="text-decoration-none text-dark">
-                <img src={AccountBox} style={{ height: 18 }} alt="account" loading="lazy" /> My Account
+                <img src={AccountBox} className="account-icon" alt="account" loading="lazy" />&nbsp; My Account
               </a>
               <a href="/cart" className="text-decoration-none text-dark">
-                <span style={{ position: "relative", display: "inline-block" }}>
+                <span className="position-relative">
                   <img src={ShoppingCart} alt="cart" loading="lazy" />
-                  {cartCount > 0 && (
-                    <span className="badge rounded-pill text-white" style={{ backgroundColor: "rgb(212, 14, 0)", position: "absolute", top: -8, right: -8, fontSize: "0.65rem", padding: "2px 6px" }}>
-                      {cartCount}
-                    </span>
-                  )}
+                  {cartCount > 0 && <span className="badge badge-custom">{cartCount}</span>}
                 </span>
                 My Cart
               </a>
@@ -276,13 +275,13 @@ export default function Header() {
         <nav className="navbar navbar-expand-lg navbar-dark sticky-top py-lg-0 wow fadeIn" data-wow-delay="0.1s">
           <a href="#" className="navbar-brand ms-3 d-lg-none">MENU</a>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <i className="bi bi-list" style={{ fontSize: "1.5rem" }}></i>
+            <i className="bi bi-list nav-toggler-icon"></i>
           </button>
 
           <div className="collapse navbar-collapse" id="navbarCollapse">
             <div className="navbar-nav mx-auto p-3 p-lg-0 d-flex justify-content-center">
               <a href="/" className="navbar-brand sticky-logo" onClick={clearProductsFilters}>
-                <img src={MiniLogo} alt="Logo" style={{ maxHeight: 40, width: "100%" }} loading="lazy" />
+                <img src={MiniLogo} alt="Logo" className="mini-logo-img" loading="lazy" />
               </a>
               {renderMegaMenuColumns()}
             </div>

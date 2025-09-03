@@ -112,7 +112,7 @@ const ManageFilterType = () => {
                                     <div className="col-md-2 d-flex gap-2">
 
                                         <button className="btn btn-success">
-                                            <BsArrowClockwise style={{ fontSize: '18px' }} />
+                                            <BsArrowClockwise />
                                         </button>
                                     </div>
                                     <div className="col-md-7 text-end">
@@ -165,7 +165,7 @@ const ManageFilterType = () => {
                                                     <td>
                                                         <button
                                                             type="button"
-                                                            className="btn btn-light icon-btn"
+                                                            className="btn btn-light icon-btn mx-1"
                                                             style={{ marginRight: '5px' }}
                                                             title="Edit"
                                                             onClick={() => {
@@ -173,24 +173,24 @@ const ManageFilterType = () => {
                                                                 setEditModalVisible(true);
                                                             }}
                                                         >
-                                                            <BsPencilSquare style={{ fontSize: '18px', color: '#28a745' }} />
+                                                            <BsPencilSquare />
                                                         </button>
                                                         <button
-                                                            className="btn btn-light icon-btn"
+                                                            className="btn btn-light icon-btn mx-1"
                                                             onClick={() => {
                                                                 setFilterType(item);
                                                                 setViewModal(true);
                                                             }}
                                                         >
-                                                            <BsEye style={{ fontSize: '18px', color: '#212529' }} />
+                                                            <BsEye  />
                                                         </button>
                                                         <button
                                                             type="button"
-                                                            className="btn btn-light icon-btn delete-btn"
+                                                            className="btn btn-light icon-btn mx-1 delete-btn"
                                                             title="Delete"
                                                             onClick={() => handleDeleteClick(item.id)}
                                                         >
-                                                            <BsTrash style={{ fontSize: '18px', color: '#dc3545' }} />
+                                                            <BsTrash  />
                                                         </button>
                                                     </td>
                                                 </tr>

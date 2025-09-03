@@ -214,19 +214,19 @@ const HomePromotionCategory = () => {
                                   <td>
                                     <button
                                       type="button"
-                                      className="btn btn-light icon-btn b-r-4 me-2"
+                                      className="btn btn-light icon-btn mx-1  me-2"
                                       onClick={() => handleEditClick(promotion)}
                                     >
-                                      <PencilSquare style={{ color: '#dc3545' }} />
+                                      <PencilSquare className='text-danger' />
                                     </button>
                                     <button
                                       type="button"
-                                      className="btn btn-light icon-btn b-r-4 me-2"
+                                      className="btn btn-light icon-btn mx-1 b-r-4 me-2"
                                       onClick={() => handleViewClick(promotion)}
                                     >
                                       <BsEye />
                                     </button>
-                                    <button className="btn btn-sm btn-outline-danger" title="Delete"
+                                    <button className="btn btn-sm btn-light text-danger" title="Delete"
                                       onClick={() => handleDeleteClick(promotion.id)}
                                     >
                                       <BsTrash />

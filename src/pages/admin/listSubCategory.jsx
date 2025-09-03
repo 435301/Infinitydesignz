@@ -318,14 +318,14 @@ const ListSubCategory = () => {
                                   </span>
                                 </td>
                                 <td>
-                                  <button className="btn btn-light icon-btn me-2" onClick={() => handleEditClick(item.id)}>
-                                    <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
+                                  <button className="btn btn-light icon-btn mx-1 me-2" onClick={() => handleEditClick(item.id)}>
+                                    <BsPencilSquare  />
                                   </button>
-                                  <button className="btn btn-light icon-btn">
-                                    <BsEye style={{ fontSize: '18px', color: '#212529' }} onClick={() => handleViewClick(item.id)} />
+                                  <button className="btn btn-light icon-btn mx-1">
+                                    <BsEye  onClick={() => handleViewClick(item.id)} />
                                   </button>
-                                  <button className="btn btn-light icon-btn m-2" >
-                                    <TiTrash style={{ fontSize: '18px', color: '#212529' }} onClick={() => {
+                                  <button className="btn btn-light icon-btn mx-1 m-2" >
+                                    <TiTrash  onClick={() => {
                                       console.log("Delete icon clicked", item.id);
                                       handleDeleteClick(item.id);
                                     }} />

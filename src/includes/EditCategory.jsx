@@ -83,7 +83,7 @@ const EditCategoryModal = ({ show, setShow, category }) => {
   if (!show) return null;
 
   return (
-    <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+    <div className="modal fade show d-block new-1" tabIndex="-1" >
       <div className="modal-dialog modal-lg">
         <div className="modal-content">
           <form className="app-form" onSubmit={handleSubmit}>

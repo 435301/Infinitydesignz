@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import axios from "axios";
 import BASE_URL from "../config/config";
 import { getToken, isLoggedIn } from "../utils/auth";
-import "../../src/css/user/userstyle.css";
 import { addToWishlist, deleteWishlistItem } from "../redux/actions/whishlistAction";
 import OtpLoginModal from "./otpLoginModal";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
+import "./productcard.css";
 
 const ProductCard = ({ product, variant = null }) => {
   const dispatch = useDispatch();
@@ -32,13 +32,11 @@ const ProductCard = ({ product, variant = null }) => {
 
     if (variant) {
       const variantId = variant.id;
-      // Check variant-specific images
       const variantImages = images.variants[variantId];
       _displayMrp = variant.mrp;
       _displayPrice = variant.sellingPrice;
       _mainImageObj = variantImages?.main || (variantImages?.additional || []).find(img => img.isMain);
     } else {
-      // Use main product image or additional images
       _mainImageObj = images.main || (images.additional || []).find(img => img.isMain);
 
       if ((!_displayMrp || !_displayPrice) && variants.length > 0) {
@@ -67,7 +65,6 @@ const ProductCard = ({ product, variant = null }) => {
     };
   }, [mrp, sellingPrice, images, variants, variant]);
 
-  // Memoize wishlist handler
   const handleWishlistClick = useCallback(
     async (e) => {
       e.preventDefault();
@@ -98,7 +95,6 @@ const ProductCard = ({ product, variant = null }) => {
     [dispatch, isWishlisted, wishlistItemId, product?.id, variant?.id]
   );
 
-  // Fetch wishlist only when logged in and product/variant changes
   useEffect(() => {
     let isMounted = true;
     const fetchWishlist = async () => {
@@ -156,48 +152,38 @@ const ProductCard = ({ product, variant = null }) => {
           className="text_decoration"
         >
           <div className="card h-100 position-relative">
-            {/* Discount badge */}
             {discountPercent > 0 && (
               <div className="discount-badge position-absolute">
                 {discountPercent}% OFF
               </div>
             )}
 
-            {/* Wishlist icon */}
-            <div
-              className="position-absolute top-0 end-0 p-2"
-              style={{ zIndex: 2 }}
-            >
+            <div className="wishlist-container">
               <div className="whishlist_Icon" onClick={handleWishlistClick}>
                 {isWishlisted ? (
                   <FaHeart
-                    className="text-danger"
-                    style={{ fontSize: "1.1rem", cursor: "pointer" }}
+                    className="text-danger wishlist-icon"
                     title="Remove from Wishlist"
                   />
                 ) : (
                   <FaRegHeart
-                    className="text-black"
-                    style={{ fontSize: "1.1rem", cursor: "pointer" }}
+                    className="text-black wishlist-icon"
                     title="Add to Wishlist"
                   />
                 )}
               </div>
             </div>
 
-            {/* Product image */}
             {hasImage ? (
               <img src={imageUrl} className="card-img-top" alt={title} />
             ) : (
               <div
-                className="card-img-top d-flex align-items-center justify-content-center bg-light text-muted"
-                style={{ height: "200px", fontSize: "1.2rem" }}
+                className="card-img-top no-image-placeholder"
               >
                 N/A
               </div>
             )}
 
-            {/* Product info */}
             <div className="card-body">
               <h6 className="card-title">{title}</h6>
               <p className="card-text">

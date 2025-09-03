@@ -46,17 +46,11 @@ const AppCategoryPromotionsList = () => {
 
     const getStatusBadge = (status) => {
         return (
-            <span
-                className="badge"
-                style={{
-                    backgroundColor: status === 'Active' ? '#d4f7f2' : '#f8d7da',
-                    color: status === 'Active' ? '#28a745' : '#dc3545',
-                    fontWeight: '500',
-                }}
-            >
+            <span className={`badge ${status === 'Active' ? 'status-active' : 'status-inactive'}`}>
                 {status}
             </span>
         );
+
     };
 
     return (

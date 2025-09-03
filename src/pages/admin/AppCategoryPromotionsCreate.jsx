@@ -93,9 +93,9 @@ const AppCategoryPromotionsCreate = () => {
                           <select className="form-control" name="sub_menu">
                             <option value="">--Choose Sub Menu--</option>
                           </select>
-                          <div className="mt-1">
-                            <a href="#" style={{ fontSize: '10px' }}>Create Sub Menu</a> |{' '}
-                            <a href="#" style={{ fontSize: '10px' }}>Create Brand</a>
+                          <div className="mt-1 Create-sub">
+                            <a href="#" >Create Sub Menu</a> |{' '}
+                            <a href="#">Create Brand</a>
                           </div>
                         </div>
 
@@ -104,8 +104,8 @@ const AppCategoryPromotionsCreate = () => {
                           <select className="form-control" name="list_sub_menu">
                             <option value="">--Choose List Sub Menu--</option>
                           </select>
-                          <div className="mt-1">
-                            <a href="#" style={{ fontSize: '10px' }}>Create List Sub Menu</a>
+                          <div className="mt-1 Create-sub">
+                            <a href="#">Create List Sub Menu</a>
                           </div>
                         </div>
 

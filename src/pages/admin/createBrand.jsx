@@ -237,24 +237,24 @@ const ManageBrands = () => {
                           </td>
                           <td>
                             <button
-                              className="btn btn-light icon-btn m-2"
+                              className="btn btn-light icon-btn mx-1 m-2"
                               onClick={() => handleEditClick(brand)}
                             >
-                              <BsPencilSquare style={{ fontSize: '18px', color: '#dc3545' }} />
+                              <BsPencilSquare  />
                             </button>
                             <button
-                              className="btn btn-light icon-btn"
+                              className="btn btn-light icon-btn mx-1"
                               onClick={() => handleViewClick(brand)}
                             >
-                              <BsEye style={{ fontSize: '18px', color: '#212529' }} />
+                              <BsEye  />
                             </button>
                             <button
                               type="button"
-                              className="btn btn-light-danger icon-btn b-r-4 delete-btn"
+                              className="btn btn-light icon-btn mx-1 b-r-4 delete-btn"
                               title="Delete"
                               onClick={() => handleDeleteClick(brand.id)}
                             >
-                              <TiTrash style={{ fontSize: '18px', color: '#212529' }} />
+                              <TiTrash  />
                             </button>
                           </td>
                         </tr>

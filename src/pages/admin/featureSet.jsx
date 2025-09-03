@@ -225,15 +225,8 @@ const ManageFeatureSet = () => {
                           ))}
                         </div>
                        <button
-                        className="btn"
-                        style={{
-                          backgroundColor: '#0da79e',
-                          color: '#fff',
-                          border: 'none',
-                          padding: '10px 20px',
-                          fontSize: '16px',
-                          marginTop: '20px',
-                        }}
+                        className="btn new-btn"
+                      
                           onClick={handlePriorityChange}
                           disabled={selectedRows.length === 0}
                         >

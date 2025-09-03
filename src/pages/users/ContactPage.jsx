@@ -194,7 +194,7 @@ const ContactPage = () => {
 
               <hr />
               <h6>Find us on Map</h6>
-              <div className="map-container rounded shadow-sm overflow-hidden" style={{ height: "250px" }}>
+              <div className="map-container rounded shadow-sm overflow-hidden" >
                 <iframe
                   title="map"
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3915.3643046811407!2d76.99481287481204!3d11.08169408909224!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba857f69b1d2cb5%3A0x8d2a52f9474afef!2sCoimbatore%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1691234567890!5m2!1sen!2sin"

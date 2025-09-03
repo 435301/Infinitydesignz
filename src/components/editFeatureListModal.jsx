@@ -90,7 +90,7 @@ const EditFeatureListModal = ({ show, onClose, featureList }) => {
     if (!show) return null;
 
     return (
-        <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
+        <div className="modal fade show d-block new-1" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                     <form onSubmit={handleSubmit}>

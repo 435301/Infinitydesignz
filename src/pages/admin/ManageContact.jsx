@@ -148,11 +148,11 @@ function ManageContact() {
                                                                             {moment(contact.created_at).format("DD-MM-YYYY")}
                                                                         </td>
                                                                         <td>
-                                                                            <button type="button" className="btn btn-light-danger icon-btn b-r-4 delete-btn"
+                                                                            <button type="button" className="btn btn-light icon-btn mx-1 b-r-4 delete-btn"
                                                                                 title="Delete"
                                                                                 onClick={() => handleDeleteClick(contact.id)}
                                                                             >
-                                                                                <TiTrash style={{ fontSize: '18px', color: '#212529' }} />
+                                                                                <TiTrash  />
                                                                             </button>
                                                                         </td>
                                                                     </tr>
