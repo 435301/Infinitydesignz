@@ -9,7 +9,7 @@ import Img3 from "../../img/img3.png";
 import Star from "../../img/star.svg";
 import Star1 from "../../img/star1.svg";
 import Icon from "../../img/icon.svg";
-import { fetchProfile, updateProfile } from "../../redux/actions/profileAction";
+import { fetchProfile, updateProfile } from "../../redux/actions/profileAction"; 
 
 export default function ProfilePage() {
   const dispatch = useDispatch();
@@ -24,6 +24,7 @@ export default function ProfilePage() {
     gender: "",
     dateOfBirth: "",
   });
+   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     dispatch(fetchProfile());
@@ -48,7 +49,35 @@ export default function ProfilePage() {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.phone) {
+      newErrors.phone = "Mobile number is required";
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      newErrors.phone = "Mobile number must be 10 digits";
+    }
+
+    if (formData.alternateMobile && !/^\d{10}$/.test(formData.alternateMobile)) {
+      newErrors.alternateMobile = "Alternate mobile must be 10 digits";
+    }
+
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    if (!formData.gender) newErrors.gender = "Please select a gender";
+    if (!formData.dateOfBirth) newErrors.dateOfBirth = "Date of birth is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSave = () => {
+    if (!validateForm()) return; 
     dispatch(updateProfile(formData));
     setIsEditing(false);
   };
@@ -146,39 +175,45 @@ export default function ProfilePage() {
             <div className="form-section">
               <div className="form-line">
                 <div className="form-field">
-                  <label>Name</label>
-                  <input type="text" name="name" value={formData.name} onChange={handleChange} />
+                  <label>Name<span className="text-danger">*</span></label>
+                  <input type="text" name="name" value={formData.name} className={`form-control ${errors.name ? 'is-invalid' : ''}`} onChange={handleChange} />
+                  {errors.name && <div className="invalid-feedback">{errors.name}</div>}
                 </div>
               </div>
               <div className="form-line">
                 <div className="form-field">
-                  <label>Mobile Number</label>
-                  <input type="text" name="phone" value={formData.phone} onChange={handleChange} />
+                  <label>Mobile Number<span className="text-danger">*</span></label>
+                  <input type="text" name="phone" value={formData.phone}  className={`form-control ${errors.phone ? 'is-invalid' : ''}`} onChange={handleChange} />
+                  {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
                 </div>
                 <div className="form-field">
                   <label>Alternate Mobile</label>
-                  <input type="text" name="alternateMobile" value={formData.alternateMobile} onChange={handleChange} />
+                  <input type="text" name="alternateMobile" value={formData.alternateMobile} className={`form-control ${errors.alternateMobile ? 'is-invalid' : ''}`} onChange={handleChange} />
+                  {errors.alternateMobile && <div className="invalid-feedback">{errors.alternateMobile}</div>}
                 </div>
               </div>
               <div className="form-line">
                 <div className="form-field">
-                  <label>Email</label>
-                  <input type="email" name="email" value={formData.email} onChange={handleChange} />
+                  <label>Email<span className="text-danger">*</span></label>
+                  <input type="email" name="email" value={formData.email} className={`form-control ${errors.email ? 'is-invalid' : ''}`} onChange={handleChange} />
+                  {errors.email && <div className="invalid-feedback">{errors.email}</div>}
                 </div>
                 <div className="form-field">
-                  <label>Gender</label>
-                  <select name="gender" value={formData.gender} onChange={handleChange}>
+                  <label>Gender<span className="text-danger">*</span></label>
+                  <select name="gender" value={formData.gender} className={`form-control ${errors.gender ? 'is-invalid' : ''}`} onChange={handleChange}>
                     <option value="" disabled>Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
                   </select>
+                  {errors.gender && <div className="invalid-feedback">{errors.gender}</div>}
                 </div>
               </div>
               <div className="form-line">
                 <div className="form-field full-span">
-                  <label>Date of Birth</label>
-                  <input type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} />
+                  <label>Date of Birth<span className="text-danger">*</span></label>
+                  <input type="date" name="dateOfBirth" value={formData.dateOfBirth} className={`form-control ${errors.dateOfBirth ? 'is-invalid' : ''}`} onChange={handleChange} />
+                   {errors.dateOfBirth && <div className="invalid-feedback">{errors.dateOfBirth}</div>}
                 </div>
               </div>
               <button className="submit-action" onClick={handleSave}>Save Details</button>
