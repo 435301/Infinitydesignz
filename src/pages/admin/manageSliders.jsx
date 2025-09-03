@@ -32,7 +32,7 @@ const ManageSliders = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    dispatch(fetchSliders());
+    dispatch(fetchSliders('all'));
   }, [dispatch])
 
   // Pagination logic

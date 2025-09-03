@@ -14,7 +14,7 @@ export const EDIT_COLORS_FAILURE = 'EDIT_COLORS_FAILURE'
 export const DELETE_COLOR_SUCCESS = 'DELETE_COLOR_SUCCESS';
 export const BULK_UPDATE_COLOR_SUCCESS = 'BULK_UPDATE_COLOR_SUCCESS';
 
-export const fetchColors = () => {
+export const fetchColors = (status='') => {
 
   return async (dispatch) => {
 
@@ -27,6 +27,7 @@ export const fetchColors = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        params: status === "all" ? { status: "all" } : {},
       });
 
       dispatch({ type: FETCH_COLOR_SUCCESS, payload: response.data });
@@ -55,7 +56,7 @@ export const addColors = (formData) => async (dispatch) => {
     dispatch({ type: 'ADD_COLOR_SUCCESS' });
     const successMessage = response?.message || 'Color created successfully'
     toast.success(successMessage);
-    dispatch(fetchColors());
+    dispatch(fetchColors('all'));
   } catch (error) {
       toast.error(error?.response?.data?.message || 'Error adding colors');
     dispatch({
@@ -81,7 +82,7 @@ export const editColors = (payload) => async (dispatch) => {
     dispatch({ type: 'EDIT_COLORS_SUCCESS' });
     const successMessage = response?.message || 'Color updated successfully';
     toast.success(successMessage);
-    dispatch(fetchColors());
+    dispatch(fetchColors('all'));
   } catch (error) {
       toast.error(error?.response?.data?.message || 'Error editing colors');
     dispatch({
@@ -102,7 +103,7 @@ export const deleteColor = (id) => async (dispatch) => {
       },
     });
 
-    dispatch(fetchColors(id));
+    dispatch(fetchColors('all'));
   const successMessage = response?.message || 'Color deleted successfully';
     toast.success(successMessage);
   } catch (error) {
@@ -128,7 +129,7 @@ export const bulkUpdateColorStatus = (ids,status) => async (dispatch) => {
         },
       }
     );
-    dispatch(fetchColors()); 
+    dispatch(fetchColors('all')); 
   } catch (error) {
     console.error(error);
     toast.error(error?.response?.data?.message || 'Failed to update color status.');

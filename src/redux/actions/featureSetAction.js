@@ -16,7 +16,7 @@ export const EDIT_FEATURESET_FAILURE = 'EDIT_FEATURESET_FAILURE';
 
 export const DELETE_FEATURESET_SUCCESS = 'DELETE_FEATURESET_SUCCESS';
 
-export const fetchFeatureSets = () => {
+export const fetchFeatureSets = (status='') => {
   return async (dispatch) => {
     dispatch({ type: FETCH_FEATURESET_REQUEST });
     try {
@@ -25,6 +25,7 @@ export const fetchFeatureSets = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        params: status === "all" ? { status: "all" } : {},
       });
 
       dispatch({ type: FETCH_FEATURESET_SUCCESS, payload: response.data });
@@ -55,7 +56,7 @@ export const addFeatureSet = (formData) => async (dispatch) => {
     const successMessage = response?.data?.message || 'Feature Set created successfully';
     toast.success(successMessage);
 
-    dispatch(fetchFeatureSets());
+    dispatch(fetchFeatureSets('all'));
   } catch (error) {
       toast.error(error?.response?.data?.message || 'Error adding feature set');
     console.error('Error Response', error?.response?.data);
@@ -85,7 +86,7 @@ export const editFeatureSet = (payload) => async (dispatch) => {
     const successMessage = response?.data?.message || 'Feature Set updated successfully';
     toast.success(successMessage);
 
-    dispatch(fetchFeatureSets());
+    dispatch(fetchFeatureSets('all'));
   } catch (error) {
       toast.error(error?.response?.data?.message || 'Error editing feature set');
     dispatch({
@@ -109,7 +110,7 @@ export const deleteFeatureSet = (id) => async (dispatch) => {
     const successMessage = response?.data?.message || 'Feature Set deleted successfully';
     toast.success(successMessage);
 
-    dispatch(fetchFeatureSets());
+    dispatch(fetchFeatureSets('all'));
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Failed to delete Feature Set.');
     console.error(error);
@@ -135,7 +136,7 @@ export const bulkUpdateFeatureTypeStatus = (ids, status) => async (dispatch) => 
 
     const successMessage = response?.data?.message || 'Status updated successfully';
     toast.success(successMessage);
-    dispatch(fetchFeatureSets());
+    dispatch(fetchFeatureSets('all'));
   } catch (error) {
     console.error(error);
     toast.error(error?.response?.data?.message || 'Failed to update status');
@@ -155,7 +156,7 @@ export const updateFeatureSetPriority = ({ id, priority }) => async (dispatch) =
     const successMessage = response?.data?.message || 'Priority updated successfully';
     toast.success(successMessage);
 
-    dispatch(fetchFeatureSets());
+    dispatch(fetchFeatureSets('all'));
   } catch (error) {
     console.error('Failed to update priority', error);
     toast.error(error?.response?.data?.message || 'Failed to update priority');

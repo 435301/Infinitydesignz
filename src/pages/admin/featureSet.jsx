@@ -31,7 +31,7 @@ const ManageFeatureSet = () => {
   const rowsPerPage = 10;
 
   useEffect(() => {
-    dispatch(fetchFeatureSets());
+    dispatch(fetchFeatureSets('all'));
   }, [dispatch]);
 
   const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed); // Fixed: Added parameter
@@ -88,7 +88,7 @@ const ManageFeatureSet = () => {
           : null
       )
     );
-    dispatch(fetchFeatureSets());
+    dispatch(fetchFeatureSets('all'));
     setEditedPriorities({});
     setSelectedRows([]);
   };

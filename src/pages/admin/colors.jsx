@@ -31,7 +31,7 @@ const ManageColors = () => {
   const [selectedColor, setSelectedColor] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchColors());
+    dispatch(fetchColors('all'));
   }, [dispatch]);
 
   const filteredColors = colors.filter((color) => {

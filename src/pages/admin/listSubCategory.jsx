@@ -34,7 +34,7 @@ const ListSubCategory = () => {
   const { categories = [], loading, error } = useSelector((state) => state.categories || {});
 
   useEffect(() => {
-    dispatch(fetchCategories());
+    dispatch(fetchCategories('all'));
   }, [dispatch]);
 
   useEffect(() => {
@@ -142,7 +142,7 @@ const ListSubCategory = () => {
       });
 
       toast.success(`Status updated to ${newStatus ? 'Active' : 'Inactive'}`);
-      dispatch(fetchCategories());
+      dispatch(fetchCategories('all'));
       setSelectedRows([]);
     } catch (error) {
       toast.error(error?.response?.data?.message || 'Bulk status update failed');
@@ -358,7 +358,7 @@ const ListSubCategory = () => {
               show={editModalOpen}
               setShow={setEditModalOpen}
               subCategoryId={subCategoryIdToEdit}
-              refetchCategories={() => dispatch(fetchCategories())}
+              refetchCategories={() => dispatch(fetchCategories('all'))}
             />
           )}
           {showDeleteModal && (
