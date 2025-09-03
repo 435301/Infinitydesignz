@@ -2521,6 +2521,10 @@ small a {
   color: #000;
 }
 
+.modal-backdrop {
+    background-color: #00000047 !important;
+}
+
 @media (max-width: 767px) {
     .Fabric .card-img-top {
         object-fit: fill;
