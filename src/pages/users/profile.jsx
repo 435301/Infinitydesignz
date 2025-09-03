@@ -147,24 +147,7 @@ export default function ProfilePage() {
                   <img src={AdBanner} alt="Special Sale" />
                 </div>
 
-                <div className="related-products py-4">
-                  <h4>Related Products</h4>
-                  {[1].map((_, index) => (
-                    <div className="card mb-2" key={index}>
-                      <div className="discount-badge">22% off</div>
-                      <div className="wishlist-icon"><img src={Icon} alt="Wishlist" /></div>
-                      <img src={Img3} className="card-img-top" alt="Sofa" />
-                      <div className="card-body">
-                        <h6 className="card-title">Andres Fabric 3 Seater Sofa</h6>
-                        <p className="card-text"><strong>₹37,999</strong> <del>MRP ₹48,999</del></p>
-                        <div className="rating d-flex align-items-center mb-2">
-                          {[...Array(4)].map((_, i) => <img key={i} src={Star} className="me-2" alt="*" />)}
-                          <img src={Star1} className="me-2" alt="*" /><span>4.4 | 24K</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              
               </div>
             </div>
           </div>
