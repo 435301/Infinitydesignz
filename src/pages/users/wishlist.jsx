@@ -117,8 +117,7 @@ export default function WishlistPage() {
       } else {
         dispatch(addToGuestCart(cartItem));
       }
-      setWishlistItems((prev) => prev.filter((w) => w.id !== item.id));
-      await dispatch(deleteWishlistItem(item.id));
+      // setWishlistItems((prev) => prev.filter((w) => w.id !== item.id));
     } catch (error) {
       console.error("Error moving to cart:", error);
       toast.error("Failed to move to cart.");
