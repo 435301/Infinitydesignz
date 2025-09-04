@@ -33,6 +33,7 @@ import subscribersReducer from './subscribersReducer';
 import productPromotionReducer from './productPromotionReducer';
 import { adminUserReducer } from './adminUserReducer';
 import homeCategoryReducer from './homeCategoryReducer';
+import { dashboardReducer } from './dashboardReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -77,6 +78,7 @@ const rootReducer = combineReducers({
   frontendPromotions:productPromotionReducer,
    help: categoryReducer,
    homeCategories:homeCategoryReducer,
+    dashboard: dashboardReducer,
 });
 
 export default rootReducer;
