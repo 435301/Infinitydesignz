@@ -154,9 +154,11 @@ export default function ProductDetailPage() {
       ]);
     }
 
-    // Sync size and color selections
-    setSelectedSizeId(product.selectedVariant?.sizeId?.toString() || '');
-    setSelectedColorId(product.selectedVariant?.colorId?.toString() || '');
+    // Sync size and color selections ONLY when a selectedVariant exists
+    if (product?.selectedVariant) {
+      setSelectedSizeId(product.selectedVariant.sizeId?.toString() ?? '');
+      setSelectedColorId(product.selectedVariant.colorId?.toString() ?? '');
+    }
   }, [product, variantIdFromURL, product?.selectedVariant]);
 
   useEffect(() => {
@@ -456,14 +458,21 @@ export default function ProductDetailPage() {
                         const newSizeId = parseInt(e.target.value);
                         setSelectedSizeId(newSizeId.toString());
 
-                        const matchedVariant = variants.find(
-                          (v) =>
-                            parseInt(v.size?.id) === newSizeId &&
-                            (!selectedColorId || parseInt(v.color?.id) === parseInt(selectedColorId))
-                        );
-                        console.log('Size changed:', { newSizeId, selectedColorId, matchedVariant });
-                        dispatch(setSelectedVariant(matchedVariant || null));
+                        // All variants for this size
+                        const sizeVariants = variants.filter(v => Number(v.size?.id) === newSizeId);
+
+                        // Prefer current color if that exact combo exists
+                        let next = sizeVariants.find(v => selectedColorId && Number(v.color?.id) === Number(selectedColorId));
+
+                        // Otherwise fall back to the first available for this size
+                        if (!next) next = sizeVariants[0];
+
+                        if (next) {
+                          dispatch(setSelectedVariant(next));
+                          if (next.color?.id) setSelectedColorId(String(next.color.id)); // keep color dropdown in sync
+                        }
                       }}
+
                     >
                       <option value="">Select</option>
                       {sizeOptions.map(size => (
@@ -484,14 +493,21 @@ export default function ProductDetailPage() {
                         const newColorId = parseInt(e.target.value);
                         setSelectedColorId(newColorId.toString());
 
-                        const matchedVariant = variants.find(
-                          (v) =>
-                            parseInt(v.color?.id) === newColorId &&
-                            (!selectedSizeId || parseInt(v.size?.id) === parseInt(selectedSizeId))
-                        );
-                        console.log('Color changed:', { newColorId, selectedSizeId, matchedVariant });
-                        dispatch(setSelectedVariant(matchedVariant || null));
+                        // All variants with this color
+                        const colorVariants = variants.filter(v => Number(v.color?.id) === newColorId);
+
+                        // Prefer current size if that exact combo exists
+                        let next = colorVariants.find(v => selectedSizeId && Number(v.size?.id) === Number(selectedSizeId));
+
+                        // Otherwise fall back to the first available for this color
+                        if (!next) next = colorVariants[0];
+
+                        if (next) {
+                          dispatch(setSelectedVariant(next));
+                          if (next.size?.id) setSelectedSizeId(String(next.size.id)); // keep size dropdown in sync
+                        }
                       }}
+
                     >
                       <option value="">Select</option>
                       {colorOptions.map(color => (
