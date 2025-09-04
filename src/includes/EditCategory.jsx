@@ -27,6 +27,7 @@ const EditCategoryModal = ({ show, setShow, category }) => {
       setWebIcon(category.webImage ? { file: null, preview: buildImageUrl(category.webImage) } : null);
       setMainImage(category.mainImage ? { file: null, preview: buildImageUrl(category.mainImage) } : null);
       setStatus(!!category.status);
+       setshowInHomeTabs(!!category.showInHomeTabs);
     }
   }, [category]);
 
