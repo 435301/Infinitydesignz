@@ -118,60 +118,6 @@ console.log('promotionIndex', promotions)
     // Optional: Perform success logic (e.g., toast, redirect)
   };
 
-  const images = [
-    { src: living, label: "Sofa / Sofa Chairs" },
-    { src: c2, label: "Centre Table" },
-    { src: c3, label: "Mandir" },
-    { src: c4, label: "Cabinets and Sideboards" },
-    { src: c10, label: "Wall Art and Paintings" },
-    { src: c5, label: "Hanging Lights" },
-    { src: c6, label: "Curtains" },
-    { src: c7, label: "Recliners" },
-    { src: c8, label: "TV & Media Units" },
-    { src: c9, label: "Carpets" },
-
-  ];
-
-  const tabs = [
-    { id: 'living', label: 'Living Room', icon: CounterTops },
-    { id: 'kitchen', label: 'Kitchen', icon: KingBed },
-    { id: 'office', label: 'Office', icon: Apartment },
-    { id: 'study', label: 'Study', icon: LocalLibrary },
-    { id: 'garden', label: 'Garden', icon: OuterGarden }
-  ];
-
-
-  const helpItems = [
-    { image: Sofa, title: "Sofa", alt: "Sofa" },
-    { image: Bed, title: "Bed", alt: "Bed" },
-    { image: Mattress, title: "Mattress", alt: "Mattress" },
-    { image: WardRobes, title: "Wardrobes", alt: "Wardrobes" },
-    { image: Dining, title: "Dining table", alt: "Dining Table" },
-  ];
-
-  const promoData = [
-    {
-      image: LivingRoom,
-      alt: "Living Room",
-      titleLine1: "FURNITURE",
-      titleLine2: "SALE",
-      text: "Lorem Ipsum is simply dummy\ntext of the printing and\ntypesetting industry.",
-      link: "shop.php",
-      overlayPosition: "promo-overlay-left",
-      titlePosition: "promo-title-left",
-    },
-    {
-      image: Bedroom,
-      alt: "Bedroom",
-      titleLine1: "FURNITURE",
-      titleLine2: "SALE",
-      text: "Lorem Ipsum is simply dummy\ntext of the printing and\ntypesetting industry.",
-      link: "shop.php",
-      overlayPosition: "promo-overlay-right",
-      titlePosition: "promo-title-right",
-    }
-  ];
-
   const features = [
     {
       icon: (
