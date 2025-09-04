@@ -5,61 +5,13 @@ import Footer from '../../includes/footer';
 import '../../css/user/userstyle.css';
 import '../../css/user/bootstrap-icons.css';
 import '../../css/user/bootstrap.min.css';
-import Modern from '../../img/modern.svg';
-import Furniture from '../../img/furniture.svg';
-import Aa from '../../img/aa.svg';
 import S1 from '../../img/s1.png';
 import S2 from '../../img/s2.png';
 import S4 from '../../img/s4.png';
-import Sale1 from '../../img/sale-1.png';
-import Sale2 from '../../img/sale-2.png';
-import Sale3 from '../../img/sale-3.png';
-import Sale4 from '../../img/sale-4.png';
-import KingBed from '../../img/king_bed.svg';
-import CounterTops from '../../img/countertops.svg';
-import Apartment from '../../img/apartment.svg';
-import LocalLibrary from '../../img/local_library.svg';
-import OuterGarden from '../../img/outdoor_garden.svg';
-import living from '../../img/living.png';
-import c2 from '../../img/c2.png';
-import c3 from '../../img/c3.png';
-import c4 from '../../img/c4.png';
-import c5 from '../../img/c5.png';
-import c6 from '../../img/c6.png';
-import c7 from '../../img/c7.png';
-import c8 from '../../img/c8.png';
-import c9 from '../../img/c9.png';
-import c10 from '../../img/c10.png';
-import New1 from '../../img/new-1.png';
-import New2 from '../../img/new-2.png';
-import New3 from '../../img/new-3.png';
-import Icon from '../../img/icon.svg';
-import Star from '../../img/star.svg';
-import Star1 from '../../img/star1.svg';
 import Bg1 from '../../img/bg1.png';
-import One from '../../img/1.png';
-import Two from '../../img/2.svg';
-import LivingRoom from '../../img/o1.png';
-import Bedroom from '../../img/o2.png';
-import F1 from '../../img/f1.png';
-import F2 from '../../img/f2.png';
-import F3 from '../../img/f3.png';
-import Sofa from '../../img/sofa.png';
-import Bed from '../../img/bed.png';
-import Mattress from '../../img/mattress.png';
-import WardRobes from '../../img/wardrobes.png';
-import Dining from '../../img/dining.png';
-import SlideImage from '../../img/slide.png';
-import Img1 from '../../img/img1.png';
-import Img2 from '../../img/img2.png';
-import Img3 from '../../img/img3.png';
-import SaleCarousel from '../../components/projectCarousel';
 import FurnitureTabs from '../../components/furnitureTabs';
-import ProductGrid from '../../components/productGrid';
 import HelpSection from '../../components/helpSection';
-import PromoSection from '../../components/PromoSection';
 import IconFeatureGrid from '../../components/iconFeaturedGrid';
-import NewArrivalsSection from '../../components/newArrivalSection';
 import CallbackForm from '../../components/callbackForm';
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -71,6 +23,7 @@ import BannerSlider from '../../components/bannerSlider';
 import { fetchFrontendPromotions } from '../../redux/actions/productionPromotionAction';
 import FrontendPromotionsSection from '../../components/frontendPromotionSection';
 import { fetchHomeTabs } from '../../redux/actions/homeCategoryAction';
+import { fetchNeedHelpItems } from '../../redux/actions/categoryAction';
 
 const waitAndShowModal = () =>
   new Promise((resolve) => {
@@ -86,17 +39,23 @@ export default function HomeBannerSection() {
   const { sliders } = useSelector((state) => state.sliders);
   const { rightSliders } = useSelector((state) => state.rightSliders);
   const { promotions, loading, error } = useSelector((state) => state.frontendPromotions);
-console.log('promotionIndex', promotions)
-  console.log("sliders", rightSliders);
    const { homeTabs } = useSelector(state => state.homeCategories);
-   console.log('homeTabs',homeTabs)
 
-  useEffect(() => {
+ useEffect(() => {
+  const handleFocus = () => {
     dispatch(fetchSliders());
     dispatch(fetchRightSliders());
     dispatch(fetchFrontendPromotions(8));
     dispatch(fetchHomeTabs());
-  }, [dispatch]);
+    dispatch(fetchNeedHelpItems());
+  };
+
+  window.addEventListener("focus", handleFocus);
+
+  return () => {
+    window.removeEventListener("focus", handleFocus);
+  };
+}, [dispatch]);
 
   useQuery({
     queryKey: ["show-login-modal"],
