@@ -155,9 +155,13 @@ export default function WishlistPage() {
               <div className="wishlist-header">
                 <h2 className="m-0">WISHLIST</h2>
               </div>
-              {loadingWishlist ? (
-                <Loader />
-              ) : (
+              {loading ? (
+                <tr>
+                  <td colSpan="5" className="text-center">
+                    <p>Loading...</p>
+                  </td>
+                </tr>
+              ) :(
                 wishlistItems.length > 0 ? (
                   wishlistItems.map((item, index) => {
                     const displayData = item.variantId && item.variant
@@ -256,33 +260,33 @@ export default function WishlistPage() {
                 <img src={AdBanner} alt="Special Sale" className="img-fluid" />
               </div>
 
-            <div className="col-lg-12">  <div className="related-products py-4">
+              <div className="col-lg-12">  <div className="related-products py-4">
                 <h4>Related Products</h4>
                 <div className="carousel-wrapper">
-                    <Carousel controls indicators={false}>
-                  {(relatedProducts || []).map((product) => {
-                    const normalizedProduct = {
-                      ...product,
-                      images: {
-                        main: {
-                          url: product.imageUrl?.startsWith("http")
-                            ? product.imageUrl.replace(`${BASE_URL}/uploads/products/`, "")
-                            : product.imageUrl.replace("/uploads/products/", ""),
+                  <Carousel controls indicators={false}>
+                    {(relatedProducts || []).map((product) => {
+                      const normalizedProduct = {
+                        ...product,
+                        images: {
+                          main: {
+                            url: product.imageUrl?.startsWith("http")
+                              ? product.imageUrl.replace(`${BASE_URL}/uploads/products/`, "")
+                              : product.imageUrl.replace("/uploads/products/", ""),
+                          },
                         },
-                      },
-                      mrp: product.mrp,
-                      sellingPrice: product.sellingPrice,
-                    };
+                        mrp: product.mrp,
+                        sellingPrice: product.sellingPrice,
+                      };
 
-                    return (
-                      <Carousel.Item key={product.id}>
-                        <ProductCard product={normalizedProduct} />
-                      </Carousel.Item>
-                    );
-                  })}
-                </Carousel>
+                      return (
+                        <Carousel.Item key={product.id}>
+                          <ProductCard product={normalizedProduct} />
+                        </Carousel.Item>
+                      );
+                    })}
+                  </Carousel>
                 </div>
-              
+
 
               </div></div>
             </div>

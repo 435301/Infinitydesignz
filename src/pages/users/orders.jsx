@@ -116,7 +116,14 @@ const MyOrdersPage = () => {
               <div className="wishlist-header">
                 <h2 className="m-0">ORDERS</h2>
               </div>
-              {latestOrderDetails ? (
+                 {loading ? (
+                  <tr>
+                    <td colSpan="5" className="text-center">
+                      <p>Loading...</p>
+                    </td>
+                  </tr>
+                ) : (
+              latestOrderDetails ? (
                 <div key={latestOrderDetails.id} className="order-block">
                   {latestOrderDetails.items.map((item) => {
                     const productData = item.variant || item.product || {};
@@ -242,9 +249,8 @@ const MyOrdersPage = () => {
                 </div>
               ) : (
                 !loading && <p>No latest order found</p>
-              )}
+              ))}
             </main>
-
 
             <aside className="col-md-3 ads-related">
               <div className="ad-banner">

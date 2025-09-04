@@ -20,7 +20,7 @@ export default function AddressBook() {
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
   const [selectedType, setSelectedType] = useState('Home');
-  const { addresses = [] } = useSelector((state) => state.addressBook);
+  const { addresses = [], loading, error } = useSelector((state) => state.addressBook);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -76,32 +76,39 @@ export default function AddressBook() {
                   <h2>Address book</h2>
                   <button className="btn add-address-btn" onClick={toggleModal}>+ Add Address</button>
                 </div>
-                {addresses.map((addr) => (
-                  <AddressEntry
-                    key={addr.id}
-                    name={addr.name}
-                    addressLines={[
-                      addr.flatNumber,
-                      addr.buildingName,
-                      addr.addressLine1,
-                      addr.addressLine2,
-                      `${addr.city} - ${addr.pincode}`,
-                      addr.state
-                    ]}
-                    mobile={addr.phone}
-                    label={addr.label}
-                    isDefault={addr.isDefault || false}
-                    onEdit={() => {
-                      setSelectedAddress(addr);
-                      setEditModalOpen(true);
-                    }}
-                    onDelete={() => {
-                      setAddressToDelete(addr);
-                      setDeleteModalOpen(true);
-                    }}
-                    onSetDefault={() => handleSetDefault(addr.id)}
-                  />
-                ))}
+                {loading ? (
+                  <tr>
+                    <td colSpan="5" className="text-center">
+                      <p>Loading...</p>
+                    </td>
+                  </tr>
+                ) : (
+                  addresses.map((addr) => (
+                    <AddressEntry
+                      key={addr.id}
+                      name={addr.name}
+                      addressLines={[
+                        addr.flatNumber,
+                        addr.buildingName,
+                        addr.addressLine1,
+                        addr.addressLine2,
+                        `${addr.city} - ${addr.pincode}`,
+                        addr.state
+                      ]}
+                      mobile={addr.phone}
+                      label={addr.label}
+                      isDefault={addr.isDefault || false}
+                      onEdit={() => {
+                        setSelectedAddress(addr);
+                        setEditModalOpen(true);
+                      }}
+                      onDelete={() => {
+                        setAddressToDelete(addr);
+                        setDeleteModalOpen(true);
+                      }}
+                      onSetDefault={() => handleSetDefault(addr.id)}
+                    />
+                  )))}
               </div>
             </div>
 
