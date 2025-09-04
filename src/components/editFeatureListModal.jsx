@@ -104,36 +104,47 @@ const EditFeatureListModal = ({ show, onClose, featureList }) => {
                                 <select
                                     className={`form-control ${errors.featureTypeId ? 'is-invalid' : ''}`}
                                     value={featureTypeId}
-                                    onChange={(e) => setFeatureTypeId(e.target.value)}
+                                    onChange={(e) => {
+                                        const newTypeId = e.target.value;
+                                        setFeatureTypeId(newTypeId);
+                                        setFeatureSetId(""); 
+                                    }}
                                 >
                                     <option value="">-- Select Feature Type --</option>
-                                    {featureTypes.map((fs) => (
-                                        <option key={fs.id} value={fs.id}>{fs.name}</option>
+                                    {featureTypes.map((ft) => (
+                                        <option key={ft.id} value={ft.id}>
+                                            {ft.name}
+                                        </option>
                                     ))}
                                 </select>
                                 {errors.featureTypeId && (
                                     <div className="invalid-feedback">{errors.featureTypeId}</div>
                                 )}
                             </div>
-                            {/* Feature Set Dropdown */}
+
                             <div className="mb-3">
-                                <label className="form-label">Feature Set <span className="text-danger">*</span></label>
+                                <label className="form-label">
+                                    Feature Set <span className="text-danger">*</span>
+                                </label>
                                 <select
-                                    className={`form-control ${errors.featureSetId ? 'is-invalid' : ''}`}
+                                    className={`form-control ${errors.featureSetId ? "is-invalid" : ""}`}
                                     value={featureSetId}
                                     onChange={(e) => setFeatureSetId(e.target.value)}
+                                    disabled={!featureTypeId} 
                                 >
                                     <option value="">-- Select Feature Set --</option>
-                                    {featureSets.map((fs) => (
-                                        <option key={fs.id} value={fs.id}>{fs.title}</option>
-                                    ))}
+                                    {featureSets
+                                        .filter((fs) => fs.featureTypeId?.toString() === featureTypeId) 
+                                        .map((fs) => (
+                                            <option key={fs.id} value={fs.id}>
+                                                {fs.title}
+                                            </option>
+                                        ))}
                                 </select>
                                 {errors.featureSetId && (
                                     <div className="invalid-feedback">{errors.featureSetId}</div>
                                 )}
                             </div>
-
-
                             {formFields.map((field, index) => (
                                 <div className="mb-3 d-flex align-items-center gap-2" key={index}>
                                     <input
