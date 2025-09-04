@@ -13,7 +13,7 @@ import ViewFilterSetModal from '../../modals/viewFilterSetModal';
 
 const ManageFilterSet = () => {
   const dispatch = useDispatch();
-  const { filterSets = [] } = useSelector((state) => state.filterSets);
+  const { filterSets = [] , loading, error} = useSelector((state) => state.filterSets);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -141,7 +141,20 @@ const ManageFilterSet = () => {
               <div className="card-block">
                 <div className="row mb-2"></div>
                 <div>
-                  {Object.entries(groupedFilterSets).map(([filterTypeName, items]) => (
+                    {loading ? (
+                    <div className="text-center my-3">
+                      <p>Loading...</p>
+                    </div>
+                  ) : error ? (
+                    <div className="text-center my-3">
+                      <p className="text-danger">{error}</p>
+                    </div>
+                  ) : filterSets.length === 0 ? (
+                    <div className="text-center my-3">
+                      <p>No feature sets available</p>
+                    </div>
+                  ) : (
+                  Object.entries(groupedFilterSets).map(([filterTypeName, items]) => (
                     <div key={filterTypeName} className="mb-4">
                       <div className="col-lg-6 d-flex align-items-center">
                        
@@ -237,7 +250,8 @@ const ManageFilterSet = () => {
                         Change Priority
                       </button>
                     </div>
-                  ))}
+                  ))
+                )}
                 </div>
               </div>
             </div>

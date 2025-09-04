@@ -166,7 +166,7 @@ const HomePromotionCategory = () => {
                     <div className="row">
                       <div className="col-sm-12 table-responsive">
                         {loading ? (
-                          <p>Loading...</p>
+                          <p className='text-center'>Loading...</p>
                         ) : error ? (
                           <p className="text-danger">{error}</p>
                         ) : (

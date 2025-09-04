@@ -26,7 +26,7 @@ const ManageFilterList = () => {
   const [editedPriorities, setEditedPriorities] = useState({});
 
   const dispatch = useDispatch();
-  const { filterLists = [] } = useSelector((state) => state.filterLists || {});
+  const { filterLists = [], loading, error } = useSelector((state) => state.filterLists || {});
   const { filterTypes = [] } = useSelector((state) => state.filterTypes || {});
 
   useEffect(() => {
@@ -147,7 +147,20 @@ const ManageFilterList = () => {
                         {filterTypeName} <span className="badge">{Object.keys(filterSets).length}</span>
                       </h3>
                     </div>
-                    {Object.entries(filterSets).map(([filterSetTitle, filters]) => (
+                    {loading ? (
+                    <div className="text-center my-3">
+                      <p>Loading...</p>
+                    </div>
+                  ) : error ? (
+                    <div className="text-center my-3">
+                      <p className="text-danger">{error}</p>
+                    </div>
+                  ) : filterLists.length === 0 ? (
+                    <div className="text-center my-3">
+                      <p>No feature sets available</p>
+                    </div>
+                  ) : (
+                    Object.entries(filterSets).map(([filterSetTitle, filters]) => (
                       <div key={filterSetTitle} className="mb-4">
                         <h5 className="mt-4">
                           {filterSetTitle} <span className="badge">{filters.length}</span>
@@ -244,7 +257,8 @@ const ManageFilterList = () => {
                           Change Priority
                         </button>
                       </div>
-                    ))}
+                    ))
+                  )}
                   </div>
                 ))}
               </div>

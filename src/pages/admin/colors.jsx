@@ -17,7 +17,7 @@ import EditColorModal from '../../components/editColorModal';
 
 const ManageColors = () => {
   const dispatch = useDispatch();
-  const { colors = [] } = useSelector((state) => state.colors || {});
+  const { colors = [] , loading, error} = useSelector((state) => state.colors || {});
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -189,7 +189,20 @@ const ManageColors = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {currentRows.map((color, index) => (
+                       {loading ? (
+                        <tr>
+                          <td colSpan="5" className="text-center">
+                            <p>Loading...</p>
+                          </td>
+                        </tr>
+                      ) : error ? (
+                        <tr>
+                          <td colSpan="5" className="text-center">
+                            <p className="text-danger">{error}</p>
+                          </td>
+                        </tr>
+                      ) :  (
+                      currentRows.map((color, index) => (
                         <tr key={color.id}>
                           <td>
                             <input
@@ -247,7 +260,8 @@ const ManageColors = () => {
                             </button>
                           </td>
                         </tr>
-                      ))}
+                      ))
+                    )}
                       {filteredColors.length === 0 && (
                         <tr>
                           <td colSpan="6" className="text-center">

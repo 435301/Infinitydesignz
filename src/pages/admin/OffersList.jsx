@@ -18,7 +18,7 @@ import ViewCouponModal from '../../modals/viewCouponModal';
 
 const OffersList = () => {
   const dispatch = useDispatch();
-  const { coupons = [] } = useSelector((state) => state.coupons);
+  const { coupons = [], loading, error } = useSelector((state) => state.coupons);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -210,7 +210,20 @@ const OffersList = () => {
                             </tr>
                           </thead>
                           <tbody>
-                            {currentRows.map((coupon, index) => (
+                            {loading ? (
+                              <tr>
+                                <td colSpan="12" className="text-center">
+                                  <p>Loading...</p>
+                                </td>
+                              </tr>
+                            ) : error ? (
+                              <tr>
+                                <td colSpan="12" className="text-center">
+                                  <p className="text-danger">{error}</p>
+                                </td>
+                              </tr>
+                            ) : (
+                            currentRows.map((coupon, index) => (
                               <tr key={coupon.id}>
                                 <td> <input
                                   type="checkbox"
@@ -261,7 +274,8 @@ const OffersList = () => {
                                   </button>
                                 </td>
                               </tr>
-                            ))}
+                            ))
+                          )}
                           </tbody>
                         </table>
 

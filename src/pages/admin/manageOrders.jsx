@@ -176,9 +176,8 @@ const ManageOrders = () => {
                         <tr>
                           <td colSpan="6" className="text-center">No orders found.</td>
                         </tr>
-                      )}
-
-
+                      )
+                      }
                     </tbody>
                   </table>
                 </div>

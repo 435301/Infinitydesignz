@@ -250,38 +250,51 @@ const ListSubCategory = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {currentRows.length > 0 ? (
-                            currentRows.map((item, index) => (
-                              <tr key={item.id}>
-                                <td>
-                                  <input
-                                    type="checkbox"
-                                    checked={selectedRows.includes(item.id)}
-                                    onChange={() => handleRowCheckboxChange(item.id)}
-                                  />
-                                </td>
-                                <td>{index + 1}</td>
-                                <td>{item.category}</td>
-                                <td>{item.subCategory}</td>
-                                <td>{item.title}</td>
-                                <td>
-                                  {(item?.appIcon) ? (
-                                  
-                                    <img
-                                      src={`${BASE_URL}${item?.appIcon}`}
-                                      alt={`${item.title} App Icon`}
-                                      className="rounded-circle"
-                                      width="50"
-                                      height="50"
+                          {loading ? (
+                            <tr>
+                              <td colSpan="12" className="text-center">
+                                <p>Loading...</p>
+                              </td>
+                            </tr>
+                          ) : error ? (
+                            <tr>
+                              <td colSpan="12" className="text-center">
+                                <p className="text-danger">{error}</p>
+                              </td>
+                            </tr>
+                          ) : (
+                            currentRows.length > 0 ? (
+                              currentRows.map((item, index) => (
+                                <tr key={item.id}>
+                                  <td>
+                                    <input
+                                      type="checkbox"
+                                      checked={selectedRows.includes(item.id)}
+                                      onChange={() => handleRowCheckboxChange(item.id)}
                                     />
-                                   
-                                  ) : (
-                                    <span>N/A</span>
-                                  )}
-                                </td>
-                                <td>
-                                  {(item?.webImage) ? (
-                                   
+                                  </td>
+                                  <td>{index + 1}</td>
+                                  <td>{item.category}</td>
+                                  <td>{item.subCategory}</td>
+                                  <td>{item.title}</td>
+                                  <td>
+                                    {(item?.appIcon) ? (
+
+                                      <img
+                                        src={`${BASE_URL}${item?.appIcon}`}
+                                        alt={`${item.title} App Icon`}
+                                        className="rounded-circle"
+                                        width="50"
+                                        height="50"
+                                      />
+
+                                    ) : (
+                                      <span>N/A</span>
+                                    )}
+                                  </td>
+                                  <td>
+                                    {(item?.webImage) ? (
+
                                       <img
                                         src={`${BASE_URL}${item?.webImage}`}
                                         alt={`${item.title} Web Icon`}
@@ -289,61 +302,62 @@ const ListSubCategory = () => {
                                         width="50"
                                         height="50"
                                       />
-                                  
-                                  ) : (
-                                    <span>N/A</span>
-                                  )}
-                                </td>
-                                <td>
-                                  {(item?.mainImage) ? (
-                                    
-                                       <img
-                                      src={`${BASE_URL}${item?.mainImage}`}
-                                      alt={`${item.title} Main Image`}
-                                      className="rounded-circle"
-                                      width="50"
-                                      height="50"
-                                    />
-                                     
-                                  ) : (
-                                    <span>N/A</span>
-                                  )}
-                                </td>
-                                <td>
-                                  <span
-                                    className={`badge text-light-${item.status === true ? 'primary' : 'danger'
-                                      }`}
-                                  >
-                                    {item.status === true ? 'Active' : 'Inactive'}
-                                  </span>
-                                </td>
-                                <td>
-                                  <button className="btn btn-light icon-btn mx-1 me-2 text-success" onClick={() => handleEditClick(item.id)}>
-                                    <BsPencilSquare  />
-                                  </button>
-                                  <button className="btn btn-light icon-btn mx-1 text-primary" onClick={() => handleViewClick(item.id)}>
-                                    <BsEye   />
-                                  </button>
-                                  <button className="btn btn-light icon-btn mx-1 m-2 text-danger" onClick={() => {
+
+                                    ) : (
+                                      <span>N/A</span>
+                                    )}
+                                  </td>
+                                  <td>
+                                    {(item?.mainImage) ? (
+
+                                      <img
+                                        src={`${BASE_URL}${item?.mainImage}`}
+                                        alt={`${item.title} Main Image`}
+                                        className="rounded-circle"
+                                        width="50"
+                                        height="50"
+                                      />
+
+                                    ) : (
+                                      <span>N/A</span>
+                                    )}
+                                  </td>
+                                  <td>
+                                    <span
+                                      className={`badge text-light-${item.status === true ? 'primary' : 'danger'
+                                        }`}
+                                    >
+                                      {item.status === true ? 'Active' : 'Inactive'}
+                                    </span>
+                                  </td>
+                                  <td>
+                                    <button className="btn btn-light icon-btn mx-1 me-2 text-success" onClick={() => handleEditClick(item.id)}>
+                                      <BsPencilSquare />
+                                    </button>
+                                    <button className="btn btn-light icon-btn mx-1 text-primary" onClick={() => handleViewClick(item.id)}>
+                                      <BsEye />
+                                    </button>
+                                    <button className="btn btn-light icon-btn mx-1 m-2 text-danger" onClick={() => {
                                       console.log("Delete icon clicked", item.id);
                                       handleDeleteClick(item.id);
                                     }} >
-                                    <TiTrash   />
-                                  </button>
-                                </td>
-                              </tr>
+                                      <TiTrash />
+                                    </button>
+                                  </td>
+                                </tr>
+                              )
+                              )
+                            ) : (
+                              filteredSubCategories.length === 0 && !loading && (
+                                <tr>
+                                  <td colSpan="10" className="text-center">
+                                    No sub-subcategories found.
+                                  </td>
+                                </tr>
+                              )
                             )
-                            )
-                          ) : (
-                            filteredSubCategories.length === 0 && !loading && (
-                              <tr>
-                                <td colSpan="10" className="text-center">
-                                  No sub-subcategories found.
-                                </td>
-                              </tr>
-                            )
-                          )
-                          }
+                          )}
+
                         </tbody>
                       </table>
                     </div>

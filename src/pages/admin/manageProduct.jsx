@@ -19,7 +19,7 @@ import ViewProductModal from '../../modals/viewProductModal';
 
 const ManageProducts = () => {
     const dispatch = useDispatch();
-    const { products = [] } = useSelector((state) => state.products);
+    const { products = [], loading, error } = useSelector((state) => state.products);
     console.log('products', products)
     console.log(products.variants?.map(v => v.id), 'variantIds')
     const navigate = useNavigate();
@@ -228,83 +228,97 @@ const ManageProducts = () => {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {currentRows.map((product, idx) => (
-                                                            <tr key={product.id}>
-                                                                <td><input
-                                                                    type="checkbox"
-                                                                    checked={selectedRows.includes(product.id)}
-                                                                    onChange={() => handleRowCheckboxChange(product.id)}
-                                                                /></td>
-                                                                <td>
-                                                                    {product.images?.main?.url ? (
-                                                                       <img
-                                                                            src={`${BASE_URL}/uploads/products/${product.images.main.url}`}
-                                                                            alt={product.title}
-                                                                            style={{ width: '50px', height: 'auto' }}
-                                                                          
-                                                                        />
-                                                                    ) : (
-                                                                        '-'
-                                                                    )}
-                                                                </td>
-                                                                <td>{product.sku}</td>
-                                                                <td><a href="#">{product.title}</a></td>
-                                                                <td>{product?.mainCategoryTitle || '-'}</td>
-                                                                <td>{product?.subCategoryTitle || '-'}</td>
-                                                                <td>{product?.listSubCategoryTitle || '-'}</td>
-                                                                <td>{product.size?.title || '-'}</td>
-                                                                <td>
-                                                                    {product.color ? (
-                                                                        <div className="color-container">
-                                                                            <span className="color-swatch" style={{ backgroundColor: product.color.hex_code || '#ccc' }} data-color={product.color.label}></span>
-                                                                            <span className="color-name">{product.color.label}</span>
-                                                                        </div>
-                                                                    ) : '-'}
-                                                                </td>
-                                                                <td>{product.stock}</td>
-                                                                <td>
-                                                                    <span className={`badge ${product.status ? 'text-light-primary' : 'text-light-danger'}`}>
-                                                                        {product.status ? 'Active' : 'In-Active'}
-                                                                    </span>
-                                                                </td>
-                                                                <td>
-                                                                    {product.variants?.length > 0 ? product.variants.length : '-'}
-                                                                </td>
-
-                                                                {/* <td>{new Date(product.created_at).toLocaleString()}</td> */}
-                                                                <td>
-                                                                    <button
-                                                                        type="button"
-                                                                        className="btn btn-light icon-btn mx-1"
-                                                                        style={{ marginRight: '5px' }}
-                                                                        title="Edit"
-                                                                        // onClick={() => handleEdit(product.id)}
-                                                                        onClick={() => handleEdit(product.id, product.variants?.map(v => v.id))}
-
-                                                                    >
-                                                                        <BsPencilSquare style={{ fontSize: '18px', color: '#28a745' }} />
-                                                                    </button>
-                                                                    <button
-                                                                        className="btn btn-light icon-btn mx-1 text-primary"
-                                                                        title="View"
-                                                                        onClick={() => {
-                                                                            setViewProduct(product);
-                                                                            setShowViewModal(true);
-                                                                        }}
-                                                                    >
-                                                                        <BsEye  />
-                                                                    </button>
-                                                                    <button
-                                                                        type="button"
-                                                                        className="btn btn-light icon-btn mx-1 delete-btn"
-                                                                        title="Delete"
-                                                                        onClick={() => handleDeleteClick(product.id)}
-                                                                    >
-                                                                        <BsTrash  />
-                                                                    </button>
+                                                        {loading ? (
+                                                            <tr>
+                                                                <td colSpan="12" className="text-center">
+                                                                    <p>Loading...</p>
                                                                 </td>
                                                             </tr>
-                                                        ))}
+                                                        ) : error ? (
+                                                            <tr>
+                                                                <td colSpan="12" className="text-center">
+                                                                    <p className="text-danger">{error}</p>
+                                                                </td>
+                                                            </tr>
+                                                        ) : (
+                                                            currentRows.map((product, idx) => (
+                                                                <tr key={product.id}>
+                                                                    <td><input
+                                                                        type="checkbox"
+                                                                        checked={selectedRows.includes(product.id)}
+                                                                        onChange={() => handleRowCheckboxChange(product.id)}
+                                                                    /></td>
+                                                                    <td>
+                                                                        {product.images?.main?.url ? (
+                                                                            <img
+                                                                                src={`${BASE_URL}/uploads/products/${product.images.main.url}`}
+                                                                                alt={product.title}
+                                                                                style={{ width: '50px', height: 'auto' }}
+
+                                                                            />
+                                                                        ) : (
+                                                                            '-'
+                                                                        )}
+                                                                    </td>
+                                                                    <td>{product.sku}</td>
+                                                                    <td><a href="#">{product.title}</a></td>
+                                                                    <td>{product?.mainCategoryTitle || '-'}</td>
+                                                                    <td>{product?.subCategoryTitle || '-'}</td>
+                                                                    <td>{product?.listSubCategoryTitle || '-'}</td>
+                                                                    <td>{product.size?.title || '-'}</td>
+                                                                    <td>
+                                                                        {product.color ? (
+                                                                            <div className="color-container">
+                                                                                <span className="color-swatch" style={{ backgroundColor: product.color.hex_code || '#ccc' }} data-color={product.color.label}></span>
+                                                                                <span className="color-name">{product.color.label}</span>
+                                                                            </div>
+                                                                        ) : '-'}
+                                                                    </td>
+                                                                    <td>{product.stock}</td>
+                                                                    <td>
+                                                                        <span className={`badge ${product.status ? 'text-light-primary' : 'text-light-danger'}`}>
+                                                                            {product.status ? 'Active' : 'In-Active'}
+                                                                        </span>
+                                                                    </td>
+                                                                    <td>
+                                                                        {product.variants?.length > 0 ? product.variants.length : '-'}
+                                                                    </td>
+
+                                                                    {/* <td>{new Date(product.created_at).toLocaleString()}</td> */}
+                                                                    <td>
+                                                                        <button
+                                                                            type="button"
+                                                                            className="btn btn-light icon-btn mx-1"
+                                                                            style={{ marginRight: '5px' }}
+                                                                            title="Edit"
+                                                                            // onClick={() => handleEdit(product.id)}
+                                                                            onClick={() => handleEdit(product.id, product.variants?.map(v => v.id))}
+
+                                                                        >
+                                                                            <BsPencilSquare style={{ fontSize: '18px', color: '#28a745' }} />
+                                                                        </button>
+                                                                        <button
+                                                                            className="btn btn-light icon-btn mx-1 text-primary"
+                                                                            title="View"
+                                                                            onClick={() => {
+                                                                                setViewProduct(product);
+                                                                                setShowViewModal(true);
+                                                                            }}
+                                                                        >
+                                                                            <BsEye />
+                                                                        </button>
+                                                                        <button
+                                                                            type="button"
+                                                                            className="btn btn-light icon-btn mx-1 delete-btn"
+                                                                            title="Delete"
+                                                                            onClick={() => handleDeleteClick(product.id)}
+                                                                        >
+                                                                            <BsTrash />
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            ))
+                                                        )}
                                                     </tbody>
                                                 </table>
                                             </div>

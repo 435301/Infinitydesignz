@@ -13,7 +13,7 @@ import ViewFilterTypeModal from '../../modals/viewFilterTypeModal';
 
 const ManageFilterType = () => {
     const dispatch = useDispatch();
-    const { filterTypes = [] } = useSelector((state) => state.filterTypes || {});
+    const { filterTypes = [] , loading, error} = useSelector((state) => state.filterTypes || {});
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -149,7 +149,20 @@ const ManageFilterType = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {currentRows.map((item, index) => (
+                                             {loading ? (
+                        <tr>
+                          <td colSpan="5" className="text-center">
+                            <p>Loading...</p>
+                          </td>
+                        </tr>
+                      ) : error ? (
+                        <tr>
+                          <td colSpan="5" className="text-center">
+                            <p className="text-danger">{error}</p>
+                          </td>
+                        </tr>
+                      ) :  (
+                                            currentRows.map((item, index) => (
                                                 <tr key={item.id}>
                                                     <td>
                                                         <input
@@ -194,7 +207,8 @@ const ManageFilterType = () => {
                                                         </button>
                                                     </td>
                                                 </tr>
-                                            ))}
+                                            ))
+                                        )}
                                             {currentRows.length === 0 && (
                                                 <tr>
                                                     <td colSpan="5" className="text-center">

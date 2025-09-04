@@ -30,7 +30,7 @@ function UserOrdersTable() {
     }, [dispatch, currentPage, searchTerm]);
 
     const handleInputChange = (e) => {
-        setSearchTerm( e.target.value);
+        setSearchTerm(e.target.value);
     };
 
     const handleReset = () => {
@@ -109,7 +109,19 @@ function UserOrdersTable() {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {filteredItems.length === 0 ? (
+                                                        {loading ? (
+                                                            <tr>
+                                                                <td colSpan="4" className="text-center">
+                                                                    Loading...
+                                                                </td>
+                                                            </tr>
+                                                        ) : error ? (
+                                                            <tr>
+                                                                <td colSpan="4" className="text-center text-danger">
+                                                                    {error}
+                                                                </td>
+                                                            </tr>
+                                                        ) : filteredItems.length === 0 ? (
                                                             <tr>
                                                                 <td colSpan="3">No subscribers found.</td>
                                                             </tr>
@@ -126,7 +138,7 @@ function UserOrdersTable() {
                                                                             className="btn btn-light icon-btn mx-1 m-2 text-danger"
                                                                             onClick={() => handleDeleteClick(subscriber.email)}
                                                                         >
-                                                                            <TiTrash  />
+                                                                            <TiTrash />
                                                                         </button>
                                                                     </td>
                                                                 </tr>

@@ -220,7 +220,9 @@ const HomeScreenPromotions = () => {
                     </div>
                     <div className="row">
                       <div className="col-sm-12 table-responsive">
-                        {error ? (
+                        {loading ? (
+                          <p className='text-center'>Loading...</p>
+                        ) : error ? (
                           <p className="text-danger">{error}</p>
                         ) : (
                           <table className="table-lg table-striped align-middle mb-0 table table-hover">

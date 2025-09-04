@@ -157,74 +157,86 @@ const ManageSliders = () => {
                       </tr>
                     </thead>
                     <tbody>
-
-                      {currentRows?.length > 0 ? (
-                        currentRows.map((slider, index) => (
-                          <tr key={slider?.id}>
-                            <td>
-                              <input
-                                type="checkbox"
-                                checked={selectedRows.includes(slider?.id)}
-                                onChange={() => handleRowCheckboxChange(slider?.id)}
-                              />
-                            </td>
-                            <td>{index + 1}</td>
-                            <td>{slider?.title}</td>
-                            <td>
-                               <img src={`${BASE_URL}${slider?.image_url}`} alt={slider?.title} width="80" />
-                            </td>
-                            <td>
-                              <a href={slider?.link} target="_blank" rel="noopener noreferrer">
-                                {slider?.link}
-                              </a>
-                            </td>
-                            <td>{slider?.priority}</td>
-                            <td>
-                              <span
-                                className={`badge ${slider?.status ? 'text-light-primary' : 'text-light-danger'} `}
-                              >
-                                {slider?.status ? 'Active' : 'Inactive'}
-                              </span>
-                            </td>
-                            <td>
-                                <button
-                                // onClick={() => {
-                                //   setSelectedSlider(slider);  
-                                //   setEditShowModal(true); 
-                                // }}
-                                onClick={() => handleEdit(slider)}
-                                className="btn btn-light icon-btn mx-1 m-2 text-success"
-                              >
-                                <BsPencilSquare/>
-                              </button>
-                              <button
-                                className="btn btn-light icon-btn mx-1 m-2 text-primary"
-                                onClick={() => {
-                                  setViewSlider(slider);
-                                  setShowViewModal(true);
-                                }}
-                              >
-                                <BsEye/>
-                              </button>
-
-                            
-                              <button
-                                className="btn btn-light icon-btn mx-1 m-2 text-danger"
-                                onClick={() => handleDeleteClick(slider?.id)}
-                              >
-                                <TiTrash/>
-                              </button>
-
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
+                      {loading ? (
                         <tr>
-                          <td colSpan="8" className="text-center">
-                            No sliders found.
+                          <td colSpan="12" className="text-center">
+                            <p>Loading...</p>
                           </td>
                         </tr>
-                      )}
+                      ) : error ? (
+                        <tr>
+                          <td colSpan="12" className="text-center">
+                            <p className="text-danger">{error}</p>
+                          </td>
+                        </tr>
+                      ) : (
+                        currentRows?.length > 0 ? (
+                          currentRows.map((slider, index) => (
+                            <tr key={slider?.id}>
+                              <td>
+                                <input
+                                  type="checkbox"
+                                  checked={selectedRows.includes(slider?.id)}
+                                  onChange={() => handleRowCheckboxChange(slider?.id)}
+                                />
+                              </td>
+                              <td>{index + 1}</td>
+                              <td>{slider?.title}</td>
+                              <td>
+                                <img src={`${BASE_URL}${slider?.image_url}`} alt={slider?.title} width="80" />
+                              </td>
+                              <td>
+                                <a href={slider?.link} target="_blank" rel="noopener noreferrer">
+                                  {slider?.link}
+                                </a>
+                              </td>
+                              <td>{slider?.priority}</td>
+                              <td>
+                                <span
+                                  className={`badge ${slider?.status ? 'text-light-primary' : 'text-light-danger'} `}
+                                >
+                                  {slider?.status ? 'Active' : 'Inactive'}
+                                </span>
+                              </td>
+                              <td>
+                                <button
+                                  // onClick={() => {
+                                  //   setSelectedSlider(slider);  
+                                  //   setEditShowModal(true); 
+                                  // }}
+                                  onClick={() => handleEdit(slider)}
+                                  className="btn btn-light icon-btn mx-1 m-2 text-success"
+                                >
+                                  <BsPencilSquare />
+                                </button>
+                                <button
+                                  className="btn btn-light icon-btn mx-1 m-2 text-primary"
+                                  onClick={() => {
+                                    setViewSlider(slider);
+                                    setShowViewModal(true);
+                                  }}
+                                >
+                                  <BsEye />
+                                </button>
+
+
+                                <button
+                                  className="btn btn-light icon-btn mx-1 m-2 text-danger"
+                                  onClick={() => handleDeleteClick(slider?.id)}
+                                >
+                                  <TiTrash />
+                                </button>
+
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="8" className="text-center">
+                              No sliders found.
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>

@@ -279,7 +279,20 @@ const ManageSubCategories = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {currentRows.length > 0 ? (
+                            {loading ? (
+                        <tr>
+                          <td colSpan="12" className="text-center">
+                            <p>Loading...</p>
+                          </td>
+                        </tr>
+                      ) : error ? (
+                        <tr>
+                          <td colSpan="12" className="text-center">
+                            <p className="text-danger">{error}</p>
+                          </td>
+                        </tr>
+                      ) :  (
+                          currentRows.length > 0 ? (
                             currentRows.map((item, index) => (
                               <tr key={item.id}>
                                 <td>
@@ -367,7 +380,7 @@ const ManageSubCategories = () => {
                                 No subcategories found.
                               </td>
                             </tr>
-                          )}
+                          ))}
                         </tbody>
                       </table>
                     </div>

@@ -14,7 +14,7 @@ import { toast } from 'react-toastify';
 
 const ManageFeatureType = () => {
   const dispatch = useDispatch();
-  const { featureTypes = [] } = useSelector((state) => state.featureTypes || {});
+  const { featureTypes = [] , loading, error} = useSelector((state) => state.featureTypes || {});
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -181,7 +181,20 @@ const ManageFeatureType = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {currentRows.map((featureType, index) => (
+                          {loading ? (
+                        <tr>
+                          <td colSpan="5" className="text-center">
+                            <p>Loading...</p>
+                          </td>
+                        </tr>
+                      ) : error ? (
+                        <tr>
+                          <td colSpan="5" className="text-center">
+                            <p className="text-danger">{error}</p>
+                          </td>
+                        </tr>
+                      ) :  (
+                      currentRows.map((featureType, index) => (
                         <tr key={featureType.id}>
                           <td>
                             <input
@@ -235,7 +248,8 @@ const ManageFeatureType = () => {
                           </td>
 
                         </tr>
-                      ))}
+                      ))
+                      )}
                       {currentRows.length === 0 && (
                         <tr>
                           <td colSpan="5" className="text-center">

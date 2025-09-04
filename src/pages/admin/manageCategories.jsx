@@ -18,7 +18,7 @@ import BASE_URL from '../../config/config';
 
 const ManageCategories = () => {
   const dispatch = useDispatch();
-  const { categories = [] } = useSelector((state) => state.categories || {});
+  const { categories = [] , loading, error} = useSelector((state) => state.categories || {});
 
   const [showModal, setShowModal] = useState(false);
   const [showModalEdit, setShowModalEdit] = useState(false);
@@ -241,7 +241,20 @@ const ManageCategories = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {currentRows.length > 0 ? currentRows.map((cat, index) => {
+                       {loading ? (
+                        <tr>
+                          <td colSpan="12" className="text-center">
+                            <p>Loading...</p>
+                          </td>
+                        </tr>
+                      ) : error ? (
+                        <tr>
+                          <td colSpan="12" className="text-center">
+                            <p className="text-danger">{error}</p>
+                          </td>
+                        </tr>
+                      ) :  (
+                      currentRows.length > 0 ? currentRows.map((cat, index) => {
                         const parentCategory = categories.find(p => p.id === cat.parentId);
                         const isSelected = selectedIds.includes(cat.id);
 
@@ -279,7 +292,7 @@ const ManageCategories = () => {
                         );
                       }) : (
                         <tr><td colSpan="8">No categories found.</td></tr>
-                      )}
+                      ))}
                     </tbody>
                   </table>
                 </div>

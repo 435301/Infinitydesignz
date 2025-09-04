@@ -18,7 +18,7 @@ import EditSizeModal from '../../components/editSizeModal';
 
 const ManageSizes = () => {
   const dispatch = useDispatch();
-  const { sizes = [] } = useSelector((state) => state.sizes || {});
+  const { sizes = [], loading, error } = useSelector((state) => state.sizes || {});
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -194,7 +194,20 @@ const ManageSizes = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {currentRows.map((size, index) => (
+                            {loading ? (
+                        <tr>
+                          <td colSpan="5" className="text-center">
+                            <p>Loading...</p>
+                          </td>
+                        </tr>
+                      ) : error ? (
+                        <tr>
+                          <td colSpan="5" className="text-center">
+                            <p className="text-danger">{error}</p>
+                          </td>
+                        </tr>
+                      ) :  (
+                        currentRows.map((size, index) => (
                           <tr key={size.id}>
                             <td>
                               <input
@@ -239,7 +252,8 @@ const ManageSizes = () => {
                               </button>
                             </td>
                           </tr>
-                        ))}
+                        ))
+                      )}
                       </tbody>
                     </table>
                   </div>

@@ -13,7 +13,7 @@ import ViewFeatureSetModal from '../../modals/viewFeatureSetModal';
 
 const ManageFeatureSet = () => {
   const dispatch = useDispatch();
-  const { featureSets = [] } = useSelector((state) => state.featureSets);
+  const { featureSets = [], loading, error } = useSelector((state) => state.featureSets);
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -150,91 +150,104 @@ const ManageFeatureSet = () => {
             <div className="card">
               <div className="card-block">
                 <div className="row mb-2">
-                  {Object.entries(groupedFeatureSets).map(
-                    ([featureTypeName, items]) => (
-                      <div key={featureTypeName} className="mb-4">
-                        <div className="col-lg-6 d-flex align-items-center">
-                          <div className="feature-set-header">
+                  {loading ? (
+                    <div className="text-center my-3">
+                      <p>Loading...</p>
+                    </div>
+                  ) : error ? (
+                    <div className="text-center my-3">
+                      <p className="text-danger">{error}</p>
+                    </div>
+                  ) : featureSets.length === 0 ? (
+                    <div className="text-center my-3">
+                      <p>No feature sets available</p>
+                    </div>
+                  ) : (
+                    Object.entries(groupedFeatureSets).map(
+                      ([featureTypeName, items]) => (
+                        <div key={featureTypeName} className="mb-4">
+                          <div className="col-lg-6 d-flex align-items-center">
+                            <div className="feature-set-header">
 
-                            <h3 className="mb-2">
-                              {featureTypeName} <span className="badge">{items.length}</span>
-                            </h3>
-                          </div>
-                        </div>
-                        <div className="feature-row">
-                          {items.map((item) => (
-                            <div
-                              key={item.id}
-                              className="feature-item d-flex justify-content-between align-items-center me-1 mb-2 p-2 border rounded"
-                            >
-                              <div className="d-flex align-items-center">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedRows.includes(item.id)}
-                                  onChange={() => handleRowCheckboxChange(item.id)}
-                                  className="me-2"
-                                />
-                                <strong>{item.title}</strong>
-                              </div>
-                              <div className="d-flex gap-2">
-                                <button
-                                  className="btn btn-sm btn-outline-primary"
-                                  title="View"
-                                  onClick={() => {
-                                    setViewFeatureSet(item);
-                                    setViewModalVisible(true);
-                                  }}
-                                >
-                                  <BsEye />
-                                </button>
-                                <button
-                                  className="btn btn-sm btn-outline-primary"
-                                  title="Edit"
-                                  onClick={() => {
-                                    setSelectedFeatureSet(item);
-                                    setEditModalVisible(true);
-                                  }}
-                                >
-                                  <BsPencilSquare />
-                                </button>
-                                <button
-                                  className="btn btn-sm btn-outline-danger"
-                                  title="Delete"
-                                  onClick={() => handleDeleteClick(item.id)}
-                                >
-                                  <BsTrash />
-                                </button>
-                              </div>
-                              {selectedRows.includes(item.id) ? (
-                                <input
-                                  type="number"
-                                  value={editedPriorities[item.id] ?? item.priority}
-                                  onChange={(e) =>
-                                    setEditedPriorities((prev) => ({
-                                      ...prev,
-                                      [item.id]: e.target.value,
-                                    }))
-                                  }
-                                  className="form-control"
-                                  style={{ width: '50px' }}
-                                />
-                              ) : (
-                                <span className="badge ms-2">{item.priority}</span>
-                              )}
+                              <h3 className="mb-2">
+                                {featureTypeName} <span className="badge">{items.length}</span>
+                              </h3>
                             </div>
-                          ))}
+                          </div>
+                          <div className="feature-row">
+                            {items.map((item) => (
+                              <div
+                                key={item.id}
+                                className="feature-item d-flex justify-content-between align-items-center me-1 mb-2 p-2 border rounded"
+                              >
+                                <div className="d-flex align-items-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedRows.includes(item.id)}
+                                    onChange={() => handleRowCheckboxChange(item.id)}
+                                    className="me-2"
+                                  />
+                                  <strong>{item.title}</strong>
+                                </div>
+                                <div className="d-flex gap-2">
+                                  <button
+                                    className="btn btn-sm btn-outline-primary"
+                                    title="View"
+                                    onClick={() => {
+                                      setViewFeatureSet(item);
+                                      setViewModalVisible(true);
+                                    }}
+                                  >
+                                    <BsEye />
+                                  </button>
+                                  <button
+                                    className="btn btn-sm btn-outline-primary"
+                                    title="Edit"
+                                    onClick={() => {
+                                      setSelectedFeatureSet(item);
+                                      setEditModalVisible(true);
+                                    }}
+                                  >
+                                    <BsPencilSquare />
+                                  </button>
+                                  <button
+                                    className="btn btn-sm btn-outline-danger"
+                                    title="Delete"
+                                    onClick={() => handleDeleteClick(item.id)}
+                                  >
+                                    <BsTrash />
+                                  </button>
+                                </div>
+                                {selectedRows.includes(item.id) ? (
+                                  <input
+                                    type="number"
+                                    value={editedPriorities[item.id] ?? item.priority}
+                                    onChange={(e) =>
+                                      setEditedPriorities((prev) => ({
+                                        ...prev,
+                                        [item.id]: e.target.value,
+                                      }))
+                                    }
+                                    className="form-control"
+                                    style={{ width: '50px' }}
+                                  />
+                                ) : (
+                                  <span className="badge ms-2">{item.priority}</span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                          <button
+                            className="btn new-btn"
+
+                            onClick={handlePriorityChange}
+                            disabled={selectedRows.length === 0}
+                          >
+                            Change Priority
+                          </button>
                         </div>
-                       <button
-                        className="btn new-btn"
-                      
-                          onClick={handlePriorityChange}
-                          disabled={selectedRows.length === 0}
-                        >
-                          Change Priority
-                        </button>
-                      </div>
-                    )
-                  )}
+                      )
+                    ))}
                 </div>
               </div>
             </div>

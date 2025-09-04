@@ -119,29 +119,46 @@ function SearchKeywordsList() {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {items.length === 0 ? (
+                                                        {loading ? (
                                                             <tr>
-                                                                <td colSpan="3">No keywords found.</td>
+                                                                <td colSpan="4" className="text-center">
+                                                                    Loading...
+                                                                </td>
+                                                            </tr>
+                                                        ) : error ? (
+                                                            <tr>
+                                                                <td colSpan="4" className="text-center text-danger">
+                                                                    {error}
+                                                                </td>
+                                                            </tr>
+                                                        ) : items.length === 0 ? (
+                                                            <tr>
+                                                                <td colSpan="3">No subscribers found.</td>
                                                             </tr>
                                                         ) : (
-                                                            items.map((keyword, index) => (
-                                                                <tr key={keyword.id}>
-                                                                    <td>{(page - 1) * 10 + index + 1}</td>
-                                                                    <td>{keyword.keyword}</td>
-                                                                    <td>
-                                                                        {moment(keyword.createdAt).format("DD-MMM-YYYY")}
-                                                                    </td>
-                                                                    <td>
-                                                                        <button
-                                                                            className="btn btn-light icon-btn mx-1 m-2 text-danger"
-                                                                            onClick={() => handleDeleteClick(keyword.id)}
-                                                                        >
-                                                                            <TiTrash  />
-                                                                        </button>
-                                                                    </td>
+                                                            items.length === 0 ? (
+                                                                <tr>
+                                                                    <td colSpan="3">No keywords found.</td>
                                                                 </tr>
-                                                            ))
-                                                        )}
+                                                            ) : (
+                                                                items.map((keyword, index) => (
+                                                                    <tr key={keyword.id}>
+                                                                        <td>{(page - 1) * 10 + index + 1}</td>
+                                                                        <td>{keyword.keyword}</td>
+                                                                        <td>
+                                                                            {moment(keyword.createdAt).format("DD-MMM-YYYY")}
+                                                                        </td>
+                                                                        <td>
+                                                                            <button
+                                                                                className="btn btn-light icon-btn mx-1 m-2 text-danger"
+                                                                                onClick={() => handleDeleteClick(keyword.id)}
+                                                                            >
+                                                                                <TiTrash />
+                                                                            </button>
+                                                                        </td>
+                                                                    </tr>
+                                                                ))
+                                                            ))}
                                                     </tbody>
                                                 </table>
 

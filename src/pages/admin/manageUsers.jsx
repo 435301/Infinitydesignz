@@ -146,40 +146,54 @@ const ManageUsers = ({ handleUpdate }) => {
                             </tr>
                           </thead>
                           <tbody>
-                            {users.map((user, index) => (
-                              <tr key={user.id}>
-                                <td><input
-                                  type="checkbox"
-                                  checked={selectedRows.includes(user.id)}
-                                  onChange={() => handleRowCheckboxChange(user.id)}
-                                /></td>
-                                <td>{index + 1}</td>
-                                <td>{user.name || '-'}</td>
-                                <td>{user.gender || '-'}</td>
-                                <td>{user.email || '-'}</td>
-                                <td>{user.phone || '-'}</td>
-                                <td> {moment(user.dateOfBirth).format("DD-MM-YYYY") || '-'}</td>
-                                <td>{user.role || '-'}</td>
-                                <td>
-                                  <span className={`badge ${user.status === true ? 'badge-active' : 'badge-inactive'}`}>
-                                    {user.status === true ? 'Active' : 'Inactive'}
-                                  </span>
-                                </td>
-                                <td>
-                                  <button
-                                    className="btn btn-light icon-btn mx-1 m-2 text-success"
-                                    onClick={() => handleEditClick(user)}
-                                  >
-                                    <FaEdit />
-                                  </button>
-                                  <button className="btn btn-light icon-btn mx-1 m-2 text-danger" title="Delete"
-                                    onClick={() => handleDeleteClick(user.id)}
-                                  >
-                                    <BsTrash />
-                                  </button>
+                            {loading ? (
+                              <tr>
+                                <td colSpan="12" className="text-center">
+                                  <p>Loading...</p>
                                 </td>
                               </tr>
-                            ))}
+                            ) : error ? (
+                              <tr>
+                                <td colSpan="12" className="text-center">
+                                  <p className="text-danger">{error}</p>
+                                </td>
+                              </tr>
+                            ) : (
+                                users.map((user, index) => (
+                                  <tr key={user.id}>
+                                    <td><input
+                                      type="checkbox"
+                                      checked={selectedRows.includes(user.id)}
+                                      onChange={() => handleRowCheckboxChange(user.id)}
+                                    /></td>
+                                    <td>{index + 1}</td>
+                                    <td>{user.name || '-'}</td>
+                                    <td>{user.gender || '-'}</td>
+                                    <td>{user.email || '-'}</td>
+                                    <td>{user.phone || '-'}</td>
+                                    <td> {moment(user.dateOfBirth).format("DD-MM-YYYY") || '-'}</td>
+                                    <td>{user.role || '-'}</td>
+                                    <td>
+                                      <span className={`badge ${user.status === true ? 'badge-active' : 'badge-inactive'}`}>
+                                        {user.status === true ? 'Active' : 'Inactive'}
+                                      </span>
+                                    </td>
+                                    <td>
+                                      <button
+                                        className="btn btn-light icon-btn mx-1 m-2 text-success"
+                                        onClick={() => handleEditClick(user)}
+                                      >
+                                        <FaEdit />
+                                      </button>
+                                      <button className="btn btn-light icon-btn mx-1 m-2 text-danger" title="Delete"
+                                        onClick={() => handleDeleteClick(user.id)}
+                                      >
+                                        <BsTrash />
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))
+                             ) }
                           </tbody>
                         </table>
                       </div>

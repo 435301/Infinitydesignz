@@ -18,7 +18,7 @@ import EditBrandModal from '../../components/editBrandModal';
 
 const ManageBrands = () => {
   const dispatch = useDispatch();
-  const { brands = [] } = useSelector((state) => state.brands || {});
+  const { brands = [], loading, error } = useSelector((state) => state.brands || {});
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -61,7 +61,7 @@ const ManageBrands = () => {
     if (pageNumber >= 1 && pageNumber <= totalPages) setCurrentPage(pageNumber);
   };
 
-  
+
 
   // Row selection
   const handleRowCheckboxChange = (id) => {
@@ -109,15 +109,16 @@ const ManageBrands = () => {
     setStatusFilter('');
   };
 
-   const handleBulkStatusUpdate = async (newStatus) => {
+  const handleBulkStatusUpdate = async (newStatus) => {
     if (selectedRows.length === 0) {
       toast.warning("Please select at least one brand.");
       return;
     }
-  
+
     await dispatch(bulkUpdateBrandStatus(selectedRows, newStatus));
     setSelectedRows([]);
   };
+
 
   return (
     <div className="sidebar-mini fixed">
@@ -217,48 +218,63 @@ const ManageBrands = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {currentRows.map((brand, index) => (
-                        <tr key={brand.id}>
-                          <td>
-                            <input
-                              type="checkbox"
-                              checked={selectedRows.includes(brand.id)}
-                              onChange={() => handleRowCheckboxChange(brand.id)}
-                            />
-                          </td>
-                          <td>{indexOfFirstRow + index + 1}</td>
-                          <td>{brand.name}</td>
-                          <td>
-                            <span
-                              className={`badge ${brand.status ? 'text-light-primary' : 'text-light-danger'}`}
-                            >
-                              {brand.status ? 'Active' : 'Inactive'}
-                            </span>
-                          </td>
-                          <td>
-                            <button
-                              className="btn btn-light icon-btn mx-1 m-2 text-success"
-                              onClick={() => handleEditClick(brand)}
-                            >
-                              <BsPencilSquare  />
-                            </button>
-                            <button
-                              className="btn btn-light icon-btn mx-1 text-primary"
-                              onClick={() => handleViewClick(brand)}
-                            >
-                              <BsEye  />
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn-light icon-btn mx-1 b-r-4 text-danger"
-                              title="Delete"
-                              onClick={() => handleDeleteClick(brand.id)}
-                            >
-                              <TiTrash  />
-                            </button>
+                      {loading ? (
+                        <tr>
+                          <td colSpan="5" className="text-center">
+                            <p>Loading...</p>
                           </td>
                         </tr>
-                      ))}
+                      ) : error ? (
+                        <tr>
+                          <td colSpan="5" className="text-center">
+                            <p className="text-danger">{error}</p>
+                          </td>
+                        </tr>
+                      ) : (
+                        currentRows.map((brand, index) => (
+                          <tr key={brand.id}>
+                            <td>
+                              <input
+                                type="checkbox"
+                                checked={selectedRows.includes(brand.id)}
+                                onChange={() => handleRowCheckboxChange(brand.id)}
+                              />
+                            </td>
+                            <td>{indexOfFirstRow + index + 1}</td>
+                            <td>{brand.name}</td>
+                            <td>
+                              <span
+                                className={`badge ${brand.status ? 'text-light-primary' : 'text-light-danger'}`}
+                              >
+                                {brand.status ? 'Active' : 'Inactive'}
+                              </span>
+                            </td>
+                            <td>
+                              <button
+                                className="btn btn-light icon-btn mx-1 m-2 text-success"
+                                onClick={() => handleEditClick(brand)}
+                              >
+                                <BsPencilSquare />
+                              </button>
+                              <button
+                                className="btn btn-light icon-btn mx-1 text-primary"
+                                onClick={() => handleViewClick(brand)}
+                              >
+                                <BsEye />
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-light icon-btn mx-1 b-r-4 text-danger"
+                                title="Delete"
+                                onClick={() => handleDeleteClick(brand.id)}
+                              >
+                                <TiTrash />
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+
                     </tbody>
                   </table>
                 </div>
