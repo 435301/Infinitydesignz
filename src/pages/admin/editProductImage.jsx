@@ -1,12 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchProductById } from '../../redux/actions/productAction';
 import { toast } from 'react-toastify';
+import { useParams } from 'react-router-dom';
 import BASE_URL from '../../config/config';
 
-const EditProductImages = ({ product }) => {
+
+const EditProductImages = ({ product: productProp }) => {
   const dispatch = useDispatch();
+  const { id } = useParams();
+
+  // Try Redux first (adjust slice names if yours differ)
+  const productFromStore = useSelector(
+    (s) => s.product?.productById?.[Number(id)] || s.product?.createdProductInfo
+  );
+
+  // Local fallback for hard refresh (direct API fetch)
+  const [localProduct, setLocalProduct] = useState(null);
+
+  // Unified product source
+  const product = productProp || productFromStore || localProduct;
+
 
   const [singlePreviews, setSinglePreviews] = useState({});
   const [multiplePreviews, setMultiplePreviews] = useState({});
@@ -19,6 +34,28 @@ const EditProductImages = ({ product }) => {
     variants: {},
   });
   const [isRemoving, setIsRemoving] = useState(false);
+// If nothing in props/Redux, fetch directly by id (hard refresh / new tab)
+useEffect(() => {
+  const mustFetch = !productProp && !productFromStore && id;
+  if (!mustFetch) return;
+
+  let cancelled = false;
+  (async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.get(`${BASE_URL}/products/${Number(id)}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!cancelled) setLocalProduct(res.data);
+    } catch (e) {
+      console.error('Failed to fetch product by id for images', e);
+      toast.error('Failed to load product images');
+    }
+  })();
+
+  return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [id, productProp, productFromStore]);
 
   const variants = product?.variants || [];
 
@@ -161,12 +198,13 @@ const EditProductImages = ({ product }) => {
       {images.map((img, i) => (
         <div key={img.id || i} className="col-3 position-relative mb-2">
           <img
-            src={`${BASE_URL}/Uploads/products/${img.url}`}
-            alt="existing"
-            className="img-thumbnail"
-            style={{ height: '100px', with: '100%', objectFit: 'cover' }}
-            loading="lazy"
-          />
+  src={`${BASE_URL}/uploads/products/${img.url}`}
+  alt="existing"
+  className="img-thumbnail"
+  style={{ height: '100px', width: '100%', objectFit: 'cover' }}
+  loading="lazy"
+/>
+
           {onRemove && (
             <button
               type="button"
@@ -254,7 +292,9 @@ const EditProductImages = ({ product }) => {
     }
   };
 
-
+if (!product) {
+  return <div className="container py-4">Loading product images…</div>;
+}
   return (
     <div className="container py-4">
       <form onSubmit={handleSubmit}>

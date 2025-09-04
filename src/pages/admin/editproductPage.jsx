@@ -19,12 +19,12 @@ const EditProductPage = () => {
   const [activeTab, setActiveTab] = useState('edit');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
+  // existing selectors
   const { productById: createdProductInfo } = useSelector((state) => state.products); 
   console.log('createdProductInfo',createdProductInfo)
-  const { products = [] } = useSelector((state) => state.products);
+  const { products = [], product: currentProduct } = useSelector((state) => state.products);
   console.log('products',products)
   const [updatedVariantIds, setUpdatedVariantIds] = useState([]);
-
 
   useEffect(() => {
     if (id) {
@@ -32,9 +32,22 @@ const EditProductPage = () => {
     }
   }, [id, dispatch]);
 
-const selectedProduct = products.find(p => p.id === parseInt(id));
+  // When switching to Images tab, refetch to ensure we have the latest variants
+  useEffect(() => {
+    if (activeTab === 'images' && id) {
+      dispatch(fetchProductById(id));
+    }
+  }, [activeTab, id, dispatch]);
 
-console.log('selectedProduct:', selectedProduct);
+  const selectedProduct = products.find(p => p.id === parseInt(id));
+  console.log('selectedProduct:', selectedProduct);
+
+  // Use the freshest product available for both tabs
+  const productForTabs = createdProductInfo || currentProduct || selectedProduct;
+
+  // Force Images tab to remount when variant count changes or after edits
+  const imagesTabKey = `img-${id}-${(productForTabs?.variants?.length || 0)}-${updatedVariantIds?.length || 0}-${activeTab}`;
+
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
@@ -61,34 +74,35 @@ console.log('selectedProduct:', selectedProduct);
                     >
                       <Tab eventKey="edit" title="Edit Product">
                         <EditProduct
-                          product={createdProductInfo}
-                            setUpdatedVariantIds={setUpdatedVariantIds}
-                          
+                          product={productForTabs}
+                          setUpdatedVariantIds={setUpdatedVariantIds}
                         />
                       </Tab>
-                      <Tab eventKey="images" title="Product Images" >
-                          <EditProductImages
-                            product={selectedProduct}
-                              updatedVariantIds={updatedVariantIds}
-                          />
+
+                      <Tab eventKey="images" title="Product Images">
+                        <EditProductImages
+                          key={imagesTabKey}
+                          product={productForTabs}
+                          updatedVariantIds={updatedVariantIds}
+                        />
                       </Tab>
-                      <Tab eventKey="filters" title="Product Filters" >
-                          <EditProductFilters/>
+
+                      <Tab eventKey="filters" title="Product Filters">
+                        <EditProductFilters/>
                       </Tab>
+
                       <Tab eventKey="features" title="Product Features">
-                       
-                          <EditProductFeatures
-                            
-                          />
-                        
+                        <EditProductFeatures/>
                       </Tab>
                     </Tabs>
                   </div>
+
                 </div>
               </div>
             </div>
           </div>
         </div>
+
       </div>  
     </div>
   );
