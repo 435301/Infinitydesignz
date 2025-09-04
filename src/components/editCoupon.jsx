@@ -39,7 +39,7 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
                 priceRange: coupon.priceRange || '',
                 brandId: coupon.brandId?.toString() || '',
             });
-             setStatus(coupon.isActive ?? false);
+             setStatus(coupon.status ?? false);
         }
     }, [coupon]);
 
@@ -60,7 +60,7 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
             minOrderAmount: parseFloat(formValues.minOrderAmount),
             fromDate: new Date(formValues.fromDate).toISOString(),
             toDate: new Date(formValues.toDate).toISOString(),
-             isActive: status,
+             status: status,
         };
 
         if (couponType === 'list_submenu' || couponType === 'brand') {
