@@ -103,7 +103,7 @@ const ChangePassword = () => {
             <div className="card-body">
               <form className="row" onSubmit={handleSubmit}>
                 <div className="col-lg-4 mb-3">
-                  <label className="form-label">Email</label>
+                  <label className="form-label">Email<span className='text-danger'>*</span></label>
                   <input
                     type="email"
                     name="email"
@@ -115,7 +115,7 @@ const ChangePassword = () => {
                   {formErrors.email && (<div className="invalid-feedback">{formErrors.email}</div>)}
                 </div>
                 <div className="col-lg-4 mb-3">
-                  <label className="form-label">Old Password</label>
+                  <label className="form-label">Old Password<span className='text-danger'>*</span></label>
                   <input
                     type="password"
                     name="oldPassword"
@@ -129,7 +129,7 @@ const ChangePassword = () => {
                 </div>
 
                 <div className="col-lg-4 mb-3">
-                  <label className="form-label">New Password</label>
+                  <label className="form-label">New Password<span className='text-danger'>*</span></label>
                   <input
                     type="password"
                     name="newPassword"
@@ -142,7 +142,7 @@ const ChangePassword = () => {
                 </div>
 
                 <div className="col-lg-4 mb-3">
-                  <label className="form-label">Confirm Password</label>
+                  <label className="form-label">Confirm Password<span className='text-danger'>*</span></label>
                   <input
                     type="password"
                     name="confirmPassword"
