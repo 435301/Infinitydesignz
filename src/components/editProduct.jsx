@@ -205,8 +205,8 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         else if (isNaN(formData.sla)) newErrors.sla = 'SLA must be a number';
         else if (isNaN(formData.deliveryCharges))
             newErrors.deliveryCharges = 'Delivery Charges must be a number';
-        if (!formData.mainCategoryPromotionIds.length)
-            newErrors.mainCategoryPromotionIds = 'At least one Main Category Promotion is required';
+        // if (!formData.mainCategoryPromotionIds.length)
+        //     newErrors.mainCategoryPromotionIds = 'At least one Main Category Promotion is required';
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -480,9 +480,9 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                             </div>
                                             <div className="col-lg-12 mb-3">
                                                 <label className="form-label">
-                                                    Display Position<span className="text-danger">*</span>
+                                                    Display Position
                                                 </label>
-                                                <div className={`form-control ${errors.mainCategoryPromotionIds ? 'is-invalid' : ''}`}>
+                                                <div className={`form-control`}>
                                                     {categoryPromotions.map((promotion) => (
                                                         <div key={promotion.id} className="form-check form-check-inline">
                                                             <input
@@ -497,9 +497,9 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                         </div>
                                                     ))}
                                                 </div>
-                                                {errors.mainCategoryPromotionIds && (
+                                                {/* {errors.mainCategoryPromotionIds && (
                                                     <div className="invalid-feedback">{errors.mainCategoryPromotionIds}</div>
-                                                )}
+                                                )} */}
                                             </div>
                                         </div>
                                     </div>
