@@ -161,7 +161,7 @@ if (!slider || !slider.id) {
                                     {sliderPreview && (
                                         <div className="mt-2">
                                             <img src={sliderPreview} alt="Preview" width="100" />
-                                            <button type="button" className="btn btn-sm btn-outline-danger ms-2" onClick={removeImage}>Remove</button>
+                                            <button type="button" className="btn btn-sm btn-outline-danger ms-2" onClick={removeImage}>x</button>
                                         </div>
                                     )}
                                 </div>

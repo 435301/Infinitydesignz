@@ -6,6 +6,7 @@ import {
   fetchHomeCategoryPromotions,
 } from "../redux/actions/categoryPromotionAction";
 import BASE_URL from "../config/config";
+import '../../src/css/admin/style.css'; 
 
 const HomeScreenEditPromotionModal = ({ show, handleClose, editData }) => {
   const dispatch = useDispatch();
@@ -132,14 +133,33 @@ const HomeScreenEditPromotionModal = ({ show, handleClose, editData }) => {
                 accept="image/*"
                 onChange={handleFileChange}
               />
-              {editData?.imageUrl && (
-                <img
-                  src={`${BASE_URL}${editData.imageUrl}`}
-                  alt="Preview"
-                  style={{ width: "50px", height: "50px", marginTop: "8px" }}
-                />
+
+              {(formData.image || editData?.imageUrl) && (
+                <div  className="editimg-container">
+                  <img
+                    src={
+                      formData.image
+                        ? URL.createObjectURL(formData.image) 
+                        : `${BASE_URL}${editData.imageUrl}` 
+                    }
+                    className="image-preview"
+                    alt="Preview"
+                   
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormData((prev) => ({ ...prev, image: null }));
+                      if (editData?.imageUrl) editData.imageUrl = null;
+                    }}
+                    className="remove-imageIcon"
+                  >
+                    ×
+                  </button>
+                </div>
               )}
             </div>
+
 
             <div className="col-lg-6 mb-3">
               <label htmlFor="priority" className="form-label">

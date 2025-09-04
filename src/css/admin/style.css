@@ -2524,7 +2524,33 @@ small a {
 .modal-backdrop {
     background-color: #00000047 !important;
 }
+.editimg-container{
+  position: relative;
+  display: inline-block;
+  margin-top: 8px;
+}
 
+.image-preview{
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.remove-imageIcon{
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: red;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  color: white;
+  cursor: pointer;
+  font-size:14px ;
+  line-height: 18px;
+  padding: 0;
+}
 @media (max-width: 767px) {
     .Fabric .card-img-top {
         object-fit: fill;
