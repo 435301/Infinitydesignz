@@ -9,6 +9,7 @@ const LoginPage = () => {
   const { error, loading } = useSelector(state => state.auth);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -38,21 +39,32 @@ const LoginPage = () => {
                     placeholder="Enter Your Username"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    required
                   />
                 </div>
-                <div className="col-lg-12">
+                <div className="col-lg-12 mb-3">
                   <label htmlFor="password" className="form-label">Password</label>
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    className="form-control"
-                    placeholder="Enter Your Password"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    required
-                  />
+                  <div className="position-relative">
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      className="form-control pe-5"
+                      placeholder="Enter Your Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <i
+                      className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"} position-absolute`}
+                      style={{
+                        right: "12px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        cursor: "pointer",
+                        color: "#6c757d",
+                      }}
+                      onClick={() => setShowPassword((prev) => !prev)}
+                    ></i>
+                  </div>
                 </div>
                 <div className="col-sm-6 col-xs-12 forgot-phone text-right mt-3">
                   {/* <a href="/forgot-password" className="text-right f-w-600">
