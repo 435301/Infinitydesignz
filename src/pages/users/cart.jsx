@@ -181,7 +181,7 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
       setError(err.message || "Failed to apply coupon");
     } finally {
       setLoading(false);
-       setError("");
+      setError("");
     }
   };
 
@@ -429,14 +429,14 @@ const CartPage = () => {
   }, [isBuyNowMode, buyNow, loggedIn, userCartItems, guestCartItems]);
 
   const handleQuantityChange = (id, newQty, productId, variantId) => {
-     if (isBuyNowMode) {
-    const updateData = {
-      quantity: newQty,
-      productId,
-      variantId: variantId || null,
-    };
-    dispatch(updateBuyNow(updateData));
-  }
+    if (isBuyNowMode) {
+      const updateData = {
+        quantity: newQty,
+        productId,
+        variantId: variantId || null,
+      };
+      dispatch(updateBuyNow(updateData));
+    }
     else if (loggedIn) {
       const itemToUpdate = localCart.find((item) => item.id === id);
       if (itemToUpdate) {
@@ -533,6 +533,7 @@ const CartPage = () => {
   };
 
   const dynamicPriceSummary = isBuyNowMode ? buyNow?.priceSummary || {} : loggedIn ? priceSummary : calculateSummary();
+  const buyNowSummary = useSelector((state) => state.buyNow?.priceSummary);
 
   return (
     <>
@@ -576,9 +577,11 @@ const CartPage = () => {
               <div className="p-3">No items in cart.</div>
             )}
           </div>
+
+
           <div className="col-lg-4 p-0">
             {localCart.length > 0 && <PriceSummary
-              summary={dynamicPriceSummary}
+              summary={isBuyNowMode ? buyNowSummary : dynamicPriceSummary}
               isBuyNowMode={isBuyNowMode}
               buyNowItems={isBuyNowMode ? buyNow?.items || [] : []}
             />}

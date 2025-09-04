@@ -101,7 +101,11 @@ const EditFilterListModal = ({ show, onClose, filterList }) => {
                                 <select
                                     className={`form-control ${errors.filterTypeId ? 'is-invalid' : ''}`}
                                     value={filterTypeId}
-                                    onChange={(e) => setFilterTypeId(e.target.value)}
+                                     onChange={(e) => {
+                                        const newTypeId = e.target.value;
+                                        setFilterTypeId(newTypeId);
+                                        setFilterSetId(""); 
+                                    }}
                                 >
                                     <option value="">-- Select Feature Type --</option>
                                     {filterTypes.map((fs) => (
@@ -119,11 +123,16 @@ const EditFilterListModal = ({ show, onClose, filterList }) => {
                                     className={`form-control ${errors.filterSetId ? 'is-invalid' : ''}`}
                                     value={filterSetId}
                                     onChange={(e) => setFilterSetId(e.target.value)}
+                                    disabled={!filterTypeId} 
                                 >
                                     <option value="">-- Select Filter Set --</option>
-                                    {filterSets.map((fs) => (
-                                        <option key={fs.id} value={fs.id}>{fs.title}</option>
-                                    ))}
+                                     {filterSets
+                                        .filter((fs) => fs.filterTypeId?.toString() === filterTypeId) 
+                                        .map((fs) => (
+                                            <option key={fs.id} value={fs.id}>
+                                                {fs.title}
+                                            </option>
+                                        ))}
                                 </select>
                                 {errors.filterSetId && (
                                     <div className="invalid-feedback">{errors.filterSetId}</div>
