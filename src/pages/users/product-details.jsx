@@ -411,7 +411,7 @@ export default function ProductDetailPage() {
             </div>
             <div className="col-md-6">
               <h2 className="product-title">
-                {title} <span className="stock-status">{selectedVariant?.stock ?? product?.stock} left</span>
+                {title.charAt(0).toUpperCase() + title.slice(1)}{" "} <span className="stock-status">{selectedVariant?.stock ?? product?.stock} left</span>
               </h2>
 
               <div className="price-details">
