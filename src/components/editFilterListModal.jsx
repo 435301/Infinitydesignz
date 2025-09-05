@@ -101,13 +101,13 @@ const EditFilterListModal = ({ show, onClose, filterList }) => {
                                 <select
                                     className={`form-control ${errors.filterTypeId ? 'is-invalid' : ''}`}
                                     value={filterTypeId}
-                                     onChange={(e) => {
+                                    onChange={(e) => {
                                         const newTypeId = e.target.value;
                                         setFilterTypeId(newTypeId);
-                                        setFilterSetId(""); 
+                                        setFilterSetId("");
                                     }}
                                 >
-                                    <option value="">-- Select Feature Type --</option>
+                                    <option value="">-- Select Filter Type --</option>
                                     {filterTypes.map((fs) => (
                                         <option key={fs.id} value={fs.id}>{fs.name}</option>
                                     ))}
@@ -123,16 +123,17 @@ const EditFilterListModal = ({ show, onClose, filterList }) => {
                                     className={`form-control ${errors.filterSetId ? 'is-invalid' : ''}`}
                                     value={filterSetId}
                                     onChange={(e) => setFilterSetId(e.target.value)}
-                                    disabled={!filterTypeId} 
+                                    disabled={!filterTypeId}
                                 >
                                     <option value="">-- Select Filter Set --</option>
-                                     {filterSets
-                                        .filter((fs) => fs.filterTypeId?.toString() === filterTypeId) 
+                                    {filterSets
+                                        .filter((fs) => String(fs.filterTypeId) === String(filterTypeId))
                                         .map((fs) => (
-                                            <option key={fs.id} value={fs.id}>
+                                            <option key={fs.id} value={fs.id.toString()}>
                                                 {fs.title}
                                             </option>
                                         ))}
+
                                 </select>
                                 {errors.filterSetId && (
                                     <div className="invalid-feedback">{errors.filterSetId}</div>
