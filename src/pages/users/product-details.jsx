@@ -474,7 +474,7 @@ export default function ProductDetailPage() {
                       }}
 
                     >
-                      <option value="">Select</option>
+                      {/* <option value="">Select</option> */}
                       {sizeOptions.map(size => (
                         <option key={size.id} value={size.id}>
                           {size.title}
@@ -509,7 +509,7 @@ export default function ProductDetailPage() {
                       }}
 
                     >
-                      <option value="">Select</option>
+                      {/* <option value="">Select</option> */}
                       {colorOptions.map(color => (
                         <option key={color.id} value={color.id}>
                           {color.label || "N/A"}
