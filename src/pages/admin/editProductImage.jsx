@@ -34,28 +34,28 @@ const EditProductImages = ({ product: productProp }) => {
     variants: {},
   });
   const [isRemoving, setIsRemoving] = useState(false);
-// If nothing in props/Redux, fetch directly by id (hard refresh / new tab)
-useEffect(() => {
-  const mustFetch = !productProp && !productFromStore && id;
-  if (!mustFetch) return;
+  // If nothing in props/Redux, fetch directly by id (hard refresh / new tab)
+  useEffect(() => {
+    const mustFetch = !productProp && !productFromStore && id;
+    if (!mustFetch) return;
 
-  let cancelled = false;
-  (async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get(`${BASE_URL}/products/${Number(id)}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!cancelled) setLocalProduct(res.data);
-    } catch (e) {
-      console.error('Failed to fetch product by id for images', e);
-      toast.error('Failed to load product images');
-    }
-  })();
+    let cancelled = false;
+    (async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await axios.get(`${BASE_URL}/products/${Number(id)}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!cancelled) setLocalProduct(res.data);
+      } catch (e) {
+        console.error('Failed to fetch product by id for images', e);
+        toast.error('Failed to load product images');
+      }
+    })();
 
-  return () => { cancelled = true; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [id, productProp, productFromStore]);
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, productProp, productFromStore]);
 
   const variants = product?.variants || [];
 
@@ -166,9 +166,12 @@ useEffect(() => {
       });
       dispatch(fetchProductById(product?.id));
       toast.success('Images uploaded successfully');
-
     } catch (err) {
-      toast.error('Upload failed');
+      if (err.response && err.response.status === 413) {
+        toast.error('Upload failed: Total images size should not exceed 100MB');
+      } else {
+        toast.error('Upload failed');
+      }
     } finally {
       setLoading(false);
     }
@@ -198,12 +201,12 @@ useEffect(() => {
       {images.map((img, i) => (
         <div key={img.id || i} className="col-3 position-relative mb-2">
           <img
-  src={`${BASE_URL}/uploads/products/${img.url}`}
-  alt="existing"
-  className="img-thumbnail"
-  style={{ height: '100px', width: '100%', objectFit: 'cover' }}
-  loading="lazy"
-/>
+            src={`${BASE_URL}/uploads/products/${img.url}`}
+            alt="existing"
+            className="img-thumbnail"
+            style={{ height: '100px', width: '100%', objectFit: 'cover' }}
+            loading="lazy"
+          />
 
           {onRemove && (
             <button
@@ -292,9 +295,9 @@ useEffect(() => {
     }
   };
 
-if (!product) {
-  return <div className="container py-4">Loading product images…</div>;
-}
+  if (!product) {
+    return <div className="container py-4">Loading product images…</div>;
+  }
   return (
     <div className="container py-4">
       <form onSubmit={handleSubmit}>
