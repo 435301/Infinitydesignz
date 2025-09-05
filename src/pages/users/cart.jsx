@@ -323,29 +323,36 @@ const CartPage = () => {
   useEffect(() => {
     const loadCartData = async () => {
       // 1️⃣ Buy Now Mode
-      if (isBuyNowMode && buyNow?.items?.length > 0) {
-        setLocalCart(
-          buyNow.items.map((item) => {
-            const source = item.variant || item.product || {};
-            return {
-              id: item.id,
-              productId: item.productId,
-              variantId: item.variantId || null,
-              quantity: item.quantity || 1,
-              product: {
-                title: source.title || "Untitled Product",
-                warranty: source.brand || "N/A",
-                price: `Rs.${source.price || 0}`,
-                mrp: `MRP: Rs.${source.mrp || 0}`,
-                sizes: [source.size || "M"],
-                image: source.imageUrl || "/placeholder.jpg",
-                delivery: "13 Aug",
-              },
-            };
-          })
-        );
+      // 1️⃣ Buy Now mode should never fall through to normal cart
+      if (isBuyNowMode) {
+        if (buyNow?.items?.length > 0) {
+          setLocalCart(
+            buyNow.items.map((item) => {
+              const source = item.variant || item.product || {};
+              return {
+                id: item.id,
+                productId: item.productId,
+                variantId: item.variantId || null,
+                quantity: item.quantity || 1,
+                product: {
+                  title: source.title || "Untitled Product",
+                  warranty: source.brand || "N/A",
+                  price: `Rs.${source.price || 0}`,
+                  mrp: `MRP: Rs.${source.mrp || 0}`,
+                  sizes: [source.size || "M"],
+                  image: source.imageUrl || "/placeholder.jpg",
+                  delivery: "13 Aug",
+                },
+              };
+            })
+          );
+        } else {
+          // Buy-Now cleared or empty → show empty list (don’t load normal cart)
+          setLocalCart([]);
+        }
         return;
       }
+
       // 2️⃣ Logged-in normal cart
       if (loggedIn) {
         setLocalCart(
@@ -472,7 +479,9 @@ const CartPage = () => {
     if (isBuyNowMode) {
       try {
         setLoading(true);
+
         dispatch(clearBuyNow());
+        setLocalCart([]);
       } catch (error) {
         toast.error(error.message || "Failed to remove Buy Now item");
       } finally {
@@ -590,7 +599,13 @@ const CartPage = () => {
 
           <div className="col-lg-4 p-0">
             {localCart.length > 0 && <PriceSummary
-              summary={isBuyNowMode ? buyNowSummary : dynamicPriceSummary}
+              summary={
+                isBuyNowMode
+                  ? (buyNowSummary && Object.keys(buyNowSummary).length > 0
+                    ? buyNowSummary
+                    : buyNow?.priceSummary || {})
+                  : dynamicPriceSummary
+              }
               isBuyNowMode={isBuyNowMode}
               buyNowItems={isBuyNowMode ? buyNow?.items || [] : []}
             />}
