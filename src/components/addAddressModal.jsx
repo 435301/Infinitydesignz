@@ -21,7 +21,7 @@ function AddressModal({ selectedType, onClose, onTypeChange }) {
     state: '',
     pincode: '',
     phone: '',
-    label: selectedType,
+    label: selectedType || "Home",
   });
   const validateForm = () => {
     const newErrors = {};
@@ -48,8 +48,6 @@ function AddressModal({ selectedType, onClose, onTypeChange }) {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
-
 
   useEffect(() => {
     fetch("https://countriesnow.space/api/v0.1/countries/states", {
@@ -78,6 +76,12 @@ function AddressModal({ selectedType, onClose, onTypeChange }) {
         .catch((err) => console.error("Error fetching cities:", err));
     }
   }, [selectedState]);
+
+  useEffect(() => {
+  if (selectedType) {
+    setFormData((prev) => ({ ...prev, label: selectedType }));
+  }
+}, [selectedType]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

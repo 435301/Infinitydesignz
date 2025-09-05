@@ -148,6 +148,7 @@ const CartItem = ({
 };
 
 const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) => {
+  console.log('summary',summary)
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [couponCode, setCouponCode] = useState("");
@@ -249,6 +250,10 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Total MRP</span>
         <span className="price-detail-label">Rs.{summary.totalMRP || 0}</span>
+      </div>
+       <div className="d-flex justify-content-between">
+        <span className="price-detail-label">Sub Total</span>
+        <span className="price-detail-label">Rs.{summary.totalAfterDiscount || 0}</span>
       </div>
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Discount on MRP</span>
