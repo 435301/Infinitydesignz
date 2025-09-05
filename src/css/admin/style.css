@@ -2154,8 +2154,10 @@ select.form-control:not([size]):not([multiple]) {
 
 .Fabric .card-img-top {
   width: 100%;
-  height: 250px;       /* fixed box */
-  object-fit: cover;   /* fills box, crops extra */
+  height: 250px;
+  /* fixed box */
+  object-fit: cover;
+  /* fills box, crops extra */
   object-position: center;
   border-radius: 8px;
 }
@@ -2522,21 +2524,23 @@ small a {
 }
 
 .modal-backdrop {
-    background-color: #00000047 !important;
+  background-color: #00000047 !important;
 }
-.editimg-container{
+
+.editimg-container {
   position: relative;
   display: inline-block;
   margin-top: 8px;
 }
 
-.image-preview{
+.image-preview {
   width: 50px;
   height: 50px;
   object-fit: cover;
   border-radius: 4px;
 }
-.remove-imageIcon{
+
+.remove-imageIcon {
   position: absolute;
   top: -5px;
   right: -5px;
@@ -2547,14 +2551,24 @@ small a {
   height: 20px;
   color: white;
   cursor: pointer;
-  font-size:14px ;
+  font-size: 14px;
   line-height: 18px;
   padding: 0;
 }
+
 @media (max-width: 767px) {
-    .Fabric .card-img-top {
-        object-fit: fill;
-        width: 100%;
-        height: 100%;
-    }
+  .Fabric .card-img-top {
+    object-fit: fill;
+    width: 100%;
+    height: 100%;
+  }
+
+  .nav-icons li {
+    padding: 0 2px !important;
+  }
+
+  .header-logo img {
+    width: 118px;
+
+  }
 }
