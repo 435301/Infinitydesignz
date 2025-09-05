@@ -89,11 +89,15 @@ const CartItem = ({
           <div className="d-flex align-items-center mb-3 gap-4 w-100">
             <div className="d-flex align-items-center">
               <label className="me-2 fw-semibold">Size</label>
-              <select className="form-select w-100 me-2">
-                {(product.sizes || ["M"]).map((size) => (
-                  <option key={size}>{size}</option>
-                ))}
-              </select>
+              {(product.sizes || [product?.variant?.size || "N/A"]).map((size) => (
+                <input
+                  key={size}
+                  type="text"
+                  className="form-control w-100 me-2"
+                  value={size}
+                  readOnly
+                />
+              ))}
             </div>
             <div className="d-flex align-items-center">
               <label className="me-2 fw-semibold">Qty</label>
@@ -148,7 +152,7 @@ const CartItem = ({
 };
 
 const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) => {
-  console.log('summary',summary)
+  console.log('summary', summary)
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [couponCode, setCouponCode] = useState("");
@@ -251,7 +255,7 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
         <span className="price-detail-label">Total MRP</span>
         <span className="price-detail-label">Rs.{summary.totalMRP || 0}</span>
       </div>
-       <div className="d-flex justify-content-between">
+      <div className="d-flex justify-content-between">
         <span className="price-detail-label">Sub Total</span>
         <span className="price-detail-label">Rs.{summary.totalAfterDiscount || 0}</span>
       </div>
