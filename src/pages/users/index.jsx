@@ -41,8 +41,8 @@ export default function HomeBannerSection() {
   const { promotions, loading, error } = useSelector((state) => state.frontendPromotions);
    const { homeTabs } = useSelector(state => state.homeCategories);
 
- useEffect(() => {
-  const handleFocus = () => {
+useEffect(() => {
+  const fetchAll = () => {
     dispatch(fetchSliders());
     dispatch(fetchRightSliders());
     dispatch(fetchFrontendPromotions(8));
@@ -50,12 +50,14 @@ export default function HomeBannerSection() {
     dispatch(fetchNeedHelpItems());
   };
 
-  window.addEventListener("focus", handleFocus);
+  fetchAll();
+  window.addEventListener("focus", fetchAll);
 
   return () => {
-    window.removeEventListener("focus", handleFocus);
+    window.removeEventListener("focus", fetchAll);
   };
 }, [dispatch]);
+
 
   useQuery({
     queryKey: ["show-login-modal"],
