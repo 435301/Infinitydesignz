@@ -25,6 +25,7 @@ const CreatePromotion = () => {
     const subMenuOptions = categories.filter((cat) => cat.parentId === parseInt(selectedMenu));
     const listSubMenuOptions = categories.filter((cat) => cat.parentId === parseInt(selectedSubMenu));
     const [errors, setErrors] = useState({});
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
     console.log('promotions', categoryPromotions)
 
@@ -33,6 +34,7 @@ const CreatePromotion = () => {
         dispatch(fetchCategories());
         dispatch(fetchBrands())
     }, [dispatch]);
+    const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
 
     const handleChange = (e) => {
         const { name, value, type, checked, files } = e.target;
@@ -140,7 +142,7 @@ const handleListSubMenuChange = (e) => {
             <div className="wrapper">
                 <HeaderAdmin />
                 <aside className="main-sidebar hidden-print">
-                    <Sidebar />
+                    <Sidebar  isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
                 </aside>
 
                 <div className="content-wrapper p-3">

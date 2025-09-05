@@ -20,7 +20,7 @@ function UserOrdersTable() {
     const [currentPage, setCurrentPage] = useState(1);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [subscriberToDelete, setsubscriberToDelete] = useState(null);
-
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const filteredItems = items.filter((subscriber) =>
         subscriber.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -29,6 +29,8 @@ function UserOrdersTable() {
         dispatch(fetchSubscribers({ page: currentPage, take: 10, search: searchTerm }));
     }, [dispatch, currentPage, searchTerm]);
 
+    const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
+    
     const handleInputChange = (e) => {
         setSearchTerm(e.target.value);
     };
@@ -53,12 +55,20 @@ function UserOrdersTable() {
     return (
         <div className="sidebar-mini fixed">
             <div className="wrapper">
-                <HeaderAdmin />
+                <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
                 <aside className="main-sidebar hidden-print">
-                    <Sidebar />
+                    <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)}/>
                 </aside>
 
-                <div className="content-wrapper pt-2 p-4">
+                <div
+          className="content-wrapper mb-4"
+          style={{
+            marginLeft: isSidebarCollapsed ? '60px' : '272px',
+            padding: '20px',
+            flex: 1,
+            transition: 'margin-left 0.3s ease',
+          }}
+        >
                     <div className="main-header" style={{ marginTop: 0 }}>
                         <h4>Subscribers List</h4>
                     </div>

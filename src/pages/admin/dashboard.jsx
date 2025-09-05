@@ -77,7 +77,7 @@ const Dashboard = () => {
           transition: "width 0.3s ease",
         }}
       >
-        <Sidebar isCollapsed={isSidebarCollapsed} />
+        <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
       </aside>
 
       <div

@@ -30,6 +30,7 @@ const ManageSliders = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     dispatch(fetchSliders('all'));
@@ -42,6 +43,8 @@ const ManageSliders = () => {
   // const currentRows = sliders.slice(indexOfFirstRow, indexOfLastRow);
   const currentRows = (sliders || []).slice(indexOfFirstRow, indexOfLastRow);
   const totalPages = Math.ceil(sliders.length / rowsPerPage);
+
+  const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) setCurrentPage(pageNumber);
@@ -103,12 +106,20 @@ const ManageSliders = () => {
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
-        <HeaderAdmin />
+        <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
         <aside className="main-sidebar hidden-print">
-          <Sidebar />
+          <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
         </aside>
 
-        <div className="content-wrapper p-4">
+        <div
+          className="content-wrapper mb-4"
+          style={{
+            marginLeft: isSidebarCollapsed ? '60px' : '272px',
+            padding: '20px',
+            flex: 1,
+            transition: 'margin-left 0.3s ease',
+          }}
+        >
           <div className="main-header mt-0 px-3 pt-3">
             <h4>Sliders</h4>
           </div>

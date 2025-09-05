@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
@@ -7,6 +7,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 
 
 const ManageCoupons = () => {
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const coupons = [
         {
             id: 1,
@@ -49,7 +50,7 @@ const ManageCoupons = () => {
             <div className="wrapper">
                 <HeaderAdmin />
                 <aside className="main-sidebar hidden-print">
-                    <Sidebar />
+                    <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
                 </aside>
 
                 <div className="content-wrapper p-3">

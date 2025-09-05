@@ -23,6 +23,7 @@ function ManageContact() {
     const [searchTerm, setSearchTerm] = useState('');
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [contactToDelete, setContactToDelete] = useState(null);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
     const filteredContacts = useMemo(() => {
         return contacts.filter((contact) =>
@@ -35,6 +36,8 @@ function ManageContact() {
     const indexOfFirstRow = indexOfLastRow - rowsPerPage;
     const currentRows = filteredContacts.slice(indexOfFirstRow, indexOfLastRow);
     const totalPages = Math.ceil(filteredContacts.length / rowsPerPage);
+
+    const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
 
     const handlePageChange = (pageNumber) => {
         if (pageNumber >= 1 && pageNumber <= totalPages) setCurrentPage(pageNumber);
@@ -54,12 +57,20 @@ function ManageContact() {
     return (
         <div className="sidebar-mini fixed">
             <div className="wrapper">
-                <HeaderAdmin />
+                <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
                 <aside className="main-sidebar hidden-print">
-                    <Sidebar />
+                    <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
                 </aside>
 
-                <div className="content-wrapper pt-2 p-4">
+                <div
+                    className="content-wrapper mb-4"
+                    style={{
+                        marginLeft: isSidebarCollapsed ? '60px' : '272px',
+                        padding: '20px',
+                        flex: 1,
+                        transition: 'margin-left 0.3s ease',
+                    }}
+                >
                     <div className="main-header" style={{ marginTop: 0 }}>
                         <h4>Contact</h4>
                     </div>
@@ -152,7 +163,7 @@ function ManageContact() {
                                                                                 title="Delete"
                                                                                 onClick={() => handleDeleteClick(contact.id)}
                                                                             >
-                                                                                <TiTrash  />
+                                                                                <TiTrash />
                                                                             </button>
                                                                         </td>
                                                                     </tr>

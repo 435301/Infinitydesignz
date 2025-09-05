@@ -36,6 +36,7 @@ const ManageProducts = () => {
     const [productToDelete, setProductToDelete] = useState(null);
     const [showViewModal, setShowViewModal] = useState(false);
     const [viewProduct, setViewProduct] = useState('');
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
     useEffect(() => {
         dispatch(fetchProducts());
@@ -62,15 +63,13 @@ const ManageProducts = () => {
         return matchesSearch && matchesStatus;
     });
 
-
-
-
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 10;
     const indexOfLastRow = currentPage * rowsPerPage;
     const indexOfFirstRow = indexOfLastRow - rowsPerPage;
     const currentRows = filteredProducts.slice(indexOfFirstRow, indexOfLastRow);
     const totalPages = Math.ceil(filteredProducts.length / rowsPerPage);
+    const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
 
     const handlePageChange = (pageNumber) => {
         if (pageNumber >= 1 && pageNumber <= totalPages) {
@@ -130,11 +129,19 @@ const ManageProducts = () => {
     return (
         <div className="sidebar-mini fixed">
             <div className="wrapper">
-                <Header />
+                <Header onToggleSidebar={handleToggleSidebar} />
                 <aside className="main-sidebar hidden-print">
-                    <Sidebar />
+                    <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
                 </aside>
-                <div className="content-wrapper p-4">
+                <div
+                    className="content-wrapper mb-4"
+                    style={{
+                        marginLeft: isSidebarCollapsed ? '60px' : '272px',
+                        padding: '20px',
+                        flex: 1,
+                        transition: 'margin-left 0.3s ease',
+                    }}
+                >
                     <div className="main-header" style={{ marginTop: '0px' }}>
                         <h5>Manage Products</h5>
                     </div>

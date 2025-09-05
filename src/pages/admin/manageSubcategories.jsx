@@ -31,7 +31,7 @@ const ManageSubCategories = () => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
-
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // const BASE_URL = 'http://68.183.89.229:4005';
   // const BASE_URL_DELETE = 'http://68.183.89.229:4005';
@@ -84,6 +84,8 @@ const ManageSubCategories = () => {
 
     return matchesSearch && matchesStatus;
   });
+
+  const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
 
   const handleEditClick = (id) => {
     setSubCategoryIdToEdit(id);
@@ -173,12 +175,20 @@ const ManageSubCategories = () => {
 
   return (
     <div className="wrapper sidebar-mini fixed">
-      <HeaderAdmin />
+      <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
       <aside className="main-sidebar hidden-print">
-        <Sidebar />
+        <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
       </aside>
 
-      <div className="content-wrapper p-3">
+      <div
+        className="content-wrapper mb-4"
+        style={{
+          marginLeft: isSidebarCollapsed ? '60px' : '272px',
+          padding: '20px',
+          flex: 1,
+          transition: 'margin-left 0.3s ease',
+        }}
+      >
         <div className="main-header px-3" style={{ marginTop: '0px' }}>
           <h4>Sub Categories</h4>
         </div>
@@ -279,34 +289,34 @@ const ManageSubCategories = () => {
                           </tr>
                         </thead>
                         <tbody>
-                            {loading ? (
-                        <tr>
-                          <td colSpan="12" className="text-center">
-                            <p>Loading...</p>
-                          </td>
-                        </tr>
-                      ) : error ? (
-                        <tr>
-                          <td colSpan="12" className="text-center">
-                            <p className="text-danger">{error}</p>
-                          </td>
-                        </tr>
-                      ) :  (
-                          currentRows.length > 0 ? (
-                            currentRows.map((item, index) => (
-                              <tr key={item.id}>
-                                <td>
-                                  <input
-                                    type="checkbox"
-                                    checked={selectedRows.includes(item.id)}
-                                    onChange={() => handleRowCheckboxChange(item.id)}
-                                  />
-                                </td>
-                                <td>{index + 1}</td>
-                                <td>{item.category}</td>
-                                <td>{item.title}</td>
-                                <td>
-                                  {(item?.appIcon) ? (
+                          {loading ? (
+                            <tr>
+                              <td colSpan="12" className="text-center">
+                                <p>Loading...</p>
+                              </td>
+                            </tr>
+                          ) : error ? (
+                            <tr>
+                              <td colSpan="12" className="text-center">
+                                <p className="text-danger">{error}</p>
+                              </td>
+                            </tr>
+                          ) : (
+                            currentRows.length > 0 ? (
+                              currentRows.map((item, index) => (
+                                <tr key={item.id}>
+                                  <td>
+                                    <input
+                                      type="checkbox"
+                                      checked={selectedRows.includes(item.id)}
+                                      onChange={() => handleRowCheckboxChange(item.id)}
+                                    />
+                                  </td>
+                                  <td>{index + 1}</td>
+                                  <td>{item.category}</td>
+                                  <td>{item.title}</td>
+                                  <td>
+                                    {(item?.appIcon) ? (
                                       <img
                                         src={`${BASE_URL}${item?.appIcon}`}
                                         alt={`${item.title} App Icon`}
@@ -314,13 +324,13 @@ const ManageSubCategories = () => {
                                         width="50"
                                         height="50"
                                       />
-                                  ) : (
-                                    <span>N/A</span>
-                                  )}
+                                    ) : (
+                                      <span>N/A</span>
+                                    )}
 
-                                </td>
-                                <td>
-                                  {(item?.webImage) ? (
+                                  </td>
+                                  <td>
+                                    {(item?.webImage) ? (
                                       <img
                                         src={`${BASE_URL}${item?.webImage}`}
                                         alt={`${item.title} Web Icon`}
@@ -328,12 +338,12 @@ const ManageSubCategories = () => {
                                         width="50"
                                         height="50"
                                       />
-                                  ) : (
-                                    <span>N/A</span>
-                                  )}
-                                </td>
-                                <td>
-                                  {(item?.mainImage) ? (
+                                    ) : (
+                                      <span>N/A</span>
+                                    )}
+                                  </td>
+                                  <td>
+                                    {(item?.mainImage) ? (
                                       <img
                                         src={`${BASE_URL}${item?.mainImage}`}
                                         alt={`${item.title} Main Image`}
@@ -341,46 +351,46 @@ const ManageSubCategories = () => {
                                         width="50"
                                         height="50"
                                       />
-                               
-                                  ) : (
-                                    <span>N/A</span>
-                                  )}
-                                </td>
-                                <td>{item.seoTitle || 'N/A'}</td>
-                                <td>{item.seoDescription || 'N/A'}</td>
-                                <td>{item.seoKeywords || 'N/A'}</td>
-                                <td>
-                                  <span
-                                    className={`badge text-light-${item.status === true ? 'primary' : 'danger'
-                                      }`}
-                                  >
-                                    {(item.status === true ? 'Active' : 'Inactive')}
-                                  </span>
-                                </td>
-                                <td>
-                                  <button className="btn btn-light icon-btn mx-1 me-2 text-success" onClick={() => handleEditClick(item.id)}>
-                                    <BsPencilSquare  />
-                                  </button>
 
-                                  <button className="btn btn-light icon-btn mx-1 text-primary" onClick={() => handleViewClick(item.id)}>
-                                    <BsEye   />
-                                  </button>
-                                  <button className="btn btn-light icon-btn mx-1 m-2 text-danger" onClick={() => {
+                                    ) : (
+                                      <span>N/A</span>
+                                    )}
+                                  </td>
+                                  <td>{item.seoTitle || 'N/A'}</td>
+                                  <td>{item.seoDescription || 'N/A'}</td>
+                                  <td>{item.seoKeywords || 'N/A'}</td>
+                                  <td>
+                                    <span
+                                      className={`badge text-light-${item.status === true ? 'primary' : 'danger'
+                                        }`}
+                                    >
+                                      {(item.status === true ? 'Active' : 'Inactive')}
+                                    </span>
+                                  </td>
+                                  <td>
+                                    <button className="btn btn-light icon-btn mx-1 me-2 text-success" onClick={() => handleEditClick(item.id)}>
+                                      <BsPencilSquare />
+                                    </button>
+
+                                    <button className="btn btn-light icon-btn mx-1 text-primary" onClick={() => handleViewClick(item.id)}>
+                                      <BsEye />
+                                    </button>
+                                    <button className="btn btn-light icon-btn mx-1 m-2 text-danger" onClick={() => {
                                       console.log("Delete icon clicked", item.id);
                                       handleDeleteClick(item.id);
                                     }}>
-                                    <TiTrash   />
-                                  </button>
+                                      <TiTrash />
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan="12" className="text-center">
+                                  No subcategories found.
                                 </td>
                               </tr>
-                            ))
-                          ) : (
-                            <tr>
-                              <td colSpan="12" className="text-center">
-                                No subcategories found.
-                              </td>
-                            </tr>
-                          ))}
+                            ))}
                         </tbody>
                       </table>
                     </div>

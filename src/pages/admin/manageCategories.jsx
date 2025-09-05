@@ -32,6 +32,7 @@ const ManageCategories = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     dispatch(fetchCategories('all'));
@@ -58,6 +59,8 @@ const ManageCategories = () => {
   const currentRows = filteredCategories.slice(indexOfFirstRow, indexOfLastRow);
   const totalPages = Math.ceil(filteredCategories.length / rowsPerPage);
 
+  const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
+  
   const handleSelectAll = () => {
     if (selectAll) {
       setSelectedIds([]);
@@ -143,11 +146,19 @@ const ManageCategories = () => {
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
-        <HeaderAdmin />
+        <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
         <aside className="main-sidebar hidden-print">
-          <Sidebar />
+          <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)}/>
         </aside>
-        <div className="content-wrapper p-3">
+          <div
+          className="content-wrapper mb-4"
+          style={{
+            marginLeft: isSidebarCollapsed ? '60px' : '272px',
+            padding: '20px',
+            flex: 1,
+            transition: 'margin-left 0.3s ease',
+          }}
+        >
           <div className="main-header px-3">
             <h4> Categories</h4>
           </div>

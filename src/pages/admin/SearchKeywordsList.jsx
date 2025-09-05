@@ -20,11 +20,14 @@ function SearchKeywordsList() {
     const [currentPage, setCurrentPage] = useState(1);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [keywordToDelete, setKewywordToDelete] = useState(null);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
     useEffect(() => {
         dispatch(fetchKeywords(currentPage, 10));
     }, [dispatch, currentPage]);
 
+     const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
+     
     const handleSearch = () => {
         dispatch(fetchKeywords({ page: 1, take: 10, search: searchTerm }));
     };
@@ -57,12 +60,20 @@ function SearchKeywordsList() {
     return (
         <div className="sidebar-mini fixed">
             <div className="wrapper">
-                <HeaderAdmin />
+                <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
                 <aside className="main-sidebar hidden-print">
-                    <Sidebar />
+                    <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
                 </aside>
 
-                <div className="content-wrapper pt-2 p-4">
+                <div
+                    className="content-wrapper mb-4"
+                    style={{
+                        marginLeft: isSidebarCollapsed ? '60px' : '272px',
+                        padding: '20px',
+                        flex: 1,
+                        transition: 'margin-left 0.3s ease',
+                    }}
+                >
                     <div className="main-header" style={{ marginTop: 0 }}>
                         <h4>Search Keywords List</h4>
                     </div>

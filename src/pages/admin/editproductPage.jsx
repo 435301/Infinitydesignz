@@ -39,6 +39,7 @@ const EditProductPage = () => {
     }
   }, [activeTab, id, dispatch]);
 
+
   const selectedProduct = products.find(p => p.id === parseInt(id));
   console.log('selectedProduct:', selectedProduct);
 
@@ -53,7 +54,7 @@ const EditProductPage = () => {
       <div className="wrapper">
         <HeaderAdmin onToggleSidebar={setIsSidebarCollapsed} />
         <aside className="main-sidebar hidden-print">
-          <Sidebar isCollapsed={isSidebarCollapsed} />
+          <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
         </aside>
 
         <div className="content-wrapper py-3" style={{ marginLeft: isSidebarCollapsed ? '60px' : '272px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease' }}>

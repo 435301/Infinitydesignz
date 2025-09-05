@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 
 const ManagePromotions = () => {
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+    const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
     const promotions = [
         { id: 1, title: 'Modern Sofa Set', category: 'Modern Sofa Set', image: 'assets/images/avatar-1.png', priority: 12, status: 'Active' },
         { id: 2, title: 'Wooden Dining Table', category: 'Modern Sofa Set', image: 'assets/images/avatar-1.png', priority: 8, status: 'Active' },
@@ -27,12 +29,20 @@ const ManagePromotions = () => {
     return (
         <div className="sidebar-mini fixed">
             <div className="wrapper">
-                <HeaderAdmin />
+                <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
                 <aside className="main-sidebar hidden-print">
-                    <Sidebar />
+                    <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
                 </aside>
 
-                <div className="content-wrapper pt-2 p-4">
+                <div
+                    className="content-wrapper mb-4"
+                    style={{
+                        marginLeft: isSidebarCollapsed ? '60px' : '272px',
+                        padding: '20px',
+                        flex: 1,
+                        transition: 'margin-left 0.3s ease',
+                    }}
+                >
                     <div className="main-header mt-0">
                         <h4>Create Promotion</h4>
                     </div>

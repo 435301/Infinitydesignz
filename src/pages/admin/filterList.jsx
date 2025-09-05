@@ -97,7 +97,7 @@ const ManageFilterList = () => {
       <div className="wrapper">
         <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
         <aside className="main-sidebar hidden-print">
-          <Sidebar isCollapsed={isSidebarCollapsed} />
+          <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)}/>
         </aside>
         <div
           className="content-wrapper"

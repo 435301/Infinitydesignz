@@ -32,7 +32,7 @@ const HomeScreenPromotions = () => {
   });
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedPromotion, setSelectedPromotion] = useState(null);
-
+const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const filteredPromotions = promotions.filter((promotion) => {
     const title = promotion.title || "";
@@ -50,6 +50,8 @@ const HomeScreenPromotions = () => {
     dispatch(fetchProductPromotions(1, 20, currentPage));
   }, [dispatch, currentPage]);
 
+  const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
+  
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
@@ -120,11 +122,19 @@ const HomeScreenPromotions = () => {
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
-        <HeaderAdmin />
+        <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
         <aside className="main-sidebar hidden-print">
-          <Sidebar />
+          <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)}/>
         </aside>
-        <div className="content-wrapper p-4">
+          <div
+          className="content-wrapper mb-4"
+          style={{
+            marginLeft: isSidebarCollapsed ? '60px' : '272px',
+            padding: '20px',
+            flex: 1,
+            transition: 'margin-left 0.3s ease',
+          }}
+        >
           <div className="main-header" style={{ marginTop: "0px" }}>
             <h4>Promotions</h4>
           </div>

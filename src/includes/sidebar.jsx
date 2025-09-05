@@ -15,7 +15,7 @@ import {
   BsBag,
 } from 'react-icons/bs';
 
-const Sidebar = ({ isCollapsed, onClose }) => {
+const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
   const location = useLocation();
   const currentPath = location.pathname;
   const [openMenus, setOpenMenus] = useState({});

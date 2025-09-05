@@ -16,6 +16,8 @@ const CreateCoupon = () => {
     toDate: '2025-05-23',
     minOrderPrice: '',
   });
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,7 +53,7 @@ const CreateCoupon = () => {
       <div className="wrapper">
         <HeaderAdmin />
         <aside className="main-sidebar hidden-print">
-          <Sidebar />
+          <Sidebar  isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)}/>
         </aside>
 
         <div className="content-wrapper p-4">

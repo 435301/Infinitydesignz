@@ -27,6 +27,7 @@ const ListSubCategory = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // const BASE_URL = 'http://68.183.89.229:4005';
   // const BASE_URL_DELETE = 'http://68.183.89.229:4005';
@@ -55,6 +56,8 @@ const ListSubCategory = () => {
       setSubSubCategories(mapped);
     }
   }, [categories]);
+
+  const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
@@ -152,12 +155,20 @@ const ListSubCategory = () => {
 
   return (
     <div className="wrapper sidebar-mini fixed">
-      <HeaderAdmin />
+      <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
       <aside className="main-sidebar hidden-print">
-        <Sidebar />
+        <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
       </aside>
 
-      <div className="content-wrapper p-3">
+      <div
+        className="content-wrapper mb-4"
+        style={{
+          marginLeft: isSidebarCollapsed ? '60px' : '272px',
+          padding: '20px',
+          flex: 1,
+          transition: 'margin-left 0.3s ease',
+        }}
+      >
         <div className="main-header px-3" style={{ marginTop: 0 }}>
           <h4>List Sub Categories</h4>
         </div>
