@@ -13,7 +13,7 @@ import ViewFilterTypeModal from '../../modals/viewFilterTypeModal';
 
 const ManageFilterType = () => {
     const dispatch = useDispatch();
-    const { filterTypes = [] , loading, error} = useSelector((state) => state.filterTypes || {});
+    const { filterTypes = [], loading, error } = useSelector((state) => state.filterTypes || {});
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -81,7 +81,7 @@ const ManageFilterType = () => {
             <div className="wrapper">
                 <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
                 <aside className="main-sidebar hidden-print">
-                    <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)}/>
+                    <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
                 </aside>
 
                 <div
@@ -105,14 +105,15 @@ const ManageFilterType = () => {
                                 <div className="row g-3 align-items-center">
                                     <div className="col-md-3">
                                         <div className="input-group">
-                                            <input type="text" className="form-control" placeholder="Search By Filter Type" />
+                                            <input type="text" className="form-control" placeholder="Search By Filter Type" value={searchTerm}
+                                                onChange={(e) => setSearchTerm(e.target.value)} />
                                         </div>
                                     </div>
 
                                     <div className="col-md-2 d-flex gap-2">
 
                                         <button className="btn btn-success">
-                                            <BsArrowClockwise />
+                                            <BsArrowClockwise onClick={() => setSearchTerm("")} />
                                         </button>
                                     </div>
                                     <div className="col-md-7 text-end">
@@ -149,66 +150,66 @@ const ManageFilterType = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                             {loading ? (
-                        <tr>
-                          <td colSpan="5" className="text-center">
-                            <p>Loading...</p>
-                          </td>
-                        </tr>
-                      ) : error ? (
-                        <tr>
-                          <td colSpan="5" className="text-center">
-                            <p className="text-danger">{error}</p>
-                          </td>
-                        </tr>
-                      ) :  (
-                                            currentRows.map((item, index) => (
-                                                <tr key={item.id}>
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            className="row-checkbox"
-                                                            checked={selectedRows.includes(item.id)}
-                                                            onChange={() => handleRowCheckboxChange(item.id)}
-                                                        />
-                                                    </td>
-                                                    <td>{index + 1}</td>
-                                                    <td>{item.name}</td>
-
-                                                    <td>
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-light icon-btn mx-1 text-success"
-                                                            style={{ marginRight: '5px' }}
-                                                            title="Edit"
-                                                            onClick={() => {
-                                                                setSelectedFilterType(item);
-                                                                setEditModalVisible(true);
-                                                            }}
-                                                        >
-                                                            <BsPencilSquare />
-                                                        </button>
-                                                        <button
-                                                            className="btn btn-light icon-btn mx-1 text-primary"
-                                                            onClick={() => {
-                                                                setFilterType(item);
-                                                                setViewModal(true);
-                                                            }}
-                                                        >
-                                                            <BsEye  />
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-light icon-btn mx-1 delete-btn"
-                                                            title="Delete"
-                                                            onClick={() => handleDeleteClick(item.id)}
-                                                        >
-                                                            <BsTrash  />
-                                                        </button>
+                                            {loading ? (
+                                                <tr>
+                                                    <td colSpan="5" className="text-center">
+                                                        <p>Loading...</p>
                                                     </td>
                                                 </tr>
-                                            ))
-                                        )}
+                                            ) : error ? (
+                                                <tr>
+                                                    <td colSpan="5" className="text-center">
+                                                        <p className="text-danger">{error}</p>
+                                                    </td>
+                                                </tr>
+                                            ) : (
+                                                currentRows.map((item, index) => (
+                                                    <tr key={item.id}>
+                                                        <td>
+                                                            <input
+                                                                type="checkbox"
+                                                                className="row-checkbox"
+                                                                checked={selectedRows.includes(item.id)}
+                                                                onChange={() => handleRowCheckboxChange(item.id)}
+                                                            />
+                                                        </td>
+                                                        <td>{index + 1}</td>
+                                                        <td>{item.name}</td>
+
+                                                        <td>
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-light icon-btn mx-1 text-success"
+                                                                style={{ marginRight: '5px' }}
+                                                                title="Edit"
+                                                                onClick={() => {
+                                                                    setSelectedFilterType(item);
+                                                                    setEditModalVisible(true);
+                                                                }}
+                                                            >
+                                                                <BsPencilSquare />
+                                                            </button>
+                                                            <button
+                                                                className="btn btn-light icon-btn mx-1 text-primary"
+                                                                onClick={() => {
+                                                                    setFilterType(item);
+                                                                    setViewModal(true);
+                                                                }}
+                                                            >
+                                                                <BsEye />
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-light icon-btn mx-1 delete-btn"
+                                                                title="Delete"
+                                                                onClick={() => handleDeleteClick(item.id)}
+                                                            >
+                                                                <BsTrash />
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            )}
                                             {currentRows.length === 0 && (
                                                 <tr>
                                                     <td colSpan="5" className="text-center">
