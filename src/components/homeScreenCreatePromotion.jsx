@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { Search, ArrowRepeat, PencilSquare, Trash } from "react-bootstrap-icons";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -13,9 +13,24 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
         image: null,
         priority: "",
         status: false,
-        showTitle:false,
+        showTitle: false,
     });
     const [errors, setErrors] = useState({});
+    console.log('')
+
+    useEffect(() => {
+        if (show) {
+            setFormData({
+                title: "",
+                displayCount: "",
+                image: null,
+                priority: "",
+                status: false,
+                showTitle: false,
+            });
+            setErrors({});
+        }
+    }, [show]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -23,6 +38,9 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
         let finalValue = value;
         if (name === "status") {
             finalValue = value === "true";
+        }
+        if (name === "displayCount" || name === "priority") {
+            finalValue = value === "" ? "" : Number(value);
         }
         setFormData((prev) => ({ ...prev, [name]: value }));
         setErrors((prev) => ({ ...prev, [name]: "" }));
@@ -42,7 +60,7 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
         if (formData.status === "" || formData.status === null) {
             newErrors.status = "Status is required";
         }
-         if (formData.showTitle === "" || formData.showTitle === null) {
+        if (formData.showTitle === "" || formData.showTitle === null) {
             newErrors.showTitle = "Show Title is required";
         }
         return newErrors;
@@ -57,7 +75,7 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
         }
         const data = new FormData();
         data.append("title", formData.title);
-        data.append("display_count", formData.displayCount);
+         data.append("displayCount", String(Number(formData.displayCount ?? 0)));
         data.append("image", formData.image);
         data.append("priority", formData.priority);
         data.append("status", formData.status);
@@ -105,7 +123,7 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
                                 name="displayCount"
                                 placeholder="Display count"
                                 className={`form-control ${errors.displayCount ? "is-invalid" : ""}`}
-                                type="text"
+                                type="number"
                                 value={formData.displayCount}
                                 onChange={handleInputChange}
                             />
@@ -158,7 +176,7 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
                             </select>
                             {errors.status && <div className="invalid-feedback">{errors.status}</div>}
                         </div>
-                         <div className="col-lg-6 mb-3">
+                        <div className="col-lg-6 mb-3">
                             <label htmlFor="status" className="form-label">
                                 Show Title<span className="text-danger">*</span>
                             </label>
