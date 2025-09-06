@@ -90,7 +90,7 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
     return (
         <Modal show={show} onHide={handleClose} size="lg" centered>
             <Modal.Header closeButton>
-                <Modal.Title>Create Promotion</Modal.Title>
+                <Modal.Title>Create Promotion Category</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <form
