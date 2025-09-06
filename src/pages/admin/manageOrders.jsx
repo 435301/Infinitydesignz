@@ -141,8 +141,10 @@ const ManageOrders = () => {
                       <tr>
                         <th>Order No</th>
                         <th>Qty</th>
-                        <th>Order Date</th>
                         <th>Price</th>
+                        <th>Additonal charges</th>
+                        <th>Total Amount</th>
+                        <th>Order Date</th>
                         <th>Order From</th>
                         <th>Action</th>
                       </tr>
@@ -153,13 +155,17 @@ const ManageOrders = () => {
                           <tr key={index}>
                             <td>{order.orderId || order.orderNo}</td>
                             <td>{order.totalQuantity || order.qty}</td>
-                            <td>
+                           
+                            <td>{order.amt ||''}</td>
+                            <td>{order.additonlCharges ||'100'}</td>
+                            <td>{order.price ||''}</td>
+                             <td>
                               {order.orderDate || order.date
                                 ? new Date(order.orderDate || order.date).toLocaleDateString('en-GB')
                                 : ''}
                             </td>
 
-                            <td>{order.price ||''}</td>
+
                             <td>{order.orderFrom}</td>
                             <td>
                               <button className="btn btn-sm btn-outline-primary" onClick={() => handleViewOrder(order.id || order.orderNo)}>

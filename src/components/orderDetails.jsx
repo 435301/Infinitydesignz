@@ -112,6 +112,7 @@ const OrderDetailsPage = () => {
                                     <p className='order-p text-secondary'>
                                         Total MRP: ₹{priceSummary.totalMRP}<br />
                                         Discount on MRP: ₹{priceSummary.discountOnMRP}<br />
+                                        Sub Total: ₹{priceSummary.totalAfterDiscount}<br />
                                         Coupon Discount: ₹{priceSummary.couponDiscount}<br />
                                         Platform Fee: ₹{priceSummary.platformFee}<br />
                                         Shipping Fee: ₹{priceSummary.shippingFee}<br />
@@ -145,6 +146,7 @@ const OrderDetailsPage = () => {
                                         {order.items && order.items.length > 0 ? (
                                             order.items.map((item, index) => {
                                                 const product = item.product || item.variant || {};
+                                                console.log('product',item)
                                                 return (
                                                     <tr key={index}>
                                                         <td>
