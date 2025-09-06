@@ -45,7 +45,7 @@ const OrderDetailsPage = () => {
     };
 
     const handleNoteSubmit = (status, note) => {
-        dispatch(cancelOrderItemAdmin(selectedItemId, selectedOrderId, note,status)).then(() => {
+        dispatch(cancelOrderItemAdmin(selectedItemId, selectedOrderId, note,"CANCELLED",status)).then(() => {
         dispatch(fetchOrderById(orderId)); 
         // dispatch(fetchAdminOrders());
     });
