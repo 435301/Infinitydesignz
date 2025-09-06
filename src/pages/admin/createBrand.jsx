@@ -274,6 +274,13 @@ const ManageBrands = () => {
                           </tr>
                         ))
                       )}
+                       {filteredBrands.length === 0 && (
+                        <tr>
+                          <td colSpan="6" className="text-center">
+                            No brands found.
+                          </td>
+                        </tr>
+                      )}
 
                     </tbody>
                   </table>

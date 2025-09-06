@@ -69,14 +69,14 @@ const ManageSizes = () => {
 
   };
 
- const handleBulkStatusUpdate = async (newStatus) => {
-     if (selectedRows.length === 0) {
-       toast.warning("Please select at least one size.");
-       return;
-     }
-     await dispatch(bulkUpdateSizeStatus(selectedRows, newStatus));
-     setSelectedRows([]);
-   };
+  const handleBulkStatusUpdate = async (newStatus) => {
+    if (selectedRows.length === 0) {
+      toast.warning("Please select at least one size.");
+      return;
+    }
+    await dispatch(bulkUpdateSizeStatus(selectedRows, newStatus));
+    setSelectedRows([]);
+  };
 
   const handleRowCheckboxChange = (id) => {
     setSelectedRows((prev) =>
@@ -99,7 +99,7 @@ const ManageSizes = () => {
         <div className="wrapper">
           <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
           <aside className="main-sidebar hidden-print">
-            <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)}/>
+            <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
           </aside>
           <div
             className="content-wrapper mb-4"
@@ -194,66 +194,73 @@ const ManageSizes = () => {
                         </tr>
                       </thead>
                       <tbody>
-                            {loading ? (
-                        <tr>
-                          <td colSpan="5" className="text-center">
-                            <p>Loading...</p>
-                          </td>
-                        </tr>
-                      ) : error ? (
-                        <tr>
-                          <td colSpan="5" className="text-center">
-                            <p className="text-danger">{error}</p>
-                          </td>
-                        </tr>
-                      ) :  (
-                        currentRows.map((size, index) => (
-                          <tr key={size.id}>
-                            <td>
-                              <input
-                                type="checkbox"
-                                checked={selectedRows.includes(size.id)}
-                                onChange={() => handleRowCheckboxChange(size.id)}
-                              />
-                            </td>
-                            <td>{index + 1 + indexOfFirstRow}</td>
-                            <td>{size.title}</td>
-                            <td>
-                              <span
-                                className={`badge ${size.status ? 'text-light-primary' : 'text-light-danger'}`}
-                              >
-                                {size.status ? 'Active' : 'Inactive'}
-                              </span>
-                            </td>
-                            <td>
-                              <button
-                                className="btn btn-light icon-btn mx-1 m-2 text-success"
-                                onClick={() => {
-                                  setSelectedSize(size);
-                                  setEditModalVisible(true);
-                                }}
-                              >
-                                <BsPencilSquare  />
-                              </button>
-                              <button
-                                className="btn btn-light icon-btn mx-1 text-primary"
-                                onClick={() => {
-                                  setViewSize(size);
-                                  setShowViewModal(true);
-                                }}
-                              >
-                                <BsEye  />
-                              </button>
-                              <button
-                                className="btn btn-light icon-btn mx-1 m-2 text-danger"
-                                onClick={() => handleDeleteClick(size.id)}
-                              >
-                                <TiTrash  />
-                              </button>
+                        {loading ? (
+                          <tr>
+                            <td colSpan="5" className="text-center">
+                              <p>Loading...</p>
                             </td>
                           </tr>
-                        ))
-                      )}
+                        ) : error ? (
+                          <tr>
+                            <td colSpan="5" className="text-center">
+                              <p className="text-danger">{error}</p>
+                            </td>
+                          </tr>
+                        ) : (
+                          currentRows.map((size, index) => (
+                            <tr key={size.id}>
+                              <td>
+                                <input
+                                  type="checkbox"
+                                  checked={selectedRows.includes(size.id)}
+                                  onChange={() => handleRowCheckboxChange(size.id)}
+                                />
+                              </td>
+                              <td>{index + 1 + indexOfFirstRow}</td>
+                              <td>{size.title}</td>
+                              <td>
+                                <span
+                                  className={`badge ${size.status ? 'text-light-primary' : 'text-light-danger'}`}
+                                >
+                                  {size.status ? 'Active' : 'Inactive'}
+                                </span>
+                              </td>
+                              <td>
+                                <button
+                                  className="btn btn-light icon-btn mx-1 m-2 text-success"
+                                  onClick={() => {
+                                    setSelectedSize(size);
+                                    setEditModalVisible(true);
+                                  }}
+                                >
+                                  <BsPencilSquare />
+                                </button>
+                                <button
+                                  className="btn btn-light icon-btn mx-1 text-primary"
+                                  onClick={() => {
+                                    setViewSize(size);
+                                    setShowViewModal(true);
+                                  }}
+                                >
+                                  <BsEye />
+                                </button>
+                                <button
+                                  className="btn btn-light icon-btn mx-1 m-2 text-danger"
+                                  onClick={() => handleDeleteClick(size.id)}
+                                >
+                                  <TiTrash />
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                        {filteredSizes.length === 0 && (
+                          <tr>
+                            <td colSpan="6" className="text-center">
+                              No sizes found.
+                            </td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>

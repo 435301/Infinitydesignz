@@ -302,7 +302,7 @@ const ManageCategories = () => {
                           </tr>
                         );
                       }) : (
-                        <tr><td colSpan="8">No categories found.</td></tr>
+                        <tr><td colSpan="8" className='text-center'>No categories found.</td></tr>
                       ))}
                     </tbody>
                   </table>

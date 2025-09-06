@@ -223,59 +223,66 @@ const OffersList = () => {
                                 </td>
                               </tr>
                             ) : (
-                            currentRows.map((coupon, index) => (
-                              <tr key={coupon.id}>
-                                <td> <input
-                                  type="checkbox"
-                                  checked={selectedRows.includes(coupon.id)}
-                                  onChange={() => handleRowCheckboxChange(coupon.id)}
-                                /></td>
+                              currentRows.map((coupon, index) => (
+                                <tr key={coupon.id}>
+                                  <td> <input
+                                    type="checkbox"
+                                    checked={selectedRows.includes(coupon.id)}
+                                    onChange={() => handleRowCheckboxChange(coupon.id)}
+                                  /></td>
 
-                                <td>{index + 1}</td>
-                                <td>{coupon.type}</td>
-                                <td>{coupon.code}</td>
-                                <td>{coupon.priceType}</td>
-                                <td>{coupon.value}</td>
-                                <td>{new Date(coupon.fromDate).toLocaleDateString('en-GB', {
-                                  day: '2-digit',
-                                  month: 'short',
-                                  year: 'numeric'
-                                })}</td>
+                                  <td>{index + 1}</td>
+                                  <td>{coupon.type}</td>
+                                  <td>{coupon.code}</td>
+                                  <td>{coupon.priceType}</td>
+                                  <td>{coupon.value}</td>
+                                  <td>{new Date(coupon.fromDate).toLocaleDateString('en-GB', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric'
+                                  })}</td>
 
-                                <td>{new Date(coupon.toDate).toLocaleDateString('en-GB', {
-                                  day: '2-digit',
-                                  month: 'short',
-                                  year: 'numeric'
-                                })}</td>
-                                <td>{coupon.minOrderAmount}</td>
-                                <td>
-                                  <span className={`badge ${coupon.status ? 'text-light-primary' : 'text-light-danger'}`}>
-                                    {coupon.status ? 'Active' : 'Inactive'}
-                                  </span>
-                                </td>
-                                <td>
-                                  <button type="button" className="btn btn-light icon-btn mx-1 m-2 text-success" onClick={() => {
-                                    setEditModalVisible(true)
-                                    setSelectedEditCoupon(coupon);
-                                  }}>
-                                    <BsPencilSquare className="text-success" />
-                                  </button>
-                                  <button type="button" className="btn btn-light icon-btn mx-1 m-2 text-primary" onClick={() => {
-                                    setViewCouponModal(true)
-                                    setSelectedViewCoupon(coupon);
-                                  }}>
-                                    <BsEye className="text-success" />
-                                  </button>
-                                  <button type="button" className="btn btn-light icon-btn mx-1 b-r-4 text-primary" onClick={() => {
-                                    handleDeleteClick(coupon.id);
-                                    setShowDeleteModal(true);
-                                  }}>
-                                    <TiTrash className="text-danger" />
-                                  </button>
+                                  <td>{new Date(coupon.toDate).toLocaleDateString('en-GB', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric'
+                                  })}</td>
+                                  <td>{coupon.minOrderAmount}</td>
+                                  <td>
+                                    <span className={`badge ${coupon.status ? 'text-light-primary' : 'text-light-danger'}`}>
+                                      {coupon.status ? 'Active' : 'Inactive'}
+                                    </span>
+                                  </td>
+                                  <td>
+                                    <button type="button" className="btn btn-light icon-btn mx-1 m-2 text-success" onClick={() => {
+                                      setEditModalVisible(true)
+                                      setSelectedEditCoupon(coupon);
+                                    }}>
+                                      <BsPencilSquare className="text-success" />
+                                    </button>
+                                    <button type="button" className="btn btn-light icon-btn mx-1 m-2 text-primary" onClick={() => {
+                                      setViewCouponModal(true)
+                                      setSelectedViewCoupon(coupon);
+                                    }}>
+                                      <BsEye className="text-success" />
+                                    </button>
+                                    <button type="button" className="btn btn-light icon-btn mx-1 b-r-4 text-primary" onClick={() => {
+                                      handleDeleteClick(coupon.id);
+                                      setShowDeleteModal(true);
+                                    }}>
+                                      <TiTrash className="text-danger" />
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                            {filteredCoupons.length === 0 && (
+                              <tr>
+                                <td colSpan="12" className="text-center">
+                                  No coupons found.
                                 </td>
                               </tr>
-                            ))
-                          )}
+                            )}
                           </tbody>
                         </table>
 

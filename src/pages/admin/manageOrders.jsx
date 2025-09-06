@@ -47,7 +47,7 @@ const ManageOrders = () => {
     const orderId = e.target.orderNo.value;
     const dateFrom = e.target.fromDate.value;
     const dateTo = e.target.toDate.value;
-    const status = e.target.status.value;
+    const status = e.target.status;
 
     const newFilters = {
       orderId,

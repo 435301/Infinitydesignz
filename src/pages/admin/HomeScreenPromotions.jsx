@@ -32,7 +32,7 @@ const HomeScreenPromotions = () => {
   });
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedPromotion, setSelectedPromotion] = useState(null);
-const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const filteredPromotions = promotions.filter((promotion) => {
     const title = promotion.title || "";
@@ -51,7 +51,7 @@ const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   }, [dispatch, currentPage]);
 
   const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
-  
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
@@ -124,9 +124,9 @@ const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
       <div className="wrapper">
         <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
         <aside className="main-sidebar hidden-print">
-          <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)}/>
+          <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
         </aside>
-          <div
+        <div
           className="content-wrapper mb-4"
           style={{
             marginLeft: isSidebarCollapsed ? '60px' : '272px',
@@ -314,6 +314,13 @@ const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
                                   </td>
                                 </tr>
                               ))}
+                              {filteredPromotions.length === 0 && (
+                                <tr>
+                                  <td colSpan="8" className="text-center">
+                                    No promotions found.
+                                  </td>
+                                </tr>
+                              )}
                             </tbody>
                           </table>
                         )}

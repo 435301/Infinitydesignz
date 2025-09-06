@@ -190,13 +190,13 @@ const HomePromotionCategory = () => {
                                   <td>{indexOfFirstRow + index + 1}</td>
                                   <td>{promotion.title}</td>
                                   <td>
-                                    {promotion.imageUrl ? ( <img
-                                        src={`${BASE_URL}${promotion.imageUrl}`}
-                                        alt={promotion.title}
-                                        className="rounded-circle"
-                                        width="25"
-                                        height="25"
-                                      />
+                                    {promotion.imageUrl ? (<img
+                                      src={`${BASE_URL}${promotion.imageUrl}`}
+                                      alt={promotion.title}
+                                      className="rounded-circle"
+                                      width="25"
+                                      height="25"
+                                    />
                                     ) : (
                                       <span className="text-muted">N/A</span>
                                     )}
@@ -217,7 +217,7 @@ const HomePromotionCategory = () => {
                                       className="btn btn-light icon-btn mx-1  me-2 text-success"
                                       onClick={() => handleEditClick(promotion)}
                                     >
-                                      <PencilSquare  />
+                                      <PencilSquare />
                                     </button>
                                     <button
                                       type="button"
@@ -234,6 +234,13 @@ const HomePromotionCategory = () => {
                                   </td>
                                 </tr>
                               ))}
+                              {filteredPromotions.length === 0 && (
+                                <tr>
+                                  <td colSpan="8" className="text-center">
+                                    No promotions found.
+                                  </td>
+                                </tr>
+                              )}
                             </tbody>
                           </table>
                         )}
