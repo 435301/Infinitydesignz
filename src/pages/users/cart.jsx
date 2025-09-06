@@ -96,6 +96,7 @@ const CartItem = ({
                   className="form-control w-100 me-2"
                   value={size}
                   readOnly
+                  disabled
                 />
               ))}
             </div>

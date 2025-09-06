@@ -205,6 +205,7 @@ export default function WishlistPage() {
                               className="form-control w-auto me-2"
                               value={displayData.size || "N/A"}
                               readOnly
+                              disabled
                             />
 
                             <label className="me-2 fw-semibold">Qty</label>
