@@ -20,6 +20,7 @@ const initialState = {
     priceSummary: {},
     appliedCoupon: null,
     error: null,
+    canAccessCheckout: false
 };
 
 export const cartReducer = (state = initialState, action) => {
@@ -97,7 +98,8 @@ export const cartReducer = (state = initialState, action) => {
         loading: false,
         error: action.payload,
       };
-
+       case "ALLOW_CHECKOUT":
+      return { ...state, canAccessCheckout: true };
         default:
             return state;
     }

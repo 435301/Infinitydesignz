@@ -67,6 +67,7 @@ const CartItem = ({
       : `${BASE_URL}${product.image}`
     : "/placeholder.jpg";
 
+
   return (
     <div className="cart-page">
       <div className="d-flex flex-column border-bottom flex-md-row gap-4  pt-3 pb-3">
@@ -445,6 +446,11 @@ const CartPage = () => {
     loadCartData();
   }, [isBuyNowMode, buyNow, loggedIn, userCartItems, guestCartItems]);
 
+
+const handleCheckout = () => {
+  dispatch({ type: "ALLOW_CHECKOUT" });
+  navigate("/checkout");
+};
   const handleQuantityChange = (id, newQty, productId, variantId) => {
     if (isBuyNowMode) {
       const updateData = {

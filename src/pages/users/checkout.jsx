@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../../css/user/userstyle.css";
 import Img1 from "../../img/img1.png";
 import Img2 from "../../img/img2.png";
@@ -16,6 +16,7 @@ import { applyCouponBuyNow } from "../../redux/actions/buyNowAction";
 
 const CheckoutPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const { addresses = [] } = useSelector((state) => state.addressBook);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
@@ -27,6 +28,7 @@ const CheckoutPage = () => {
   const cart = useSelector((state) => state.cart);
   const reduxBuyNowPriceSummary = useSelector((state) => state.buyNow.priceSummary) || {};
   const reduxCartPriceSummary = useSelector((state) => state.cart.priceSummary) || {};
+  const canAccessCheckout = useSelector((state) => state.cart.canAccessCheckout);
 
   const buyNowItems = buyNow?.items || [];
   const isBuyNow = buyNowItems.length > 0;
@@ -114,6 +116,12 @@ const CheckoutPage = () => {
       );
     }
   }, [buyNow, itemsFromCart]);
+
+  useEffect(() => {
+  if (!canAccessCheckout) {
+    navigate("/cart"); 
+  }
+}, [canAccessCheckout, navigate]);
 
   const handlePaymentChange = useCallback((e) => {
     setPaymentMethod(e.target.value);
