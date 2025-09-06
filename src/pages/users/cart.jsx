@@ -115,8 +115,8 @@ const CartItem = ({
             </div>
           </div>
           <div className="d-flex align-items-center gap-3 mb-3">
-            <h4 className="mb-0 price">{product.price || "Rs.0"}</h4>
-            <span className="strike-text">{product.mrp || "MRP: Rs.0"}</span>
+            <h4 className="mb-0 price">₹{product.price || "₹0"}</h4>
+            <span className="strike-text">₹{product.mrp || "MRP: ₹.0"}</span>
           </div>
           <div className="d-flex gap-2 mb-3">
             <small>
@@ -254,32 +254,32 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
       <h5 className="text-bold">Price details</h5>
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Total MRP</span>
-        <span className="price-detail-label">Rs.{summary.totalMRP || 0}</span>
+        <span className="price-detail-label">₹{summary.totalMRP || 0}</span>
       </div>
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Sub Total</span>
-        <span className="price-detail-label">Rs.{summary.totalAfterDiscount || 0}</span>
+        <span className="price-detail-label">₹{summary.totalAfterDiscount || 0}</span>
       </div>
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Discount on MRP</span>
-        <span className="discount-text price-detail-label">Rs.{summary.discountOnMRP || 0}</span>
+        <span className="discount-text price-detail-label">₹{summary.discountOnMRP || 0}</span>
       </div>
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Coupon Discount</span>
-        <span className="discount-text price-detail-label">Rs.{summary.couponDiscount || 0}</span>
+        <span className="discount-text price-detail-label">₹{summary.couponDiscount || 0}</span>
       </div>
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Platform fee <small className="know-more">Know More</small></span>
-        <span className="price-detail-label">Rs.{summary.platformFee || 0}</span>
+        <span className="price-detail-label">₹{summary.platformFee || 0}</span>
       </div>
       <div className="d-flex justify-content-between mb-3">
         <span className="price-detail-label">Shipping fee <small className="know-more">Know More</small></span>
-        <span className="price-detail-label">Rs.{summary.shippingFee || 0}</span>
+        <span className="price-detail-label">₹{summary.shippingFee || 0}</span>
       </div>
       <hr />
       <div className="d-flex justify-content-between total-amount mb-3">
         <span>Total Amount</span>
-        <span>Rs.{summary.finalPayable || 0}</span>
+        <span>₹{summary.finalPayable || 0}</span>
       </div>
       <button className="btn btn-place-order w-100" onClick={handleClick}>
         Checkout
@@ -338,8 +338,8 @@ const CartPage = () => {
                 product: {
                   title: source.title || "Untitled Product",
                   warranty: source.brand || "N/A",
-                  price: `Rs.${source.price || 0}`,
-                  mrp: `MRP: Rs.${source.mrp || 0}`,
+                  price: `₹${source.price || 0}`,
+                  mrp: `MRP: ₹${source.mrp || 0}`,
                   sizes: [source.size || "M"],
                   image: source.imageUrl || "/placeholder.jpg",
                   delivery: "13 Aug",
@@ -363,8 +363,8 @@ const CartPage = () => {
             product: {
               title: (item.variant || item.product)?.title,
               warranty: (item.variant || item.product)?.brand,
-              price: `Rs.${(item.variant || item.product)?.price || 0}`,
-              mrp: `MRP: Rs.${(item.variant || item.product)?.mrp || 0}`,
+              price: `₹${(item.variant || item.product)?.price || 0}`,
+              mrp: `MRP: ₹${(item.variant || item.product)?.mrp || 0}`,
               sizes: [(item.variant || item.product)?.size || "M"],
               image: (item.variant || item.product)?.imageUrl || "/placeholder.jpg",
               delivery: "13 Aug",
@@ -405,8 +405,8 @@ const CartPage = () => {
                   product: {
                     title: productData.title,
                     warranty: productData.brand?.name || "N/A",
-                    price: `Rs.${source.sellingPrice || source.price || 0}`,
-                    mrp: `MRP: Rs.${source.mrp || 0}`,
+                    price: `₹.${source.sellingPrice || source.price || 0}`,
+                    mrp: `MRP: ₹.${source.mrp || 0}`,
                     sizes: [sizeLabel],
                     image: imageUrl.startsWith("http") ? imageUrl : `${BASE_URL}/Uploads/products/${imageUrl}`,
                     delivery: "13 Aug",
@@ -419,8 +419,8 @@ const CartPage = () => {
                   product: {
                     title: "Unknown Product",
                     warranty: "N/A",
-                    price: "Rs.0",
-                    mrp: "MRP: Rs.0",
+                    price: "₹0",
+                    mrp: "MRP: ₹0",
                     sizes: ["M"],
                     image: "/placeholder.jpg",
                     delivery: "N/A",
@@ -532,8 +532,8 @@ const CartPage = () => {
     localCart.forEach((item) => {
       const source = item.variant || item.product || {};
       const qty = item.quantity || 1;
-      const price = parseFloat(source.price?.replace("Rs.", "") || 0);
-      const mrp = parseFloat(source.mrp?.replace("MRP: Rs.", "") || 0);
+      const price = parseFloat(source.price?.replace("₹", "") || 0);
+      const mrp = parseFloat(source.mrp?.replace("MRP: ₹", "") || 0);
       totalMRP += mrp * qty;
       discountOnMRP += (mrp - price) * qty;
     });
@@ -577,8 +577,8 @@ const CartPage = () => {
                     product={{
                       title: source.title,
                       warranty: source.warranty || source.brand,
-                      price: source.price || "Rs.0",
-                      mrp: source.mrp || "MRP: Rs.0",
+                      price: source.price || "₹0",
+                      mrp: source.mrp || "MRP: ₹0",
                       sizes: source.sizes || [source.size || "M"],
                       image: source.image || source.imageUrl || "/placeholder.jpg",
                       delivery: source.delivery || "13 Aug",
