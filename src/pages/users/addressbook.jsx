@@ -64,7 +64,7 @@ export default function AddressBook() {
             {/* sidebars */}
             <div className="col-md-2 sidebars">
               <Link to="/profile">Profile</Link>
-              <Link to="/orders">Orders</Link>
+              <Link to="/orders">My Orders</Link>
               <Link to="/wishlist">Wishlist</Link>
               <Link to="/addressbook" className="active">Address book</Link>
             </div>

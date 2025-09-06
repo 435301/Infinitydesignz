@@ -107,14 +107,14 @@ const MyOrdersPage = () => {
           <div className="row">
             <aside className="col-md-2 sidebars">
               <Link to="/profile">Profile</Link>
-              <Link to="/orders" className="active">Orders</Link>
+              <Link to="/orders" className="active">My Orders</Link>
               <Link to="/wishlist">Wishlist</Link>
               <Link to="/addressbook">Address book</Link>
             </aside>
 
             <main className="col-md-7">
               <div className="wishlist-header">
-                <h2 className="m-0">ORDERS</h2>
+                <h2 className="m-0">MY ORDERS</h2>
               </div>
                  {loading ? (
                   <tr>

@@ -101,7 +101,7 @@ export default function ProfilePage() {
             <div className="row">
               <div className="col-md-2 sidebars">
                 <a href="" className="active">Profile</a>
-                <a href="/orders">Orders</a>
+                <a href="/orders">My Orders</a>
                 <a href="/wishlist">Wishlist</a>
                 <a href="/addressbook">Address book</a>
               </div>

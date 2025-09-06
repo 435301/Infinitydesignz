@@ -147,7 +147,7 @@ export default function WishlistPage() {
           <div className="row">
             <div className="col-md-2 sidebars">
               <a href="/profile">Profile</a>
-              <a href="/orders">Orders</a>
+              <a href="/orders">My Orders</a>
               <a href="/wishlist" className="active">Wishlist</a>
               <a href="/addressbook">Address book</a>
             </div>
