@@ -20,50 +20,59 @@ const Dashboard = () => {
     dispatch(fetchDashboardSummary(30));
   }, [dispatch]);
 
-  const dashboardCards = data
-    ? [
-        {
-          title: "TOTAL PRODUCTS",
-          value: data.cards.products.total,
-          items: [
-            `In Stock: ${data.cards.products.inStock}`,
-            `New: ${data.cards.products.new}`,
-            `Out of Stock: ${data.cards.products.outOfStock}`,
-          ],
-          bg: "#fff3e0",
-          color: "#ffa726",
-          icon: "bi-box-seam",
-        },
-        {
-          title: "TOTAL CATEGORIES",
-          value: data.cards.categories.total,
-          items: data.cards.categories.top.map((cat) => cat.title),
-          bg: "#daf4f0",
-          color: "#26a69a",
-          icon: "bi-tags",
-        },
-        {
-          title: "ORDERS",
-          value: data.cards.orders.total,
-          items: [
-            `Pending: ${data.cards.orders.pending}`,
-            `Delivered: ${data.cards.orders.delivered}`,
-            `Cancelled: ${data.cards.orders.cancelled}`,
-          ],
-          bg: "#daf4f0",
-          color: "#26a69a",
-          icon: "bi-cart-check-fill",
-        },
-        {
-          title: "VENDORS",
-          value: "—", 
-          items: ["Active", "Inactive", "New"],
-          bg: "#eceff1",
-          color: "#78909c",
-          icon: "bi-people-fill",
-        },
-      ]
-    : [];
+ const dashboardCards = data
+  ? [
+      {
+        title: "NEW ORDERS",
+        value: data.cards.orders.new || 0,
+        items: [],
+        bg: "#e3f2fd",
+        color: "#42a5f5",
+        icon: "bi-bag-plus-fill",
+      },
+      {
+        title: "TOTAL ORDERS",
+        value: data.cards.orders.total || 0,
+        items: [],
+        bg: "#ede7f6",
+        color: "#7e57c2",
+        icon: "bi-cart-check-fill",
+      },
+      {
+        title: "CANCELLED ORDERS",
+        value: data.cards.orders.cancelled || 0,
+        items: [],
+        bg: "#ffebee",
+        color: "#ef5350",
+        icon: "bi-x-circle-fill",
+      },
+      {
+        title: "DELIVERED ORDERS",
+        value: data.cards.orders.delivered || 0,
+        items: [],
+        bg: "#e8f5e9",
+        color: "#66bb6a",
+        icon: "bi-check-circle-fill",
+      },
+      {
+        title: "TOTAL PRODUCTS",
+        value: data.cards.products.total || 0,
+        items: [],
+        bg: "#fff3e0",
+        color: "#ffa726",
+        icon: "bi-box-seam",
+      },
+      {
+        title: "OUT OF STOCK",
+        value: data.cards.products.outOfStock || 0,
+        items: [],
+        bg: "#fbe9e7",
+        color: "#ff7043",
+        icon: "bi-exclamation-circle-fill",
+      },
+    ]
+  : [];
+
 
   const products = data?.tables?.topSellingProducts || [];
 
@@ -126,7 +135,8 @@ const Dashboard = () => {
               </div>
 
               {/* Top 5 Products Table */}
-              <div className="row">
+              {/* required later  */}
+              {/* <div className="row">
                 <div className="col-sm-6 mb-3">
                   <div className="card">
                     <div className="card-block custom-card-block">
@@ -167,7 +177,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </>
           )}
         </div>
