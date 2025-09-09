@@ -31,14 +31,10 @@ const FurnitureTabs = ({ homecategories = [] }) => {
   const currentTab = homeTabs.find(tab => tab.id === activeTab);
 
   const handleRedirect = (child, parent) => {
-     const makeSlug = (title) =>
-    title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-    const parentSlug = makeSlug(parent.title);
-    const childSlug = `${makeSlug(child.title)}-${child.id}`;
-    navigate(`/products/${parentSlug}/${childSlug}`);
+   navigate(`/products${child.slug}/ `);
 
   };
-
+console.log('currentTab',currentTab);
   return (
     <section className="bg-lights">
       <div className="container py-5">

@@ -33,6 +33,15 @@ const extractIdFromSlug = (seg) => {
   const n = Number(last);
   return Number.isFinite(n) ? n : null;
 };
+const toSlug = (title = "") =>
+  String(title)
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
+
+const makeSlug = (title, id) => `${toSlug(title)}-${id}`;
+
 
 const ProductsPage = () => {
   const navigate = useNavigate();
@@ -143,56 +152,47 @@ const ProductsPage = () => {
   const getCategoryTitle = (id) =>
     (id ? byId[id]?.title : null) || "Unknown";
 
-  const breadcrumbItems = useMemo(() => {
-    const items = [{ label: "Home", link: "/" }];
+const breadcrumbItems = useMemo(() => {
+  const items = [{ label: "Home", link: "/" }];
 
-    // If search mode is active → show search breadcrumb
-    if (filters.searchStr && filters.searchStr.trim() !== "") {
-      items.push({ label: "Search" });
-      items.push({ label: filters.searchStr.trim() });
-      return items;
-    }
-
-    // Normal category hierarchy
-    if (mainCategoryId) {
-      const mainSlug = `${(byId[mainCategoryId]?.title || "")
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, "")
-        .trim()
-        .replace(/\s+/g, "-")}-${mainCategoryId}`;
-      items.push({
-        label: getCategoryTitle(mainCategoryId),
-        link: `/products/${mainSlug}`,
-      });
-    }
-
-    if (subCategoryId) {
-      const subSlug = `${(byId[subCategoryId]?.title || "")
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, "")
-        .trim()
-        .replace(/\s+/g, "-")}-${subCategoryId}`;
-      items.push({
-        label: getCategoryTitle(subCategoryId),
-        link: `/products/${(items[1]?.link || "").replace("/products/", "")}/${subSlug}`,
-      });
-    }
-
-    if (listSubCatId) {
-      const leafSlug = `${(byId[listSubCatId]?.title || "")
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, "")
-        .trim()
-        .replace(/\s+/g, "-")}-${listSubCatId}`;
-      items.push({
-        label: getCategoryTitle(listSubCatId),
-        link: `/products/${(items[1]?.link || "").replace("/products/", "")}/${(items[2]?.link || "").replace("/products/", "")}/${leafSlug}`,
-      });
-    }
-
+  // Search mode
+  if (filters.searchStr && filters.searchStr.trim() !== "") {
+    items.push({ label: "Search" });
+    items.push({ label: filters.searchStr.trim() });
     return items;
-  }, [filters.searchStr, byId, mainCategoryId, subCategoryId, listSubCatId]);
+  }
 
+  // Use current URL segments for *previous* parts (no ids),
+  // and add id only for the clicked segment.
+  // main, sub, leaf come from useParams()
+  if (mainCategoryId) {
+    const mainWithId = makeSlug(byId[mainCategoryId]?.title || "", mainCategoryId);
+    items.push({
+      label: getCategoryTitle(mainCategoryId),
+      link: `/products/${mainWithId}`, // Luxury → /products/luxury-000
+    });
+  }
+
+  if (subCategoryId) {
+    const subWithId = makeSlug(byId[subCategoryId]?.title || "", subCategoryId);
+    const mainSegment = main || toSlug(byId[mainCategoryId]?.title || "");
+    items.push({
+      label: getCategoryTitle(subCategoryId),
+      link: `/products/${mainSegment}/${subWithId}`, // Home Office → /products/luxury/home-office-009
+    });
+  }
+
+  if (listSubCatId) {
+    // Leaf: NO LINK on category page
+    items.push({
+      label: getCategoryTitle(listSubCatId),
+      // no link here: Office Chairs → plain text (current page)
+    });
+  }
+
+  return items;
+  // include `main` so changes in URL segment reflect correctly
+}, [filters.searchStr, byId, mainCategoryId, subCategoryId, listSubCatId, main]);
 
   useEffect(() => {
     setProducts([]);

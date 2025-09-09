@@ -79,7 +79,7 @@ const MegaMenuColumn = React.memo(({ parent, children, groupedCategories }) => (
               <div className="col-md-3 col-lg-2 col-6" key={child.id}>
                 <h3>
                   <Link
-                    to={`/products/${slugify(parent.title)}/${slugify(child.title)}-${child.id}`}
+                    to={`/products${child.slug}`}
                     state={baseFilters}
                     className="subcategory-link"
                     onClick={() => saveProductsFilters(baseFilters)}
@@ -94,7 +94,7 @@ const MegaMenuColumn = React.memo(({ parent, children, groupedCategories }) => (
                     return (
                       <Link
                         key={sub.id}
-                        to={`/products/${slugify(parent.title)}/${slugify(child.title)}/${slugify(sub.title)}-${sub.id}`}
+                        to={`/products${sub.slug}`}
                         state={subFilters}
                         className="dropdown-item"
                         onClick={() => saveProductsFilters(subFilters)}

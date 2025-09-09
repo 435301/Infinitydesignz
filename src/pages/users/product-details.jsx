@@ -59,32 +59,42 @@ export default function ProductDetailPage() {
     return result;
   }, []);
 
-  const makeSlug = (title, id) =>
-    `${title?.toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, "")
-      .trim()
-      .replace(/\s+/g, "-")}-${id}`;
+const toSlug = (title = "") =>
+  String(title)
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
+
+const makeSlug = (title, id) => `${toSlug(title)}-${id}`;
+
+
 
   // Memoize breadcrumb items
-  const breadcrumbItems = useMemo(() => {
-    if (!product) return [{ label: "Home", link: "/" }];
-    const hierarchy = getCategoryHierarchy(product.category?.id, categories);
-    const crumbs = [{ label: "Home", link: "/" }];
-    let pathSegments = [];
-    hierarchy.forEach((cat) => {
-      const slug = makeSlug(cat.title, cat.id);
-      pathSegments.push(slug);
-      crumbs.push({
-        label: cat.title,
-        link: `/products/${pathSegments.join("/")}`,
-      });
+const breadcrumbItems = useMemo(() => {
+  if (!product) return [{ label: "Home", link: "/" }];
+  const hierarchy = getCategoryHierarchy(product.category?.id, categories);
+  const crumbs = [{ label: "Home", link: "/" }];
+
+  // For each category index, build a link where:
+  // - all previous segments use toSlug(title)
+  // - the current segment uses makeSlug(title, id)
+  hierarchy.forEach((cat, idx) => {
+    const segments = hierarchy
+      .map((c, k) => (k < idx ? toSlug(c.title) : k === idx ? makeSlug(c.title, c.id) : null))
+      .filter(Boolean);
+
+    crumbs.push({
+      label: cat.title,
+      link: `/products/${segments.join("/")}`,
     });
+  });
 
-    // finally the product itself (no link)
-    crumbs.push({ label: product.title });
+  crumbs.push({ label: product.title });
+  return crumbs;
+}, [product, categories, getCategoryHierarchy]);
 
-    return crumbs;
-  }, [product, categories, getCategoryHierarchy]);
+
 
   useEffect(() => {
     dispatch(fetchUserProductDetailsById(productId, variantIdFromURL));

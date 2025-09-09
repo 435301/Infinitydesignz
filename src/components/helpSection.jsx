@@ -17,20 +17,11 @@ const HelpSection = ({ title }) => {
     dispatch(fetchNeedHelpItems());
   }, [dispatch]);
 
-    const makeSlug = (str) =>
-  str.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
 
 const handleRedirect = async (item) => {
-  let parentSlug = "category";
-  
-  if (item.parentId) {
-    const res = await fetch(`${BASE_URL}/categories/${item.parentId}`);
-    const parent = await res.json();
-    parentSlug = makeSlug(parent.title);
-  }
-
-  const childSlug = `${makeSlug(item.title)}-${item.id}`;
-  navigate(`/products/main/${parentSlug}/${childSlug}`);
+ 
+  navigate(`/products${item.slug}`);
 };
 
     if (loading) return <p>Loading help items...</p>;
