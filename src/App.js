@@ -83,6 +83,7 @@ import AdminRoute from './components/adminRoute.jsx';
 import OrderDetailsPage from './components/orderDetails.jsx';
 import ContactPage from './pages/users/ContactPage.jsx';
 import ShopNow from './pages/admin/shopNow.jsx';
+import ScrollToTop from './includes/scrollToTop.jsx';
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
     <div className="content">{children}</div>
@@ -111,6 +112,7 @@ function App() {
     <BrowserRouter>
       <div className="App">
         <ToastContainer />
+         <ScrollToTop />
         <Routes>
           <Route path='/' element={<HomeBannerSection />} />
           <Route path='/shop' element={<ProductTopBar />} />

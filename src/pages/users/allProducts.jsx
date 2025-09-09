@@ -312,7 +312,7 @@ const ProductsPage = () => {
   return (
     <>
       <Header />
-      <section className="bg-light py-3">
+      <section className="bg-light py-3 breadcrumb-all" style={{backgroundColor:"#f4f4f4"}}>
         <div className="container shop">
           <div className="row">
             <div className="col-lg-12">
@@ -337,11 +337,11 @@ const ProductsPage = () => {
 
       <section className="terms-of-service">
         <div className="container">
-          <h2>Products</h2>
+          {/* <h2>Products</h2> */}
 
           {subCategoryId && (
-            <div className="mb-3">
-              <h5>
+            <div className="mb-4 mt-4">
+              <h5 className="product-title">
                 {listSubCatId
                   ? getCategoryTitle(listSubCatId)
                   : getCategoryTitle(subCategoryId)}{" "}
@@ -368,7 +368,7 @@ const ProductsPage = () => {
                     Object.entries(groupByListSubCategory(products)).map(
                       ([listSubCatTitle, subProducts]) => (
                         <div key={listSubCatTitle} className="mb-5">
-                          <h4 className="mb-3">{listSubCatTitle}</h4>
+                          <h6 className="mb-3 product-title">{listSubCatTitle}</h6>
                           <div className="row row-cols-1 row-cols-md-4 g-4">
                             {subProducts.map((product) => (
                               <ProductCard
@@ -382,9 +382,10 @@ const ProductsPage = () => {
                       )
                     )
                   ) : (
-                    <div className="row row-cols-1 row-cols-md-4 g-4">
+                    <div className="row row-cols-1 row-cols-md-4">
                       {products.map((product) => (
                         <ProductCard
+                        size="medium"
                           key={`${product.id}-${product.variantId || "base"}`}
                           product={product}
                           variant={product._variant}
@@ -393,7 +394,7 @@ const ProductsPage = () => {
                     </div>
                   )
                 ) : (
-                  <p>No products found for this category.</p>
+                  <p className="text-center ">No products found for this category.</p>
                 )}
               </div>
             </div>

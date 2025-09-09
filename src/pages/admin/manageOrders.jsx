@@ -7,14 +7,14 @@ import '../../css/admin/icofont.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAdminOrders } from '../../redux/actions/orderAction';
 import { useNavigate } from 'react-router-dom';
-
+import PaginationComponent from '../../includes/pagination';
 
 const ManageOrders = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const { adminOrder: orders, loading } = useSelector((state) => state.ordersState);
-  console.log('orders', orders);
+  const { adminOrder: orders, loading, pagination = {} } = useSelector((state) => state.ordersState);
+  console.log('orders', pagination);
   const [filters, setFilters] = useState({
     orderId: '',
     dateFrom: '',
@@ -25,6 +25,7 @@ const ManageOrders = () => {
     page: 1,
     pageSize: 10,
   });
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [showModal, setShowModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -78,13 +79,27 @@ const ManageOrders = () => {
     };
     setFilters(resetFilters);
     dispatch(fetchAdminOrders(resetFilters));
-  }
+  };
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= pagination.totalPages) {
+      setCurrentPage(pageNumber);
+      const newFilters = {
+        ...filters,
+        page: pageNumber,
+      };
+      setFilters(newFilters);
+      dispatch(fetchAdminOrders(newFilters));
+    }
+  };
+
+
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
         <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
         <aside className="main-sidebar hidden-print">
-          <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)}/>
+          <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
         </aside>
 
         <div className="content-wrapper mb-4" style={{ marginLeft: isSidebarCollapsed ? '60px' : '272px', padding: '20px', flex: 1, transition: 'margin-left 0.3s ease', }}>
@@ -132,7 +147,7 @@ const ManageOrders = () => {
             <div className="card">
               <div className="card-block">
                 <div className="row mb-2">
-                 
+
                 </div>
 
                 <div className="table-responsive">
@@ -155,11 +170,11 @@ const ManageOrders = () => {
                           <tr key={index}>
                             <td>{order.orderId || order.orderNo}</td>
                             <td>{order.totalQuantity || order.qty}</td>
-                           
-                            <td>{order.amt ||''}</td>
-                            <td>{order.additonlCharges ||'100'}</td>
-                            <td>{order.price ||''}</td>
-                             <td>
+
+                            <td>{order.amt || ''}</td>
+                            <td>{order.additonlCharges || '100'}</td>
+                            <td>{order.price || ''}</td>
+                            <td>
                               {order.orderDate || order.date
                                 ? new Date(order.orderDate || order.date).toLocaleDateString('en-GB')
                                 : ''}
@@ -190,10 +205,13 @@ const ManageOrders = () => {
 
               </div>
             </div>
-
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={pagination.totalPages || 1}
+              onPageChange={handlePageChange}
+            />
           </div>
         </div>
-
       </div>
     </div>
   );

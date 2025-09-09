@@ -164,7 +164,7 @@ const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
       )}
       <aside className="main-sidebar sidebar-scrollbar" style={asideStyle()}>
         <section style={{ height: '100%' }}>
-          <ul className="sidebar-menu mb-4" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          <ul className="sidebar-menu mb-4" style={{ listStyle: 'none', paddingRight: 0, margin: "15px -5px 12px 18px"}}>
             <li>
               <NavLink
                 to="/admin/dashboard"
@@ -395,7 +395,7 @@ const asideStyle = () => ({
   background: 'rgb(13 167 158)',
   overflowY: 'auto',
   zIndex: 900,
-  left: 0,
+  left: "0px",
 });
 
 const navLinkStyle = (isCollapsed, clickable = false) => ({

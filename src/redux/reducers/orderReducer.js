@@ -72,6 +72,7 @@ const orderReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         orderById: action.payload,
+        pagination: action.payload.pagination,
       };
     case FETCH_ORDER_BY_ID_FAILURE:
       return {

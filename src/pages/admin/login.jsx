@@ -17,7 +17,7 @@ const LoginPage = () => {
   };
 
   return (
-    <section className="login p-fixed d-flex bg-primary common-img-bg">
+    <section className="login p-fixed d-flex common-img-bg">
       <div className="container-fluid">
         <div className="row">
           <div className="col-sm-12">
@@ -75,7 +75,7 @@ const LoginPage = () => {
                   <div className="col-12 text-danger text-center mt-2">{error}</div>
                 )}
                 <div className="col-xs-12 text-center mt-4">
-                  <button type="submit" className="btn btn-primary text-center m-b-20" disabled={loading}>
+                  <button type="submit" className="btn text-center m-b-20 common-img-bg text-white" disabled={loading}>
                     {loading ? 'Logging in...' : 'LOGIN'}
                   </button>
                 </div>

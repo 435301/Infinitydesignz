@@ -22,6 +22,8 @@ import { addToWishlist, deleteWishlistItem, fetchWishlist } from "../../redux/ac
 import { toast } from "react-toastify";
 import OtpLoginModal from "../../components/otpLoginModal";
 import { setBuyNow } from "../../redux/actions/buyNowAction";
+import { Row } from "react-bootstrap";
+import { Accordion, Card } from "react-bootstrap";
 
 export default function ProductDetailPage() {
   const dispatch = useDispatch();
@@ -44,6 +46,7 @@ export default function ProductDetailPage() {
   const [showLogin, setShowLogin] = useState(false);
   const [postLoginAction, setPostLoginAction] = useState(null);
   const [checked, setChecked] = useState(false);
+  const [showFeatures, setShowFeatures] = useState(false);
 
   // Memoize category hierarchy to avoid recalculation
   const getCategoryHierarchy = useCallback((categoryId, allCategories) => {
@@ -350,14 +353,14 @@ export default function ProductDetailPage() {
     <>
       <Header />
       <section className="product-details-page">
-        <section className="bg-light py-3">
+        <section className=" py-3 breadcrumb-section">
           <div className="container">
             <div className="row">
               <div className="col-lg-12 product-span">
                 {breadcrumbItems.map((item, index) => (
                   <span key={index}>
                     {item.link ? (
-                      <Link to={item.link} className="text-dark text-decoration-none">{item.label}</Link>
+                      <Link to={item.link} className=" breadcrumb-hover" style={{ textDecoration: "none", color: "#333" }}>{item.label}</Link>
                     ) : (
                       <span>{item.label}</span>
                     )}
@@ -446,7 +449,7 @@ export default function ProductDetailPage() {
 
                 <p className="tax-info">Inclusive of all taxes</p>
               </div>
-              <div className="dropdown-container mb-3">
+              <div className="dropdown-container ">
                 <div className="row">
                   {/* Size Dropdown */}
                   <div className="col-md-6 mb-2">
@@ -638,24 +641,62 @@ export default function ProductDetailPage() {
                   </div>
                 </div>
 
-                <div className="view-more">
-                  <a href="#">View More Details</a>
+                <div>
+                  <div className="view-more">
+                    <a
+                      href="#"
+                      className="text-decoration-none"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowFeatures(!showFeatures);
+                      }}
+                    >
+                      {showFeatures ? "Hide Details" : "View More Details"}
+                    </a>
+                  </div>
+
+                  {showFeatures && (
+                    <div className="product-details mt-3">
+                      <h5>Product Features</h5>
+                      {product?.featureSets?.length > 0 ? (
+                        <Accordion defaultActiveKey="0" className="mb-3 custom-accordion">
+                          {product.featureSets.map((set, idx) => (
+                            <Accordion.Item eventKey={idx.toString()} key={set.setId}>
+                              <Accordion.Header>{set.setTitle}</Accordion.Header>
+                              <Accordion.Body>
+                                <ul className="list-unstyled mb-0">
+                                  {set.rows.map((r) => (
+                                    <li key={r.listId} className="mb-1">
+                                      <strong>{r.label}:</strong> {r.value ?? "-"}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </Accordion.Body>
+                            </Accordion.Item>
+                          ))}
+                        </Accordion>
+                      ) : (
+                        <p className="text-muted">No features available</p>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <OtpLoginModal
                   show={showLogin}
                   onClose={() => {
                     setShowLogin(false);
-                    setPostLoginAction(null); // Clear action after closing
+                    setPostLoginAction(null);
                   }}
                   onLoginSuccess={async () => {
                     if (postLoginAction) {
-                      await postLoginAction(); // Execute the stored action
+                      await postLoginAction();
                     }
                     setShowLogin(false);
-                    setPostLoginAction(null); // Clear action after execution
+                    setPostLoginAction(null);
                   }}
                 />
               </div>
+
             </div>
           </div>
         </div>

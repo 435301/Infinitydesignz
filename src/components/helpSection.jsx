@@ -37,7 +37,7 @@ const handleRedirect = async (item) => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <section className="help-section">
+    <section className="help-section pb-5">
       <div className="container">
         <h2 className="help-title text-start">{title}</h2>
         <div className="help-grid">

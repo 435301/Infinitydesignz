@@ -109,6 +109,7 @@
     appearance: none;
     border-radius: 5px;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    height: 37px !important;
 }
 
 .suggestion-item:hover {
@@ -126,4 +127,12 @@
     box-shadow: none;
     /* Remove any Bootstrap focus shadow */
     border-color: #009688;
+}
+
+.search-btn-img{
+    height: 25px;
+}
+
+.section-index{
+    background-color:#f4f4f4;
 }

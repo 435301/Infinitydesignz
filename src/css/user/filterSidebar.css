@@ -91,3 +91,9 @@
   border-radius: 20px;
   font-size: 14px;
 }
+
+.checkbox-label.checked-label {
+  font-weight: 600;
+  color: #000000 !important; 
+  font-size: 14px;
+}

@@ -1,14 +1,41 @@
 .carousel-scroll-wrapper {
   display: flex;
   overflow-x: auto;
-  gap: 22px;
+  gap: 7px;
   scroll-behavior: smooth;
-  padding-bottom: 10px;
+}
+
+.carousel-wrapper .carousel-item img {
+  max-height: 100%;
+  width: auto;
+  object-fit: cover;
+  height: 270px;
+  border-radius: 10px;
+
+}
+
+.slide .card {
+  border: none !important;
+}
+
+.carousel-controls .btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: #ddd; /* grey background like your image */
+  color: #333;
+  font-size: 14px;
+}
+
+.carousel-controls .btn:hover {
+  background: #bbb;
 }
 
 .sale-item {
   min-width: 250px;
-  /* flex: 0 0 auto; */
   border-radius: 8px;
   overflow: hidden;
 }

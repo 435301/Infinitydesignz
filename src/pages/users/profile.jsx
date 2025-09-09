@@ -86,7 +86,7 @@ export default function ProfilePage() {
     <>
       <Header />
       <div>
-        <section className="bg-light py-3">
+        <section className="py-3">
           <div className="container shop">
             <div className="row">
               <div className="col-lg-12">

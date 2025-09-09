@@ -119,7 +119,7 @@ export default function RelatedProducts({ products = [] }) {
                     src={imageUrl}
                     className="card-img-top"
                     alt={item.title}
-                    style={{ height: "220px", objectFit: "cover" }}
+                    style={{ height: "250px", objectFit: "cover" }}
                   />
                 ) : (
                   <div

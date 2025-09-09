@@ -9,7 +9,12 @@ import OtpLoginModal from "./otpLoginModal";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import "./productcard.css";
 
-const ProductCard = ({ product, variant = null }) => {
+const ProductCard = ({ product, variant = null ,className ='',size="medium"}) => {
+  const sizeClasses = {
+    small: "col-lg-3 col-4 p-1 m-1",
+    medium: "col-lg-4 col-6 p-2",
+    large: "col-lg-3 col-6 p-3",
+  };
   const dispatch = useDispatch();
   const [showLogin, setShowLogin] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
@@ -142,7 +147,7 @@ const ProductCard = ({ product, variant = null }) => {
 
   return (
     <>
-      <div className="col-lg-4 col-6 p-2">
+      <div className={sizeClasses[size]}>
         <Link
           to={
             variant
@@ -158,7 +163,7 @@ const ProductCard = ({ product, variant = null }) => {
               </div>
             )}
 
-            <div className="wishlist-container">
+            <div className="wishlist-container border-0">
               <div className="" onClick={handleWishlistClick}>
                 {isWishlisted ? (
                   <FaHeart

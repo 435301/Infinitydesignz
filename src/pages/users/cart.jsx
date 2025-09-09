@@ -70,7 +70,7 @@ const CartItem = ({
 
   return (
     <div className="cart-page">
-      <div className="d-flex flex-column border-bottom flex-md-row gap-4  pt-3 pb-3">
+      <div className="d-flex flex-column border-bottom flex-md-row gap-4  pt-3 pb-2 px-3">
         <img
           src={imageUrl}
           alt="Product"
@@ -86,37 +86,39 @@ const CartItem = ({
           >
             {product.title || "Untitled Product"}
           </h4>
-          <p className="mb-1 product-info-p">{product.warranty || "No warranty info"}</p>
-          <div className="d-flex align-items-center mb-3 gap-4 w-100">
-            <div className="d-flex align-items-center">
-              <label className="me-2 fw-semibold">Size</label>
-              {(product.sizes || [product?.variant?.size || "N/A"]).map((size) => (
-                <input
-                  key={size}
-                  type="text"
-                  className="form-control w-100 me-2"
-                  value={size}
-                  readOnly
-                  disabled
-                />
-              ))}
+          {/* <p className="mb-1 product-info-p">{product.warranty || "No warranty info"}</p> */}
+          <div className="d-flex align-items-center mb-2 p-2">
+            {/* <div className="d-flex align-items-center"> */}
+            <label className="me-2 fw-semibold text-dark size-wishlist">Size</label>
+            {(product.sizes || [product?.variant?.size || "N/A"]).map((size) => (
+              <input
+                key={size}
+                type="text"
+                className="form-control w-30 me-2"
+                value={size}
+                readOnly
+              // disabled
+              />
+            ))}
+            {/* </div> */}
+            {/* <div className="d-flex align-items-center"> */}
+            <label className="me-2 fw-semibold text-dark size-wishlist">Qty</label>
+            <div className="qty-box d-flex align-items-center">
+              <button className="btn-qty" onClick={decrement}>-</button>
+              <input
+                type="text"
+                className="qty-input text-center"
+                value={quantity.toString().padStart(2, "0")}
+                readOnly
+              />
+              <button className="btn-qty" onClick={increment}>+</button>
             </div>
-            <div className="d-flex align-items-center">
-              <label className="me-2 fw-semibold">Qty</label>
-              <div className="qty-box">
-                <button className="btn-qty" onClick={decrement}>-</button>
-                <input
-                  type="text"
-                  className="qty-input"
-                  value={quantity.toString().padStart(2, "0")}
-                  readOnly
-                />
-                <button className="btn-qty" onClick={increment}>+</button>
-              </div>
-            </div>
+            {/* </div> */}
           </div>
           <div className="d-flex align-items-center gap-3 mb-3">
-            <h4 className="mb-0 price">₹{product.price || "₹0"}</h4>
+            <h4 className="mb-0 price">
+              ₹ {product.price ? Number(String(product.price).replace(/[^0-9.]/g, "")) : "0"}
+            </h4>
             <span className="strike-text">₹{product.mrp || "MRP: ₹.0"}</span>
           </div>
           <div className="d-flex gap-2 mb-3">
@@ -127,7 +129,7 @@ const CartItem = ({
               <i className="bi bi-calendar me-2"></i> Delivery by {product.delivery || "N/A"}
             </small>
           </div>
-          <div className="d-flex gap-3">
+          <div className="d-flex gap-3 mb-2">
             <button
               className="btn btn-outline-secondary btn-sm"
               onClick={() => onWishlistToggle(productId, variantId)}
@@ -447,10 +449,10 @@ const CartPage = () => {
   }, [isBuyNowMode, buyNow, loggedIn, userCartItems, guestCartItems]);
 
 
-const handleCheckout = () => {
-  dispatch({ type: "ALLOW_CHECKOUT" });
-  navigate("/checkout");
-};
+  const handleCheckout = () => {
+    dispatch({ type: "ALLOW_CHECKOUT" });
+    navigate("/checkout");
+  };
   const handleQuantityChange = (id, newQty, productId, variantId) => {
     if (isBuyNowMode) {
       const updateData = {
@@ -563,6 +565,16 @@ const handleCheckout = () => {
   return (
     <>
       <Header />
+      <section className="py-3" style={{ backgroundColor: "#f4f4f4" }}>
+        <div className="container shop">
+          <div className="row">
+            <div className="col-lg-12">
+              <a href=""><strong>My Cart</strong></a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div className="container py-4">
         {loading && <Loader />}
         <div className="row">

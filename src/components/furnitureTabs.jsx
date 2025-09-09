@@ -5,8 +5,10 @@ import '../css/user/bootstrap.min.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchHomeTabs } from '../redux/actions/homeCategoryAction';
 import BASE_URL from '../config/config';
+import { useNavigate } from 'react-router-dom';
 
 const FurnitureTabs = ({ homecategories = [] }) => {
+  const navigate = useNavigate();
   const homeTabs = homecategories.filter(cat => cat.showInHomeTabs);
   const [activeTab, setActiveTab] = useState(null);
 
@@ -27,6 +29,15 @@ const FurnitureTabs = ({ homecategories = [] }) => {
   }
 
   const currentTab = homeTabs.find(tab => tab.id === activeTab);
+
+  const handleRedirect = (child, parent) => {
+     const makeSlug = (title) =>
+    title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    const parentSlug = makeSlug(parent.title);
+    const childSlug = `${makeSlug(child.title)}-${child.id}`;
+    navigate(`/products/${parentSlug}/${childSlug}`);
+
+  };
 
   return (
     <section className="bg-lights">
@@ -61,7 +72,7 @@ const FurnitureTabs = ({ homecategories = [] }) => {
                     : null;
 
                   return (
-                    <div className="col-6 col-sm-4 col-md-3" key={child.id}>
+                    <div className="col-6 col-sm-4 col-md-3" key={child.id} onClick={() => handleRedirect(child, currentTab)}  style={{ cursor: "pointer" }}>
                       <div className="product-item text-center">
                         {imgSrc ? (
                           <img src={imgSrc} alt={child.title || 'N/A'} />

@@ -184,7 +184,7 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
                   checked={checked}
                   onChange={() => handleFilterChange(filterType, raw)}
                 />
-                {item.label}
+                 <span className="ms-2">{item.label}</span>
               </label>
             </div>
           );
@@ -199,7 +199,7 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
       <div className="filter-header px-3 pt-3">
         <h4 className="text-dark">Filter</h4>
         <a className="mb-3" onClick={clearFilters} style={{ cursor: "pointer" }}>
-          Clear Filters
+          Clear all
         </a>
       </div>
 
@@ -207,13 +207,14 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
       {facetData.sidebar?.length > 0 &&
         facetData.sidebar.map((group) => (
           <div key={group.id} className="filter-section">
-            <h5>{group.name}</h5>
+            {/* <h5>{group.name}</h5> */}
             {group.sets.map((set) => (
               <div key={set.id} className="filter-subgroup">
                 <h5>{set.title}</h5>
                 {set.lists.map((option) => (
                   <div key={option.id} className="filter-option">
-                    <label className="checkbox-label">
+                    <label className={`checkbox-label ${isChecked("filterListIds", option.id) ? "checked-label" : ""
+                      }`}>
                       <input
                         type="checkbox"
                         checked={isChecked("filterListIds", option.id)}
@@ -248,8 +249,8 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
                 <span
                   style={{
                     display: "inline-block",
-                    width: "16px",
-                    height: "16px",
+                    width: "12px",
+                    height: "12px",
                     backgroundColor: color.hex_code,
                     border: "1px solid #ccc",
                     marginRight: "6px",

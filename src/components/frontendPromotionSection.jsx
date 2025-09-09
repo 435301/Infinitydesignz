@@ -10,7 +10,7 @@ import ProductCard from "./productCard";
 
 // Deals UI (new)
 const DealsSection = ({ title, images }) => (
-    <div className="container py-5">
+    <div className="container">
         <h2 className="h2_heading text-start mb-3">{title}</h2>
         <div className="row g-3">
             {images.map((img, idx) => {
@@ -34,39 +34,6 @@ const DealsSection = ({ title, images }) => (
     </div>
 );
 
-const ProductPromotionGrid = ({ products }) => (
-    <div className="container Fabric pb-4">
-        <div className="row row-cols-1 row-cols-md-4 g-4">
-            {products.map((product) => {
-                const discount = Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100);
-                const mainImage = product.images?.find((img) => img.isMain)?.url || product.images?.[0]?.url;
-
-                return (
-                    <div key={product.id} className="col-lg-3 p-2">
-                        <div className="card h-100 position-relative">
-                            {discount > 0 && <div className="discount-badge">{discount}% off</div>}
-                            <img
-                                src={`${BASE_URL}/uploads/products/${mainImage}`}
-                                className="card-img-top"
-                                alt={product.title}
-                            />
-
-                            <div className="card-body">
-                                <h6 className="card-title">{product.title}</h6>
-                                <p className="card-text">
-                                    <strong>₹{product.sellingPrice.toLocaleString()}</strong>{" "}
-                                    <del>MRP ₹{product.mrp.toLocaleString()}</del>
-                                </p>
-
-                            </div>
-                        </div>
-                    </div>
-                );
-            })}
-        </div>
-    </div>
-);
-
 
 const FrontendPromotionsSection = () => {
     const dispatch = useDispatch();
@@ -82,7 +49,7 @@ const FrontendPromotionsSection = () => {
     //   if (!items?.length) return null;
 
     return (
-        <div className="container my-5">
+        <div className="container">
             {promotions.map((block) => {
                 switch (block.title.toLowerCase()) {
                     case "new arrivals":
@@ -104,12 +71,13 @@ const FrontendPromotionsSection = () => {
                                 />
                                 {block.productPromotionList?.length > 0 && (
                                     <div className="container Fabric pb-4">
-                                        <div className="row row-cols-1 row-cols-md-4  mt-4">
+                                        <div className="row row-cols-1 row-cols-md-4">
                                             {block.productPromotionList.map((product) => {
                                                 const mainImage = product.images?.find(img => img.isMain) || product.images?.[0];
                                                 const additionalImages = product.images?.filter(img => !img.isMain) || [];
                                                 return (
                                                     <ProductCard
+                                                        size="small"
                                                         key={product.id}
                                                         product={{
                                                             ...product,
@@ -122,8 +90,6 @@ const FrontendPromotionsSection = () => {
                                                     />
                                                 );
                                             }
-
-
                                             )}
                                         </div>
                                     </div>
@@ -151,6 +117,7 @@ const FrontendPromotionsSection = () => {
                                                 const additionalImages = product.images?.filter(img => !img.isMain) || [];
                                                 return (
                                                     <ProductCard
+                                                    size="small"
                                                         key={product.id}
                                                         product={{
                                                             ...product,
@@ -192,6 +159,7 @@ const FrontendPromotionsSection = () => {
                                                 const additionalImages = product.images?.filter(img => !img.isMain) || [];
                                                 return (
                                                     <ProductCard
+                                                    size="small"
                                                         key={product.id}
                                                         product={{
                                                             ...product,
@@ -210,18 +178,18 @@ const FrontendPromotionsSection = () => {
                             </div>
                         );
 
-                    case "offers":
-                        return (
-                            <SaleCarousel
-                                key={block.id}
-                                promotions={block.promotions.map((promo) => ({
-                                    id: promo.id,
-                                    image: `${BASE_URL}${promo.imageUrl}`,
-                                    title: promo.title,
-                                    link: `/category/${promo.categoryId}`,
-                                }))}
-                            />
-                        );
+                    // case "offers":
+                    //     return (
+                    //         <SaleCarousel
+                    //             key={block.id}
+                    //             promotions={block.promotions.map((promo) => ({
+                    //                 id: promo.id,
+                    //                 image: `${BASE_URL}${promo.imageUrl}`,
+                    //                 title: promo.title,
+                    //                 link: `/category/${promo.categoryId}`,
+                    //             }))}
+                    //         />
+                    //     );
 
                     default:
                         return null;

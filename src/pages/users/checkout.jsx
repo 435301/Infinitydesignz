@@ -28,7 +28,7 @@ const CheckoutPage = () => {
   const cart = useSelector((state) => state.cart);
   const reduxBuyNowPriceSummary = useSelector((state) => state.buyNow.priceSummary) || {};
   const reduxCartPriceSummary = useSelector((state) => state.cart.priceSummary) || {};
-  const canAccessCheckout = useSelector((state) => state.cart.canAccessCheckout);
+  // const canAccessCheckout = useSelector((state) => state.cart.canAccessCheckout);
 
   const buyNowItems = buyNow?.items || [];
   const isBuyNow = buyNowItems.length > 0;
@@ -117,11 +117,11 @@ const CheckoutPage = () => {
     }
   }, [buyNow, itemsFromCart]);
 
-  useEffect(() => {
-  if (!canAccessCheckout) {
-    navigate("/cart"); 
-  }
-}, [canAccessCheckout, navigate]);
+  //   useEffect(() => {
+  //   if (!canAccessCheckout) {
+  //     navigate("/cart"); 
+  //   }
+  // }, [canAccessCheckout, navigate]);
 
   const handlePaymentChange = useCallback((e) => {
     setPaymentMethod(e.target.value);
@@ -145,7 +145,7 @@ const CheckoutPage = () => {
       );
     } else {
       dispatch(
-        applyCoupon( promoCode)
+        applyCoupon(promoCode)
       );
     }
   };
@@ -179,7 +179,7 @@ const CheckoutPage = () => {
         </div>
       </section>
       <div className="main-wrapper">
-        <div className="container my-5">
+        <div className="container">
           <div className="row">
             {/* LEFT COLUMN */}
             <div className="col-lg-8">
@@ -203,11 +203,9 @@ const CheckoutPage = () => {
                         </span>
                       </div>
                       <p className="location-text">
-                        {addr.flatNumber}, {addr.buildingName}, {addr.addressLine1}, {addr.addressLine2}
+                        {addr.flatNumber}, {addr.buildingName}, {addr.addressLine1}, {addr.addressLine2} {addr.city}, {addr.state}, {addr.pincode}
                       </p>
-                      <p className="location-text">
-                        {addr.city}, {addr.state}, {addr.pincode}
-                      </p>
+
                       <p className="location-text">Phone: {addr.phone}</p>
                     </div>
                   </div>
@@ -238,8 +236,8 @@ const CheckoutPage = () => {
                         />
                         <div className="cart-item__info">
                           <p className="cart-item__title">{item.product.title}</p>
-                          <span>Brand: {item.product.brand}</span>
-                          <span>Qty: {item.quantity}</span>
+                          <span className="cart-item__desc">Brand: {item.product.brand}</span>
+                          <span className="cart-item__desc">Qty: {item.quantity}</span>
                           <span className="cart-item__cost">
                             ₹{(item.product.price * item.quantity).toLocaleString("en-IN")}
                           </span>
@@ -306,31 +304,32 @@ const CheckoutPage = () => {
                             .toLocaleString("en-IN")}
                         </strong>
                       </div>
+                    </div>
 
-                      <PlaceOrderButton
-                        mode={isBuyNow ? "buyNow" : "cart"}
-                        disabled={(!itemsFromCart.length && !buyNowItems.length) || !selectedAddressId}
-                        selectedAddressId={selectedAddressId}
-                        paymentMethod={paymentMethod}
-                        cartItems={itemsFromCart}
-                        buyNowProduct={buyNowItems[0]}
-                        priceSummary={priceSummary}
-                        appliedCoupon={coupon}
-                      />
+                    <PlaceOrderButton
+                      mode={isBuyNow ? "buyNow" : "cart"}
+                      disabled={(!itemsFromCart.length && !buyNowItems.length) || !selectedAddressId}
+                      selectedAddressId={selectedAddressId}
+                      paymentMethod={paymentMethod}
+                      cartItems={itemsFromCart}
+                      buyNowProduct={buyNowItems[0]}
+                      priceSummary={priceSummary}
+                      appliedCoupon={coupon}
+                      className="main-action w-100 mt-3"
+                      fdprocessedid="h7koaf"
+                    />
 
-
-                      <div className="trust-section mt-2">
-                        <i className="fas fa-lock me-2"></i>
-                        Secure Checkout Powered by Infinity Designz
-                        <strong>
-                          ₹{(priceSummary.finalPayable - (coupon?.discount || 0))
-                            .toLocaleString("en-IN")}
-                        </strong>
-                      </div>
+                    <div className="trust-section mt-2">
+                      <i className="fas fa-lock me-2"></i>
+                      Secure Checkout Powered by Infinity Designz
                     </div>
 
                   </>
                 )}
+                {displayItems.length === 0 && (
+                  <p>Add items in the cart to checkout</p>
+                )}
+
               </div>
             </div>
 

@@ -109,6 +109,8 @@ export const fetchOrderById = (orderId) => async (dispatch) => {
     dispatch({
       type: FETCH_ORDER_BY_ID_SUCCESS,
       payload: response.data,
+      payload: response.data,
+       pagination: response.data.pagination,
     });
   } catch (error) {
     dispatch({

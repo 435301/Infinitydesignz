@@ -74,7 +74,7 @@ export default function AddressBook() {
               <div className="address-book-container">
                 <div className="address-book-header p-3">
                   <h2>Address book</h2>
-                  <button className="btn add-address-btn" onClick={toggleModal}>+ Add Address</button>
+                  <button className="add-address-btn" onClick={toggleModal}>+ Add Address</button>
                 </div>
                 {loading ? (
                   <tr>

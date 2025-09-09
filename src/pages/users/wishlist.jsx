@@ -133,7 +133,7 @@ export default function WishlistPage() {
   return (
     <>
       <Header wishlistCount={wishlistItems.length} />
-      <section className="bg-light py-3">
+      <section className="breadcrumb-all py-3" style={{ backgroundColor: "#f4f4f4 !important" }}>
         <div className="container shop">
           <div className="row">
             <div className="col-lg-12">
@@ -151,110 +151,116 @@ export default function WishlistPage() {
               <a href="/wishlist" className="active">Wishlist</a>
               <a href="/addressbook">Address book</a>
             </div>
-            <div className="col-md-7">
-              <div className="wishlist-header">
-                <h2 className="m-0">WISHLIST</h2>
-              </div>
-              {loading ? (
-                <tr>
-                  <td colSpan="5" className="text-center">
-                    <p>Loading...</p>
-                  </td>
-                </tr>
-              ) :(
-                wishlistItems.length > 0 ? (
-                  wishlistItems.map((item, index) => {
-                    const displayData = item.variantId && item.variant
-                      ? item.variant
-                      : (!item.variantId && item.productId && item.product ? item.product : null);
 
-                    if (!displayData) return null;
+            <div className="col-md-7 ">
+              <div class="col-md-12">
+                <div class="wishlist-container">
+                  <div className="wishlist-header">
+                    <h2 className="m-0">WISHLIST</h2>
+                  </div>
+                  {loading ? (
+                    <tr>
+                      <td colSpan="5" className="text-center">
+                        <p>Loading...</p>
+                      </td>
+                    </tr>
+                  ) : (
+                    wishlistItems.length > 0 ? (
+                      wishlistItems.map((item, index) => {
+                        const displayData = item.variantId && item.variant
+                          ? item.variant
+                          : (!item.variantId && item.productId && item.product ? item.product : null);
 
-                    const imageUrl = displayData.imageUrl
-                      ? (displayData.imageUrl.startsWith("http")
-                        ? displayData.imageUrl
-                        : `${BASE_URL}${displayData.imageUrl}`)
-                      : Sofa;
+                        if (!displayData) return null;
 
-                    const imageAlt = displayData.imageAlt || displayData.title || "Product Image";
-                    const title = displayData.title || "No Title";
-                    const price = displayData.price || 0;
-                    const mrp = displayData.mrp || 0;
-                    const size = displayData.size || "N/A";
-                    const key = `${item.productId}-${item.variantId || 'null'}`;
+                        const imageUrl = displayData.imageUrl
+                          ? (displayData.imageUrl.startsWith("http")
+                            ? displayData.imageUrl
+                            : `${BASE_URL}${displayData.imageUrl}`)
+                          : Sofa;
 
-                    return (
-                      <div key={item.id || index} className="wishlist-item border-between d-flex"  >
-                        <div className="col-3" onClick={() => handleProductClick(item.productId, item.variantId)} style={{ cursor: "pointer" }}>
-                          <img
-                            src={imageUrl}
-                            alt={imageAlt}
-                            className="wishlist-item-img img-fluid"
-                          />
-                        </div>
-                        <div className="details ms-3">
-                          <h5 style={{ cursor: "pointer" }} onClick={() => handleProductClick(item.productId, item.variantId)}>{title}</h5>
+                        const imageAlt = displayData.imageAlt || displayData.title || "Product Image";
+                        const title = displayData.title || "No Title";
+                        const price = displayData.price || 0;
+                        const mrp = displayData.mrp || 0;
+                        const size = displayData.size || "N/A";
+                        const key = `${item.productId}-${item.variantId || 'null'}`;
 
-                          <div className="d-flex align-items-center mb-3">
-                            <label className="me-2 fw-semibold">Size</label>
-                            {/* <select className="form-select w-auto me-4" value={displayData.size || "N/A"} disabled>
+                        return (
+                          <div key={item.id || index} className="wishlist-item border-between d-flex"  >
+                            <div className="col-3" onClick={() => handleProductClick(item.productId, item.variantId)} style={{ cursor: "pointer" }}>
+                              <img
+                                src={imageUrl}
+                                alt={imageAlt}
+                                className="wishlist-item-img img-fluid"
+                              />
+                            </div>
+                            <div className="details ms-3">
+                              <h5 style={{ cursor: "pointer" }} onClick={() => handleProductClick(item.productId, item.variantId)}>{title}</h5>
+
+                              <div className="d-flex align-items-center mb-3 pt-2">
+                                <label className="me-2  fw-semibold text-dark size-wishlist">Size</label>
+                                {/* <select className="form-select w-auto me-4" value={displayData.size || "N/A"} disabled>
   <option>{displayData.size || "N/A"}</option>
 </select> */}
-                            <input
-                              type="text"
-                              className="form-control w-auto me-2"
-                              value={displayData.size || "N/A"}
-                              readOnly
-                              disabled
-                            />
+                                <input
+                                  type="text"
+                                  className="form-control w-30 me-2"
+                                  value={displayData.size || "N/A"}
+                                  readOnly
+                                // disabled
+                                />
 
-                            <label className="me-2 fw-semibold">Qty</label>
-                            <div className="qty-box d-flex align-items-center">
-                              <button className="btn-qty" onClick={() => decrement(item)}>-</button>
-                              <input
-                                type="text"
-                                className="qty-input text-center"
-                                value={(quantities[key] || 1).toString().padStart(2, '0')}
-                                readOnly
-                              />
-                              <button className="btn-qty" onClick={() => increment(item)}>+</button>
+                                <label className="me-2 fw-semibold text-dark size-wishlist">Qty</label>
+                                <div className="qty-box d-flex align-items-center">
+                                  <button className="btn-qty" onClick={() => decrement(item)}>-</button>
+                                  <input
+                                    type="text"
+                                    className="qty-input text-center"
+                                    value={(quantities[key] || 1).toString().padStart(2, '0')}
+                                    readOnly
+                                  />
+                                  <button className="btn-qty" onClick={() => increment(item)}>+</button>
+                                </div>
+                              </div>
+
+                              <div className="price">
+                                <span className="currency">₹</span>{price}{" "}
+                                <small>MRP: <span className="currency">₹</span>{mrp}</small>
+                              </div>
+
+                              <div className="icons">
+                                <span>
+                                  <i className="bi bi-arrow-return-right icon-return"></i> Easy 14 days return & exchange
+                                </span>
+                                <span>
+                                  <i className="bi bi-truck icon-delivery"></i> Estimated delivery by 13 Aug
+                                </span>
+                              </div>
+
+                              <div className="actions mt-3">
+                                <button className="btn me-2" onClick={() => handleCart(item)}>
+                                  <i className="bi bi-cart"></i> Move to cart
+                                </button>
+                                <button
+                                  className="btn"
+                                  onClick={() => handleDelete(item.id)}
+                                >
+                                  <i className="bi bi-trash"></i> Delete
+                                </button>
+                              </div>
                             </div>
                           </div>
-
-                          <div className="price">
-                            <span className="currency">₹</span>{price}{" "}
-                            <small>MRP: <span className="currency">₹</span>{mrp}</small>
-                          </div>
-
-                          <div className="icons">
-                            <span>
-                              <i className="bi bi-arrow-return-right icon-return"></i> Easy 14 days return & exchange
-                            </span>
-                            <span>
-                              <i className="bi bi-truck icon-delivery"></i> Estimated delivery by 13 Aug
-                            </span>
-                          </div>
-
-                          <div className="actions mt-3">
-                            <button className="btn me-2" onClick={() => handleCart(item)}>
-                              <i className="bi bi-cart"></i> Move to cart
-                            </button>
-                            <button
-                              className="btn"
-                              onClick={() => handleDelete(item.id)}
-                            >
-                              <i className="bi bi-trash"></i> Delete
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <p className="text-center">Your wishlist is empty.</p>
-                )
-              )}
+                        );
+                      })
+                    ) : (
+                      <p className="text-center">Your wishlist is empty.</p>
+                    )
+                  )}
+                </div>
+              </div>
             </div>
+
             {/* Related Products Section */}
             <div className="col-md-3">
               <div className="ad-banner mb-4">
@@ -281,7 +287,7 @@ export default function WishlistPage() {
 
                       return (
                         <Carousel.Item key={product.id}>
-                          <ProductCard product={normalizedProduct} />
+                          <ProductCard product={normalizedProduct} size="medium" />
                         </Carousel.Item>
                       );
                     })}
@@ -289,7 +295,8 @@ export default function WishlistPage() {
                 </div>
 
 
-              </div></div>
+              </div>
+              </div>
             </div>
           </div>
         </div>

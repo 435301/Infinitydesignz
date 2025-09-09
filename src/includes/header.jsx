@@ -249,17 +249,17 @@ export default function Header() {
             </div>
 
             <div className="col-lg-4 Wishlist col-md-8 text-end d-flex justify-content-end align-items-center gap-4">
-              <a href="/wishlist" className="text-decoration-none text-dark">
+              <a href="/wishlist" className="text-decoration-none text-dark px-1">
                 <span className="position-relative">
                   <img src={Favourite} alt="wishlist" loading="lazy" />
                   {wishlistCount > 0 && <span className="badge badge-custom">{wishlistCount}</span>}
                 </span>
                 Wishlist
               </a>
-              <a href="/profile" className="text-decoration-none text-dark">
+              <a href="/profile" className="text-decoration-none text-dark ">
                 <img src={AccountBox} className="account-icon" alt="account" loading="lazy" />&nbsp; My Account
               </a>
-              <a href="/cart" className="text-decoration-none text-dark">
+              <a href="/cart" className="text-decoration-none text-dark ">
                 <span className="position-relative">
                   <img src={ShoppingCart} alt="cart" loading="lazy" />
                   {cartCount > 0 && <span className="badge badge-custom">{cartCount}</span>}
@@ -271,7 +271,7 @@ export default function Header() {
         </div>
       </div>
 
-      <div className="container-fluid px-5 py-2 cart wow fadeIn" data-wow-delay="0.1s">
+      <div className="container-fluid px-5  cart wow fadeIn" data-wow-delay="0.1s">
         <nav className="navbar navbar-expand-lg navbar-dark sticky-top py-lg-0 wow fadeIn" data-wow-delay="0.1s">
           <a href="#" className="navbar-brand ms-3 d-lg-none">MENU</a>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">

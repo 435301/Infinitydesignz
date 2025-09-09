@@ -1,11 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../../includes/header";
 import Footer from "../../includes/footer";
 import "../../css/user/order-success.css";  // new CSS file
 import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchOrderById } from "../../redux/actions/orderAction";
 
 export default function OrderSuccess() {
   const { id } = useParams();
+  const dispatch = useDispatch();
+
+  useEffect(()=>{
+    dispatch(fetchOrderById(id));
+  }, [dispatch]);
+
+  const {orderById} = useSelector((state)=> state.ordersState);
+   if (!orderById) return null;
+
+  const { orderNo, priceSummary } = orderById;
 
   const handleContinueShopping = () => {
     window.location.href = "/";
@@ -28,7 +40,8 @@ export default function OrderSuccess() {
 
               <div className="success-info">
                 <p>Thank you for your purchase! Your order has been successfully placed.</p>
-                <p>Order Number: #{id}</p>
+                <p>Order Number: {orderNo}</p>
+                <p>Order Total: ₹{priceSummary.finalPayable}</p>
                 <p>You’ll receive a confirmation email soon.</p>
               </div>
 
