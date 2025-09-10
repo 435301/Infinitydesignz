@@ -30,7 +30,7 @@ const BannerSlider = ({ sliders }) => {
               style={{
                 background: `url(${BASE_URL}${slider.image_url}) center center / cover no-repeat`,
                 minHeight: '445px',
-                borderRadius: '8px',
+                borderRadius: '10px',
               }}
             >
               <div

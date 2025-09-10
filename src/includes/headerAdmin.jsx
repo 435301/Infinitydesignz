@@ -82,6 +82,7 @@ const HeaderAdmin = ({ onToggleSidebar = () => { } }) => {
           cursor: pointer;
           color: #0da79e;
           transition: transform 0.3s ease;
+          margin:14px;
         }
         .sidebar-toggle svg {
           transition: transform 0.3s ease;
@@ -176,10 +177,10 @@ const HeaderAdmin = ({ onToggleSidebar = () => { } }) => {
 
           <ul className="nav-icons">
             <li className="d-none d-md-block">
-              <div className="search-bx">
+              {/* <div className="search-bx">
                 <input type="search" placeholder="Search" />
                 <BsSearch />
-              </div>
+              </div> */}
             </li>
           </ul>
 
