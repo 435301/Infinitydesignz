@@ -147,7 +147,7 @@ export default function HomeBannerSection() {
               id: promo.id,
               image: `${BASE_URL}${promo.imageUrl}`,
               title: promo.title,
-              link: `/category/${promo.categoryId}`,
+              link: promo.categorySlug ? `/products${promo.categorySlug}` : '',
             })) || []}
           />
         </Suspense>

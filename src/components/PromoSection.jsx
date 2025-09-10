@@ -18,7 +18,9 @@ const PromoSection = ({ heading, promos }) => {
             >
               <div className="promo-card">
                 <div className="promo-img-wrapper">
+                  <a href={promo.link}>
                   <img src={promo.image} alt={promo.alt} className="promo-img" />
+                  </a>
                 </div>
                 {/* <div className={`promo-overlay ${promo.overlayPosition}`}>
                   <div>

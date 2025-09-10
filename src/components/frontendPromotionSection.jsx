@@ -15,17 +15,19 @@ const DealsSection = ({ title, images }) => (
         <div className="row g-3">
             {images.map((img, idx) => {
                 if (idx === 0) {
-                    // First image -> full width
                     return (
                         <div key={idx} className="col-12">
-                            <img src={img.src} alt={img.alt} className="w-100 rounded" />
+                            <a href={img.link}>
+                                <img src={img.src} alt={img.alt} className="w-100 rounded" />
+                            </a>
                         </div>
                     );
                 } else {
-                    // Remaining -> half width
                     return (
                         <div key={idx} className="col-12 col-md-6 deals-image-wrapper" >
-                            <img src={img.src} alt={img.alt} className="w-100 rounded deals-image" />
+                            <a href={img.link}>
+                                <img src={img.src} alt={img.alt} className="w-100 rounded deals-image" />
+                            </a>
                         </div>
                     );
                 }
@@ -65,7 +67,7 @@ const FrontendPromotionsSection = () => {
                                         fullWidth: index === 0,
                                         text: promo.title,
                                         buttonText: "Shop Now",
-                                        link: `/category/${promo.categoryId}`,
+                                        link: promo.categorySlug ? `/products${promo.categorySlug}` : '',
                                         bgColor: "#fff",
                                     }))}
                                 />
@@ -107,6 +109,7 @@ const FrontendPromotionsSection = () => {
                                     images={block.promotions.map((promo) => ({
                                         src: `${BASE_URL}${promo.imageUrl}`,
                                         alt: promo.title,
+                                        link: promo.categorySlug ? `/products${promo.categorySlug}` : '',
                                     }))}
                                 />
                                 {block.productPromotionList?.length > 0 && (
@@ -117,7 +120,7 @@ const FrontendPromotionsSection = () => {
                                                 const additionalImages = product.images?.filter(img => !img.isMain) || [];
                                                 return (
                                                     <ProductCard
-                                                    size="small"
+                                                        size="small"
                                                         key={product.id}
                                                         product={{
                                                             ...product,
@@ -144,11 +147,9 @@ const FrontendPromotionsSection = () => {
                                     heading={block.title}
                                     promos={block.promotions.map((promo) => ({
                                         image: `${BASE_URL}${promo.imageUrl}`,
-
                                         overlayPosition: "promo-overlay-left",
-
                                         text: `${promo.minPrice} - ${promo.maxPrice}`,
-                                        link: `/category/${promo.categoryId}`,
+                                        link: promo.categorySlug ? `/products${promo.categorySlug}` : '',
                                     }))}
                                 />
                                 {block.productPromotionList?.length > 0 && (
@@ -159,7 +160,7 @@ const FrontendPromotionsSection = () => {
                                                 const additionalImages = product.images?.filter(img => !img.isMain) || [];
                                                 return (
                                                     <ProductCard
-                                                    size="small"
+                                                        size="small"
                                                         key={product.id}
                                                         product={{
                                                             ...product,

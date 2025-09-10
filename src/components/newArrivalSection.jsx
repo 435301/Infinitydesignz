@@ -15,7 +15,10 @@ const NewArrivalsSection = ({ title = "New Arrivals", cards = [] }) => {
               key={`new-card-${index}`}
             >
               {card.type === "imageOnly" ? (
-                <img src={card.image} alt={card.alt} className="w-100" />
+                <a href={card.link} >
+                  <img src={card.image} alt={card.alt} className="w-100" />
+                </a>
+
               ) : (
                 <div className="card-wrapper position-relative overflow-hidden rounded-3 mb-3">
                   <img src={card.image} className="img-fluid" alt={card.alt} />

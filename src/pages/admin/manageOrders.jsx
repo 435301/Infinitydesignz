@@ -156,7 +156,7 @@ const ManageOrders = () => {
                       <tr>
                         <th>Order No</th>
                         <th>Qty</th>
-                        <th>Price</th>
+                        {/* <th>Price</th> */}
                         <th>Additonal charges</th>
                         <th>Total Amount</th>
                         <th>Order Date</th>
@@ -171,7 +171,7 @@ const ManageOrders = () => {
                             <td>{order.orderId || order.orderNo}</td>
                             <td>{order.totalQuantity || order.qty}</td>
 
-                            <td>{order.amt || ''}</td>
+                            {/* <td>{order.amt || ''}</td> */}
                             <td>{order.additonlCharges || '100'}</td>
                             <td>{order.price || ''}</td>
                             <td>
