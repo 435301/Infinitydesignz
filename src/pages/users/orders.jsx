@@ -13,8 +13,8 @@ import { cancelOrderItem, fetchOrders } from "../../redux/actions/orderAction";
 import { useDispatch, useSelector } from "react-redux";
 import { getToken } from "../../utils/auth";
 import CancelOrderModal from "../../modals/cancelOrderModal";
-
-
+import { Carousel } from "react-bootstrap";
+import ProductCard from "../../components/productCard";
 
 const MyOrdersPage = () => {
   const dispatch = useDispatch();
@@ -23,7 +23,8 @@ const MyOrdersPage = () => {
   const [latestOrderDetails, setLatestOrderDetails] = useState(null);
   const [cancelModalShow, setCancelModalShow] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-
+  const relatedProducts = useSelector((state) => state.ordersState.relatedProducts);
+  console.log('relatedProducts', relatedProducts);
 
   useEffect(() => {
     dispatch(fetchOrders());
@@ -260,10 +261,38 @@ const MyOrdersPage = () => {
               <div className="ad-banner">
                 <img src={AdBanner} alt="Special Sale" />
               </div>
-              {/* <div className="related-products">
-                <h4>Related Products</h4>
-                <RelatedProductsCarousel products={sampleProducts} />
-              </div> */}
+
+                {/* Related products section  */}
+                <div className="col-lg-12">  <div className="related-products py-4">
+                  <h4>Related Products</h4>
+                  <div className="carousel-wrapper">
+                    <Carousel controls indicators={false}>
+                      {(relatedProducts || []).map((product) => {
+                        const normalizedProduct = {
+                          ...product,
+                          images: {
+                            main: {
+                              url: product.imageUrl?.startsWith("http")
+                                ? product.imageUrl.replace(`${BASE_URL}/uploads/products/`, "")
+                                : product.imageUrl.replace("/uploads/products/", ""),
+                            },
+                          },
+                          mrp: product.mrp,
+                          sellingPrice: product.price,
+                        };
+
+                        return (
+                          <Carousel.Item key={product.id}>
+                            <ProductCard product={normalizedProduct} size="medium" />
+                          </Carousel.Item>
+                        );
+                      })}
+                    </Carousel>
+                  </div>
+
+
+                </div>
+                </div>
             </aside>
           </div>
           <CancelOrderModal
