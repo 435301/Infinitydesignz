@@ -84,6 +84,7 @@ import OrderDetailsPage from './components/orderDetails.jsx';
 import ContactPage from './pages/users/ContactPage.jsx';
 import ShopNow from './pages/admin/shopNow.jsx';
 import ScrollToTop from './includes/scrollToTop.jsx';
+import NotFound from './includes/notFound.jsx';
 const AdminLayout = ({ children }) => (
   <div className="admin-layout d-flex">
     <div className="content">{children}</div>
@@ -114,6 +115,7 @@ function App() {
         <ToastContainer />
          <ScrollToTop />
         <Routes>
+           <Route path="*" element={<NotFound />} />
           <Route path='/' element={<HomeBannerSection />} />
           <Route path='/shop' element={<ProductTopBar />} />
           <Route path='/product-details/:productId' element={<ProductDetailPage />}></Route>
@@ -189,6 +191,7 @@ function App() {
         </Routes>
         <Routes>
           <Route element={<AdminLayout />}>
+           <Route path="*" element={<NotFound />} />
             <Route path="/admin/dashboard" element={<Dashboard />} />
           </Route>
         </Routes>
