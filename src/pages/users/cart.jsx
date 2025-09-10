@@ -87,14 +87,14 @@ const CartItem = ({
             {product.title || "Untitled Product"}
           </h4>
           {/* <p className="mb-1 product-info-p">{product.warranty || "No warranty info"}</p> */}
-          <div className="d-flex align-items-center mb-2 p-2">
+          <div className="d-flex align-items-center mb-2 pt-1">
             {/* <div className="d-flex align-items-center"> */}
             <label className="me-2 fw-semibold text-dark size-wishlist">Size</label>
             {(product.sizes || [product?.variant?.size || "N/A"]).map((size) => (
               <input
                 key={size}
                 type="text"
-                className="form-control w-30 me-2"
+                className="form-control w-30 me-4 cart-size-width"
                 value={size}
                 readOnly
               // disabled
@@ -115,11 +115,11 @@ const CartItem = ({
             </div>
             {/* </div> */}
           </div>
-          <div className="d-flex align-items-center gap-3 mb-3">
+          <div className="d-flex align-items-center gap-3 mb-3 pt-2">
             <h4 className="mb-0 price">
               ₹ {product.price ? Number(String(product.price).replace(/[^0-9.]/g, "")) : "0"}
             </h4>
-            <span className="strike-text">₹{product.mrp || "MRP: ₹.0"}</span>
+            <span className="strike-text">MRP:₹{product.mrp || "MRP: ₹.0"}</span>
           </div>
           <div className="d-flex gap-2 mb-3">
             <small>

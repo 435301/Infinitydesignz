@@ -10,7 +10,7 @@ export default function SaleCarousel({ promotions = [] }) {
   if (!promotions.length) return null; 
 
   return (
-    <div className="container my-5">
+    <div className="container my-4">
       <div className="carousel-scroll-wrapper">
         {promotions.map((promo) => (
           <div className="sale-item" key={promo.id}>

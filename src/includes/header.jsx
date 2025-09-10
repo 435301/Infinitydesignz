@@ -250,7 +250,7 @@ export default function Header() {
 
             <div className="col-lg-4 Wishlist col-md-8 text-end d-flex justify-content-end align-items-center gap-4">
               <a href="/wishlist" className="text-decoration-none text-dark px-1">
-                <span className="position-relative">
+                <span className="position-relative mx-1">
                   <img src={Favourite} alt="wishlist" loading="lazy" />
                   {wishlistCount > 0 && <span className="badge badge-custom">{wishlistCount}</span>}
                 </span>
@@ -260,7 +260,7 @@ export default function Header() {
                 <img src={AccountBox} className="account-icon" alt="account" loading="lazy" />&nbsp; My Account
               </a>
               <a href="/cart" className="text-decoration-none text-dark ">
-                <span className="position-relative">
+                <span className="position-relative mx-1">
                   <img src={ShoppingCart} alt="cart" loading="lazy" />
                   {cartCount > 0 && <span className="badge badge-custom">{cartCount}</span>}
                 </span>

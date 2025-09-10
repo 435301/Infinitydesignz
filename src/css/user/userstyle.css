@@ -1956,7 +1956,6 @@ MEGA MENU - Responsive Styles
 
 .product-span span {
   font-size: 14px;
-  font-weight: 500 !important;
 }
 
 .thumb-gallery::-webkit-scrollbar-track {
@@ -2751,7 +2750,7 @@ CART PAGE
 } */
 .cart-page {
   border: 1px solid #ccc;
-  padding: 0px 10px;
+  padding: 0px;
   border-right: none;
   border-bottom: none;
 }

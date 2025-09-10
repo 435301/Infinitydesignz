@@ -423,7 +423,7 @@ const breadcrumbItems = useMemo(() => {
               </div>
             </div>
             <div className="col-md-6">
-              <h2 className="product-title">
+              <h2 className="product-title mb-2">
                 {title.charAt(0).toUpperCase() + title.slice(1)}{" "} <span className="stock-status">{selectedVariant?.stock ?? product?.stock} left</span>
               </h2>
 
@@ -436,7 +436,7 @@ const breadcrumbItems = useMemo(() => {
                       : product?.sellingPrice}
                   </span>
 
-                  <span className="discount-label">
+                  <span className="discount-label mx-1">
                     {(() => {
                       const mrp = selectedVariant ? selectedVariant.mrp : product?.mrp;
                       const sp = selectedVariant ? selectedVariant.sellingPrice : product?.sellingPrice;

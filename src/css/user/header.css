@@ -134,5 +134,9 @@
 }
 
 .section-index{
-    background-color:#f4f4f4;
+    background-color:#f4f4f4 !important;
+}
+
+.shadow-lg{
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
 }

@@ -205,7 +205,7 @@ export default function WishlistPage() {
 </select> */}
                                 <input
                                   type="text"
-                                  className="form-control w-30 me-2"
+                                  className="form-control w-30 me-4"
                                   value={displayData.size || "N/A"}
                                   readOnly
                                 // disabled

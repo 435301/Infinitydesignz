@@ -169,7 +169,7 @@ const CheckoutPage = () => {
   return (
     <>
       <Header />
-      <section className="bg-light py-3">
+      <section className="section-index py-3">
         <div className="container shop">
           <div className="row">
             <div className="col-lg-12">

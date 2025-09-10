@@ -312,7 +312,7 @@ const breadcrumbItems = useMemo(() => {
   return (
     <>
       <Header />
-      <section className="bg-light py-3 breadcrumb-all" style={{backgroundColor:"#f4f4f4"}}>
+      <section className="section-index py-3 breadcrumb-all" style={{backgroundColor:"#f4f4f4"}}>
         <div className="container shop">
           <div className="row">
             <div className="col-lg-12">
@@ -341,7 +341,7 @@ const breadcrumbItems = useMemo(() => {
 
           {subCategoryId && (
             <div className="mb-4 mt-4">
-              <h5 className="product-title">
+              <h5 className="product-title py-2">
                 {listSubCatId
                   ? getCategoryTitle(listSubCatId)
                   : getCategoryTitle(subCategoryId)}{" "}
@@ -352,7 +352,7 @@ const breadcrumbItems = useMemo(() => {
 
           <div className="row">
             {listSubCatId !== null && (
-              <div className="col-lg-3">
+              <div className="col-lg-3 pb-5">
                 <FilterSidebar filters={filters} onChangeFilters={onChangeFilters} />
               </div>
             )}

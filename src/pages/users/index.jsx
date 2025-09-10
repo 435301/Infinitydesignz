@@ -95,7 +95,7 @@ export default function HomeBannerSection() {
     <>
       <Suspense fallback={<p>Loading homepage...</p>}>
         <Header />
-        <section className="bg-light section-index">
+        <section className=" section-index">
           <div className="container py-4">
             <div className="row g-4">
               {/* Left Banner Card */}

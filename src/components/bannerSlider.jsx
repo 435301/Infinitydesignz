@@ -6,6 +6,7 @@ import BASE_URL from '../config/config';
 import Aa from '../img/aa.svg';
 import Modern from '../img/modern.svg';
 import Furniture from '../img/furniture.svg';
+import '../../src/css/user/header.css';
 
 const BannerSlider = ({ sliders }) => {
   const settings = {
@@ -20,7 +21,7 @@ const BannerSlider = ({ sliders }) => {
   };
 
   return (
-    <div className="col-md-6">
+    <div className="col-md-6 shadow-lg">
       <Slider {...settings}>
         {sliders.map((slider) => (
           <div key={slider.id}>

@@ -24,3 +24,7 @@
         .btn-qty:hover {
             background: #d6d8db;
         }
+
+        .cart-size-width{
+            width: 90px !important;
+        }
