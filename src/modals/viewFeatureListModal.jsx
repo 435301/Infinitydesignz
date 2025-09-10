@@ -1,6 +1,7 @@
 import React from 'react';
 
 const ViewFeatureListModal = ({ show, onClose, featureList }) => {
+  console.log('featureList',featureList )
   if (!show || !featureList) return null;
 
   return (
@@ -24,12 +25,12 @@ const ViewFeatureListModal = ({ show, onClose, featureList }) => {
 
             <div className="row mb-2">
               <div className="col-sm-4 fw-semibold text-dark">Feature Type:</div>
-              <div className="col-sm-8">{featureList.featureTypeName || 'N/A'}</div>
+              <div className="col-sm-8">{featureList.featureTypeName  || 'N/A'}</div>
             </div>
 
             <div className="row mb-2">
               <div className="col-sm-4 fw-semibold text-dark">Feature Set:</div>
-              <div className="col-sm-8">{featureList?.featureSet?.title || 'N/A'}</div>
+              <div className="col-sm-8">{featureList?.featureSetTitle  || 'N/A'}</div>
             </div>
 
             <div className="row mb-2 align-items-center">

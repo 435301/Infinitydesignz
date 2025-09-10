@@ -181,8 +181,18 @@ const ManageFeatureList = () => {
                                   <button
                                     className="btn btn-sm btn-outline-primary"
                                     title="View"
+                                    // onClick={() => {
+                                    //   setViewFeatureList(feature);
+                                    //   setViewModalVisible(true);
+                                    // }}
                                     onClick={() => {
-                                      setViewFeatureList(feature);
+                                      const featureTypeName = getFeatureTypeName(feature.featureSet?.featureTypeId);
+                                      const featureSetTitle = feature.featureSet?.title || 'Unknown';
+                                      setViewFeatureList({
+                                        ...feature,
+                                        featureTypeName,
+                                        featureSetTitle
+                                      });
                                       setViewModalVisible(true);
                                     }}
                                   >
