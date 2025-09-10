@@ -21,7 +21,7 @@ const BannerSlider = ({ sliders }) => {
   };
 
   return (
-    <div className="col-md-6 shadow-lg">
+    <div className="col-md-6">
       <Slider {...settings}>
         {sliders.map((slider) => (
           <div key={slider.id}>
@@ -29,8 +29,8 @@ const BannerSlider = ({ sliders }) => {
               className="furniture-banner position-relative overflow-hidden rounded"
               style={{
                 background: `url(${BASE_URL}${slider.image_url}) center center / cover no-repeat`,
-                minHeight: '445px', 
-                borderRadius:'8px',
+                minHeight: '445px',
+                borderRadius: '8px',
               }}
             >
               <div
@@ -45,7 +45,7 @@ const BannerSlider = ({ sliders }) => {
                 }}
               >
                 <img src={Modern} alt="Modern" style={{ width: '108px' }} className="mb-2" />
-                  <img src={Furniture} alt="Furniture" style={{ width: '190px' }} className="mb-3" />
+                <img src={Furniture} alt="Furniture" style={{ width: '190px' }} className="mb-3" />
                 <ul className="list-unstyled fs-6">
                   <li className="mb-2">• 36-Month Warranty Available</li>
                   <li className="mb-2">• EMI starting from ₹1,825/month</li>
