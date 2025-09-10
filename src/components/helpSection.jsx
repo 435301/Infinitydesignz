@@ -11,31 +11,37 @@ const HelpSection = ({ title }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { items, loading, error } = useSelector((state) => state.help);
-  console.log('items',items)
+  console.log('items', items)
 
-    useEffect(() => {
+  useEffect(() => {
     dispatch(fetchNeedHelpItems());
   }, [dispatch]);
 
 
 
-const handleRedirect = async (item) => {
- 
-  navigate(`/products${item.slug}`);
-};
+  const handleRedirect = async (item) => {
 
-    if (loading) return <p>Loading help items...</p>;
+    navigate(`/products${item.slug}`);
+  };
+
+  if (loading) return <p>Loading help items...</p>;
   if (error) return <p>Error: {error}</p>;
+
+  const normalizeImagePath = (path) => {
+    if (!path) return "";
+    return path.replace("/uploads/categories//uploads/categories/", "/uploads/categories/");
+  };
+
 
   return (
     <section className="help-section pb-5">
       <div className="container">
         <h2 className="help-title text-start">{title}</h2>
         <div className="help-grid">
-         {items.map((item) => (
-            <div className="help-card" key={item.id}  onClick={() => handleRedirect(item, items)}>
+          {items.map((item) => (
+            <div className="help-card" key={item.id} onClick={() => handleRedirect(item, items)}>
               <div className="help-card-img-wrapper">
-                <img  src={`${BASE_URL}${item.mainImage || item.appIcon || item.webImage}`}  alt={item.title} />
+                <img src={`${BASE_URL}${normalizeImagePath(item.mainImage || item.appIcon || item.webImage)}`} alt={item.title} />
                 <div className="help-card-overlay">
                   <div className="help-card-title">{item.title}</div>
                 </div>

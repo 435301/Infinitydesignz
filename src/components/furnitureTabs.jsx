@@ -34,7 +34,11 @@ const FurnitureTabs = ({ homecategories = [] }) => {
    navigate(`/products${child.slug}/ `);
 
   };
-console.log('currentTab',currentTab);
+  const normalizeImagePath = (path) => {
+    if (!path) return "";
+    return path.replace("/uploads/categories//uploads/categories/", "/uploads/categories/");
+  };
+
   return (
     <section className="bg-lights">
       <div className="container py-5">
@@ -46,7 +50,7 @@ console.log('currentTab',currentTab);
                 className={`nav-link ${activeTab === tab.id ? "active" : ""}`}
                 onClick={() => setActiveTab(tab.id)}
               >
-                <img src={`${BASE_URL}${tab.appIcon}`} className="me-2" alt={tab.title} />
+                <img src={`${BASE_URL}${normalizeImagePath(tab.appIcon)}`} className="me-2" alt={tab.title} />
                 {tab.title}
               </button>
             </li>
