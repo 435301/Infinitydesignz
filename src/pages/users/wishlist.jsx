@@ -187,7 +187,7 @@ export default function WishlistPage() {
                         const key = `${item.productId}-${item.variantId || 'null'}`;
 
                         return (
-                          <div key={item.id || index} className="wishlist-item border-between d-flex"  >
+                          <div key={item.id || index} className="wishlist-item d-flex"  >
                             <div className="col-3" onClick={() => handleProductClick(item.productId, item.variantId)} style={{ cursor: "pointer" }}>
                               <img
                                 src={imageUrl}
