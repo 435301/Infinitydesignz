@@ -9,12 +9,38 @@ const LoginPage = () => {
   const { error, loading } = useSelector(state => state.auth);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState("")
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    dispatch(login(email, password));
-  };
+const handleLogin = (e) => {
+  e.preventDefault();
+  const newErrors = {};
+  if (!email) {
+    newErrors.email = "Email is required";
+  }
+  if (!password) {
+    newErrors.password = "Password is required";
+  }
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    return;
+  }
+  dispatch(login(email, password));
+};
+
+const handleEmailChange = (e) => {
+  setEmail(e.target.value);
+  if (errors.email) {
+    setErrors((prev) => ({ ...prev, email: "" }));
+  }
+};
+
+const handlePasswordChange = (e) => {
+  setPassword(e.target.value);
+  if (errors.password) {
+    setErrors((prev) => ({ ...prev, password: "" }));
+  }
+};
 
   return (
     <section className="login p-fixed d-flex common-img-bg">
@@ -30,16 +56,18 @@ const LoginPage = () => {
                   Let's Get Started
                 </h3>
                 <div className="col-lg-12 mb-3">
-                  <label htmlFor="email" className="form-label">Username</label>
+                  <label htmlFor="email" className="form-label">Email</label>
                   <input
                     id="email"
                     name="email"
                     type="text"
-                    className="form-control"
-                    placeholder="Enter Your Username"
+                    className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                    placeholder="Enter Your Email"
                     value={email}
-                    onChange={e => setEmail(e.target.value)}
+                    onChange={handleEmailChange}
                   />
+                  {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+
                 </div>
                 <div className="col-lg-12 mb-3">
                   <label htmlFor="password" className="form-label">Password</label>
@@ -48,11 +76,12 @@ const LoginPage = () => {
                       id="password"
                       name="password"
                       type={showPassword ? "text" : "password"}
-                      className="form-control pe-5"
+                      className={`form-control pe-5 ${errors.password ? 'is-invalid' : ''}`}
                       placeholder="Enter Your Password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={handlePasswordChange}
                     />
+                    {errors.password && <div className="invalid-feedback">{errors.password}</div>}
                     <i
                       className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"} position-absolute`}
                       style={{
