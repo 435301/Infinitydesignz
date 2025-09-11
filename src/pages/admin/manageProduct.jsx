@@ -241,13 +241,7 @@ const ManageProducts = () => {
                                                                     <p>Loading...</p>
                                                                 </td>
                                                             </tr>
-                                                        ) : error ? (
-                                                            <tr>
-                                                                <td colSpan="12" className="text-center">
-                                                                    <p className="text-danger">{error}</p>
-                                                                </td>
-                                                            </tr>
-                                                        ) : (
+                                                        )  : (
                                                             currentRows.map((product, idx) => (
                                                                 <tr key={product.id}>
                                                                     <td><input

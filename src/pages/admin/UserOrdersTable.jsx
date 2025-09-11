@@ -125,12 +125,6 @@ function UserOrdersTable() {
                                                                     Loading...
                                                                 </td>
                                                             </tr>
-                                                        ) : error ? (
-                                                            <tr>
-                                                                <td colSpan="4" className="text-center text-danger">
-                                                                    {error}
-                                                                </td>
-                                                            </tr>
                                                         ) : filteredItems.length === 0 ? (
                                                             <tr>
                                                                 <td colSpan="3">No subscribers found.</td>

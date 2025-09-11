@@ -136,13 +136,7 @@ function SearchKeywordsList() {
                                                                     Loading...
                                                                 </td>
                                                             </tr>
-                                                        ) : error ? (
-                                                            <tr>
-                                                                <td colSpan="4" className="text-center text-danger">
-                                                                    {error}
-                                                                </td>
-                                                            </tr>
-                                                        ) : items.length === 0 ? (
+                                                        )  : items.length === 0 ? (
                                                             <tr>
                                                                 <td colSpan="3">No subscribers found.</td>
                                                             </tr>

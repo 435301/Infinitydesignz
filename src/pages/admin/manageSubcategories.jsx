@@ -295,13 +295,7 @@ const ManageSubCategories = () => {
                                 <p>Loading...</p>
                               </td>
                             </tr>
-                          ) : error ? (
-                            <tr>
-                              <td colSpan="12" className="text-center">
-                                <p className="text-danger">{error}</p>
-                              </td>
-                            </tr>
-                          ) : (
+                          )  : (
                             currentRows.length > 0 ? (
                               currentRows.map((item, index) => (
                                 <tr key={item.id}>

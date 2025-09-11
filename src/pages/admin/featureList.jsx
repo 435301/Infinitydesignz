@@ -143,11 +143,7 @@ const ManageFeatureList = () => {
                   <div className="text-center my-3">
                     <p>Loading...</p>
                   </div>
-                ) : error ? (
-                  <div className="text-center my-3">
-                    <p className="text-danger">{error}</p>
-                  </div>
-                ) : featureLists.length === 0 ? (
+                )  : featureLists.length === 0 ? (
                   <div className="text-center my-3">
                     <p>No feature sets available</p>
                   </div>

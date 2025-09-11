@@ -106,8 +106,6 @@ const Dashboard = () => {
           </div>
 
           {loading && <p>Loading...</p>}
-          {error && <p className="text-danger">{error}</p>}
-
           {!loading && data && (
             <>
               {/* Dashboard Cards */}

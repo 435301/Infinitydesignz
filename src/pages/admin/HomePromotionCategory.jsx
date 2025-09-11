@@ -167,8 +167,6 @@ const HomePromotionCategory = () => {
                       <div className="col-sm-12 table-responsive">
                         {loading ? (
                           <p className='text-center'>Loading...</p>
-                        ) : error ? (
-                          <p className="text-danger">{error}</p>
                         ) : (
                           <table className="table-lg table-striped align-middle mb-0 table table-hover">
                             <thead>

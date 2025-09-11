@@ -156,12 +156,6 @@ const ManageFilterType = () => {
                                                         <p>Loading...</p>
                                                     </td>
                                                 </tr>
-                                            ) : error ? (
-                                                <tr>
-                                                    <td colSpan="5" className="text-center">
-                                                        <p className="text-danger">{error}</p>
-                                                    </td>
-                                                </tr>
                                             ) : (
                                                 currentRows.map((item, index) => (
                                                     <tr key={item.id}>

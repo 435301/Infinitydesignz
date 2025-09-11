@@ -216,13 +216,7 @@ const OffersList = () => {
                                   <p>Loading...</p>
                                 </td>
                               </tr>
-                            ) : error ? (
-                              <tr>
-                                <td colSpan="12" className="text-center">
-                                  <p className="text-danger">{error}</p>
-                                </td>
-                              </tr>
-                            ) : (
+                            ): (
                               currentRows.map((coupon, index) => (
                                 <tr key={coupon.id}>
                                   <td> <input

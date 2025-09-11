@@ -187,13 +187,7 @@ const ManageFeatureType = () => {
                             <p>Loading...</p>
                           </td>
                         </tr>
-                      ) : error ? (
-                        <tr>
-                          <td colSpan="5" className="text-center">
-                            <p className="text-danger">{error}</p>
-                          </td>
-                        </tr>
-                      ) :  (
+                      ):  (
                       currentRows.map((featureType, index) => (
                         <tr key={featureType.id}>
                           <td>

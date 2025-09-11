@@ -258,12 +258,6 @@ const ManageCategories = () => {
                             <p>Loading...</p>
                           </td>
                         </tr>
-                      ) : error ? (
-                        <tr>
-                          <td colSpan="12" className="text-center">
-                            <p className="text-danger">{error}</p>
-                          </td>
-                        </tr>
                       ) :  (
                       currentRows.length > 0 ? currentRows.map((cat, index) => {
                         const parentCategory = categories.find(p => p.id === cat.parentId);

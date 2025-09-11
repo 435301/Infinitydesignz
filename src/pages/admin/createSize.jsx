@@ -200,12 +200,6 @@ const ManageSizes = () => {
                               <p>Loading...</p>
                             </td>
                           </tr>
-                        ) : error ? (
-                          <tr>
-                            <td colSpan="5" className="text-center">
-                              <p className="text-danger">{error}</p>
-                            </td>
-                          </tr>
                         ) : (
                           currentRows.map((size, index) => (
                             <tr key={size.id}>
