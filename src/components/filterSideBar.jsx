@@ -76,8 +76,10 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
   useEffect(() => {
     const qs = new URLSearchParams(identity).toString();
     if (!qs) return;
+    const catId = identity.listSubCatId || identity.subCategoryId || identity.mainCategoryId;
+  if (!catId) return;
     axios
-      .get(`${BASE_URL}/filters?${qs}`)
+      .get(`${BASE_URL}/filters?categoryId=${catId}`)
       .then((res) => setFacetData(res.data || {}))
       .catch((err) => console.error("Failed to fetch filters", err));
   }, [identity]);
@@ -89,6 +91,8 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
       return;
     }
     const next = new URLSearchParams(searchParams);
+    const catId = identity.listSubCatId || identity.subCategoryId || identity.mainCategoryId;
+  if (catId) next.set("categoryId", catId);
     Object.entries(patch).forEach(([k, v]) => {
       if (v === "" || v === null || v === undefined) next.delete(k);
       else next.set(k, Array.isArray(v) ? v.join(",") : String(v));
@@ -269,7 +273,7 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
         <div className="filter-section mt-4">
           <h6>Price</h6>
           {facetData.price.buckets.map((bucket) =>
-            bucket.count > 0 ? (
+            // bucket.count > 0 ? (
               <div key={bucket.key} className="filter-option">
                 <label className="checkbox-label">
                   <input
@@ -282,7 +286,7 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
                   {bucket.label}
                 </label>
               </div>
-            ) : null
+            // ) : null
           )}
         </div>
       )}
