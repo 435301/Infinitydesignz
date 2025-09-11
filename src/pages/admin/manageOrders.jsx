@@ -157,7 +157,7 @@ const ManageOrders = () => {
                         <th>Order No</th>
                         <th>Qty</th>
                         {/* <th>Price</th> */}
-                        <th>Additonal charges</th>
+                        <th>Additional Charges</th>
                         <th>Total Amount</th>
                         <th>Order Date</th>
                         <th>Order From</th>
