@@ -59,6 +59,10 @@ const PlaceOrderButton = ({
   });
 
   const handlePlaceOrder = async () => {
+     if (!selectedAddressId) {
+      toast.error("Please select or add a delivery address before placing the order.");
+      return;
+    }
     let orderData;
     if (mode === "buyNow") {
       if (!buyNowProduct) {
@@ -73,7 +77,6 @@ const PlaceOrderButton = ({
       }
       orderData = buildCartOrderData();
     }
-
     try {
       let result;
       if (mode === "buyNow") {
