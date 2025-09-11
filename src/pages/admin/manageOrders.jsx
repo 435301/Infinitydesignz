@@ -124,7 +124,7 @@ const ManageOrders = () => {
                   </div>
                   <div className="col-md-3">
                     <label htmlFor="toDate" className="form-label">To Date</label>
-                    <input type="date" className="form-control" id="toDate" />
+                    <input type="date" className="form-control" id="toDate" max={new Date().toISOString().split("T")[0]}/>
                   </div>
                   {/* <div className="col-md-3">
                     <label htmlFor="status" className="form-label">Status</label>
