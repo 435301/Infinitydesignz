@@ -262,7 +262,7 @@ const ManageProducts = () => {
                                                                         )}
                                                                     </td>
                                                                     <td>{product.sku}</td>
-                                                                    <td><a href="#">{product.title}</a></td>
+                                                                    <td>{product.title}</td>
                                                                     <td>{product?.mainCategoryTitle || '-'}</td>
                                                                     <td>{product?.subCategoryTitle || '-'}</td>
                                                                     <td>{product?.listSubCategoryTitle || '-'}</td>
