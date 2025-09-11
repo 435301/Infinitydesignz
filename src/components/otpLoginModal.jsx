@@ -4,6 +4,7 @@ import { sendOtp, verifyOtp } from "../redux/actions/userAuthAction";
 import Logo from "../../src/img/logo.svg";
 import "../css/user/userstyle.css";
 import { syncGuestCartToUserCart } from "../redux/actions/cartAction";
+import { toast } from "react-toastify";
 
 const OtpLoginModal = ({ show, onClose, onLoginSuccess }) => {
   const [mobile, setMobile] = useState("");
@@ -16,8 +17,12 @@ const OtpLoginModal = ({ show, onClose, onLoginSuccess }) => {
   const userAuth = useSelector((state) => state.userAuth);
 
   const handleSendOtp = () => {
-    if (!mobile || !agreeTerms) {
-      alert("Please accept terms and enter a mobile number.");
+    if (!mobile) {
+      toast.error('Please enter the mobile number');
+      return;
+    }
+    if (!agreeTerms) {
+      toast.error('Please accept the T&C');
       return;
     }
     setLoading(true);
@@ -30,7 +35,7 @@ const OtpLoginModal = ({ show, onClose, onLoginSuccess }) => {
     setLoading(true);
     dispatch(verifyOtp(mobile, otp))
       .then(() => {
-         dispatch(syncGuestCartToUserCart()); 
+        dispatch(syncGuestCartToUserCart());
         if (onLoginSuccess) onLoginSuccess();
         onClose();
       })
