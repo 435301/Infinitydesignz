@@ -531,7 +531,6 @@ const validate = () => {
                               value={formData[field]}
                               onChange={(e) => {
                                 let value = e.target.value;
-
                                 if (field === 'Stock') {
                                   value = value.replace(/\D/g, '').slice(0, 4);
                                 }
@@ -550,10 +549,6 @@ const validate = () => {
                                 }
 
                                 setFormData(updatedForm);
-
-                                if (errors[field] && field !== 'SellingPrice') {
-                                  setErrors(prev => ({ ...prev, [field]: '' }));
-                                }
                               }}
                             />
                             {errors[field] && <div className="invalid-feedback">{errors[field]}</div>}

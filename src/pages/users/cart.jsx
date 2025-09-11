@@ -346,7 +346,7 @@ const CartPage = () => {
                   title: source.title || "Untitled Product",
                   warranty: source.brand || "N/A",
                   price: `₹${source.price || 0}`,
-                  mrp: `MRP: ₹${source.mrp || 0}`,
+                  mrp: ` ${source.mrp || 0}`,
                   sizes: [source.size || "M"],
                   image: source.imageUrl || "/placeholder.jpg",
                   delivery: "13 Aug",

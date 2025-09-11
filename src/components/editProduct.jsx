@@ -644,28 +644,25 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                             value={formData[field]}
                                                             onChange={(e) => {
                                                                 let value = e.target.value;
-
                                                                 if (field === 'stock') {
                                                                     value = value.replace(/\D/g, '').slice(0, 4);
                                                                 }
-
                                                                 const updatedForm = { ...formData, [field]: value };
-
-                                                                if (field === 'sellingPrice') {
+                                                                if (field === 'sellingPrice' || field === 'mrp') {
                                                                     const mrp = parseFloat(updatedForm['mrp']);
-                                                                    const sp = parseFloat(value);
+                                                                    const sp = parseFloat(updatedForm['sellingPrice']);
+
                                                                     if (!isNaN(mrp) && !isNaN(sp) && sp > mrp) {
                                                                         setErrors((prev) => ({
                                                                             ...prev,
-                                                                            [field]: 'Selling Price cannot be greater than MRP',
+                                                                            sellingPrice: 'Selling Price cannot be greater than MRP',
                                                                         }));
                                                                     } else {
-                                                                        setErrors((prev) => ({ ...prev, [field]: '' }));
+                                                                        setErrors((prev) => ({ ...prev, sellingPrice: '' }));
                                                                     }
                                                                 } else if (errors[field]) {
                                                                     setErrors((prev) => ({ ...prev, [field]: '' }));
                                                                 }
-
                                                                 setFormData(updatedForm);
                                                             }}
                                                         />
