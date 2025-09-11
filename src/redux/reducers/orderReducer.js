@@ -48,7 +48,7 @@ const orderReducer = (state = initialState, action) => {
     case FETCH_ORDERS_REQUEST:
       return { ...state, loading: true, error: null };
     case FETCH_ORDERS_SUCCESS:
-      return { ...state, loading: false, orders: action.payload, relatedProducts: action.payload.relatedProducts || []  };
+      return { ...state, loading: false, orders: action.payload.orders, relatedProducts: action.payload.relatedProducts || []  };
     case FETCH_ORDERS_FAILURE:
       return { ...state, loading: false, error: action.payload };
     case FETCH_ADMINORDERS_REQUEST:

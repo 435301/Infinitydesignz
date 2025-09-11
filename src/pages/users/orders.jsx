@@ -18,7 +18,7 @@ import ProductCard from "../../components/productCard";
 
 const MyOrdersPage = () => {
   const dispatch = useDispatch();
-  const { orders = [], loading, error } = useSelector((state) => state.order);
+  const { orders = [], loading, error } = useSelector((state) => state.ordersState.orders);
   const latestOrder = orders.length > 0 ? orders[0] : null;
   const [latestOrderDetails, setLatestOrderDetails] = useState(null);
   const [cancelModalShow, setCancelModalShow] = useState(false);
