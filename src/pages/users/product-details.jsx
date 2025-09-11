@@ -59,40 +59,40 @@ export default function ProductDetailPage() {
     return result;
   }, []);
 
-const toSlug = (title = "") =>
-  String(title)
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-");
+  const toSlug = (title = "") =>
+    String(title)
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-");
 
-const makeSlug = (title, id) => `${toSlug(title)}-${id}`;
+  const makeSlug = (title, id) => `${toSlug(title)}-${id}`;
 
 
 
   // Memoize breadcrumb items
-const breadcrumbItems = useMemo(() => {
-  if (!product) return [{ label: "Home", link: "/" }];
-  const hierarchy = getCategoryHierarchy(product.category?.id, categories);
-  const crumbs = [{ label: "Home", link: "/" }];
+  const breadcrumbItems = useMemo(() => {
+    if (!product) return [{ label: "Home", link: "/" }];
+    const hierarchy = getCategoryHierarchy(product.category?.id, categories);
+    const crumbs = [{ label: "Home", link: "/" }];
 
-  // For each category index, build a link where:
-  // - all previous segments use toSlug(title)
-  // - the current segment uses makeSlug(title, id)
-  hierarchy.forEach((cat, idx) => {
-    const segments = hierarchy
-      .map((c, k) => (k < idx ? toSlug(c.title) : k === idx ? makeSlug(c.title, c.id) : null))
-      .filter(Boolean);
+    // For each category index, build a link where:
+    // - all previous segments use toSlug(title)
+    // - the current segment uses makeSlug(title, id)
+    hierarchy.forEach((cat, idx) => {
+      const segments = hierarchy
+        .map((c, k) => (k < idx ? toSlug(c.title) : k === idx ? makeSlug(c.title, c.id) : null))
+        .filter(Boolean);
 
-    crumbs.push({
-      label: cat.title,
-      link: `/products/${segments.join("/")}`,
+      crumbs.push({
+        label: cat.title,
+        link: `/products/${segments.join("/")}`,
+      });
     });
-  });
 
-  crumbs.push({ label: product.title });
-  return crumbs;
-}, [product, categories, getCategoryHierarchy]);
+    crumbs.push({ label: product.title });
+    return crumbs;
+  }, [product, categories, getCategoryHierarchy]);
 
 
 
@@ -462,74 +462,78 @@ const breadcrumbItems = useMemo(() => {
               <div className="dropdown-container ">
                 <div className="row">
                   {/* Size Dropdown */}
-                  <div className="col-md-6 mb-2">
-                    <label className="dropdown-label">Select Size</label>
-                    <select
-                      className="form-select1 size-dropdown w-100"
-                      value={selectedSizeId}
-                      onChange={(e) => {
-                        const newSizeId = parseInt(e.target.value);
-                        setSelectedSizeId(newSizeId.toString());
+                  {sizeOptions.length > 0 && (
+                    <div className="col-md-6 mb-2">
+                      <label className="dropdown-label">Select Size</label>
+                      <select
+                        className="form-select1 size-dropdown w-100"
+                        value={selectedSizeId}
+                        onChange={(e) => {
+                          const newSizeId = parseInt(e.target.value);
+                          setSelectedSizeId(newSizeId.toString());
 
-                        // All variants for this size
-                        const sizeVariants = variants.filter(v => Number(v.size?.id) === newSizeId);
+                          // All variants for this size
+                          const sizeVariants = variants.filter(v => Number(v.size?.id) === newSizeId);
 
-                        // Prefer current color if that exact combo exists
-                        let next = sizeVariants.find(v => selectedColorId && Number(v.color?.id) === Number(selectedColorId));
+                          // Prefer current color if that exact combo exists
+                          let next = sizeVariants.find(v => selectedColorId && Number(v.color?.id) === Number(selectedColorId));
 
-                        // Otherwise fall back to the first available for this size
-                        if (!next) next = sizeVariants[0];
+                          // Otherwise fall back to the first available for this size
+                          if (!next) next = sizeVariants[0];
 
-                        if (next) {
-                          dispatch(setSelectedVariant(next));
-                          if (next.color?.id) setSelectedColorId(String(next.color.id)); // keep color dropdown in sync
-                        }
-                      }}
+                          if (next) {
+                            dispatch(setSelectedVariant(next));
+                            if (next.color?.id) setSelectedColorId(String(next.color.id)); // keep color dropdown in sync
+                          }
+                        }}
 
-                    >
-                      {/* <option value="">Select</option> */}
-                      {sizeOptions.map(size => (
-                        <option key={size.id} value={size.id}>
-                          {size.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                      >
+                        {/* <option value="">Select</option> */}
+                        {sizeOptions.map(size => (
+                          <option key={size.id} value={size.id}>
+                            {size.title}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
 
                   {/* Color Dropdown */}
-                  <div className="col-md-6 mb-2">
-                    <label className="dropdown-label">Select Color</label>
-                    <select
-                      className="form-select1 color-dropdown w-100"
-                      value={selectedColorId}
-                      onChange={(e) => {
-                        const newColorId = parseInt(e.target.value);
-                        setSelectedColorId(newColorId.toString());
+                  {colorOptions.length > 0 && (
+                    <div className="col-md-6 mb-2">
+                      <label className="dropdown-label">Select Color</label>
+                      <select
+                        className="form-select1 color-dropdown w-100"
+                        value={selectedColorId}
+                        onChange={(e) => {
+                          const newColorId = parseInt(e.target.value);
+                          setSelectedColorId(newColorId.toString());
 
-                        // All variants with this color
-                        const colorVariants = variants.filter(v => Number(v.color?.id) === newColorId);
+                          // All variants with this color
+                          const colorVariants = variants.filter(v => Number(v.color?.id) === newColorId);
 
-                        // Prefer current size if that exact combo exists
-                        let next = colorVariants.find(v => selectedSizeId && Number(v.size?.id) === Number(selectedSizeId));
+                          // Prefer current size if that exact combo exists
+                          let next = colorVariants.find(v => selectedSizeId && Number(v.size?.id) === Number(selectedSizeId));
 
-                        // Otherwise fall back to the first available for this color
-                        if (!next) next = colorVariants[0];
+                          // Otherwise fall back to the first available for this color
+                          if (!next) next = colorVariants[0];
 
-                        if (next) {
-                          dispatch(setSelectedVariant(next));
-                          if (next.size?.id) setSelectedSizeId(String(next.size.id)); // keep size dropdown in sync
-                        }
-                      }}
+                          if (next) {
+                            dispatch(setSelectedVariant(next));
+                            if (next.size?.id) setSelectedSizeId(String(next.size.id)); // keep size dropdown in sync
+                          }
+                        }}
 
-                    >
-                      {/* <option value="">Select</option> */}
-                      {colorOptions.map(color => (
-                        <option key={color.id} value={color.id}>
-                          {color.label || "N/A"}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                      >
+                        {/* <option value="">Select</option> */}
+                        {colorOptions.map(color => (
+                          <option key={color.id} value={color.id}>
+                            {color.label || "N/A"}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
               </div>
 
