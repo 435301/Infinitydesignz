@@ -133,7 +133,7 @@ const CreateCouponModal = ({ show, onHide }) => {
       <Modal.Body>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="fw-bold mb-2">Select Coupon Type</label>
+            <label className="fw-bold mb-2 pe-3">Select Coupon Type</label>
             {['list_submenu', 'brand', 'url', 'price'].map((type) => (
               <div key={type} className="form-check form-check-inline">
                 <input
