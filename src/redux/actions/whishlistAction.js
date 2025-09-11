@@ -36,15 +36,15 @@ export const addToWishlist = (productId, variantId = null) => async (dispatch) =
     }, {
       headers: { Authorization: `Bearer ${getToken()}` }
     });
-
+    const newItem = res.data?.data;
     dispatch({ type: ADD_TO_WISHLIST_SUCCESS, payload: res.data.data });
     const successMessage = res.message || 'Added to whishlist';
-    toast.success(successMessage)
+    toast.success(successMessage);
+    return newItem
   } catch (error) {
     console.error('Add to wishlist failed', error);
   }
 };
-
 
 
 export const deleteWishlistItem = (wishlistId) => async (dispatch) => {

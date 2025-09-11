@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import axios from "axios";
 import BASE_URL from "../config/config";
@@ -9,7 +9,7 @@ import OtpLoginModal from "./otpLoginModal";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import "./productcard.css";
 
-const ProductCard = ({ product, variant = null ,className ='',size="medium"}) => {
+const ProductCard = ({ product, variant = null, className = '', size = "medium" }) => {
   const sizeClasses = {
     small: "col-lg-3 col-4 p-1 m-1",
     medium: "col-lg-4 col-6 p-2",
@@ -17,7 +17,8 @@ const ProductCard = ({ product, variant = null ,className ='',size="medium"}) =>
   };
   const dispatch = useDispatch();
   const [showLogin, setShowLogin] = useState(false);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const { items: wishlistItems } = useSelector((state) => state.whishlist);
+  // const [isWishlisted, setIsWishlisted] = useState(false);
   const [wishlistItemId, setWishlistItemId] = useState(null);
 
   const {
@@ -70,35 +71,41 @@ const ProductCard = ({ product, variant = null ,className ='',size="medium"}) =>
     };
   }, [mrp, sellingPrice, images, variants, variant]);
 
-  const handleWishlistClick = useCallback(
-    async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+  const isWishlisted = useMemo(() => {
+    return wishlistItems.some((item) =>
+      variant?.id
+        ? item.productId === product.id && item.variantId === variant.id
+        : item.productId === product.id && !item.variantId
+    );
+  }, [wishlistItems, product.id, variant?.id]);
 
-      if (!isLoggedIn()) {
-        setShowLogin(true);
-        return;
-      }
-
-      if (isWishlisted) {
-        try {
-          await dispatch(deleteWishlistItem(wishlistItemId));
-          setIsWishlisted(false);
-        } catch (err) {
-          console.error("Failed to remove from wishlist", err);
-        }
-      } else {
-        try {
-          const res = await dispatch(addToWishlist(product?.id, variant?.id ?? null));
-          setIsWishlisted(true);
-          if (res?.payload?.id) setWishlistItemId(res.payload.id);
-        } catch (err) {
-          console.error("Failed to add to wishlist", err);
-        }
-      }
-    },
-    [dispatch, isWishlisted, wishlistItemId, product?.id, variant?.id]
+  const currentWishlistItem = useMemo(() => {
+  return wishlistItems.find((item) =>
+    variant?.id
+      ? item.productId === product.id && item.variantId === variant.id
+      : item.productId === product.id && !item.variantId
   );
+}, [wishlistItems, product.id, variant?.id]);
+
+const handleWishlistClick = useCallback(
+  async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!isLoggedIn()) {
+      setShowLogin(true);
+      return;
+    }
+
+    if (isWishlisted && currentWishlistItem?.id) {
+      await dispatch(deleteWishlistItem(currentWishlistItem.id));
+    } else {
+ await dispatch(addToWishlist(product.id, variant?.id ?? null));
+    }
+  },
+  [dispatch, isWishlisted, wishlistItemId, product?.id, variant?.id]
+);
+
 
   useEffect(() => {
     let isMounted = true;
@@ -118,16 +125,16 @@ const ProductCard = ({ product, variant = null ,className ='',size="medium"}) =>
         });
 
         if (isMounted && match) {
-          setIsWishlisted(true);
+          // setIsWishlisted(true);
           setWishlistItemId(match.id);
         }
         if (isMounted && !match) {
-          setIsWishlisted(false);
+          // setIsWishlisted(false);
           setWishlistItemId(null);
         }
       } catch (err) {
         if (isMounted) {
-          setIsWishlisted(false);
+          // setIsWishlisted(false);
           setWishlistItemId(null);
         }
         console.error("Error checking wishlist", err);
@@ -137,7 +144,7 @@ const ProductCard = ({ product, variant = null ,className ='',size="medium"}) =>
     if (isLoggedIn()) {
       fetchWishlist();
     } else {
-      setIsWishlisted(false);
+      // setIsWishlisted(false);
       setWishlistItemId(null);
     }
     return () => {
@@ -209,7 +216,7 @@ const ProductCard = ({ product, variant = null ,className ='',size="medium"}) =>
         onLoginSuccess={async () => {
           const res = await dispatch(addToWishlist(id, variant?.id ?? null));
           if (res?.payload?.id) {
-            setIsWishlisted(true);
+            // setIsWishlisted(true);
             setWishlistItemId(res.payload.id);
           }
         }}

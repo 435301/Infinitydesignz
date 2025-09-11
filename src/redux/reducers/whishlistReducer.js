@@ -24,7 +24,7 @@ const wishlistReducer = (state = initialState, action) => {
       return {
     ...state,
     loading: false,
-    items: action.payload.wishlistItems || [],
+    items: action.payload.wishlistItems || action.payload || [],
     relatedProducts: action.payload.relatedProducts || [] 
   };
     case FETCH_WISHLIST_FAILURE:
