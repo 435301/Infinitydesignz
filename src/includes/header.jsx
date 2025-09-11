@@ -207,18 +207,18 @@ export default function Header() {
             </div>
 
             <div className="col-lg-5 col-md-4 my-3 position-relative" ref={inputRef}>
-              <form className="d-flex" onSubmit={handleSearch} autoComplete="off">
+              <form className="d-flex input-width" onSubmit={handleSearch} autoComplete="off">
                 <input
                   type="text"
-                  className="form-control1 search-input"
+                  className="form-control1 search-input pe-3"
                   placeholder="Search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onFocus={() => setShowSuggestions(true)}
                   aria-label="Search"
                 />
-                <button className="btn btn-light" type="submit" aria-label="Search">
-                  <img src={Search} className="search-btn-img" alt="search" loading="lazy" />
+                <button className="btn btn-light border-0 end-0 top-0 me-0 p-0 bg-transparent" type="submit" aria-label="Search">
+                  <img src={Search} className="search-btn-img" alt="search" loading="lazy"   />
                 </button>
               </form>
 

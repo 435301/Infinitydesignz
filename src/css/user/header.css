@@ -131,6 +131,11 @@
 
 .search-btn-img{
     height: 25px;
+    width: 30px;
+    height: 25px;
+    position: absolute;
+    bottom: 5px;
+    right: 4px;
 }
 
 .section-index{
@@ -139,4 +144,7 @@
 
 .shadow-lg{
     box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+.input-width{
+    width: 513px;
 }
