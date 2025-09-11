@@ -56,10 +56,14 @@ const CartItem = ({
     onQuantityChange?.(newQty);
   };
 
-  const decrement = () => {
-    const newQty = quantity > 1 ? quantity - 1 : 1;
-    onQuantityChange?.(newQty);
-  };
+const decrement = () => {
+  if (quantity <= 1) {
+    toast.warning("Quantity cannot be less than 1");
+    return;
+  }
+  const newQty = quantity - 1;
+  onQuantityChange?.(newQty);
+};
 
   const imageUrl = product.image
     ? product.image.startsWith("http")

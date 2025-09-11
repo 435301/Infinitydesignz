@@ -60,7 +60,7 @@ const PlaceOrderButton = ({
 
   const handlePlaceOrder = async () => {
      if (!selectedAddressId) {
-      toast.error("Please select or add a delivery address before placing the order.");
+      toast.warning("Please select or add a delivery address before placing the order.");
       return;
     }
     let orderData;

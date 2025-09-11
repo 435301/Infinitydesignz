@@ -80,13 +80,19 @@ export default function WishlistPage() {
     }));
   }, []);
 
-  const decrement = useCallback((item) => {
-    const key = `${item.productId}-${item.variantId || 'null'}`;
-    setQuantities((prev) => ({
+ const decrement = useCallback((item) => {
+  const key = `${item.productId}-${item.variantId || "null"}`;
+  setQuantities((prev) => {
+    const newQty = (prev[key] || 1) - 1;
+    if (newQty < 1) {
+      toast.warning("Quantity cannot be less than 1");
+    }
+    return {
       ...prev,
-      [key]: Math.max((prev[key] || 1) - 1, 1),
-    }));
-  }, []);
+      [key]: Math.max(newQty, 1),
+    };
+  });
+}, []);
 
   const handleProductClick = useCallback((productId, variantId) => {
     if (variantId) {
