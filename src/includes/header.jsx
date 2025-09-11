@@ -15,10 +15,11 @@ import ShoppingCart from '../../src/img/shopping_cart.svg';
 import MenuImg from '../../src/img/menu-img.webp';
 import { isLoggedIn } from "../utils/auth";
 import { addKeyword, fetchKeywords } from "../redux/actions/searchKeywordsAction";
+import { BsBoxArrowRight } from "react-icons/bs";
 
 const PRODUCTS_FILTERS_KEY = "productsFilters";
-const saveProductsFilters = (filters) => { try { sessionStorage.setItem(PRODUCTS_FILTERS_KEY, JSON.stringify(filters)); } catch {} };
-export const clearProductsFilters = () => { try { sessionStorage.removeItem(PRODUCTS_FILTERS_KEY); } catch {} };
+const saveProductsFilters = (filters) => { try { sessionStorage.setItem(PRODUCTS_FILTERS_KEY, JSON.stringify(filters)); } catch { } };
+export const clearProductsFilters = () => { try { sessionStorage.removeItem(PRODUCTS_FILTERS_KEY); } catch { } };
 
 const slugify = (str = "") =>
   str.toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-");
@@ -165,6 +166,12 @@ export default function Header() {
     setShowSuggestions(false);
   };
 
+    const handleLogout = (e) => {
+    e.preventDefault(); 
+    localStorage.removeItem("access_token");
+    navigate("/");
+  };
+
   return (
     <>
       <style>
@@ -248,7 +255,7 @@ export default function Header() {
               )}
             </div>
 
-            <div className="col-lg-4 Wishlist col-md-8 text-end d-flex justify-content-end align-items-center gap-4">
+            <div className="col-lg-4 Wishlist col-md-8 text-end d-flex justify-content-end align-items-center gap-2">
               <a href="/wishlist" className="text-decoration-none text-dark px-1">
                 <span className="position-relative mx-1">
                   <img src={Favourite} alt="wishlist" loading="lazy" />
@@ -266,6 +273,7 @@ export default function Header() {
                 </span>
                 My Cart
               </a>
+             <a href="/admin/login" className="text-decoration-none text-dark" onClick={handleLogout}><span className="position-relative mx-1"><BsBoxArrowRight /></span> Logout</a>
             </div>
           </div>
         </div>
