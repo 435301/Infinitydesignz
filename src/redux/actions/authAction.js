@@ -30,7 +30,8 @@ export const login = (email, password) => {
       window.location.href = '/admin/dashboard';
 
     } catch (error) {
-      dispatch({ type: LOGIN_FAILURE, payload: 'Invalid email or password' });
+      toast.error(error?.response?.data?.message || 'Invalid Credentials')
+      dispatch({ type: LOGIN_FAILURE, payload: 'Invalid Credentials' });
     }
   };
 };
