@@ -19,8 +19,11 @@ import ProductCard from "../../components/productCard";
 const MyOrdersPage = () => {
   const dispatch = useDispatch();
   const { orders = [], loading, error } = useSelector((state) => state.ordersState.orders);
+
   const latestOrder = orders.length > 0 ? orders[0] : null;
   const [latestOrderDetails, setLatestOrderDetails] = useState(null);
+    console.log('orders', orders)
+  const [showPreviousOrders, setShowPreviousOrders] = useState(false);
   const [cancelModalShow, setCancelModalShow] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const relatedProducts = useSelector((state) => state.ordersState.relatedProducts);
@@ -149,6 +152,7 @@ const MyOrdersPage = () => {
                                 <p className="warranty">{productData.warranty || ""}</p>
 
                                 <div className="order-meta">
+                                    <span className="separator">Color: {productData.color || "N/A"}</span>
                                   <span className="separator">
                                     Size: {productData.size || "N/A"}
                                   </span>
@@ -249,10 +253,117 @@ const MyOrdersPage = () => {
                             </span>
                           </div>
                         )}
+
                       </div>
                     ) : (
                       !loading && <p className="text-center">No latest order found</p>
                     ))}
+
+
+                  {orders.length > 1 && (
+                    <div className="text-center mt-4 mb-4">
+                      <button
+                        className="btn btn-outline-primary"
+                        onClick={() => setShowPreviousOrders(!showPreviousOrders)}
+                      >
+                        {showPreviousOrders ? "Hide Previous Orders" : "Show Previous Orders"}
+                      </button>
+                    </div>
+                  )}
+
+                  {showPreviousOrders && (
+                    <div className="previous-orders mt-4">
+                      <h3>Previous Orders</h3>
+                      {orders.slice(1).map((order) => (
+                        <div key={order.id} className="order-block mb-4">
+                          {order.items.map((item) => {
+                            const productData = item.variant || item.product || {};
+                            console.log('productData', productData)
+                            return (
+                              <div className="order-item" key={item.id}>
+                                <div className="order-image">
+                                  <img
+                                    src={
+                                      productData.imageUrl
+                                        ? `${BASE_URL}${productData.imageUrl}`
+                                        : "/placeholder.jpg"
+                                    }
+                                    alt={productData.imageAlt || productData.title || "Product"}
+                                    className="order-item-img"
+                                  />
+                                </div>
+
+                                <div className="order-details">
+                                  <h5>{productData.title || "Product"}</h5>
+                                  <div className="order-meta">
+                                    <span className="separator">Color: {productData.color || "N/A"}</span>
+                                    <span className="separator">Size: {productData.size || "N/A"}</span>
+                                    <span className="separator">Qty: {String(item.qty).padStart(2, "0")}</span>
+                                    <span>
+                                      Payment Status: <strong>{order.payment?.method || "N/A"}</strong>
+                                    </span>
+                                  </div>
+
+                                  <div className="order-price">
+                                    <span className="current-price">
+                                      ₹{item.price?.toLocaleString() || 0}
+                                    </span>
+                                    <del className="mrp">
+                                      MRP: ₹
+                                      {(item?.mrp ?? item?.mrp ?? 0).toLocaleString()}
+                                    </del>
+                                  </div>
+
+                                  <div className="order-info">
+                                    <span>
+                                      <i className="bi bi-truck"></i> Estimated delivery by{" "}
+                                      {order.estimatedDelivery || "N/A"}
+                                    </span>
+                                    <span>
+                                      <i className="bi bi-arrow-return-right"></i> Easy 14 days return & exchange available
+                                    </span>
+                                  </div>
+
+                                  <div className="order-status">
+                                    <div className="status">
+                                      <span>
+                                        Status:{" "}
+                                        <span className={`status ${order?.status?.toLowerCase()}`}>
+                                          {order?.status || "N/A"}
+                                        </span>
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+
+                          {order?.address && (
+                            <div className="delivery-address">
+                              <strong>Deliver to:</strong> <br />
+                              <span className="name">{order.address.name}</span> <br />
+                              <span className="address-line">
+                                {order.address.flatNumber}, {order.address.buildingName}
+                              </span>
+                              <br />
+                              <span className="address-line">
+                                {order.address.addressLine1}, {order.address.addressLine2}
+                              </span>
+                              <br />
+                              <span className="address-line">
+                                {order.address.city}, {order.address.state} - {order.address.pincode}
+                              </span>
+                              <br />
+                              <span className="phone">Phone: {order.address.phone}</span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+
                 </div>
               </div>
             </div>
@@ -262,37 +373,37 @@ const MyOrdersPage = () => {
                 <img src={AdBanner} alt="Special Sale" />
               </div>
 
-                {/* Related products section  */}
-                <div className="col-lg-12">  <div className="related-products py-4">
-                  <h4>Related Products</h4>
-                  <div className="carousel-wrapper">
-                    <Carousel controls indicators={false}>
-                      {(relatedProducts || []).map((product) => {
-                        const normalizedProduct = {
-                          ...product,
-                          images: {
-                            main: {
-                              url: product.imageUrl?.startsWith("http")
-                                ? product.imageUrl.replace(`${BASE_URL}/uploads/products/`, "")
-                                : product.imageUrl.replace("/uploads/products/", ""),
-                            },
+              {/* Related products section  */}
+              <div className="col-lg-12">  <div className="related-products py-4">
+                <h4>Related Products</h4>
+                <div className="carousel-wrapper">
+                  <Carousel controls indicators={false}>
+                    {(relatedProducts || []).map((product) => {
+                      const normalizedProduct = {
+                        ...product,
+                        images: {
+                          main: {
+                            url: product.imageUrl?.startsWith("http")
+                              ? product.imageUrl.replace(`${BASE_URL}/uploads/products/`, "")
+                              : product.imageUrl.replace("/uploads/products/", ""),
                           },
-                          mrp: product.mrp,
-                          sellingPrice: product.price,
-                        };
+                        },
+                        mrp: product.mrp,
+                        sellingPrice: product.price,
+                      };
 
-                        return (
-                          <Carousel.Item key={product.id}>
-                            <ProductCard product={normalizedProduct} size="medium" />
-                          </Carousel.Item>
-                        );
-                      })}
-                    </Carousel>
-                  </div>
-
-
+                      return (
+                        <Carousel.Item key={product.id}>
+                          <ProductCard product={normalizedProduct} size="medium" />
+                        </Carousel.Item>
+                      );
+                    })}
+                  </Carousel>
                 </div>
-                </div>
+
+
+              </div>
+              </div>
             </aside>
           </div>
           <CancelOrderModal

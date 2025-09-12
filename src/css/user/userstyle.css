@@ -3625,6 +3625,7 @@ background-color: #eaf8ff !important;
   font-weight: bold;
   margin: 0 0 5px;
   text-transform: uppercase;
+  padding-bottom: 10px;
 }
 
 .order-details .warranty {
