@@ -51,6 +51,8 @@ const CartItem = ({
     }
   };
 
+  console.log('product',product)
+
   const increment = () => {
     const newQty = quantity + 1;
     onQuantityChange?.(newQty);
@@ -92,18 +94,18 @@ const decrement = () => {
           </h4>
           {/* <p className="mb-1 product-info-p">{product.warranty || "No warranty info"}</p> */}
           <div className="d-flex align-items-center mb-2 pt-1">
-            {/* <div className="d-flex align-items-center"> */}
             <label className="me-2 fw-semibold text-dark size-wishlist">Size</label>
             {(product.sizes || [product?.variant?.size || "N/A"]).map((size) => (
               <input
                 key={size}
                 type="text"
                 className="form-control w-30 me-4 cart-size-width"
-                value={size}
+                value={size || 'N/A'}
                 readOnly
               // disabled
-              />
+              />  
             ))}
+
             {/* </div> */}
             {/* <div className="d-flex align-items-center"> */}
             <label className="me-2 fw-semibold text-dark size-wishlist">Qty</label>
@@ -347,7 +349,7 @@ const CartPage = () => {
                   warranty: source.brand || "N/A",
                   price: `₹${source.price || 0}`,
                   mrp: ` ${source.mrp || 0}`,
-                  sizes: [source.size || "M"],
+                  sizes: [source.size || ""],
                   image: source.imageUrl || "/placeholder.jpg",
                   delivery: "13 Aug",
                 },
@@ -372,7 +374,7 @@ const CartPage = () => {
               warranty: (item.variant || item.product)?.brand,
               price: `₹${(item.variant || item.product)?.price || 0}`,
               mrp: `MRP: ₹${(item.variant || item.product)?.mrp || 0}`,
-              sizes: [(item.variant || item.product)?.size || "M"],
+              sizes: [(item.variant || item.product)?.size || ""],
               image: (item.variant || item.product)?.imageUrl || "/placeholder.jpg",
               delivery: "13 Aug",
             },
