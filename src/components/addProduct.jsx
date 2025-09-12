@@ -677,7 +677,7 @@ const validate = () => {
                                 onChange={(e) => handleChange(index, 'mrp', e.target.value)}
                                 placeholder="MRP"
                               />
-                               {variant.error && <div className="text-danger small mt-1">{variant.error}</div>}
+                               {/* {variant.error && <div className="text-danger small mt-1">{variant.error}</div>} */}
                             </td>
                             <td>
                               <input
