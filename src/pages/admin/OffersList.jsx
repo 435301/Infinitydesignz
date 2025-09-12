@@ -197,7 +197,7 @@ const OffersList = () => {
                                 onChange={handleSelectAll}
                               /></th>
 
-                              <th>Sl No</th> {/* New Sl No column */}
+                              <th>S. No</th>
                               <th>Coupon Type</th>
                               <th>Coupon Code</th>
                               <th>Price/Percentage</th>

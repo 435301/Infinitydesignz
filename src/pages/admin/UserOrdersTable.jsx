@@ -113,7 +113,7 @@ function UserOrdersTable() {
                                                     <thead className="thead-dark">
                                                         <tr>
                                                             {/* <th><input type="checkbox" /></th> */}
-                                                            <th>Sl. No</th>
+                                                            <th>S. No</th>
                                                             <th>Email</th>
                                                             <th>Subscribed Date</th>
                                                             <th>Action</th>
