@@ -5899,3 +5899,14 @@ h3 a {
   overflow: hidden;
   margin-bottom: 10px;
 }
+
+.show-order-button{
+  color: #0da79e !important;
+  border-color: #0da79e !important;
+}
+
+.btn:hover{
+  color: #fff !important;
+  border-color: #0da79e !important;
+  background-color:#0da79e  !important;
+}

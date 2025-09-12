@@ -1,6 +1,7 @@
 // src/components/PaginationComponent.js
 import React from 'react';
 import { Pagination } from 'react-bootstrap';
+import "../css/user/pagination.css";
 
 const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
   if (totalPages === 0) return null;
@@ -20,7 +21,7 @@ const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
   }
 
   return (
-    <div className="d-flex justify-content-center mt-3">
+    <div className="d-flex justify-content-center mt-3" >
       <Pagination>
         <Pagination.Prev
           onClick={() => onPageChange(currentPage - 1)}

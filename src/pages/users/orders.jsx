@@ -15,19 +15,27 @@ import { getToken } from "../../utils/auth";
 import CancelOrderModal from "../../modals/cancelOrderModal";
 import { Carousel } from "react-bootstrap";
 import ProductCard from "../../components/productCard";
+import PaginationComponent from "../../includes/pagination";
 
 const MyOrdersPage = () => {
   const dispatch = useDispatch();
   const { orders = [], loading, error } = useSelector((state) => state.ordersState.orders);
-
   const latestOrder = orders.length > 0 ? orders[0] : null;
   const [latestOrderDetails, setLatestOrderDetails] = useState(null);
-    console.log('orders', orders)
+  console.log('orders', orders)
   const [showPreviousOrders, setShowPreviousOrders] = useState(false);
   const [cancelModalShow, setCancelModalShow] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const relatedProducts = useSelector((state) => state.ordersState.relatedProducts);
   console.log('relatedProducts', relatedProducts);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 5;
+  const previousOrders = orders.slice(1);
+  const totalPages = Math.ceil(previousOrders.length / ordersPerPage);
+  const paginatedOrders = previousOrders.slice(
+    (currentPage - 1) * ordersPerPage,
+    currentPage * ordersPerPage
+  );
 
   useEffect(() => {
     dispatch(fetchOrders());
@@ -95,7 +103,9 @@ const MyOrdersPage = () => {
   };
 
 
-
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) setCurrentPage(pageNumber);
+  };
 
   return (
     <>
@@ -152,7 +162,7 @@ const MyOrdersPage = () => {
                                 <p className="warranty">{productData.warranty || ""}</p>
 
                                 <div className="order-meta">
-                                    <span className="separator">Color: {productData.color || "N/A"}</span>
+                                  <span className="separator">Color: {productData.color || "N/A"}</span>
                                   <span className="separator">
                                     Size: {productData.size || "N/A"}
                                   </span>
@@ -263,7 +273,7 @@ const MyOrdersPage = () => {
                   {orders.length > 1 && (
                     <div className="text-center mt-4 mb-4">
                       <button
-                        className="btn btn-outline-primary"
+                        className="btn show-order-button"
                         onClick={() => setShowPreviousOrders(!showPreviousOrders)}
                       >
                         {showPreviousOrders ? "Hide Previous Orders" : "Show Previous Orders"}
@@ -273,8 +283,8 @@ const MyOrdersPage = () => {
 
                   {showPreviousOrders && (
                     <div className="previous-orders mt-4">
-                      <h3>Previous Orders</h3>
-                      {orders.slice(1).map((order) => (
+                      <h3 className="ps-3">Previous Orders</h3>
+                      {paginatedOrders.slice(1).map((order) => (
                         <div key={order.id} className="order-block mb-4">
                           {order.items.map((item) => {
                             const productData = item.variant || item.product || {};
@@ -339,7 +349,7 @@ const MyOrdersPage = () => {
                             );
                           })}
 
-                          {order?.address && (
+                          {paginatedOrders?.address && (
                             <div className="delivery-address">
                               <strong>Deliver to:</strong> <br />
                               <span className="name">{order.address.name}</span> <br />
@@ -362,10 +372,13 @@ const MyOrdersPage = () => {
                       ))}
                     </div>
                   )}
-
-
                 </div>
               </div>
+              <PaginationComponent
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
             </div>
 
             <aside className="col-md-3 ads-related">
