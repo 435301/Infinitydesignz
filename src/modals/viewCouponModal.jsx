@@ -35,7 +35,7 @@ const ViewCouponModal = ({ show, onHide, coupon }) => {
                     <div className="col-md-6 mb-3"><strong>Price Type:</strong> {coupon.priceType}</div>
                     <div className="col-md-6 mb-3"><strong>Value:</strong> {coupon.value}</div>
                     <div className="col-md-6 mb-3"><strong>Min Order:</strong> {coupon.minOrderAmount}</div>
-                    <div className="col-md-6 mb-3"><strong>Status:</strong> {coupon.isActive ? 'Active' : 'Inactive'}</div>
+                    <div className="col-md-6 mb-3"><strong>Status:</strong> {coupon.status ? 'Active' : 'Inactive'}</div>
                     <div className="col-md-6 mb-3">
                         <strong>From Date:</strong> {new Date(coupon.fromDate).toLocaleDateString('en-GB', {
                             day: '2-digit',
