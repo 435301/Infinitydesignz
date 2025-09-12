@@ -111,7 +111,7 @@ const OrderDetailsPage = () => {
                                     <h6>ORDER SUMMARY</h6>
                                     <p className='order-p text-secondary'>
                                         Total MRP: ₹{priceSummary.totalMRP}<br />
-                                        Discount on MRP: -₹{priceSummary.discountOnMRP}<br />
+                                        Discount on MRP: ₹{priceSummary.discountOnMRP}<br />
                                         Sub Total: ₹{priceSummary.totalAfterDiscount}<br />
                                         Coupon Discount: ₹{priceSummary.couponDiscount}<br />
                                         Platform Fee: ₹{priceSummary.platformFee}<br />

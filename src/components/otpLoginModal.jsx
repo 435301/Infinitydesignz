@@ -12,11 +12,30 @@ const OtpLoginModal = ({ show, onClose, onLoginSuccess }) => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+
 
   const dispatch = useDispatch();
   const userAuth = useSelector((state) => state.userAuth);
 
+  const validateForm = () => {
+    let newErrors = {};
+    if (!mobile) {
+      newErrors.mobile = "Mobile number is required";
+    } else if (!/^[0-9]{10}$/.test(mobile)) {
+      newErrors.mobile = "Enter a valid 10-digit mobile number";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    setMobile(e.target.value)
+    setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+  };
+
   const handleSendOtp = () => {
+    if (!validateForm()) return;
     if (!mobile) {
       toast.error('Please enter the mobile number');
       return;
@@ -66,12 +85,14 @@ const OtpLoginModal = ({ show, onClose, onLoginSuccess }) => {
                 <label htmlFor="mobile">Mobile Number</label>
                 <input
                   type="tel"
-                  className="form-control"
+                  className={`form-control ${errors.mobile ? 'is-invalid' : ''}`}
                   id="mobile"
                   placeholder="Mobile Number"
                   value={mobile}
-                  onChange={(e) => setMobile(e.target.value)}
+                  // onChange={(e) => setMobile(e.target.value)}
+                  onChange={handleChange}
                 />
+                {errors.mobile && <div className="invalid-feedback">{errors.mobile}</div>}
               </div>
               <div className="form-check mb-3">
                 <input
