@@ -401,7 +401,7 @@ const asideStyle = () => ({
 const navLinkStyle = (isCollapsed, clickable = false) => ({
   display: 'flex',
   alignItems: 'center',
-  padding: isCollapsed ? '10px' : '5px 15px',
+  padding: isCollapsed ? '10px' : '12px 5px 12px 15px',
   color: '#fff',
   fontSize: '14px',
   textDecoration: 'none',

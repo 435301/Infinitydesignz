@@ -100,11 +100,12 @@ function App() {
     dispatch({ type: "HIDE_LOGIN_MODAL" });
   };
 
-    useEffect(() => {
-    if (!isLoggedIn()) {
-      dispatch({ type: "SHOW_LOGIN_MODAL" });
-    }
-  }, [dispatch]);
+  //   useEffect(() => {
+  //   if (!isLoggedIn()) {
+  //     dispatch({ type: "SHOW_LOGIN_MODAL" });
+  //   }
+
+  // }, [dispatch]);
 
   useEffect(() => {
     if (isLoggedIn()) {
