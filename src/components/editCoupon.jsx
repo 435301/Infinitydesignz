@@ -15,6 +15,7 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
     const [selectedSubMenu, setSelectedSubMenu] = useState('');
     const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
     const [formValues, setFormValues] = useState({});
+    console.log('formValues',formValues)
   const [status, setStatus] = useState(false);
 
     useEffect(() => {

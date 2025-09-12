@@ -41,11 +41,11 @@ export const fetchCoupon = () => {
   };
 };
 
-export const addCoupon = (formData) => async (dispatch) => {
+export const addCoupon = (payload) => async (dispatch) => {
   dispatch({ type: 'ADD_COUPON_REQUEST' });
   try {
     const token = localStorage.getItem('token');
-    await axios.post(`${BASE_URL}/coupons`, formData, {
+    await axios.post(`${BASE_URL}/coupons`, payload, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -56,10 +56,10 @@ export const addCoupon = (formData) => async (dispatch) => {
     toast.success('coupon created successfully')
     dispatch(fetchCoupon());
   } catch (error) {
-      toast.error(error?.response?.data?.message || 'Error adding coupons');
+      toast.error(error?.response?.message || 'Error adding coupons');
     dispatch({
       type: 'ADD_COUPON_FAILURE',
-      payload: error.response?.data?.message || 'Error adding coupons',
+      // payload: error.response?.data?.message || 'Error adding coupons',
     });
     throw error;
   }
