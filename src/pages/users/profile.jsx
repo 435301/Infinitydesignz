@@ -195,7 +195,7 @@ export default function ProfilePage() {
               <div className="form-line">
                 <div className="form-field full-span">
                   <label>Date of Birth<span className="text-danger">*</span></label>
-                  <input type="date" name="dateOfBirth" value={formData.dateOfBirth} className={`form-control ${errors.dateOfBirth ? 'is-invalid' : ''}`} onChange={handleChange} />
+                  <input type="date" name="dateOfBirth" value={formData.dateOfBirth} className={`form-control ${errors.dateOfBirth ? 'is-invalid' : ''}`} onChange={handleChange} max={new Date().toISOString().split("T")[0]}/>
                    {errors.dateOfBirth && <div className="invalid-feedback">{errors.dateOfBirth}</div>}
                 </div>
               </div>
