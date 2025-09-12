@@ -116,6 +116,7 @@ function UserOrdersTable() {
                                                             <th>Sl. No</th>
                                                             <th>Email</th>
                                                             <th>Subscribed Date</th>
+                                                            <th>Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
