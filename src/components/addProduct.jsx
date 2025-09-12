@@ -132,11 +132,10 @@ const validate = () => {
   return Object.keys(newErrors).length === 0;
 };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setErrors({});
+    // setErrors({});
     if (!validate()) return;
 
     const variantPayloads = variants
