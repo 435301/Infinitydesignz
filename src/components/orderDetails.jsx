@@ -45,10 +45,10 @@ const OrderDetailsPage = () => {
     };
 
     const handleNoteSubmit = (status, note) => {
-        dispatch(cancelOrderItemAdmin(selectedItemId, selectedOrderId, note,"CANCELLED",status)).then(() => {
-        dispatch(fetchOrderById(orderId)); 
-        // dispatch(fetchAdminOrders());
-    });
+        dispatch(cancelOrderItemAdmin(selectedItemId, selectedOrderId, note, "CANCELLED", status)).then(() => {
+            dispatch(fetchOrderById(orderId));
+            // dispatch(fetchAdminOrders());
+        });
         setSnackbarOpen(false);
     };
 
@@ -66,7 +66,7 @@ const OrderDetailsPage = () => {
             <div className="wrapper">
                 <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
                 <aside className="main-sidebar hidden-print">
-                    <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)}/>
+                    <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
                 </aside>
 
                 <div
@@ -146,7 +146,7 @@ const OrderDetailsPage = () => {
                                         {order.items && order.items.length > 0 ? (
                                             order.items.map((item, index) => {
                                                 const product = item.product || item.variant || {};
-                                                console.log('product',item)
+                                                console.log('product', item)
                                                 return (
                                                     <tr key={index}>
                                                         <td>
@@ -165,13 +165,12 @@ const OrderDetailsPage = () => {
                                                         <td>₹{item.total}</td>
                                                         <td>09-Oct-2023</td>
                                                         <td>
-                                                            <span style={{position:"absolute"}}>
-                                                                        {item.status}
-                                                            </span>
 
-                                                            <div className="action-buttons">
-                                                                {item.status !== 'CANCELLED' && item.status !== 'APPROVED' && (
-                                                                    <>
+
+                                                            <div className="action-cell">
+                                                                {item.status !== 'CANCELLED' && item.status !== 'APPROVED' ? (
+
+                                                                    <div className="action-buttons">
                                                                         <button
                                                                             type="button"
                                                                             className="action-btn approve-btn action-rounded"
@@ -186,10 +185,19 @@ const OrderDetailsPage = () => {
                                                                         >
                                                                             <i className="ti-close"></i> Cancel Order
                                                                         </button>
-                                                                    </>
-                                                                )}
+                                                                    </div>
+
+                                                                )
+                                                                    : (
+                                                                        <div className="status-label">
+                                                                            <span className={`status ${item.status.toLowerCase()}`}>
+                                                                                {item.status}
+                                                                            </span>
+                                                                        </div>
+                                                                    )}
                                                             </div>
                                                         </td>
+
                                                     </tr>
                                                 );
                                             })
