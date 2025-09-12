@@ -165,12 +165,7 @@ const OrderDetailsPage = () => {
                                                         <td>₹{item.total}</td>
                                                         <td>09-Oct-2023</td>
                                                         <td>
-                                                            <span>
-                                                                {/* {item.status === 'CANCELLED'
-                                                                    ? 'Cancelled'
-                                                                    : item.status === 'APPROVED'
-                                                                        ? 'Approved'
-                                                                        : 'Order Placed'} */}
+                                                            <span style={{position:"absolute"}}>
                                                                         {item.status}
                                                             </span>
 
