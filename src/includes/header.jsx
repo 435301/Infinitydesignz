@@ -15,7 +15,7 @@ import ShoppingCart from '../../src/img/shopping_cart.svg';
 import MenuImg from '../../src/img/menu-img.webp';
 import { isLoggedIn } from "../utils/auth";
 import { addKeyword, fetchKeywords } from "../redux/actions/searchKeywordsAction";
-import { BsBoxArrowRight } from "react-icons/bs";
+import { BsBoxArrowInRight, BsBoxArrowRight } from "react-icons/bs";
 
 const PRODUCTS_FILTERS_KEY = "productsFilters";
 const saveProductsFilters = (filters) => { try { sessionStorage.setItem(PRODUCTS_FILTERS_KEY, JSON.stringify(filters)); } catch { } };
@@ -166,8 +166,8 @@ export default function Header() {
     setShowSuggestions(false);
   };
 
-    const handleLogout = (e) => {
-    e.preventDefault(); 
+  const handleLogout = (e) => {
+    // e.preventDefault();
     localStorage.removeItem("access_token");
     navigate("/");
   };
@@ -218,7 +218,7 @@ export default function Header() {
                   aria-label="Search"
                 />
                 <button className="btn btn-light border-0 end-0 top-0 me-0 p-0 bg-transparent" type="submit" aria-label="Search">
-                  <img src={Search} className="search-btn-img" alt="search" loading="lazy"   />
+                  <img src={Search} className="search-btn-img" alt="search" loading="lazy" />
                 </button>
               </form>
 
@@ -273,7 +273,30 @@ export default function Header() {
                 </span>
                 My Cart
               </a>
-             <a href="/admin/login" className="text-decoration-none text-dark" onClick={handleLogout}><span className="position-relative mx-1"><BsBoxArrowRight /></span> Logout</a>
+              {isLoggedIn() ? (
+                <a
+                  href="/"
+                  className="text-decoration-none text-dark px-1"
+                  onClick={() => {
+                    handleLogout();
+                  }}
+                >
+                  <span className="position-relative mx-2">
+                    <BsBoxArrowRight size={20}/>
+                  </span>
+                  Logout
+                </a>
+              ) : (
+                <a href="#" className="text-decoration-none text-dark px-1" onClick={(e) => {
+                  e.preventDefault();
+                  dispatch({ type: "SHOW_LOGIN_MODAL" });
+                }}>
+                  <span className="position-relative mx-2">
+                    <BsBoxArrowInRight size={20} /> 
+                  </span>
+                  Login
+                </a>
+              )}
             </div>
           </div>
         </div>
