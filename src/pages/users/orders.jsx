@@ -374,11 +374,13 @@ const MyOrdersPage = () => {
                   )}
                 </div>
               </div>
+               {showPreviousOrders && orders.length > 1 && (
               <PaginationComponent
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
               />
+                 )}
             </div>
 
             <aside className="col-md-3 ads-related">
