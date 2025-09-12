@@ -99,7 +99,6 @@ const CreateCouponModal = ({ show, onHide }) => {
       : null,
       status: status,
     };
-  console.log("🚀 Final Payload:", payload);
     if (couponType === 'list_submenu' || couponType === 'brand') {
       payload.menuId = parseInt(selectedMenu);
       payload.subMenuId = parseInt(selectedSubMenu);
@@ -114,11 +113,9 @@ const CreateCouponModal = ({ show, onHide }) => {
         payload.brandId = selectedBrands[0];
       }
     }
-
     if (couponType === 'url') {
       payload.url = form.url?.value || '';
     }
-
     if (couponType === 'price') {
       const selectedRange = form.price_selection?.value || '';
       const priceRangeIdMap = {
