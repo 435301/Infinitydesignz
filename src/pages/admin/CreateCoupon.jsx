@@ -36,11 +36,11 @@ const CreateCouponModal = ({ show, onHide }) => {
   }, [dispatch])
 
   const handleInputChange = (e) => {
-  const { name, value } = e.target;
-  if (errors[name]) {
-    setErrors((prev) => ({ ...prev, [name]: "" }));
-  }
-};
+    const { name, value } = e.target;
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -50,40 +50,45 @@ const CreateCouponModal = ({ show, onHide }) => {
     console.log("From Date:", form.fromDate?.value, "To Date:", form.toDate?.value);
 
     // Validate common fields
-  if (!form.coupon_code?.value.trim()) newErrors.coupon_code = "Coupon Code is required";
-  if (!form.price_type?.value || form.price_type.value === "--Choose--") newErrors.price_type = "Price/Percentage is required";
-  if (!form.value?.value.trim()) newErrors.value = "Value is required";
-  if (!form.fromDate?.value) newErrors.fromDate = "From Date is required";
-  if (!form.toDate?.value) newErrors.toDate = "To Date is required";
-  if (!form.min_price?.value.trim()) newErrors.min_price = "Minimum Order Price is required";
+    if (!form.coupon_code?.value.trim()) newErrors.coupon_code = "Coupon Code is required";
+    if (!form.price_type?.value || form.price_type.value === "--Choose--") newErrors.price_type = "Price/Percentage is required";
+    if (!form.value?.value.trim()) newErrors.value = "Value is required";
+    if (!form.fromDate?.value) newErrors.fromDate = "From Date is required";
+    if (!form.toDate?.value) newErrors.toDate = "To Date is required";
+    const minPrice = parseFloat(form.min_price?.value);
+    if (!form.min_price?.value.trim()) {
+      newErrors.min_price = "Minimum Order Price is required";
+    } else if (isNaN(minPrice) || minPrice <= 0) {
+      newErrors.min_price = "Minimum Order Price must be greater than 0";
+    }
 
-  // Validate based on coupon type
-  if (couponType === 'list_submenu' || couponType === 'brand') {
-    if (!selectedMenu) newErrors.selectedMenu = "Menu is required";
-    if (!selectedSubMenu) newErrors.selectedSubMenu = "Sub Menu is required";
-    if (!selectedListSubMenu) newErrors.selectedListSubMenu = "List Sub Menu is required";
-  }
+    // Validate based on coupon type
+    if (couponType === 'list_submenu' || couponType === 'brand') {
+      if (!selectedMenu) newErrors.selectedMenu = "Menu is required";
+      if (!selectedSubMenu) newErrors.selectedSubMenu = "Sub Menu is required";
+      if (!selectedListSubMenu) newErrors.selectedListSubMenu = "List Sub Menu is required";
+    }
 
-  if (couponType === 'brand') {
-    const selectedBrands = Array.from(form["brand[]"]?.selectedOptions || []).map(
-      (opt) => parseInt(opt.value)
-    );
-    if (!selectedBrands.length) newErrors.brand = "Brand is required";
-  }
+    if (couponType === 'brand') {
+      const selectedBrands = Array.from(form["brand[]"]?.selectedOptions || []).map(
+        (opt) => parseInt(opt.value)
+      );
+      if (!selectedBrands.length) newErrors.brand = "Brand is required";
+    }
 
-  if (couponType === 'url' && !form.url?.value.trim()) {
-    newErrors.url = "URL is required";
-  }
+    if (couponType === 'url' && !form.url?.value.trim()) {
+      newErrors.url = "URL is required";
+    }
 
-  if (couponType === 'price' && !form.price_selection?.value) {
-    newErrors.price_selection = "Price selection is required";
-  }
+    if (couponType === 'price' && !form.price_selection?.value) {
+      newErrors.price_selection = "Price selection is required";
+    }
 
-  // If errors exist, stop submission
-  if (Object.keys(newErrors).length > 0) {
-    setErrors(newErrors);
-    return;
-  }
+    // If errors exist, stop submission
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
     const payload = {
       code: form.coupon_code?.value || '',
@@ -91,12 +96,12 @@ const CreateCouponModal = ({ show, onHide }) => {
       priceType: form.price_type?.value.toUpperCase() || '',
       value: parseFloat(form.value?.value) || 0,
       minOrderAmount: parseFloat(form.min_price?.value) || 0,
-    fromDate: form.fromDate?.value
-      ? new Date(form.fromDate.value).toISOString()
-      : null,
-    toDate: form.toDate?.value
-      ? new Date(form.toDate.value).toISOString()
-      : null,
+      fromDate: form.fromDate?.value
+        ? new Date(form.fromDate.value).toISOString()
+        : null,
+      toDate: form.toDate?.value
+        ? new Date(form.toDate.value).toISOString()
+        : null,
       status: status,
     };
     if (couponType === 'list_submenu' || couponType === 'brand') {
@@ -141,12 +146,12 @@ const CreateCouponModal = ({ show, onHide }) => {
       <div className="row">
         <div className="form-group col-md-4">
           <label>Coupon Code <span className="text-danger">*</span></label>
-          <input type="text" className={`form-control ${errors.coupon_code ? 'is-invalid' : ''}`} name="coupon_code"  onChange={handleInputChange}/>
-           {errors.coupon_code && <div className="invalid-feedback">{errors.coupon_code}</div>}
+          <input type="text" className={`form-control ${errors.coupon_code ? 'is-invalid' : ''}`} name="coupon_code" onChange={handleInputChange} />
+          {errors.coupon_code && <div className="invalid-feedback">{errors.coupon_code}</div>}
         </div>
         <div className="form-group col-md-4">
           <label>Price/Percentage <span className="text-danger">*</span></label>
-          <select className={`form-control ${errors.price_type ? 'is-invalid' : ''}`} name="price_type"  onChange={handleInputChange}>
+          <select className={`form-control ${errors.price_type ? 'is-invalid' : ''}`} name="price_type" onChange={handleInputChange}>
             <option>--Choose--</option>
             <option value='fixed'>Price</option>
             <option value="percentage">Percentage</option>
@@ -155,24 +160,24 @@ const CreateCouponModal = ({ show, onHide }) => {
         </div>
         <div className="form-group col-md-4">
           <label>Value <span className="text-danger">*</span></label>
-          <input type="text" className={`form-control ${errors.value ? 'is-invalid' : ''}`} name="value"  onChange={handleInputChange}/>
-           {errors.value && <div className="invalid-feedback">{errors.value}</div>}
+          <input type="text" className={`form-control ${errors.value ? 'is-invalid' : ''}`} name="value" onChange={handleInputChange} />
+          {errors.value && <div className="invalid-feedback">{errors.value}</div>}
         </div>
         <div className="form-group col-md-4">
           <label>From Date <span className="text-danger">*</span></label>
-          <input type="date" className={`form-control ${errors.fromDate ? 'is-invalid' : ''}`} name="fromDate"  onChange={handleInputChange} />
-           {errors.fromDate && <div className="invalid-feedback">{errors.fromDate}</div>}
+          <input type="date" className={`form-control ${errors.fromDate ? 'is-invalid' : ''}`} name="fromDate" onChange={handleInputChange} />
+          {errors.fromDate && <div className="invalid-feedback">{errors.fromDate}</div>}
 
         </div>
         <div className="form-group col-md-4">
           <label>To Date <span className="text-danger">*</span></label>
-          <input type="date" className={`form-control ${errors.toDate ? 'is-invalid' : ''}`} name="toDate"  onChange={handleInputChange} />
-           {errors.toDate && <div className="invalid-feedback">{errors.toDate}</div>}
+          <input type="date" className={`form-control ${errors.toDate ? 'is-invalid' : ''}`} name="toDate" onChange={handleInputChange} />
+          {errors.toDate && <div className="invalid-feedback">{errors.toDate}</div>}
         </div>
         <div className="form-group col-md-4">
           <label>Min Order Price <span className="text-danger">*</span></label>
-          <input type="text" className={`form-control ${errors.min_price ? 'is-invalid' : ''}`} name="min_price" placeholder="Enter minimum price of purchase"  onChange={handleInputChange}/>
-           {errors.min_price && <div className="invalid-feedback">{errors.min_price}</div>}
+          <input type="text" className={`form-control ${errors.min_price ? 'is-invalid' : ''}`} name="min_price" placeholder="Enter minimum price of purchase" onChange={handleInputChange} />
+          {errors.min_price && <div className="invalid-feedback">{errors.min_price}</div>}
 
         </div>
       </div>
@@ -377,13 +382,13 @@ const CreateCouponModal = ({ show, onHide }) => {
                 </div>
                 <div className="form-group col-md-4">
                   <label>Brand</label>
-                  <select  className={`form-control ${errors.brand ? 'is-invalid' : ''}`} name="brand[]"  onChange={handleInputChange}>
+                  <select className={`form-control ${errors.brand ? 'is-invalid' : ''}`} name="brand[]" onChange={handleInputChange}>
                     <option value="">--Choose Brand--</option>
                     {brands.map((brand) => (
                       <option key={brand.id} value={brand.id}>{brand.name}</option>
                     ))}
                   </select>
-                   {errors.brand && <div className="invalid-feedback">{errors.brand}</div>}
+                  {errors.brand && <div className="invalid-feedback">{errors.brand}</div>}
                 </div>
               </div>
               {renderCouponDetailsSection()}
@@ -397,8 +402,8 @@ const CreateCouponModal = ({ show, onHide }) => {
               <div className="row">
                 <div className="form-group col-md-4">
                   <label>URL<span className='text-danger'>*</span></label>
-                  <input type="text" className={`form-control ${errors.url ? 'is-invalid' : ''}`} name="url" placeholder="Enter URL"  onChange={handleInputChange} />
-                   {errors.url && <div className="invalid-feedback">{errors.url}</div>}
+                  <input type="text" className={`form-control ${errors.url ? 'is-invalid' : ''}`} name="url" placeholder="Enter URL" onChange={handleInputChange} />
+                  {errors.url && <div className="invalid-feedback">{errors.url}</div>}
                 </div>
               </div>
               {renderCouponDetailsSection()}
@@ -412,12 +417,12 @@ const CreateCouponModal = ({ show, onHide }) => {
               <div className="row">
                 <div className="form-group col-md-4">
                   <label>Choose Price<span className='text-danger'>*</span></label>
-                  <select className={`form-control ${errors.price_selection ? 'is-invalid' : ''}`} name="price_selection"  onChange={handleInputChange}>
+                  <select className={`form-control ${errors.price_selection ? 'is-invalid' : ''}`} name="price_selection" onChange={handleInputChange}>
                     {priceOptions.map((option) => (
                       <option key={option.value} value={option.value}>{option.label}</option>
                     ))}
                   </select>
-                   {errors.price_selection && <div className="invalid-feedback">{errors.price_selection}</div>}
+                  {errors.price_selection && <div className="invalid-feedback">{errors.price_selection}</div>}
                 </div>
               </div>
               {renderCouponDetailsSection()}
