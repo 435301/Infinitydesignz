@@ -227,7 +227,7 @@ const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
               {isActiveMenu('categories') && !isCollapsed && (
                 <ul className="subdropdown" style={{ paddingLeft: '20px', listStyle: 'none' }}>
                   {renderNavLink('/admin/manage-category', 'Categories')}
-                  {renderNavLink('/admin/manage-subcategory', 'Sub-categories')}
+                  {renderNavLink('/admin/manage-subcategory', 'Sub-Categories')}
                   {renderNavLink('/admin/list-subcategory', 'List Sub Categories')}
                 </ul>
               )}
