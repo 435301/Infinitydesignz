@@ -41,6 +41,8 @@ const CheckoutPage = () => {
       ? reduxCartPriceSummary
       : (cart?.priceSummary || {}));
 
+      console.log('priceSummary',priceSummary)
+
   const cartCoupon = useSelector(state => state.cart.appliedCoupon);
   const buyNowCoupon = useSelector(state => state.buyNow.coupon);
 
@@ -279,9 +281,14 @@ const CheckoutPage = () => {
                         <span>₹{priceSummary.totalAfterDiscount?.toLocaleString("en-IN")}</span>
                       </div>
 
+                      <div className="cart-total__line">
+                        <span>Discount On Mrp</span>
+                        <span>- ₹{Math.abs(priceSummary.discountOnMRP)?.toLocaleString("en-IN")}</span>
+                      </div>
+
                       {priceSummary?.couponDiscount > 0 && (
                         <div className="cart-total__line">
-                          <span>Discount</span>
+                          <span>Coupon Discount</span>
                           <span>- ₹{priceSummary.couponDiscount.toLocaleString("en-IN")}</span>
                         </div>
                       )}
