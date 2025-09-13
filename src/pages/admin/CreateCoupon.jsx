@@ -46,13 +46,15 @@ const CreateCouponModal = ({ show, onHide }) => {
     e.preventDefault();
     const form = e.target;
     let newErrors = {};
-
-    console.log("From Date:", form.fromDate?.value, "To Date:", form.toDate?.value);
-
     // Validate common fields
     if (!form.coupon_code?.value.trim()) newErrors.coupon_code = "Coupon Code is required";
     if (!form.price_type?.value || form.price_type.value === "--Choose--") newErrors.price_type = "Price/Percentage is required";
-    if (!form.value?.value.trim()) newErrors.value = "Value is required";
+    const value = parseFloat(form.value?.value);
+    if (!form.value?.value.trim()) {
+      newErrors.value = "Value is required";
+    } else if (isNaN(value) || value <= 0) {
+      newErrors.value = "Value must be greater than 0";
+    }
     if (!form.fromDate?.value) newErrors.fromDate = "From Date is required";
     if (!form.toDate?.value) newErrors.toDate = "To Date is required";
     const minPrice = parseFloat(form.min_price?.value);
@@ -61,7 +63,6 @@ const CreateCouponModal = ({ show, onHide }) => {
     } else if (isNaN(minPrice) || minPrice <= 0) {
       newErrors.min_price = "Minimum Order Price must be greater than 0";
     }
-
     // Validate based on coupon type
     if (couponType === 'list_submenu' || couponType === 'brand') {
       if (!selectedMenu) newErrors.selectedMenu = "Menu is required";
@@ -176,9 +177,8 @@ const CreateCouponModal = ({ show, onHide }) => {
         </div>
         <div className="form-group col-md-4">
           <label>Min Order Price <span className="text-danger">*</span></label>
-          <input type="text" className={`form-control ${errors.min_price ? 'is-invalid' : ''}`} name="min_price" placeholder="Enter minimum price of purchase" onChange={handleInputChange} />
+          <input type="text" className={`form-control ${errors.min_price ? 'is-invalid' : ''}`} name="min_price" placeholder="Enter minimum price of purchase" onChange={handleInputChange} min="1" />
           {errors.min_price && <div className="invalid-feedback">{errors.min_price}</div>}
-
         </div>
       </div>
     </>
@@ -441,9 +441,6 @@ const CreateCouponModal = ({ show, onHide }) => {
               Active
             </label>
           </div>
-
-
-
           <div className="text-center mt-4">
             <Button variant="secondary" onClick={onHide} className="me-2">Cancel</Button>
             <Button type="submit" variant="success">Submit</Button>
