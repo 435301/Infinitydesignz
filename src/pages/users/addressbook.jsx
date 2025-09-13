@@ -15,6 +15,7 @@ import '../../css/admin/style.css';
 import EditAddressModal from '../../components/editAddressModal';
 import DeleteModal from '../../modals/deleteModal';
 import AddressModal from '../../components/addAddressModal';
+import { toast } from 'react-toastify';
 
 export default function AddressBook() {
   const dispatch = useDispatch();
@@ -103,6 +104,10 @@ export default function AddressBook() {
                         setEditModalOpen(true);
                       }}
                       onDelete={() => {
+                        if (addr.isDefault) {
+                          toast.warning("Please set another address as default before deleting this one.");
+                          return;
+                        }
                         setAddressToDelete(addr);
                         setDeleteModalOpen(true);
                       }}
@@ -172,39 +177,7 @@ function AddressEntry({ name, addressLines, mobile, label, isDefault = false, on
   );
 }
 
-function RelatedProducts() {
-  const products = [1, 2];
-  return (
-    <div className="related-products py-4">
-      <h4>Related Products</h4>
-      <div className="carousel-inner">
-        {products.map((_, i) => (
-          <div key={i} className={`carousel-item ${i === 0 ? 'active' : ''}`}>
-            <div className="card h-100 position-relative">
-              <div className="discount-badge">22% off</div>
-              <div className="wishlist-icon"><img src={Icon} alt="wishlist" /></div>
-              <img src={Img3} className="card-img-top" alt="Sofa" />
-              <div className="card-body">
-                <h6 className="card-title">Andres Fabric 3 Seater Sofa In Sandy Brown Colour</h6>
-                <p className="card-text"><strong>₹37,999</strong> <del>MRP ₹48,999</del></p>
-                <div className="rating d-flex align-items-center mb-2">
-                  {Array(4).fill().map((_, i) => <img key={i} src={Star} className="me-2" alt="star" />)}
-                  <img src={Star1} className="me-2" alt="half-star" />
-                  <span>4.4 | 24K</span>
-                </div>
-                <p className="emi-text">
-                  36-Month Warranty Available<br />
-                  EMI starting from ₹1,825/month<br />
-                  Express Shipping in 1 day
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+
 
 
 

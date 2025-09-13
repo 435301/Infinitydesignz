@@ -282,7 +282,7 @@ const CheckoutPage = () => {
                       </div>
 
                       <div className="cart-total__line">
-                        <span>Discount On Mrp</span>
+                        <span>Discount on Mrp</span>
                         <span>- ₹{Math.abs(priceSummary.discountOnMRP)?.toLocaleString("en-IN")}</span>
                       </div>
 
@@ -292,7 +292,6 @@ const CheckoutPage = () => {
                           <span>- ₹{priceSummary.couponDiscount.toLocaleString("en-IN")}</span>
                         </div>
                       )}
-
 
                       <div className="cart-total__line">
                         <span>Shipping</span>
