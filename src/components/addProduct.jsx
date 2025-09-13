@@ -114,19 +114,25 @@ const validate = () => {
     newErrors.SellingPrice = 'Selling Price cannot be greater than MRP'
   }
 
-
   if (!formData.description.trim()) newErrors.description = 'Description is required';
   if (!formData.status) newErrors.status = 'Product status is required';
   if (!formData.searchKeywords.trim()) newErrors.searchKeywords = 'Search Keywords are required';
 
-  // if (!formData.weight) newErrors.weight = 'Weight is required';
-  // else if (isNaN(formData.weight)) newErrors.weight = 'Weight must be a number';
+   if (isNaN(formData.weight)) newErrors.weight = 'Weight must be a number';
 
   if (!formData.sla) newErrors.sla = 'SLA is required';
   else if (isNaN(formData.sla)) newErrors.sla = 'SLA must be a number';
 
   if (formData.deliveryCharges && isNaN(formData.deliveryCharges))
     newErrors.deliveryCharges = 'Delivery Charges must be a number';
+
+    variants.forEach((v, idx) => {
+    if (v.mrp || v.sellingPrice ) {
+      if (parseFloat(v.sellingPrice) > parseFloat(v.mrp)) {
+        newErrors[`variant_sp_${idx}`] = `Variant ${idx + 1}: Selling Price cannot be greater than MRP`;
+      }
+    }
+  })
 
   setErrors(newErrors);
   return Object.keys(newErrors).length === 0;
@@ -256,23 +262,6 @@ const validate = () => {
   const [variants, setVariants] = useState([
     { sku: '', stock: '', mrp: '', sellingPrice: '', sizeId: '', colorId: '' },
   ]);
-
-  // const handleChange = (index, field, value) => {
-  //   const updatedVariants = [...variants];
-  //   updatedVariants[index][field] = value;
-  //   setVariants(updatedVariants);
-  // };
-
-  // const handleChange = (index, field, value) => {
-  //   const updatedVariants = [...variants];
-
-  //   if (field === 'stock') {
-  //     value = value.replace(/\D/g, '').slice(0, 4);
-  //   }
-
-  //   updatedVariants[index][field] = value;
-  //   setVariants(updatedVariants);
-  // };
 
   const handleChange = (index, field, value) => {
   const updatedVariants = [...variants];
@@ -677,7 +666,6 @@ const validate = () => {
                                 onChange={(e) => handleChange(index, 'mrp', e.target.value)}
                                 placeholder="MRP"
                               />
-                               {/* {variant.error && <div className="text-danger small mt-1">{variant.error}</div>} */}
                             </td>
                             <td>
                               <input

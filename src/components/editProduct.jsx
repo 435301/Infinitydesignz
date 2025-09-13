@@ -210,6 +210,13 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         // if (!formData.mainCategoryPromotionIds.length)
         //     newErrors.mainCategoryPromotionIds = 'At least one Main Category Promotion is required';
 
+    variants.forEach((v, idx) => {
+    if (v.mrp || v.sellingPrice ) {
+      if (parseFloat(v.sellingPrice) > parseFloat(v.mrp)) {
+        newErrors[`variant_sp_${idx}`] = `Variant ${idx + 1}: Selling Price cannot be greater than MRP`;
+      }
+    }
+  })
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -800,7 +807,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                                 onChange={(e) => handleChange(index, 'mrp', e.target.value)}
                                                                 placeholder="MRP"
                                                             />
-                                                            {variant.error && <div className="text-danger small mt-1">{variant.error}</div>}
+                                                            {/* {variant.error && <div className="text-danger small mt-1">{variant.error}</div>} */}
                                                         </td>
                                                         <td>
                                                             <input
