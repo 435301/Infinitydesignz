@@ -308,7 +308,7 @@ const CheckoutPage = () => {
 
                     <PlaceOrderButton
                       mode={isBuyNow ? "buyNow" : "cart"}
-                      disabled={(!itemsFromCart.length && !buyNowItems.length) || !selectedAddressId}
+                      disabled={(!itemsFromCart.length && !buyNowItems.length) }
                       selectedAddressId={selectedAddressId}
                       paymentMethod={paymentMethod}
                       cartItems={itemsFromCart}
