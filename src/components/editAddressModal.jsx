@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { editAddress } from '../redux/actions/addressAction';
 import '../css/user/userstyle.css';
+import { toast } from 'react-toastify';
 
 function EditAddressModal({ addressData, onClose, selectedType, onTypeChange }) {
     const types = ['Home', 'Office', 'Other'];
@@ -136,10 +137,28 @@ function EditAddressModal({ addressData, onClose, selectedType, onTypeChange }) 
         });
     };
 
-
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!validateForm()) return;
+        const addresses = Array.isArray(addressData) ? addressData : [addressData];
+
+        const isDuplicate = addresses.some(addr =>
+            addr.id !== formData.id &&
+            addr.name?.trim().toLowerCase() === formData.name?.trim().toLowerCase() &&
+            addr.flatNumber?.trim().toLowerCase() === formData.flatNumber?.trim().toLowerCase() &&
+            addr.buildingName?.trim().toLowerCase() === formData.buildingName?.trim().toLowerCase() &&
+            addr.addressLine1?.trim().toLowerCase() === formData.addressLine1?.trim().toLowerCase() &&
+            addr.addressLine2?.trim().toLowerCase() === formData.addressLine2?.trim().toLowerCase() &&
+            addr.city?.trim().toLowerCase() === formData.city?.trim().toLowerCase() &&
+            addr.state?.trim().toLowerCase() === formData.state?.trim().toLowerCase() &&
+            addr.pincode?.trim() === formData.pincode?.trim() &&
+            addr.phone?.trim() === formData.phone?.trim() &&
+            addr.label !== formData.label
+        );
+        if (isDuplicate) {
+            toast.error("This address already exists under another type. Please use a different address.");
+            return;
+        }
         dispatch(editAddress(addressData?.id, formData));
         onClose();
     };
@@ -174,7 +193,7 @@ function EditAddressModal({ addressData, onClose, selectedType, onTypeChange }) 
 
     return (
         <div className="custom-modal-wrapper">
-        {/* <div className="modal-backdrop"> */}
+            {/* <div className="modal-backdrop"> */}
             <div className="modal-box">
                 <div className="modal-top">
                     <h3>Edit Address</h3>
@@ -328,7 +347,7 @@ function EditAddressModal({ addressData, onClose, selectedType, onTypeChange }) 
                     <button type="submit" className="submit-action" onClick={handleSubmit}>+ Update Address</button>
                 </form>
             </div>
-        {/* </div> */}
+            {/* </div> */}
         </div>
     );
 }

@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { addAddress } from '../redux/actions/addressAction';
 import { City, State } from "country-state-city";
+import { toast } from 'react-toastify';
 
-function AddressModal({ selectedType, onClose, onTypeChange }) {
+function AddressModal({ selectedType, onClose, onTypeChange ,addresses}) {
   const types = ['Home', 'Office', 'Other'];
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([])
@@ -89,6 +90,21 @@ function AddressModal({ selectedType, onClose, onTypeChange }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateForm()) return;
+     const isDuplicate = addresses.some(addr => 
+    addr.name === formData.name &&
+    addr.flatNumber === formData.flatNumber &&
+    addr.buildingName === formData.buildingName &&
+    addr.addressLine1 === formData.addressLine1 &&
+    addr.addressLine2 === formData.addressLine2 &&
+    addr.city === formData.city &&
+    addr.state === formData.state &&
+    addr.pincode === formData.pincode &&
+    addr.phone === formData.phone
+  );
+  if (isDuplicate) {
+    toast.error("This address already exists under another type. Please use a different address.");
+    return;
+  }
     dispatch(addAddress(formData));
     onClose();
   };
@@ -133,12 +149,24 @@ function AddressModal({ selectedType, onClose, onTypeChange }) {
               key={type}
               type="button"
               className={`type-option ${formData.label === type ? 'active' : ''}`}
-              onClick={() =>
-                setFormData((prev) => ({
-                  ...prev,
-                  label: type,
-                }))
-              }
+               onClick={() => {
+        // reset form when changing type
+        setFormData({
+          name: '',
+          buildingName: '',
+          flatNumber: '',
+          addressLine1: '',
+          addressLine2: '',
+          city: '',
+          state: '',
+          pincode: '',
+          phone: '',
+          label: type,   // set the new type
+        });
+        setSelectedState("");
+        setSelectedCity("");
+        setErrors({});
+      }}
             >
               {type}
             </button>

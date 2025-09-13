@@ -128,7 +128,7 @@ export default function AddressBook() {
       <Footer />
 
       {/* Modal Popup */}
-      {showModal && <AddressModal selectedType={selectedType} onClose={() => setShowModal(false)} onTypeChange={handleTypeSelect} />}
+      {showModal && <AddressModal selectedType={selectedType} onClose={() => setShowModal(false)} onTypeChange={handleTypeSelect} addresses={addresses} />}
       {editModalOpen && selectedAddress && (
         <EditAddressModal addressData={selectedAddress} selectedType={selectedAddress.label} onTypeChange={handleTypeSelect} onClose={() => {
           setEditModalOpen(false)
