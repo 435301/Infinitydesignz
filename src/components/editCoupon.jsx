@@ -185,7 +185,7 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
                         </div>
                         <div className="form-group col-md-4">
                             <label>To Date</label>
-                            <input type="date" name="toDate" value={formValues.toDate} onChange={handleChange} className="form-control" />
+                            <input type="date" name="toDate" value={formValues.toDate} onChange={handleChange} className="form-control" min={new Date().toISOString().split("T")[0]}/>
                         </div>
                         <div className="form-group col-md-4">
                             <label>Min Order Amount</label>

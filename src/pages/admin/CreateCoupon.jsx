@@ -171,7 +171,7 @@ const CreateCouponModal = ({ show, onHide }) => {
         </div>
         <div className="form-group col-md-4">
           <label>To Date <span className="text-danger">*</span></label>
-          <input type="date" className={`form-control ${errors.toDate ? 'is-invalid' : ''}`} name="toDate" onChange={handleInputChange} />
+          <input type="date" className={`form-control ${errors.toDate ? 'is-invalid' : ''}`} name="toDate" onChange={handleInputChange} min={new Date().toISOString().split("T")[0]} />
           {errors.toDate && <div className="invalid-feedback">{errors.toDate}</div>}
         </div>
         <div className="form-group col-md-4">
