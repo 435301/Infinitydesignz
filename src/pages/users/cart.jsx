@@ -271,11 +271,11 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
       </div>
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Discount on MRP</span>
-        <span className="discount-text price-detail-label">-₹{summary.discountOnMRP || 0}</span>
+        <span className="discount-text price-detail-label">- ₹{summary.discountOnMRP || 0}</span>
       </div>
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Coupon Discount</span>
-        <span className="discount-text price-detail-label">₹{summary.couponDiscount || 0}</span>
+        <span className="discount-text price-detail-label">- ₹{summary.couponDiscount || 0}</span>
       </div>
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Platform Fee <small className="know-more">Know More</small></span>
