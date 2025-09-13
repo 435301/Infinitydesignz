@@ -325,7 +325,7 @@ function EditAddressModal({ addressData, onClose, selectedType, onTypeChange }) 
                             {errors.pincode && <div className='invalid-feedback'>{errors.pincode}</div>}
                         </div>
                     </div>
-                    <button type="submit" className="submit-action" onClick={handleSubmit}>+ Edit Address</button>
+                    <button type="submit" className="submit-action" onClick={handleSubmit}>+ Update Address</button>
                 </form>
             </div>
         {/* </div> */}
