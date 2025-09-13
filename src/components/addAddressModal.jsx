@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { addAddress } from '../redux/actions/addressAction';
-
+import { City, State } from "country-state-city";
 
 function AddressModal({ selectedType, onClose, onTypeChange }) {
   const types = ['Home', 'Office', 'Other'];
@@ -23,6 +23,7 @@ function AddressModal({ selectedType, onClose, onTypeChange }) {
     phone: '',
     label: selectedType || "Home",
   });
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -50,38 +51,25 @@ function AddressModal({ selectedType, onClose, onTypeChange }) {
   };
 
   useEffect(() => {
-    fetch("https://countriesnow.space/api/v0.1/countries/states", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ country: "India" }),
-    })
-      .then(res => res.json())
-      .then(data => setStates(data.data.states.map(s => s.name)))
-      .catch(err => console.error(err));
+    const allStates = State.getStatesOfCountry("IN"); // India
+    setStates(allStates);
   }, []);
 
   useEffect(() => {
     if (selectedState) {
-      fetch("https://countriesnow.space/api/v0.1/countries/state/cities", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ country: "India", state: selectedState })
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data?.data) {
-            setCities(data.data);
-          }
-        })
-        .catch((err) => console.error("Error fetching cities:", err));
+      const stateObj = states.find(s => s.name === selectedState);
+      if (stateObj) {
+        const allCities = City.getCitiesOfState("IN", stateObj.isoCode);
+        setCities(allCities);
+      }
     }
-  }, [selectedState]);
+  }, [selectedState, states]);
 
   useEffect(() => {
-  if (selectedType) {
-    setFormData((prev) => ({ ...prev, label: selectedType }));
-  }
-}, [selectedType]);
+    if (selectedType) {
+      setFormData((prev) => ({ ...prev, label: selectedType }));
+    }
+  }, [selectedType]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -98,14 +86,12 @@ function AddressModal({ selectedType, onClose, onTypeChange }) {
     });
   };
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateForm()) return;
     dispatch(addAddress(formData));
     onClose();
   };
-
 
   const handleStateChange = (e) => {
     const state = e.target.value;
@@ -235,7 +221,9 @@ function AddressModal({ selectedType, onClose, onTypeChange }) {
               >
                 <option value="" disabled>STATE</option>
                 {states.map((state) => (
-                  <option key={state} value={state}>{state}</option>
+                  <option key={state.isoCode} value={state.name}>
+                    {state.name}
+                  </option>
                 ))}
               </select>
               {errors.state && <div className='invalid-feedback'>{errors.state}</div>}
@@ -265,7 +253,9 @@ function AddressModal({ selectedType, onClose, onTypeChange }) {
               >
                 <option value="" disabled>CITY</option>
                 {cities.map((city) => (
-                  <option key={city} value={city}>{city}</option>
+                  <option key={city.name} value={city.name}>
+                    {city.name}
+                  </option>
                 ))}
               </select>
               {errors.city && <div className="invalid-feedback">{errors.city}</div>}
