@@ -647,7 +647,11 @@ export default function ProductDetailPage() {
                   </div>
                   <div>
                     <h6>Delivery Charges</h6>
-                    <p>₹{selectedVariant?.deliveryCharges ?? productDetails?.deliveryCharges}</p>
+                    <p>
+                      {((selectedVariant?.deliveryCharges ?? productDetails?.deliveryCharges) || 0) === 0
+                        ? "Free Delivery"
+                        : `₹${selectedVariant?.deliveryCharges ?? productDetails?.deliveryCharges}`}
+                    </p>
                   </div>
                   <div>
                     <h6>SLA</h6>
