@@ -193,10 +193,12 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         if (!formData.stock) newErrors.stock = 'Stock is required';
         if (!formData.mrp) newErrors.mrp = 'MRP is required';
         if (!formData.sellingPrice) newErrors.sellingPrice = 'Selling Price is required';
+        else if (isNaN(formData.sellingPrice)) newErrors.sellingPrice = 'Selling Price must be a number';
+        else if (parseFloat(formData.sellingPrice) > parseFloat(formData.mrp)) {
+            newErrors.sellingPrice = 'Selling Price cannot be greater than MRP';
+        }
         if (formData.stock && isNaN(formData.stock)) newErrors.stock = 'Stock must be a number';
         if (formData.mrp && isNaN(formData.mrp)) newErrors.mrp = 'MRP must be a number';
-        if (formData.sellingPrice && isNaN(formData.sellingPrice))
-            newErrors.sellingPrice = 'Selling Price must be a number';
         if (!formData.description.trim()) newErrors.description = 'Description is required';
         if (!formData.status) newErrors.status = 'Product status is required';
         if (!formData.searchKeywords.trim()) newErrors.searchKeywords = 'Search Keywords are required';
