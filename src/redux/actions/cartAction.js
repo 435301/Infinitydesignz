@@ -17,7 +17,7 @@ export const SET_GUEST_CART = "SET_GUEST_CART";
 export const CLEAR_CART_REQUEST = "CLEAR_CART_REQUEST";
 export const CLEAR_CART_SUCCESS = "CLEAR_CART_SUCCESS";
 export const CLEAR_CART_FAILURE = "CLEAR_CART_FAILURE";
-export const CLEAR_COUPON = "CLEAR_COUPON";
+
 
 export const fetchCart = () => async (dispatch) => {
     dispatch({ type: FETCH_CART_REQUEST });
@@ -192,9 +192,3 @@ export const clearCart = () => async (dispatch) => {
     throw error;
   }
 };
-
-export const clearCoupon = () => ({
-  type: CLEAR_COUPON,
-});
-
-

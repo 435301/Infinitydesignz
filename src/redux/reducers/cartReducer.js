@@ -12,7 +12,6 @@ import {
     CLEAR_CART_REQUEST,
     CLEAR_CART_SUCCESS,
     CLEAR_CART_FAILURE,
-    CLEAR_COUPON
 } from '../actions/cartAction';
 
 const initialState = {
@@ -98,15 +97,6 @@ export const cartReducer = (state = initialState, action) => {
                 ...state,
                 loading: false,
                 error: action.payload,
-            };
-        case CLEAR_COUPON:
-            return {
-                ...state,
-                appliedCoupon: null,
-                priceSummary: {
-                    ...state.priceSummary,
-                    couponDiscount: 0,
-                },
             };
 
         case "ALLOW_CHECKOUT":
