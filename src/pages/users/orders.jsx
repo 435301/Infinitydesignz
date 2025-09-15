@@ -374,13 +374,13 @@ const MyOrdersPage = () => {
                   )}
                 </div>
               </div>
-               {showPreviousOrders && orders.length > 1 && (
-              <PaginationComponent
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-                 )}
+              {showPreviousOrders && orders.length > 1 && (
+                <PaginationComponent
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              )}
             </div>
 
             <aside className="col-md-3 ads-related">
@@ -394,13 +394,18 @@ const MyOrdersPage = () => {
                 <div className="carousel-wrapper">
                   <Carousel controls indicators={false}>
                     {(relatedProducts || []).map((product) => {
+                      const imageUrl =
+                        product.imageUrl ||
+                        product.variant?.imageUrl ||
+                        product.product?.imageUrl ||
+                        "";
                       const normalizedProduct = {
                         ...product,
                         images: {
                           main: {
-                            url: product.imageUrl?.startsWith("http")
-                              ? product.imageUrl.replace(`${BASE_URL}/uploads/products/`, "")
-                              : product.imageUrl.replace("/uploads/products/", ""),
+                            url: imageUrl?.startsWith("http")
+                              ? imageUrl.replace(`${BASE_URL}/uploads/products/`, "")
+                              : imageUrl.replace("/uploads/products/", ""),
                           },
                         },
                         mrp: product.mrp,
