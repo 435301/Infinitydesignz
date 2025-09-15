@@ -10,8 +10,9 @@ import {
     APPLY_COUPON_SUCCESS,
     SET_GUEST_CART,
     CLEAR_CART_REQUEST,
-  CLEAR_CART_SUCCESS,
-  CLEAR_CART_FAILURE,
+    CLEAR_CART_SUCCESS,
+    CLEAR_CART_FAILURE,
+    CLEAR_COUPON
 } from '../actions/cartAction';
 
 const initialState = {
@@ -79,29 +80,40 @@ export const cartReducer = (state = initialState, action) => {
                 ...state,
                 items: action.payload,
             };
-      case CLEAR_CART_REQUEST:
-      return {
-        ...state,
-        loading: true,
-      };
-    case CLEAR_CART_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        items: [],
-        priceSummary: {},
-        appliedCoupon: null,
-      };
-    case CLEAR_CART_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
-       case "ALLOW_CHECKOUT":
-      return { ...state, canAccessCheckout: true };
+        case CLEAR_CART_REQUEST:
+            return {
+                ...state,
+                loading: true,
+            };
+        case CLEAR_CART_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                items: [],
+                priceSummary: {},
+                appliedCoupon: null,
+            };
+        case CLEAR_CART_FAILURE:
+            return {
+                ...state,
+                loading: false,
+                error: action.payload,
+            };
+        case CLEAR_COUPON:
+            return {
+                ...state,
+                appliedCoupon: null,
+                priceSummary: {
+                    ...state.priceSummary,
+                    couponDiscount: 0,
+                },
+            };
+
+        case "ALLOW_CHECKOUT":
+            return { ...state, canAccessCheckout: true };
         default:
             return state;
     }
+
 };
 

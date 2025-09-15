@@ -3,7 +3,7 @@ import { Modal, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBrands } from '../redux/actions/brandAction';
 import { fetchCategories } from '../redux/actions/categoryAction';
-import { editCoupon } from '../redux/actions/couponAction';
+import { editCoupon, fetchCouponById } from '../redux/actions/couponAction';
 
 const EditCouponModal = ({ show, onHide, coupon }) => {
     console.log('id', coupon.id);
@@ -18,9 +18,7 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
     console.log('formValues', formValues)
     const [status, setStatus] = useState(false);
     const [errors, setErrors] = useState({});
-
     const priceOptions = [
-        { value: '', label: 'Select Price' },
         { value: '<100', label: 'Upto 100' },
         { value: '100-500', label: '100-500' },
         { value: '500-1000', label: '500-1000' },
@@ -35,7 +33,8 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (show && coupon) {
+        if (show && coupon && coupon?.id) {
+              const fullCoupon =  dispatch(fetchCouponById(coupon.id));
             setCouponType(coupon.type?.toLowerCase() || '');
             setSelectedMenu(coupon.menuId?.toString() || '');
             setSelectedSubMenu(coupon.subMenuId?.toString() || '');
@@ -48,7 +47,7 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
                 fromDate: coupon.fromDate?.slice(0, 10),
                 toDate: coupon.toDate?.slice(0, 10),
                 url: coupon.url || '',
-                priceRange: coupon.priceRange?.toString() || '',
+                priceRange: coupon.priceRangeId?.toString() || '',
                 brandId: coupon.brandId?.toString() || '',
             });
             setStatus(coupon.status ?? false);
@@ -140,7 +139,7 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
         }
 
         if (couponType === 'price') {
-            payload.priceRange = formValues.priceRange;
+            payload.priceRangeId = parseInt(formValues.priceRange);
         }
 
         dispatch(editCoupon(payload));
@@ -326,7 +325,6 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
                             </select>
                         </div>
                     </div>
-
                     <div className="text-center mt-4">
                         <Button variant="danger" onClick={onHide}>Close</Button>{' '}
                         <Button type="submit" variant="primary">Update</Button>

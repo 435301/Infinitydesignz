@@ -41,6 +41,18 @@ export const fetchCoupon = () => {
   };
 };
 
+export const fetchCouponById = (id) => async (dispatch) => {
+  try {
+    const res = await axios.get(`${BASE_URL}/coupons/${id}`);
+    dispatch({ type: "FETCH_COUPON_BY_ID_SUCCESS", payload: res.data });
+    return res.data
+  } catch (err) {
+    dispatch({ type: "FETCH_COUPON_BY_ID_FAILURE", payload: err });
+    throw err;
+  }
+};
+
+
 export const addCoupon = (payload) => async (dispatch) => {
   dispatch({ type: 'ADD_COUPON_REQUEST' });
   try {

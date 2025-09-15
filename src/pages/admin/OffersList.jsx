@@ -119,7 +119,7 @@ const OffersList = () => {
           }}
         >
           <div className="main-header" style={{ marginTop: '0px' }}>
-            <h5>Offers List</h5>
+            <h5>Offers List</h5>  
           </div>
           <div className="container-fluid manage">
             <div className="row mb-2">

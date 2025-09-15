@@ -14,6 +14,7 @@ import {
   UpdateToCart,
   addToGuestCart,
   syncGuestCartToUserCart,
+  clearCoupon,
 } from "../../redux/actions/cartAction";
 import BASE_URL from "../../config/config";
 import {
@@ -220,7 +221,17 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
 
   useEffect(() => {
     dispatch(fetchAddresses());
+    dispatch(clearCoupon());
   }, [dispatch]);
+
+  useEffect(() => {
+  if (isBuyNowMode) {
+    dispatch({ type: "REMOVE_BUYNOW_COUPON" });
+  } else {
+    dispatch(removeCoupon());
+  }
+}, [dispatch, isBuyNowMode]);
+
 
   // Use the appropriate coupon based on mode
   const coupon = isBuyNowMode ? buyNowCoupon : appliedCoupon;
