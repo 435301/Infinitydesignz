@@ -51,21 +51,21 @@ const CartItem = ({
     }
   };
 
-  console.log('product',product)
+  console.log('product', product)
 
   const increment = () => {
     const newQty = quantity + 1;
     onQuantityChange?.(newQty);
   };
 
-const decrement = () => {
-  if (quantity <= 1) {
-    toast.warning("Quantity cannot be less than 1");
-    return;
-  }
-  const newQty = quantity - 1;
-  onQuantityChange?.(newQty);
-};
+  const decrement = () => {
+    if (quantity <= 1) {
+      toast.warning("Quantity cannot be less than 1");
+      return;
+    }
+    const newQty = quantity - 1;
+    onQuantityChange?.(newQty);
+  };
 
   const imageUrl = product.image
     ? product.image.startsWith("http")
@@ -103,7 +103,7 @@ const decrement = () => {
                 value={size || 'N/A'}
                 readOnly
               // disabled
-              />  
+              />
             ))}
 
             {/* </div> */}
@@ -221,7 +221,7 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
   useEffect(() => {
     dispatch(fetchAddresses());
   }, [dispatch]);
-  
+
 
   // Use the appropriate coupon based on mode
   const coupon = isBuyNowMode ? buyNowCoupon : appliedCoupon;
@@ -267,16 +267,16 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
         <span className="price-detail-label">₹{summary.totalMRP || 0}</span>
       </div>
       <div className="d-flex justify-content-between">
-        <span className="price-detail-label">Sub Total</span>
-        <span className="price-detail-label">₹{summary.totalAfterDiscount || 0}</span>
-      </div>
-      <div className="d-flex justify-content-between">
         <span className="price-detail-label">Discount on MRP</span>
         <span className="discount-text price-detail-label">- ₹{summary.discountOnMRP || 0}</span>
       </div>
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Coupon Discount</span>
         <span className="discount-text price-detail-label">- ₹{summary.couponDiscount || 0}</span>
+      </div>
+      <div className="d-flex justify-content-between">
+        <span className="price-detail-label">Sub Total</span>
+        <span className="price-detail-label">₹{summary.totalAfterDiscount || 0}</span>
       </div>
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Platform Fee <small className="know-more">Know More</small></span>
@@ -352,8 +352,9 @@ const CartPage = () => {
                   mrp: ` ${source.mrp || 0}`,
                   sizes: [source.size || ""],
                   image: source.imageUrl || "/placeholder.jpg",
-                  delivery: "13 Aug",
+                  delivery: source.estimatedDateText,
                 },
+                deliveryCharge: item.deliveryCharge
               };
             })
           );
@@ -377,8 +378,9 @@ const CartPage = () => {
               mrp: `MRP: ₹${(item.variant || item.product)?.mrp || 0}`,
               sizes: [(item.variant || item.product)?.size || ""],
               image: (item.variant || item.product)?.imageUrl || "/placeholder.jpg",
-              delivery: "13 Aug",
+              delivery: item.estimatedDateText,
             },
+            deliveryCharge: item.deliveryCharge
           }))
         );
         return;
@@ -419,7 +421,7 @@ const CartPage = () => {
                     mrp: `MRP: ₹.${source.mrp || 0}`,
                     sizes: [sizeLabel],
                     image: imageUrl.startsWith("http") ? imageUrl : `${BASE_URL}/Uploads/products/${imageUrl}`,
-                    delivery: "13 Aug",
+                    delivery: productData.estimatedDateText,
                   },
                 };
               } catch (error) {
@@ -606,7 +608,7 @@ const CartPage = () => {
                       mrp: source.mrp || "MRP: ₹0",
                       sizes: source.sizes || [source.size || "M"],
                       image: source.image || source.imageUrl || "/placeholder.jpg",
-                      delivery: source.delivery || "13 Aug",
+                      delivery: source.estimatedDateText || "N/A",
                     }}
                     onWishlistToggle={handleWishlistToggle}
                     inWishlist={isInWishlist(productId, variantId)}

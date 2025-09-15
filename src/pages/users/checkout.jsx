@@ -41,7 +41,7 @@ const CheckoutPage = () => {
       ? reduxCartPriceSummary
       : (cart?.priceSummary || {}));
 
-      console.log('priceSummary',priceSummary)
+  console.log('priceSummary', priceSummary)
 
   const cartCoupon = useSelector(state => state.cart.appliedCoupon);
   const buyNowCoupon = useSelector(state => state.buyNow.coupon);
@@ -277,30 +277,30 @@ const CheckoutPage = () => {
                     {/* Totals */}
                     <div className="cart-total mt-3">
                       <div className="cart-total__line">
-                        <span>Subtotal</span>
-                        <span>₹{priceSummary.totalAfterDiscount?.toLocaleString("en-IN")}</span>
+                        <span>Total MRP</span>
+                        <span>₹{priceSummary.totalMRP?.toLocaleString("en-IN")}</span>
                       </div>
-
                       <div className="cart-total__line">
                         <span>Discount on Mrp</span>
                         <span>- ₹{Math.abs(priceSummary.discountOnMRP)?.toLocaleString("en-IN")}</span>
                       </div>
-
                       {priceSummary?.couponDiscount > 0 && (
                         <div className="cart-total__line">
                           <span>Coupon Discount</span>
                           <span>- ₹{priceSummary.couponDiscount.toLocaleString("en-IN")}</span>
                         </div>
                       )}
-
                       <div className="cart-total__line">
-                        <span>Shipping</span>
-                        <span>₹{priceSummary.shippingFee?.toLocaleString("en-IN")}</span>
+                        <span>Subtotal</span>
+                        <span>₹{priceSummary.totalAfterDiscount?.toLocaleString("en-IN")}</span>
                       </div>
-
                       <div className="cart-total__line">
                         <span>Platform Fee</span>
                         <span>₹{priceSummary.platformFee?.toLocaleString("en-IN")}</span>
+                      </div>
+                      <div className="cart-total__line">
+                        <span>Shipping</span>
+                        <span>₹{priceSummary.shippingFee?.toLocaleString("en-IN")}</span>
                       </div>
 
                       <div className="cart-total__final">
@@ -314,7 +314,7 @@ const CheckoutPage = () => {
 
                     <PlaceOrderButton
                       mode={isBuyNow ? "buyNow" : "cart"}
-                      disabled={(!itemsFromCart.length && !buyNowItems.length) }
+                      disabled={(!itemsFromCart.length && !buyNowItems.length)}
                       selectedAddressId={selectedAddressId}
                       paymentMethod={paymentMethod}
                       cartItems={itemsFromCart}
