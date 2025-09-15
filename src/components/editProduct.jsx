@@ -210,13 +210,13 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         // if (!formData.mainCategoryPromotionIds.length)
         //     newErrors.mainCategoryPromotionIds = 'At least one Main Category Promotion is required';
 
-    variants.forEach((v, idx) => {
-    if (v.mrp || v.sellingPrice ) {
-      if (parseFloat(v.sellingPrice) > parseFloat(v.mrp)) {
-        newErrors[`variant_sp_${idx}`] = `Variant ${idx + 1}: Selling Price cannot be greater than MRP`;
-      }
-    }
-  })
+        variants.forEach((v, idx) => {
+            if (v.mrp || v.sellingPrice) {
+                if (parseFloat(v.sellingPrice) > parseFloat(v.mrp)) {
+                    newErrors[`variant_sp_${idx}`] = `Variant ${idx + 1}: Selling Price cannot be greater than MRP`;
+                }
+            }
+        })
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -850,24 +850,28 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            {index === variants.length - 1 ? (
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn-light-success icon-btn b-r-4"
-                                                                    onClick={addRow}
-                                                                >
-                                                                    <BsPlus />
-                                                                </button>
-                                                            ) : (
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn-danger icon-btn b-r-4"
-                                                                    onClick={() => removeRow(index)}
-                                                                >
-                                                                    -
-                                                                </button>
-                                                            )}
+                                                            <div className="d-flex gap-2">
+                                                                {variants.length > 1 && (
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-danger icon-btn b-r-4"
+                                                                        onClick={() => removeRow(index)}
+                                                                    >
+                                                                        -
+                                                                    </button>
+                                                                )}
+                                                                {index === variants.length - 1 && (
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-light-success icon-btn b-r-4"
+                                                                        onClick={addRow}
+                                                                    >
+                                                                        <BsPlus />
+                                                                    </button>
+                                                                )}
+                                                            </div>
                                                         </td>
+
                                                     </tr>
                                                 ))}
                                             </tbody>
