@@ -147,13 +147,11 @@ const CreateCouponModal = ({ show, onHide }) => {
           </div>
         )}
 
-        {couponType !== 'price' && (
           <div className="form-group col-md-4">
             <label>Value <span className="text-danger">*</span></label>
             <input type="text" className={`form-control ${errors.value ? 'is-invalid' : ''}`} name="value" onChange={handleInputChange} />
             {errors.value && <div className="invalid-feedback">{errors.value}</div>}
           </div>
-        )}
 
         <div className="form-group col-md-4">
           <label>From Date <span className="text-danger">*</span></label>

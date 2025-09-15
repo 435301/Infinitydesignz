@@ -303,13 +303,11 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
                         )
                         }
 
-                        {couponType !== 'price' && (
                             <div className="form-group col-md-4">
                                 <label>Value<span className='text-danger'>*</span></label>
                                 <input name="value" value={formValues.value} onChange={handleChange} className={`form-control ${errors.value ? 'is-invalid' : ''}`} />
                                 {errors.value && <div className="invalid-feedback">{errors.value}</div>}
-                            </div>
-                        )}
+                         </div>
                         <div className="form-group col-md-4">
                             <label>From Date<span className='text-danger'>*</span></label>
                             <input type="date" name="fromDate" value={formValues.fromDate} onChange={handleChange} className={`form-control ${errors.fromDate ? 'is-invalid' : ''}`} min={new Date().toISOString().split("T")[0]} />
