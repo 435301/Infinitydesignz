@@ -278,13 +278,18 @@ export default function WishlistPage() {
                 <div className="carousel-wrapper">
                   <Carousel controls indicators={false}>
                     {(relatedProducts || []).map((product) => {
+                       const imageUrl =
+                        product.imageUrl ||
+                        product.variant?.imageUrl ||
+                        product.product?.imageUrl ||
+                        "";
                       const normalizedProduct = {
                         ...product,
                         images: {
                           main: {
-                            url: product.imageUrl?.startsWith("http")
-                              ? product.imageUrl.replace(`${BASE_URL}/uploads/products/`, "")
-                              : product.imageUrl.replace("/uploads/products/", ""),
+                            url: imageUrl?.startsWith("http")
+                              ? imageUrl.replace(`${BASE_URL}/uploads/products/`, "")
+                              :imageUrl.replace("/uploads/products/", ""),
                           },
                         },
                         mrp: product.mrp,
