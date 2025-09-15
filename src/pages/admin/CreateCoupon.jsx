@@ -118,7 +118,7 @@ const CreateCouponModal = ({ show, onHide }) => {
       payload.url = form.url?.value || '';
     }
     if (couponType === 'price') {
-     payload.priceRangeId = parseInt(form.price_selection?.value)|| null; 
+      payload.priceRangeId = parseInt(form.price_selection?.value) || null;
     }
 
     dispatch(addCoupon(payload));
@@ -135,20 +135,26 @@ const CreateCouponModal = ({ show, onHide }) => {
           <input type="text" className={`form-control ${errors.coupon_code ? 'is-invalid' : ''}`} name="coupon_code" onChange={handleInputChange} />
           {errors.coupon_code && <div className="invalid-feedback">{errors.coupon_code}</div>}
         </div>
-        <div className="form-group col-md-4">
-          <label>Price/Percentage <span className="text-danger">*</span></label>
-          <select className={`form-control ${errors.price_type ? 'is-invalid' : ''}`} name="price_type" onChange={handleInputChange}>
-            <option>--Choose--</option>
-            <option value='fixed'>Price</option>
-            <option value="percentage">Percentage</option>
-          </select>
-          {errors.price_type && <div className="invalid-feedback">{errors.price_type}</div>}
-        </div>
-        <div className="form-group col-md-4">
-          <label>Value <span className="text-danger">*</span></label>
-          <input type="text" className={`form-control ${errors.value ? 'is-invalid' : ''}`} name="value" onChange={handleInputChange} />
-          {errors.value && <div className="invalid-feedback">{errors.value}</div>}
-        </div>
+        {couponType !== 'price' && (
+          <div className="form-group col-md-4">
+            <label>Price/Percentage <span className="text-danger">*</span></label>
+            <select className={`form-control ${errors.price_type ? 'is-invalid' : ''}`} name="price_type" onChange={handleInputChange}>
+              <option>--Choose--</option>
+              <option value='fixed'>Price</option>
+              <option value="percentage">Percentage</option>
+            </select>
+            {errors.price_type && <div className="invalid-feedback">{errors.price_type}</div>}
+          </div>
+        )}
+
+        {couponType !== 'price' && (
+          <div className="form-group col-md-4">
+            <label>Value <span className="text-danger">*</span></label>
+            <input type="text" className={`form-control ${errors.value ? 'is-invalid' : ''}`} name="value" onChange={handleInputChange} />
+            {errors.value && <div className="invalid-feedback">{errors.value}</div>}
+          </div>
+        )}
+
         <div className="form-group col-md-4">
           <label>From Date <span className="text-danger">*</span></label>
           <input type="date" className={`form-control ${errors.fromDate ? 'is-invalid' : ''}`} name="fromDate" onChange={handleInputChange} min={new Date().toISOString().split("T")[0]} />
@@ -160,11 +166,14 @@ const CreateCouponModal = ({ show, onHide }) => {
           <input type="date" className={`form-control ${errors.toDate ? 'is-invalid' : ''}`} name="toDate" onChange={handleInputChange} min={new Date().toISOString().split("T")[0]} />
           {errors.toDate && <div className="invalid-feedback">{errors.toDate}</div>}
         </div>
-        <div className="form-group col-md-4">
-          <label>Min Order Price <span className="text-danger">*</span></label>
-          <input type="text" className={`form-control ${errors.min_price ? 'is-invalid' : ''}`} name="min_price" placeholder="Enter minimum price of purchase" onChange={handleInputChange} min="1" />
-          {errors.min_price && <div className="invalid-feedback">{errors.min_price}</div>}
-        </div>
+
+        {couponType !== 'price' && (
+          <div className="form-group col-md-4">
+            <label>Min Order Price <span className="text-danger">*</span></label>
+            <input type="text" className={`form-control ${errors.min_price ? 'is-invalid' : ''}`} name="min_price" placeholder="Enter minimum price of purchase" onChange={handleInputChange} min="1" />
+            {errors.min_price && <div className="invalid-feedback">{errors.min_price}</div>}
+          </div>
+        )}
       </div>
     </>
   );
