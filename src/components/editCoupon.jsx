@@ -55,13 +55,29 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
         }
     }, [show, coupon]);
 
+    // const handleChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setFormValues((prev) => ({ ...prev, [name]: value }));
+    //     if (errors[name]) {
+    //         setErrors((prev) => ({ ...prev, [name]: "" }));
+    //     }
+    // };
+
     const handleChange = (e) => {
-        const { name, value } = e.target;
+    const { name, value } = e.target;
+    if (name === "priceType") {
+        setFormValues((prev) => ({
+            ...prev,
+            [name]: value,
+            value: "" 
+        }));
+    } else {
         setFormValues((prev) => ({ ...prev, [name]: value }));
-        if (errors[name]) {
-            setErrors((prev) => ({ ...prev, [name]: "" }));
-        }
-    };
+    }
+    if (errors[name]) {
+        setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+};
 
     const handleSubmit = (e) => {
         e.preventDefault();
