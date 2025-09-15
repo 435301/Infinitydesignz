@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchBrands } from '../redux/actions/brandAction';
 import { fetchCategories } from '../redux/actions/categoryAction';
 import { editCoupon, fetchCouponById } from '../redux/actions/couponAction';
+import { fetchPrice } from '../redux/actions/priceAction';
 
 const EditCouponModal = ({ show, onHide, coupon }) => {
     console.log('id', coupon.id);
@@ -18,23 +19,17 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
     console.log('formValues', formValues)
     const [status, setStatus] = useState(false);
     const [errors, setErrors] = useState({});
-    const priceOptions = [
-        { value: '<100', label: 'Upto 100' },
-        { value: '100-500', label: '100-500' },
-        { value: '500-1000', label: '500-1000' },
-        { value: '1000-5000', label: '1000-5000' },
-        { value: '5000-10000', label: '5000-10000' },
-        { value: '>10000', label: 'Above 10000' },
-    ];
+      const priceOptions = useSelector((state) => state.prices.prices);
+console.log('priceOptions',priceOptions)
 
     useEffect(() => {
         dispatch(fetchBrands());
         dispatch(fetchCategories());
+        dispatch(fetchPrice());
     }, [dispatch]);
 
     useEffect(() => {
         if (show && coupon && coupon?.id) {
-              const fullCoupon =  dispatch(fetchCouponById(coupon.id));
             setCouponType(coupon.type?.toLowerCase() || '');
             setSelectedMenu(coupon.menuId?.toString() || '');
             setSelectedSubMenu(coupon.subMenuId?.toString() || '');
@@ -277,7 +272,7 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
                             >
                                 <option value="">-- Choose Price --</option>
                                 {priceOptions.map((option) => (
-                                    <option key={option.value} value={option.value}>
+                                    <option key={option.id} value={option.id}>
                                         {option.label}
                                     </option>
                                 ))}

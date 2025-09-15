@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addCoupon } from '../../redux/actions/couponAction';
 import { fetchBrands } from '../../redux/actions/brandAction';
 import { fetchCategories } from '../../redux/actions/categoryAction';
+import { fetchPrice } from '../../redux/actions/priceAction';
 
 const CreateCouponModal = ({ show, onHide }) => {
   const dispatch = useDispatch();
@@ -20,19 +21,13 @@ const CreateCouponModal = ({ show, onHide }) => {
   const menuOptions = categories.filter((cat) => cat.parentId === null);
   const subMenuOptions = categories.filter((cat) => cat.parentId === parseInt(selectedMenu));
   const listSubMenuOptions = categories.filter((cat) => cat.parentId === parseInt(selectedSubMenu));
-  const priceOptions = [
-    { value: '', label: 'Select Price' },
-    { value: '<100', label: 'Upto 100' },
-    { value: '100-500', label: '100-500' },
-    { value: '500-1000', label: '500-1000' },
-    { value: '1000-5000', label: '1000-5000' },
-    { value: '5000-10000', label: '5000-10000' },
-    { value: '>10000', label: 'Above 10000' },
-  ];
+
+  const priceOptions = useSelector((state) => state.prices.prices);
 
   useEffect(() => {
     dispatch(fetchBrands());
-    dispatch(fetchCategories())
+    dispatch(fetchCategories());
+    dispatch(fetchPrice());
   }, [dispatch])
 
   const handleInputChange = (e) => {
@@ -123,17 +118,7 @@ const CreateCouponModal = ({ show, onHide }) => {
       payload.url = form.url?.value || '';
     }
     if (couponType === 'price') {
-      const selectedRange = form.price_selection?.value || '';
-      const priceRangeIdMap = {
-        '<100': 1,
-        '100-500': 2,
-        '500-1000': 3,
-        '1000-5000': 4,
-        '5000-10000': 5,
-        '>10000': 6,
-      };
-      // payload.priceRange = selectedRange;
-      payload.priceRangeId = priceRangeIdMap[selectedRange] || null;
+     payload.priceRangeId = parseInt(form.price_selection?.value)|| null; 
     }
 
     dispatch(addCoupon(payload));
@@ -419,7 +404,7 @@ const CreateCouponModal = ({ show, onHide }) => {
                   <label>Choose Price<span className='text-danger'>*</span></label>
                   <select className={`form-control ${errors.price_selection ? 'is-invalid' : ''}`} name="price_selection" onChange={handleInputChange}>
                     {priceOptions.map((option) => (
-                      <option key={option.value} value={option.value}>{option.label}</option>
+                      <option key={option.id} value={option.id}>{option.label}</option>
                     ))}
                   </select>
                   {errors.price_selection && <div className="invalid-feedback">{errors.price_selection}</div>}
