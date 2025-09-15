@@ -19,8 +19,8 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
     console.log('formValues', formValues)
     const [status, setStatus] = useState(false);
     const [errors, setErrors] = useState({});
-      const priceOptions = useSelector((state) => state.prices.prices);
-console.log('priceOptions',priceOptions)
+    const priceOptions = useSelector((state) => state.prices.prices);
+    console.log('priceOptions', priceOptions)
 
     useEffect(() => {
         dispatch(fetchBrands());
@@ -36,7 +36,7 @@ console.log('priceOptions',priceOptions)
             setSelectedListSubMenu(coupon.listSubMenuId?.toString() || '');
             setFormValues({
                 code: coupon.code,
-                  priceType: coupon.priceType?.toLowerCase() || '', 
+                priceType: coupon.priceType?.toLowerCase() || '',
                 value: coupon.value,
                 minOrderAmount: coupon.minOrderAmount,
                 fromDate: coupon.fromDate?.slice(0, 10),
@@ -59,20 +59,20 @@ console.log('priceOptions',priceOptions)
     // };
 
     const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "priceType") {
-        setFormValues((prev) => ({
-            ...prev,
-            [name]: value,
-            value: "" 
-        }));
-    } else {
-        setFormValues((prev) => ({ ...prev, [name]: value }));
-    }
-    if (errors[name]) {
-        setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
-};
+        const { name, value } = e.target;
+        if (name === "priceType") {
+            setFormValues((prev) => ({
+                ...prev,
+                [name]: value,
+                value: ""
+            }));
+        } else {
+            setFormValues((prev) => ({ ...prev, [name]: value }));
+        }
+        if (errors[name]) {
+            setErrors((prev) => ({ ...prev, [name]: "" }));
+        }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -282,7 +282,7 @@ console.log('priceOptions',priceOptions)
                     )}
 
                     <hr />
-                    <h6 className="text-info mb-3">Coupon Details</h6>
+                    <h6 className="text-info mb-3">Coupon Related Details Section</h6>
                     <div className="row">
                         <div className="form-group col-md-4">
                             <label>Coupon Code<span className='text-danger'>*</span></label>
@@ -290,22 +290,26 @@ console.log('priceOptions',priceOptions)
                             {errors.code && <div className="invalid-feedback">{errors.code}</div>}
 
                         </div>
-                        <div className="form-group col-md-4">
-                            <label>Price/Percentage <span className="text-danger">*</span></label>
-                            <select className={`form-control ${errors.priceType ? 'is-invalid' : ''}`} name="priceType" onChange={handleChange}  value={formValues.priceType}>
-                                <option>--Choose--</option>
-                                <option value='fixed'>Price</option>
-                                <option value="percentage">Percentage</option>
-                            </select>
-                            {errors.priceType && <div className="invalid-feedback">{errors.priceType}</div>}
-                        </div>
+                        {couponType !== 'price' && (
+                            <div className="form-group col-md-4">
+                                <label>Price/Percentage <span className="text-danger">*</span></label>
+                                <select className={`form-control ${errors.priceType ? 'is-invalid' : ''}`} name="priceType" onChange={handleChange} value={formValues.priceType}>
+                                    <option>--Choose--</option>
+                                    <option value='fixed'>Price</option>
+                                    <option value="percentage">Percentage</option>
+                                </select>
+                                {errors.priceType && <div className="invalid-feedback">{errors.priceType}</div>}
+                            </div>
+                        )
+                        }
 
-                        <div className="form-group col-md-4">
-                            <label>Value<span className='text-danger'>*</span></label>
-                            <input name="value" value={formValues.value} onChange={handleChange} className={`form-control ${errors.value ? 'is-invalid' : ''}`} />
-                            {errors.value && <div className="invalid-feedback">{errors.value}</div>}
-
-                        </div>
+                        {couponType !== 'price' && (
+                            <div className="form-group col-md-4">
+                                <label>Value<span className='text-danger'>*</span></label>
+                                <input name="value" value={formValues.value} onChange={handleChange} className={`form-control ${errors.value ? 'is-invalid' : ''}`} />
+                                {errors.value && <div className="invalid-feedback">{errors.value}</div>}
+                            </div>
+                        )}
                         <div className="form-group col-md-4">
                             <label>From Date<span className='text-danger'>*</span></label>
                             <input type="date" name="fromDate" value={formValues.fromDate} onChange={handleChange} className={`form-control ${errors.fromDate ? 'is-invalid' : ''}`} min={new Date().toISOString().split("T")[0]} />
@@ -316,14 +320,15 @@ console.log('priceOptions',priceOptions)
                             <label>To Date<span className='text-danger'>*</span></label>
                             <input type="date" name="toDate" value={formValues.toDate} onChange={handleChange} className={`form-control ${errors.toDate ? 'is-invalid' : ''}`} min={new Date().toISOString().split("T")[0]} />
                             {errors.toDate && <div className="invalid-feedback">{errors.toDate}</div>}
-
                         </div>
-                        <div className="form-group col-md-4">
-                            <label>Min Order Price<span className='text-danger'>*</span></label>
-                            <input name="minOrderAmount" value={formValues.minOrderAmount} onChange={handleChange} className={`form-control ${errors.minOrderAmount ? 'is-invalid' : ''}`} min="1" />
-                            {errors.minOrderAmount && <div className="invalid-feedback">{errors.minOrderAmount}</div>}
+                        {couponType !== 'price' && (
+                            <div className="form-group col-md-4">
+                                <label>Min Order Price<span className='text-danger'>*</span></label>
+                                <input name="minOrderAmount" value={formValues.minOrderAmount} onChange={handleChange} className={`form-control ${errors.minOrderAmount ? 'is-invalid' : ''}`} min="1" />
+                                {errors.minOrderAmount && <div className="invalid-feedback">{errors.minOrderAmount}</div>}
+                            </div>
+                        )}
 
-                        </div>
                         <div className="form-group col-md-4">
                             <label>Status<span className='text-danger'>*</span></label>
                             <select
