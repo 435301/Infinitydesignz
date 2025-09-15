@@ -24,6 +24,7 @@ import OtpLoginModal from "../../components/otpLoginModal";
 import { setBuyNow } from "../../redux/actions/buyNowAction";
 import { Row } from "react-bootstrap";
 import { Accordion, Card } from "react-bootstrap";
+import LocalShippingImage from "../../img/local_shipping.png"
 
 export default function ProductDetailPage() {
   const dispatch = useDispatch();
@@ -593,6 +594,10 @@ export default function ProductDetailPage() {
                 <p className="note-text">
                   Please enter PIN code to check delivery time & Pay on Delivery Availability
                 </p>
+                <div className="delivery-date">
+                  <img src={LocalShippingImage} alt="Truck" class="delivery-icon"></img>
+                <span>Get it By {product?.estimatedDeliveryText}</span>
+                </div>
                 <hr />
                 <div className="features">
                   {[
