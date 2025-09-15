@@ -4,352 +4,368 @@ import { editAddress } from '../redux/actions/addressAction';
 import '../css/user/userstyle.css';
 import { toast } from 'react-toastify';
 
-function EditAddressModal({ addressData, onClose, selectedType, onTypeChange }) {
-    const types = ['Home', 'Office', 'Other'];
-    const [states, setStates] = useState([]);
-    const [cities, setCities] = useState([])
-    const [selectedState, setSelectedState] = useState("");
-    const [selectedCity, setSelectedCity] = useState("");
-    const [errors, setErrors] = useState({});
-    const dispatch = useDispatch();
-    const [formData, setFormData] = useState({
-        name: '',
-        buildingName: '',
-        flatNumber: '',
-        addressLine1: '',
-        addressLine2: '',
-        city: '',
-        state: '',
-        pincode: '',
-        phone: '',
-        label: selectedType,
-    });
-    const validateForm = () => {
-        const newErrors = {};
+function EditAddressModal({ addressData, onClose }) {
+  const types = ["Home", "Office", "Other"];
+  const dispatch = useDispatch();
 
-        if (!formData.name.trim()) newErrors.name = "Name is required";
-        if (!formData.phone.trim()) {
-            newErrors.phone = "Mobile number is required";
-        } else if (!/^\d{10}$/.test(formData.phone)) {
-            newErrors.phone = "Mobile number must be 10 digits";
-        }
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [selectedType, setSelectedType] = useState(addressData?.label || "Home");
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+  const [errors, setErrors] = useState({});
 
-        if (!formData.pincode.trim()) {
-            newErrors.pincode = "Pincode is required";
-        } else if (!/^\d{6}$/.test(formData.pincode)) {
-            newErrors.pincode = "Pincode must be 6 digits";
-        }
+  const [formData, setFormData] = useState({
+    Home: {
+      name: "",
+      buildingName: "",
+      flatNumber: "",
+      addressLine1: "",
+      addressLine2: "",
+      city: "",
+      state: "",
+      pincode: "",
+      phone: "",
+    },
+    Office: {
+      name: "",
+      buildingName: "",
+      flatNumber: "",
+      addressLine1: "",
+      addressLine2: "",
+      city: "",
+      state: "",
+      pincode: "",
+      phone: "",
+    },
+    Other: {
+      name: "",
+      buildingName: "",
+      flatNumber: "",
+      addressLine1: "",
+      addressLine2: "",
+      city: "",
+      state: "",
+      pincode: "",
+      phone: "",
+    },
+  });
 
-        if (!formData.flatNumber.trim()) newErrors.flatNumber = "Flat No/H.No is required";
-        if (!formData.buildingName.trim()) newErrors.buildingName = "Building name is required";
-        if (!formData.addressLine1.trim()) newErrors.addressLine1 = "Address line 1 is required";
-        if (!formData.city.trim()) newErrors.city = "City is required";
-        if (!formData.state.trim()) newErrors.state = "State is required";
+  useEffect(() => {
+    fetch("https://countriesnow.space/api/v0.1/countries/states", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ country: "India" }),
+    })
+      .then((res) => res.json())
+      .then((data) => setStates(data.data.states.map((s) => s.name)))
+      .catch((err) => console.error(err));
+  }, []);
 
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    useEffect(() => {
-        fetch("https://countriesnow.space/api/v0.1/countries/states", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ country: "India" }),
+  useEffect(() => {
+    if (selectedState) {
+      fetch("https://countriesnow.space/api/v0.1/countries/state/cities", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ country: "India", state: selectedState }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.data) setCities(data.data);
         })
-            .then(res => res.json())
-            .then(data => setStates(data.data.states.map(s => s.name)))
-            .catch(err => console.error(err));
-    }, []);
+        .catch((err) => console.error(err));
+    } else {
+      setCities([]);
+    }
+  }, [selectedState]);
 
-    useEffect(() => {
-        if (selectedState) {
-            fetch("https://countriesnow.space/api/v0.1/countries/state/cities", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ country: "India", state: selectedState })
-            })
-                .then((res) => res.json())
-                .then((data) => {
-                    if (data?.data) {
-                        setCities(data.data);
-                    }
-                })
-                .catch((err) => console.error("Error fetching cities:", err));
-        }
-    }, [selectedState]);
+  useEffect(() => {
+    if (addressData) {
+      const label = addressData.label || "Home";
+      setSelectedType(label);
 
-    useEffect(() => {
-        if (addressData) {
-            setFormData({
-                name: addressData.name || '',
-                buildingName: addressData.buildingName || '',
-                flatNumber: addressData.flatNumber || '',
-                addressLine1: addressData.addressLine1 || '',
-                addressLine2: addressData.addressLine2 || '',
-                city: addressData.city || '',
-                state: addressData.state || '',
-                pincode: addressData.pincode || '',
-                phone: addressData.phone || '',
-                label: addressData.label || selectedType || '',
-                default: addressData.default || false,
-            });
-            setSelectedState(addressData.state || '');
-            setSelectedCity(addressData.city || '');
-        }
-    }, [addressData]);
+      setFormData((prev) => ({
+        ...prev,
+        [label]: {
+          name: addressData.name || "",
+          buildingName: addressData.buildingName || "",
+          flatNumber: addressData.flatNumber || "",
+          addressLine1: addressData.addressLine1 || "",
+          addressLine2: addressData.addressLine2 || "",
+          city: addressData.city || "",
+          state: addressData.state || "",
+          pincode: addressData.pincode || "",
+          phone: addressData.phone || "",
+        },
+      }));
+      setSelectedState(addressData.state || "");
+      setSelectedCity(addressData.city || "");
+    }
+  }, [addressData]);
 
-    // useEffect(() => {
-    //     if (addressData) {
-    //         setFormData({ ...addressData });
-    //         setSelectedState(addressData.state);
-    //         setSelectedCity(addressData.city);
-    //         setFormData(prev => ({
-    //             ...prev,
-    //             ...addressData,
-    //         }));
-    //     }
-    // }, [addressData]);
+  const currentForm = formData[selectedType];
 
-    useEffect(() => {
-        setFormData((prev) => ({
-            ...prev,
-            label: selectedType || prev.label,
-        }));
-    }, [selectedType]);
+  const handleTypeChange = (type) => {
+    setSelectedType(type);
+    setSelectedState(formData[type].state || "");
+    setSelectedCity(formData[type].city || "");
+  };
 
-    const handleTypeChange = (type) => {
-        setFormData((prev) => ({ ...prev, label: type }));
-        onTypeChange(type);
-    };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [selectedType]: {
+        ...prev[selectedType],
+        [name]: value,
+      },
+    }));
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-        setErrors((prevErrors) => {
-            const updatedErrors = { ...prevErrors };
-            if (value.trim() !== "") {
-                delete updatedErrors[name];
-            }
-            return updatedErrors;
-        });
-    };
+    if (value.trim() !== "") {
+      setErrors((prevErrors) => {
+        const updatedErrors = { ...prevErrors };
+        delete updatedErrors[name];
+        return updatedErrors;
+      });
+    }
+  };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (!validateForm()) return;
-        const addresses = Array.isArray(addressData) ? addressData : [addressData];
+  const handleStateChange = (e) => {
+    const state = e.target.value;
+    setSelectedState(state);
+    setSelectedCity("");
+    setFormData((prev) => ({
+      ...prev,
+      [selectedType]: {
+        ...prev[selectedType],
+        state,
+        city: "",
+      },
+    }));
 
-        const isDuplicate = addresses.some(addr =>
-            addr.id !== formData.id &&
-            addr.name?.trim().toLowerCase() === formData.name?.trim().toLowerCase() &&
-            addr.flatNumber?.trim().toLowerCase() === formData.flatNumber?.trim().toLowerCase() &&
-            addr.buildingName?.trim().toLowerCase() === formData.buildingName?.trim().toLowerCase() &&
-            addr.addressLine1?.trim().toLowerCase() === formData.addressLine1?.trim().toLowerCase() &&
-            addr.addressLine2?.trim().toLowerCase() === formData.addressLine2?.trim().toLowerCase() &&
-            addr.city?.trim().toLowerCase() === formData.city?.trim().toLowerCase() &&
-            addr.state?.trim().toLowerCase() === formData.state?.trim().toLowerCase() &&
-            addr.pincode?.trim() === formData.pincode?.trim() &&
-            addr.phone?.trim() === formData.phone?.trim() &&
-            addr.label !== formData.label
-        );
-        if (isDuplicate) {
-            toast.error("This address already exists under another type. Please use a different address.");
-            return;
-        }
-        dispatch(editAddress(addressData?.id, formData));
-        onClose();
-    };
+    if (state.trim() !== "") {
+      setErrors((prevErrors) => {
+        const updatedErrors = { ...prevErrors };
+        delete updatedErrors.state;
+        return updatedErrors;
+      });
+    }
+  };
 
+  const handleCityChange = (e) => {
+    const city = e.target.value;
+    setSelectedCity(city);
+    setFormData((prev) => ({
+      ...prev,
+      [selectedType]: {
+        ...prev[selectedType],
+        city,
+      },
+    }));
 
-    const handleStateChange = (e) => {
-        const state = e.target.value;
-        setSelectedState(state);
-        setFormData((prev) => ({ ...prev, state, city: "" }));
-        if (state.trim() !== "") {
-            setErrors((prevErrors) => {
-                const updatedErrors = { ...prevErrors };
-                delete updatedErrors.state;
-                return updatedErrors;
-            });
-        }
-    };
+    if (city.trim() !== "") {
+      setErrors((prevErrors) => {
+        const updatedErrors = { ...prevErrors };
+        delete updatedErrors.city;
+        return updatedErrors;
+      });
+    }
+  };
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (!currentForm.name.trim()) newErrors.name = "Name is required";
+    if (!currentForm.phone.trim()) newErrors.phone = "Mobile number is required";
+    else if (!/^\d{10}$/.test(currentForm.phone)) newErrors.phone = "Mobile number must be 10 digits";
 
-    const handleCityChange = (e) => {
-        const city = e.target.value;
-        setSelectedCity(city);
-        setFormData((prev) => ({ ...prev, city }));
-        if (city.trim() !== "") {
-            setErrors((prevErrors) => {
-                const updatedErrors = { ...prevErrors };
-                delete updatedErrors.city;
-                return updatedErrors;
-            });
-        }
-    };
+    if (!currentForm.pincode.trim()) newErrors.pincode = "Pincode is required";
+    else if (!/^\d{6}$/.test(currentForm.pincode)) newErrors.pincode = "Pincode must be 6 digits";
 
-    return (
-        <div className="custom-modal-wrapper">
-            {/* <div className="modal-backdrop"> */}
-            <div className="modal-box">
-                <div className="modal-top">
-                    <h3>Edit Address</h3>
-                    <button className="close-icon" onClick={onClose}>× Close</button>
-                </div>
-                <div className="type-options">
-                    {types.map(type => (
-                        <button
-                            key={type}
-                            type="button"
-                            className={`type-option ${formData.label === type ? 'active' : ''}`}
-                            onClick={() =>
-                                setFormData(prev => ({
-                                    ...prev,
-                                    label: type,
-                                }))
-                            }
-                        >
-                            {type}
-                        </button>
-                    ))}
+    if (!currentForm.flatNumber.trim()) newErrors.flatNumber = "Flat No/H.No is required";
+    if (!currentForm.buildingName.trim()) newErrors.buildingName = "Building name is required";
+    if (!currentForm.addressLine1.trim()) newErrors.addressLine1 = "Address line 1 is required";
+    if (!currentForm.city.trim()) newErrors.city = "City is required";
+    if (!currentForm.state.trim()) newErrors.state = "State is required";
 
-                </div>
-                <form className="form-section">
-                    <div className="form-line">
-                        <div className="form-field">
-                            <label>Name</label>
-                            <input
-                                type="text"
-                                name="name"
-                                className={`form-control ${errors.name ? 'is-invalid' : ''}`}
-                                placeholder="Name"
-                                value={formData.name}
-                                onChange={handleChange}
-                            />
-                            {errors.name && <div className="invalid-feedback">{errors.name}</div>}
-                        </div>
-                        <div className="form-field">
-                            <label>Address line 1</label>
-                            <input
-                                type="text"
-                                className={`form-control ${errors.addressLine1 ? 'is-invalid' : ''}`}
-                                name="addressLine1"
-                                placeholder="Address line 1"
-                                value={formData.addressLine1}
-                                onChange={handleChange}
-                            />
-                            {errors.addressLine1 && <div className="invalid-feedback">{errors.addressLine1}</div>}
-                        </div>
-                    </div>
-                    <div className="form-line">
-                        <div className="form-field">
-                            <label>Home/Apartment/Building Name</label>
-                            <input
-                                type="text"
-                                className={`form-control ${errors.buildingName ? 'is-invalid' : ''}`}
-                                name="buildingName"
-                                placeholder="Home/Apartment/Building Name"
-                                value={formData.buildingName}
-                                onChange={handleChange}
-                            />
-                            {errors.buildingName && <div className="invalid-feedback">{errors.buildingName}</div>}
-                        </div>
-                        <div className="form-field">
-                            <label>Address line 2</label>
-                            <input
-                                type="text"
-                                className={`form-control ${errors.addressLine2 ? 'is-invalid' : ''}`}
-                                name="addressLine2"
-                                placeholder="Address line 2"
-                                value={formData.addressLine2}
-                                onChange={handleChange}
-                            />
-                            {errors.addressLine2 && <div className="invalid-feedback">{errors.addressLine2}</div>}
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-                        </div>
-                    </div>
-                    <div className="form-line">
-                        <div className="form-field">
-                            <label>Flat No/H.No</label>
-                            <input
-                                type="text"
-                                className={`form-control ${errors.flatNumber ? 'is-invalid' : ''}`}
-                                name="flatNumber"
-                                placeholder="Flat No/H.No"
-                                value={formData.flatNumber}
-                                onChange={handleChange}
-                            />
-                            {errors.flatNumber && <div className="invalid-feedback">{errors.flatNumber}</div>}
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
 
-                        </div>
-                        <div className="form-field">
-                            <label>State</label>
-                            <select
-                                value={selectedState}
-                                className={`form-control ${errors.state ? 'is-invalid' : ''}`}
-                                onChange={handleStateChange}
-                            >
-                                <option value="" disabled>STATE</option>
-                                {states.map((state) => (
-                                    <option key={state} value={state}>{state}</option>
-                                ))}
-                            </select>
-                            {errors.state && <div className='invalid-feedback'>{errors.state}</div>}
-                        </div>
-                    </div>
-                    <div className="form-line">
-                        <div className="form-field">
-                            <label>Mobile Number</label>
-                            <input
-                                type="text"
-                                className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
-                                name="phone"
-                                placeholder="Mobile Number"
-                                value={formData.phone}
-                                onChange={handleChange}
-                            />
-                            {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
+    // Dispatch the current type's data
+    dispatch(editAddress(addressData?.id, { ...currentForm, label: selectedType }));
+    onClose();
+  };
 
-                        </div>
-                        <div className="form-field">
-                            <label>City</label>
-                            <select
-                                value={selectedCity}
-                                className={`form-control ${errors.city ? 'is-invalid' : ''}`}
-                                onChange={handleCityChange}
-                                disabled={!selectedState}
-                            >
-                                <option value="" disabled>CITY</option>
-                                {cities.map((city) => (
-                                    <option key={city} value={city}>{city}</option>
-                                ))}
-                            </select>
-                            {errors.city && <div className="invalid-feedback">{errors.city}</div>}
-                        </div>
-                    </div>
-                    <div className="form-line">
-                        <div className="form-field full-span">
-                            <label>Pin Code</label>
-                            <input
-                                type="text"
-                                className={`form-control ${errors.pincode ? 'is-invalid' : ''}`}
-                                name="pincode"
-                                placeholder="Pin Code"
-                                value={formData.pincode}
-                                onChange={handleChange}
-                            />
-                            {errors.pincode && <div className='invalid-feedback'>{errors.pincode}</div>}
-                        </div>
-                    </div>
-                    <button type="submit" className="submit-action" onClick={handleSubmit}>+ Update Address</button>
-                </form>
-            </div>
-            {/* </div> */}
+  return (
+    <div className="custom-modal-wrapper">
+      <div className="modal-box">
+        <div className="modal-top">
+          <h3>Edit Address</h3>
+          <button className="close-icon" onClick={onClose}>× Close</button>
         </div>
-    );
+
+        <div className="type-options">
+          {types.map((type) => (
+            <button
+              key={type}
+              type="button"
+              className={`type-option ${selectedType === type ? "active" : ""}`}
+              onClick={() => handleTypeChange(type)}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
+
+        <form className="form-section" onSubmit={handleSubmit}>
+          <div className="form-line">
+            <div className="form-field">
+              <label>Name</label>
+              <input
+                type="text"
+                name="name"
+                className={`form-control ${errors.name ? "is-invalid" : ""}`}
+                placeholder="Name"
+                value={currentForm.name}
+                onChange={handleChange}
+              />
+              {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+            </div>
+            <div className="form-field">
+              <label>Address line 1</label>
+              <input
+                type="text"
+                name="addressLine1"
+                className={`form-control ${errors.addressLine1 ? "is-invalid" : ""}`}
+                placeholder="Address line 1"
+                value={currentForm.addressLine1}
+                onChange={handleChange}
+              />
+              {errors.addressLine1 && <div className="invalid-feedback">{errors.addressLine1}</div>}
+            </div>
+          </div>
+
+          <div className="form-line">
+            <div className="form-field">
+              <label>Home/Apartment/Building Name</label>
+              <input
+                type="text"
+                name="buildingName"
+                className={`form-control ${errors.buildingName ? "is-invalid" : ""}`}
+                placeholder="Home/Apartment/Building Name"
+                value={currentForm.buildingName}
+                onChange={handleChange}
+              />
+              {errors.buildingName && <div className="invalid-feedback">{errors.buildingName}</div>}
+            </div>
+            <div className="form-field">
+              <label>Address line 2</label>
+              <input
+                type="text"
+                name="addressLine2"
+                className={`form-control ${errors.addressLine2 ? "is-invalid" : ""}`}
+                placeholder="Address line 2"
+                value={currentForm.addressLine2}
+                onChange={handleChange}
+              />
+              {errors.addressLine2 && <div className="invalid-feedback">{errors.addressLine2}</div>}
+            </div>
+          </div>
+
+          <div className="form-line">
+            <div className="form-field">
+              <label>Flat No/H.No</label>
+              <input
+                type="text"
+                name="flatNumber"
+                className={`form-control ${errors.flatNumber ? "is-invalid" : ""}`}
+                placeholder="Flat No/H.No"
+                value={currentForm.flatNumber}
+                onChange={handleChange}
+              />
+              {errors.flatNumber && <div className="invalid-feedback">{errors.flatNumber}</div>}
+            </div>
+            <div className="form-field">
+              <label>State</label>
+              <select
+                value={selectedState}
+                className={`form-control ${errors.state ? "is-invalid" : ""}`}
+                onChange={handleStateChange}
+              >
+                <option value="" disabled>
+                  STATE
+                </option>
+                {states.map((state) => (
+                  <option key={state} value={state}>
+                    {state}
+                  </option>
+                ))}
+              </select>
+              {errors.state && <div className="invalid-feedback">{errors.state}</div>}
+            </div>
+          </div>
+
+          <div className="form-line">
+            <div className="form-field">
+              <label>Mobile Number</label>
+              <input
+                type="text"
+                name="phone"
+                className={`form-control ${errors.phone ? "is-invalid" : ""}`}
+                placeholder="Mobile Number"
+                value={currentForm.phone}
+                onChange={handleChange}
+              />
+              {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
+            </div>
+            <div className="form-field">
+              <label>City</label>
+              <select
+                value={selectedCity}
+                className={`form-control ${errors.city ? "is-invalid" : ""}`}
+                onChange={handleCityChange}
+                disabled={!selectedState}
+              >
+                <option value="" disabled>
+                  CITY
+                </option>
+                {cities.map((city) => (
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </select>
+              {errors.city && <div className="invalid-feedback">{errors.city}</div>}
+            </div>
+          </div>
+
+          <div className="form-line">
+            <div className="form-field full-span">
+              <label>Pin Code</label>
+              <input
+                type="text"
+                name="pincode"
+                className={`form-control ${errors.pincode ? "is-invalid" : ""}`}
+                placeholder="Pin Code"
+                value={currentForm.pincode}
+                onChange={handleChange}
+              />
+              {errors.pincode && <div className="invalid-feedback">{errors.pincode}</div>}
+            </div>
+          </div>
+
+          <button type="submit" className="submit-action">
+            Update Address
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
+
 
 export default EditAddressModal;
