@@ -230,8 +230,7 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
   } else {
     dispatch(removeCoupon());
   }
-}, [dispatch, isBuyNowMode]);
-
+}, []);
 
   // Use the appropriate coupon based on mode
   const coupon = isBuyNowMode ? buyNowCoupon : appliedCoupon;
