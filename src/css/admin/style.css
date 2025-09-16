@@ -2556,6 +2556,14 @@ small a {
   padding: 0;
 }
 
+.product-title-cell {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
 @media (max-width: 767px) {
   .Fabric .card-img-top {
     object-fit: fill;
@@ -2571,22 +2579,23 @@ small a {
     width: 118px;
 
   }
+
   .action-cell {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 40px; 
-}
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 40px;
+  }
 
-.action-buttons {
-  display: flex;
-  gap: 8px;
-}
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
 
-.status-label {
-  font-weight: 600;
-  text-align: center;
-}
+  .status-label {
+    font-weight: 600;
+    text-align: center;
+  }
 
 
 }

@@ -241,7 +241,7 @@ const ManageProducts = () => {
                                                                     <p>Loading...</p>
                                                                 </td>
                                                             </tr>
-                                                        )  : (
+                                                        ) : (
                                                             currentRows.map((product, idx) => (
                                                                 <tr key={product.id}>
                                                                     <td><input
@@ -262,7 +262,9 @@ const ManageProducts = () => {
                                                                         )}
                                                                     </td>
                                                                     <td>{product.sku}</td>
-                                                                    <td>{product.title}</td>
+                                                                    <td className="product-title-cell" title={product.title}>
+                                                                        {product.title}
+                                                                    </td>
                                                                     <td>{product?.mainCategoryTitle || '-'}</td>
                                                                     <td>{product?.subCategoryTitle || '-'}</td>
                                                                     <td>{product?.listSubCategoryTitle || '-'}</td>
