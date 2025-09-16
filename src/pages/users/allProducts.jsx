@@ -46,7 +46,7 @@ const makeSlug = (title, id) => `${toSlug(title)}-${id}`;
 const ProductsPage = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
-
+const [sortOrder, setSortOrder] = useState("newest");
   const [searchParams] = useSearchParams();
   const { state: navState } = useLocation();
   const { main, sub, leaf } = useParams();
@@ -119,7 +119,7 @@ const ProductsPage = () => {
     try {
       const raw = sessionStorage.getItem(PRODUCTS_FILTERS_KEY);
       if (raw) fromSession = JSON.parse(raw) || {};
-    } catch {}
+    } catch { }
 
     const fromState = navState || {};
     const derivedIds = {
@@ -136,7 +136,7 @@ const ProductsPage = () => {
     const next = { ...filters, ...patch };
     try {
       sessionStorage.setItem(PRODUCTS_FILTERS_KEY, JSON.stringify(next));
-    } catch {}
+    } catch { }
     // stay on same slug path
     const segments = [
       main,
@@ -152,47 +152,47 @@ const ProductsPage = () => {
   const getCategoryTitle = (id) =>
     (id ? byId[id]?.title : null) || "Unknown";
 
-const breadcrumbItems = useMemo(() => {
-  const items = [{ label: "Home", link: "/" }];
+  const breadcrumbItems = useMemo(() => {
+    const items = [{ label: "Home", link: "/" }];
 
-  // Search mode
-  if (filters.searchStr && filters.searchStr.trim() !== "") {
-    items.push({ label: "Search" });
-    items.push({ label: filters.searchStr.trim() });
+    // Search mode
+    if (filters.searchStr && filters.searchStr.trim() !== "") {
+      items.push({ label: "Search" });
+      items.push({ label: filters.searchStr.trim() });
+      return items;
+    }
+
+    // Use current URL segments for *previous* parts (no ids),
+    // and add id only for the clicked segment.
+    // main, sub, leaf come from useParams()
+    if (mainCategoryId) {
+      const mainWithId = makeSlug(byId[mainCategoryId]?.title || "", mainCategoryId);
+      items.push({
+        label: getCategoryTitle(mainCategoryId),
+        link: `/products/${mainWithId}`, // Luxury → /products/luxury-000
+      });
+    }
+
+    if (subCategoryId) {
+      const subWithId = makeSlug(byId[subCategoryId]?.title || "", subCategoryId);
+      const mainSegment = main || toSlug(byId[mainCategoryId]?.title || "");
+      items.push({
+        label: getCategoryTitle(subCategoryId),
+        link: `/products/${mainSegment}/${subWithId}`, // Home Office → /products/luxury/home-office-009
+      });
+    }
+
+    if (listSubCatId) {
+      // Leaf: NO LINK on category page
+      items.push({
+        label: getCategoryTitle(listSubCatId),
+        // no link here: Office Chairs → plain text (current page)
+      });
+    }
+
     return items;
-  }
-
-  // Use current URL segments for *previous* parts (no ids),
-  // and add id only for the clicked segment.
-  // main, sub, leaf come from useParams()
-  if (mainCategoryId) {
-    const mainWithId = makeSlug(byId[mainCategoryId]?.title || "", mainCategoryId);
-    items.push({
-      label: getCategoryTitle(mainCategoryId),
-      link: `/products/${mainWithId}`, // Luxury → /products/luxury-000
-    });
-  }
-
-  if (subCategoryId) {
-    const subWithId = makeSlug(byId[subCategoryId]?.title || "", subCategoryId);
-    const mainSegment = main || toSlug(byId[mainCategoryId]?.title || "");
-    items.push({
-      label: getCategoryTitle(subCategoryId),
-      link: `/products/${mainSegment}/${subWithId}`, // Home Office → /products/luxury/home-office-009
-    });
-  }
-
-  if (listSubCatId) {
-    // Leaf: NO LINK on category page
-    items.push({
-      label: getCategoryTitle(listSubCatId),
-      // no link here: Office Chairs → plain text (current page)
-    });
-  }
-
-  return items;
-  // include `main` so changes in URL segment reflect correctly
-}, [filters.searchStr, byId, mainCategoryId, subCategoryId, listSubCatId, main]);
+    // include `main` so changes in URL segment reflect correctly
+  }, [filters.searchStr, byId, mainCategoryId, subCategoryId, listSubCatId, main]);
 
   useEffect(() => {
     setProducts([]);
@@ -216,9 +216,9 @@ const breadcrumbItems = useMemo(() => {
         const discMax = num(filters.discountPctMax, Infinity);
         const colorIds = filters.color
           ? String(filters.color)
-              .split(",")
-              .map((c) => Number(c))
-              .filter((n) => !Number.isNaN(n))
+            .split(",")
+            .map((c) => Number(c))
+            .filter((n) => !Number.isNaN(n))
           : [];
 
         const inRange = (sellingPrice, discountPct) =>
@@ -250,7 +250,7 @@ const breadcrumbItems = useMemo(() => {
           );
 
           if (productInRange && variantsInRange.length > 0) {
-              if (colorIds.length > 0) {
+            if (colorIds.length > 0) {
               return variantsInRange.map((variant) => ({
                 ...product,
                 variantId: variant.id,
@@ -293,11 +293,26 @@ const breadcrumbItems = useMemo(() => {
           }
           return [];
         });
-
         setProducts(filtered);
       })
       .catch((err) => console.error("GET: Failed to fetch products", err));
   }, [filters]);
+
+  // --- Sorting function ---
+const sortedProducts = useMemo(() => {
+  let sorted = [...products];
+  if (sortOrder === "price-low-high") {
+    sorted.sort((a, b) => a.sellingPrice - b.sellingPrice);
+  } else if (sortOrder === "price-high-low") {
+    sorted.sort((a, b) => b.sellingPrice - a.sellingPrice);
+  } else if (sortOrder === "newest") {
+    sorted.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }
+  return sorted;
+}, [products, sortOrder]);
 
   const groupByListSubCategory = (items) => {
     const grouped = {};
@@ -312,7 +327,7 @@ const breadcrumbItems = useMemo(() => {
   return (
     <>
       <Header />
-      <section className="section-index py-3 breadcrumb-all" style={{backgroundColor:"#f4f4f4"}}>
+      <section className="section-index py-3 breadcrumb-all" style={{ backgroundColor: "#f4f4f4" }}>
         <div className="container shop">
           <div className="row">
             <div className="col-lg-12">
@@ -338,17 +353,35 @@ const breadcrumbItems = useMemo(() => {
       <section className="terms-of-service">
         <div className="container">
           {/* <h2>Products</h2> */}
-
-          {subCategoryId && (
-            <div className="mb-4 mt-4">
-              <h5 className="product-title py-2">
-                {listSubCatId
-                  ? getCategoryTitle(listSubCatId)
-                  : getCategoryTitle(subCategoryId)}{" "}
-                ({products.length} item{products.length !== 1 ? "s" : ""})
-              </h5>
+          <div className="row align-items-center mb-4 mt-4">
+            {/* Left side: Category title + item count */}
+            <div className="col-lg-6 col-md-6 col-12">
+              {subCategoryId && (
+                <div className="mb-4 mt-4">
+                  <h5 className="product-title py-2">
+                    {listSubCatId
+                      ? getCategoryTitle(listSubCatId)
+                      : getCategoryTitle(subCategoryId)}{" "}
+                    ({products.length} item{products.length !== 1 ? "s" : ""})
+                  </h5>
+                </div>
+              )}
             </div>
-          )}
+            <div className="col-lg-6 col-md-6 col-12 text-lg-end text-md-end text-start">
+
+              <div class="product-sorting d-flex align-items-center justify-content-lg-end mb-3">
+                <label for="sort" class="sort-label me-2">Sort by:</label>
+                <form action="#" method="get">
+                  <select id="sort" name="sort" className="form-select custom-select sort"  value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value)}>
+                    <option value="recommended" selected>Newest</option>
+                    <option value="price-high-low">Price: High to Low</option>
+                    <option value="price-low-high">Price: Low to High</option>
+                  </select>
+                </form>
+              </div>
+            </div>
+          </div>
 
           <div className="row">
             {listSubCatId !== null && (
@@ -363,9 +396,9 @@ const breadcrumbItems = useMemo(() => {
               }
             >
               <div className="Fabric pb-4">
-                {products.length > 0 ? (
+                {sortedProducts.length > 0 ? (
                   subCategoryId && !listSubCatId ? (
-                    Object.entries(groupByListSubCategory(products)).map(
+                    Object.entries(groupByListSubCategory(sortedProducts)).map(
                       ([listSubCatTitle, subProducts]) => (
                         <div key={listSubCatTitle} className="mb-5">
                           <h6 className="mb-3 product-title">{listSubCatTitle}</h6>
@@ -383,9 +416,9 @@ const breadcrumbItems = useMemo(() => {
                     )
                   ) : (
                     <div className="row row-cols-1 row-cols-md-4">
-                      {products.map((product) => (
+                      {sortedProducts.map((product) => (
                         <ProductCard
-                        size="medium"
+                          size="medium"
                           key={`${product.id}-${product.variantId || "base"}`}
                           product={product}
                           variant={product._variant}

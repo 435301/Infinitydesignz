@@ -5933,3 +5933,11 @@ h3 a {
   font-size: 14px;
   margin-bottom: 12px;
 }
+
+.sort {
+  background-color: #f5f5f5 !important;
+  border: none !important;
+  color: #333 !important;
+  border-radius: 4px;
+  font-weight: 500 !important;
+}
