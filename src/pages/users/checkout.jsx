@@ -241,7 +241,7 @@ const CheckoutPage = () => {
                           <span className="cart-item__desc">Brand: {item.product.brand}</span>
                           <span className="cart-item__desc">Qty: {item.quantity}</span>
                           <span className="cart-item__cost">
-                            ₹{(item.product.price * item.quantity).toLocaleString("en-IN")}
+                            ₹{(item.product.price * item.quantity)?.toFixed(2).toLocaleString("en-IN")}
                           </span>
                         </div>
                       </div>

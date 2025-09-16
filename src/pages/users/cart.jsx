@@ -294,7 +294,7 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
       <hr />
       <div className="d-flex justify-content-between total-amount mb-3">
         <span>Total Amount</span>
-        <span>₹{summary.finalPayable || 0}</span>
+        <span>₹{(summary.finalPayable || 0).toFixed(2)}</span>
       </div>
       <button className="btn btn-place-order w-100" onClick={handleClick}>
         Checkout
