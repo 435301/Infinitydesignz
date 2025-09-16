@@ -306,8 +306,7 @@ const CheckoutPage = () => {
                       <div className="cart-total__final">
                         <strong>Total</strong>
                         <strong>
-                          ₹{(priceSummary.finalPayable - (coupon?.discount || 0))
-                            .toLocaleString("en-IN")}
+                          ₹{(priceSummary.finalPayable).toFixed(2)?.toLocaleString("en-IN")}
                         </strong>
                       </div>
                     </div>
