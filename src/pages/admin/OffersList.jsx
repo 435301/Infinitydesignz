@@ -119,7 +119,7 @@ const OffersList = () => {
           }}
         >
           <div className="main-header" style={{ marginTop: '0px' }}>
-            <h5>Offers List</h5>  
+            <h5>Offers List</h5>
           </div>
           <div className="container-fluid manage">
             <div className="row mb-2">
@@ -216,7 +216,7 @@ const OffersList = () => {
                                   <p>Loading...</p>
                                 </td>
                               </tr>
-                            ): (
+                            ) : (
                               currentRows.map((coupon, index) => (
                                 <tr key={coupon.id}>
                                   <td> <input
@@ -226,9 +226,21 @@ const OffersList = () => {
                                   /></td>
 
                                   <td>{index + 1}</td>
-                                  <td>{coupon.type}</td>
+                                  <td>
+                                    {coupon.type
+                                      ? coupon.type
+                                        .replace(/_/g, " ")
+                                        .toLowerCase()
+                                        .replace(/\b\w/g, (c) => c.toUpperCase())
+                                      : ""}
+                                  </td>
                                   <td>{coupon.code}</td>
-                                  <td>{coupon.priceType}</td>
+                                  <td>{coupon.priceType
+                                    ? coupon.priceType
+                                      .replace(/_/g, " ")
+                                      .toLowerCase()
+                                      .replace(/\b\w/g, (c) => c.toUpperCase())
+                                    : ""}</td>
                                   <td>{coupon.value}</td>
                                   <td>{new Date(coupon.fromDate).toLocaleDateString('en-GB', {
                                     day: '2-digit',

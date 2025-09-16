@@ -54,12 +54,12 @@ const CreateCouponModal = ({ show, onHide }) => {
     if (!form.toDate?.value) newErrors.toDate = "To Date is required";
     const minPrice = parseFloat(form.min_price?.value);
     if (couponType !== "price") {
-    if (!form.min_price?.value.trim()) {
-      newErrors.min_price = "Minimum Order Price is required";
-    } else if (isNaN(minPrice) || minPrice <= 0) {
-      newErrors.min_price = "Minimum Order Price must be greater than 0";
+      if (!form.min_price?.value.trim()) {
+        newErrors.min_price = "Minimum Order Price is required";
+      } else if (isNaN(minPrice) || minPrice <= 0) {
+        newErrors.min_price = "Minimum Order Price must be greater than 0";
+      }
     }
-  }
     // Validate based on coupon type
     if (couponType === 'list_submenu' || couponType === 'brand') {
       if (!selectedMenu) newErrors.selectedMenu = "Menu is required";
@@ -194,7 +194,11 @@ const CreateCouponModal = ({ show, onHide }) => {
                   checked={couponType === type}
                   onChange={(e) => setCouponType(e.target.value)}
                 />
-                <label className="form-check-label text-capitalize">{type}</label>
+                <label className="form-check-label">
+                  {type === 'list_submenu'
+                    ? 'List Submenu'
+                    : type.charAt(0).toUpperCase() + type.slice(1)}
+                </label>
               </div>
             ))}
           </div>
