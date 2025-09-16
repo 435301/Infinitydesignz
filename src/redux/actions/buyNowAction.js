@@ -14,6 +14,7 @@ export const PLACE_ORDER_BUYNOW_REQUEST = 'PLACE_ORDER_BUYNOW_REQUEST';
 export const PLACE_ORDER_BUYNOW_SUCCESS = 'PLACE_ORDER_BUYNOW_SUCCESS';
 export const PLACE_ORDER_BUYNOW_FAILURE = 'PLACE_ORDER_BUYNOW_FAILURE';
 
+export const CLEAR_NOW = "CLEAR_NOW";
 export const CLEAR_BUY_NOW = 'CLEAR_BUY_NOW';
 
 // Get Buy Now
@@ -134,5 +135,22 @@ export const clearBuyNow = () => async (dispatch) => {
         return response.data;
     } catch (error) {
         console.log('error', error)
+    }
+};
+
+
+export const clearCoupon = (code) => async (dispatch) => {
+    dispatch({ type: CLEAR_NOW });
+    try {
+        const response = await axios.post(`${BASE_URL}/coupons/clear-buy-now`, code, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`,
+            },
+        });
+        dispatch({ type: CLEAR_NOW, payload: response.data });
+        return { payload: response.data };
+    } catch (error) {
+       
+        throw error;
     }
 };

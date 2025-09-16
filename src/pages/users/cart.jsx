@@ -27,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { deleteFromGuestCart, initializeGuestCart, updateGuestCart } from "../../redux/actions/guestCartAction";
-import { applyCouponBuyNow, clearBuyNow, getBuyNow, updateBuyNow } from "../../redux/actions/buyNowAction";
+import { applyCouponBuyNow, CLEAR_NOW, clearBuyNow, clearCoupon, getBuyNow, updateBuyNow } from "../../redux/actions/buyNowAction";
 
 const CartItem = ({
   id,
@@ -220,10 +220,14 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
 
   useEffect(() => {
     dispatch(fetchAddresses());
-  }, [dispatch]);
+     if (isBuyNowMode) {
+    dispatch(clearCoupon({ code: null })); 
+  } else {
+    // dispatch(removeCoupon());
+  }
+  }, [dispatch,isBuyNowMode]);
 
 
-  // Use the appropriate coupon based on mode
   const coupon = isBuyNowMode ? buyNowCoupon : appliedCoupon;
 
   return (
@@ -333,8 +337,8 @@ const CartPage = () => {
   // Fetch product details for guest cart items
   useEffect(() => {
     const loadCartData = async () => {
-      // 1️⃣ Buy Now Mode
-      // 1️⃣ Buy Now mode should never fall through to normal cart
+      // Buy Now Mode
+      //  Buy Now mode should never fall through to normal cart
       if (isBuyNowMode) {
         if (buyNow?.items?.length > 0) {
           setLocalCart(
@@ -365,7 +369,7 @@ const CartPage = () => {
         return;
       }
 
-      // 2️⃣ Logged-in normal cart
+      // Logged-in normal cart
       if (loggedIn) {
         setLocalCart(
           userCartItems.map((item) => ({
@@ -386,7 +390,7 @@ const CartPage = () => {
         return;
       }
 
-      // 3️⃣ Guest cart
+      //  Guest cart
       if (!loggedIn && guestCartItems.length > 0) {
         try {
           setLoading(true);

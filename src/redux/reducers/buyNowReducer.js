@@ -5,14 +5,18 @@ import {
   DELETE_BUY_NOW,
   APPLY_COUPON_BUY_NOW,
   BUY_NOW_ERROR,
-    PLACE_ORDER_BUYNOW_REQUEST,
+  PLACE_ORDER_BUYNOW_REQUEST,
   PLACE_ORDER_BUYNOW_SUCCESS,
   PLACE_ORDER_BUYNOW_FAILURE,
   CLEAR_BUY_NOW,
+  CLEAR_NOW
 } from "../actions/buyNowAction";
 
 const initialState = {
-  buyNow: null, 
+   buyNow: {
+    items: [],   // keep an array, so no undefined
+    coupon: null
+  },
   coupon: null,
   loading: false,
   error: null,
@@ -33,29 +37,29 @@ export const buyNowReducer = (state = initialState, action) => {
     case DELETE_BUY_NOW:
       return { ...state, buyNow: null, loading: false };
 
-  case APPLY_COUPON_BUY_NOW:
-  return {
-    ...state,
-    coupon: action.payload.coupon,
-    priceSummary: action.payload.priceSummary
-  };
+    case APPLY_COUPON_BUY_NOW:
+      return {
+        ...state,
+        coupon: action.payload.coupon,
+        priceSummary: action.payload.priceSummary
+      };
 
     case BUY_NOW_ERROR:
       return { ...state, error: action.payload, loading: false };
-       case PLACE_ORDER_BUYNOW_REQUEST:
+    case PLACE_ORDER_BUYNOW_REQUEST:
       return { ...state, loading: true, error: null };
     case PLACE_ORDER_BUYNOW_SUCCESS:
       return { ...state, loading: false, order: action.payload };
     case PLACE_ORDER_BUYNOW_FAILURE:
       return { ...state, loading: false, error: action.payload };
-      case CLEAR_BUY_NOW:
+    case CLEAR_BUY_NOW:
       return {
         ...state,
         items: [],
         priceSummary: {},
         coupon: null,
       };
-      case "REMOVE_BUYNOW_COUPON":
+    case "REMOVE_BUYNOW_COUPON":
       return {
         ...state,
         coupon: null,
@@ -69,6 +73,16 @@ export const buyNowReducer = (state = initialState, action) => {
             (state.priceSummary.shippingFee || 0),
         },
       };
+ case CLEAR_NOW:
+  return {
+    ...state,
+    buyNow: {
+      ...state.buyNow,
+      coupon: null,
+    },
+    coupon: null,
+     priceSummary: action.payload?.priceSummary || state.priceSummary,
+  };
     default:
       return state;
   }
