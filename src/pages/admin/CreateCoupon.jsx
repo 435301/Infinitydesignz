@@ -53,11 +53,13 @@ const CreateCouponModal = ({ show, onHide }) => {
     if (!form.fromDate?.value) newErrors.fromDate = "From Date is required";
     if (!form.toDate?.value) newErrors.toDate = "To Date is required";
     const minPrice = parseFloat(form.min_price?.value);
+    if (couponType !== "price") {
     if (!form.min_price?.value.trim()) {
       newErrors.min_price = "Minimum Order Price is required";
     } else if (isNaN(minPrice) || minPrice <= 0) {
       newErrors.min_price = "Minimum Order Price must be greater than 0";
     }
+  }
     // Validate based on coupon type
     if (couponType === 'list_submenu' || couponType === 'brand') {
       if (!selectedMenu) newErrors.selectedMenu = "Menu is required";
@@ -135,23 +137,20 @@ const CreateCouponModal = ({ show, onHide }) => {
           <input type="text" className={`form-control ${errors.coupon_code ? 'is-invalid' : ''}`} name="coupon_code" onChange={handleInputChange} />
           {errors.coupon_code && <div className="invalid-feedback">{errors.coupon_code}</div>}
         </div>
-        {couponType !== 'price' && (
-          <div className="form-group col-md-4">
-            <label>Price/Percentage <span className="text-danger">*</span></label>
-            <select className={`form-control ${errors.price_type ? 'is-invalid' : ''}`} name="price_type" onChange={handleInputChange}>
-              <option>--Choose--</option>
-              <option value='fixed'>Price</option>
-              <option value="percentage">Percentage</option>
-            </select>
-            {errors.price_type && <div className="invalid-feedback">{errors.price_type}</div>}
-          </div>
-        )}
-
-          <div className="form-group col-md-4">
-            <label>Value <span className="text-danger">*</span></label>
-            <input type="text" className={`form-control ${errors.value ? 'is-invalid' : ''}`} name="value" onChange={handleInputChange} />
-            {errors.value && <div className="invalid-feedback">{errors.value}</div>}
-          </div>
+        <div className="form-group col-md-4">
+          <label>Price/Percentage <span className="text-danger">*</span></label>
+          <select className={`form-control ${errors.price_type ? 'is-invalid' : ''}`} name="price_type" onChange={handleInputChange}>
+            <option>--Choose--</option>
+            <option value='fixed'>Price</option>
+            <option value="percentage">Percentage</option>
+          </select>
+          {errors.price_type && <div className="invalid-feedback">{errors.price_type}</div>}
+        </div>
+        <div className="form-group col-md-4">
+          <label>Value <span className="text-danger">*</span></label>
+          <input type="text" className={`form-control ${errors.value ? 'is-invalid' : ''}`} name="value" onChange={handleInputChange} />
+          {errors.value && <div className="invalid-feedback">{errors.value}</div>}
+        </div>
 
         <div className="form-group col-md-4">
           <label>From Date <span className="text-danger">*</span></label>

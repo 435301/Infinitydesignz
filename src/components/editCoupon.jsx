@@ -93,10 +93,12 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
         if (!formValues.toDate) newErrors.toDate = "To Date is required";
 
         const minPrice = parseFloat(formValues.minOrderAmount);
-        if (!formValues.minOrderAmount?.toString().trim()) {
-            newErrors.minOrderAmount = "Minimum Order Price is required";
-        } else if (isNaN(minPrice) || minPrice <= 0) {
-            newErrors.minOrderAmount = "Minimum Order Price must be greater than 0";
+        if (couponType !== "price") {
+            if (!formValues.minOrderAmount?.toString().trim()) {
+                newErrors.minOrderAmount = "Minimum Order Price is required";
+            } else if (isNaN(minPrice) || minPrice <= 0) {
+                newErrors.minOrderAmount = "Minimum Order Price must be greater than 0";
+            }
         }
 
         // Validate based on coupon type
@@ -290,24 +292,20 @@ const EditCouponModal = ({ show, onHide, coupon }) => {
                             {errors.code && <div className="invalid-feedback">{errors.code}</div>}
 
                         </div>
-                        {couponType !== 'price' && (
-                            <div className="form-group col-md-4">
-                                <label>Price/Percentage <span className="text-danger">*</span></label>
-                                <select className={`form-control ${errors.priceType ? 'is-invalid' : ''}`} name="priceType" onChange={handleChange} value={formValues.priceType}>
-                                    <option>--Choose--</option>
-                                    <option value='fixed'>Price</option>
-                                    <option value="percentage">Percentage</option>
-                                </select>
-                                {errors.priceType && <div className="invalid-feedback">{errors.priceType}</div>}
-                            </div>
-                        )
-                        }
-
-                            <div className="form-group col-md-4">
-                                <label>Value<span className='text-danger'>*</span></label>
-                                <input name="value" value={formValues.value} onChange={handleChange} className={`form-control ${errors.value ? 'is-invalid' : ''}`} />
-                                {errors.value && <div className="invalid-feedback">{errors.value}</div>}
-                         </div>
+                        <div className="form-group col-md-4">
+                            <label>Price/Percentage <span className="text-danger">*</span></label>
+                            <select className={`form-control ${errors.priceType ? 'is-invalid' : ''}`} name="priceType" onChange={handleChange} value={formValues.priceType}>
+                                <option>--Choose--</option>
+                                <option value='fixed'>Price</option>
+                                <option value="percentage">Percentage</option>
+                            </select>
+                            {errors.priceType && <div className="invalid-feedback">{errors.priceType}</div>}
+                        </div>
+                        <div className="form-group col-md-4">
+                            <label>Value<span className='text-danger'>*</span></label>
+                            <input name="value" value={formValues.value} onChange={handleChange} className={`form-control ${errors.value ? 'is-invalid' : ''}`} />
+                            {errors.value && <div className="invalid-feedback">{errors.value}</div>}
+                        </div>
                         <div className="form-group col-md-4">
                             <label>From Date<span className='text-danger'>*</span></label>
                             <input type="date" name="fromDate" value={formValues.fromDate} onChange={handleChange} className={`form-control ${errors.fromDate ? 'is-invalid' : ''}`} min={new Date().toISOString().split("T")[0]} />
