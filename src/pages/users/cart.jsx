@@ -14,6 +14,7 @@ import {
   UpdateToCart,
   addToGuestCart,
   syncGuestCartToUserCart,
+  clearCouponCart,
 } from "../../redux/actions/cartAction";
 import BASE_URL from "../../config/config";
 import {
@@ -223,7 +224,7 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
      if (isBuyNowMode) {
     dispatch(clearCoupon({ code: null })); 
   } else {
-    // dispatch(removeCoupon());
+    dispatch(clearCouponCart({ code: null }));
   }
   }, [dispatch,isBuyNowMode]);
 

@@ -12,6 +12,7 @@ import {
     CLEAR_CART_REQUEST,
     CLEAR_CART_SUCCESS,
     CLEAR_CART_FAILURE,
+    CLEAR_NOW
 } from '../actions/cartAction';
 
 const initialState = {
@@ -98,6 +99,12 @@ export const cartReducer = (state = initialState, action) => {
                 loading: false,
                 error: action.payload,
             };
+            case CLEAR_NOW:
+              return {
+                ...state,
+                appliedCoupon: null,
+                 priceSummary: action.payload?.priceSummary || state.priceSummary,
+              };
 
         case "ALLOW_CHECKOUT":
             return { ...state, canAccessCheckout: true };

@@ -17,6 +17,7 @@ export const SET_GUEST_CART = "SET_GUEST_CART";
 export const CLEAR_CART_REQUEST = "CLEAR_CART_REQUEST";
 export const CLEAR_CART_SUCCESS = "CLEAR_CART_SUCCESS";
 export const CLEAR_CART_FAILURE = "CLEAR_CART_FAILURE";
+export const CLEAR_NOW = "CLEAR_NOW";
 
 
 export const fetchCart = () => async (dispatch) => {
@@ -191,4 +192,21 @@ export const clearCart = () => async (dispatch) => {
     });
     throw error;
   }
+};
+
+
+export const clearCouponCart = (code) => async (dispatch) => {
+    dispatch({ type: CLEAR_NOW });
+    try {
+        const response = await axios.post(`${BASE_URL}/coupons/clear-buy-now`, code, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`,
+            },
+        });
+        dispatch({ type: CLEAR_NOW, payload: response.data });
+        return { payload: response.data };
+    } catch (error) {
+       
+        throw error;
+    }
 };
