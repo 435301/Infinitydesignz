@@ -80,19 +80,19 @@ export default function WishlistPage() {
     }));
   }, []);
 
- const decrement = useCallback((item) => {
-  const key = `${item.productId}-${item.variantId || "null"}`;
-  setQuantities((prev) => {
-    const newQty = (prev[key] || 1) - 1;
-    if (newQty < 1) {
-      toast.warning("Quantity cannot be less than 1");
-    }
-    return {
-      ...prev,
-      [key]: Math.max(newQty, 1),
-    };
-  });
-}, []);
+  const decrement = useCallback((item) => {
+    const key = `${item.productId}-${item.variantId || "null"}`;
+    setQuantities((prev) => {
+      const newQty = (prev[key] || 1) - 1;
+      if (newQty < 1) {
+        toast.warning("Quantity cannot be less than 1");
+      }
+      return {
+        ...prev,
+        [key]: Math.max(newQty, 1),
+      };
+    });
+  }, []);
 
   const handleProductClick = useCallback((productId, variantId) => {
     if (variantId) {
@@ -203,7 +203,7 @@ export default function WishlistPage() {
                             </div>
                             <div className="details ms-3">
                               <h5 style={{ cursor: "pointer" }} onClick={() => handleProductClick(item.productId, item.variantId)}>{title}</h5>
-
+                              <p>36-Months Warranty Available</p>
                               <div className="d-flex align-items-center mb-3 pt-2">
                                 <label className="me-2  fw-semibold text-dark size-wishlist">Size</label>
                                 {/* <select className="form-select w-auto me-4" value={displayData.size || "N/A"} disabled>
@@ -278,7 +278,7 @@ export default function WishlistPage() {
                 <div className="carousel-wrapper">
                   <Carousel controls indicators={false}>
                     {(relatedProducts || []).map((product) => {
-                       const imageUrl =
+                      const imageUrl =
                         product.imageUrl ||
                         product.variant?.imageUrl ||
                         product.product?.imageUrl ||
@@ -289,7 +289,7 @@ export default function WishlistPage() {
                           main: {
                             url: imageUrl?.startsWith("http")
                               ? imageUrl.replace(`${BASE_URL}/uploads/products/`, "")
-                              :imageUrl.replace("/uploads/products/", ""),
+                              : imageUrl.replace("/uploads/products/", ""),
                           },
                         },
                         mrp: product.mrp,
