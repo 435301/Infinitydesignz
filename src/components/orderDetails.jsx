@@ -167,7 +167,9 @@ const OrderDetailsPage = () => {
                                                         <td>
                                                             <div className="action-cell">
                                                                 <div className="status-label mb-2">
-                                                                    <span className={`status ${item.status.toLowerCase()}`}>
+                                                                    <span className={`status ${item.status.toLowerCase()}`} style={{
+                                                                        color: item.status === "CANCELLED" ? "#dc3545" : item.status === "APPROVED" ? "#0DA79E" : "inherit",
+                                                                    }}>
                                                                         {item.status === "CANCEL_REQUESTED"
                                                                             ? "Cancellation Requested"
                                                                             : item.status}
