@@ -110,13 +110,13 @@ const OrderDetailsPage = () => {
                                 <div className="p-2" style={{ width: '33%' }}>
                                     <h6>ORDER SUMMARY</h6>
                                     <p className='order-p text-secondary'>
-                                        Total MRP: ₹{priceSummary.totalMRP? priceSummary.totalMRP.toFixed(2) : "0.00"}<br />
-                                        Discount on MRP: ₹{priceSummary.discountOnMRP? priceSummary.discountOnMRP.toFixed(2) : "0.00"}<br />
-                                        Sub Total: ₹{priceSummary.totalAfterDiscount? priceSummary.totalAfterDiscount.toFixed(2) :"0.00"}<br />
-                                        Coupon Discount: ₹{priceSummary.couponDiscount? priceSummary.couponDiscount.toFixed(2):"0.00"}<br />
-                                        Platform Fee: ₹{priceSummary.platformFee? priceSummary.platformFee.toFixed(2):"0.00"}<br />
-                                        Shipping Fee: ₹{priceSummary.shippingFee? priceSummary.shippingFee.toFixed(2):"0.00"}<br />
-                                        <strong>Total Payable Amount: ₹{priceSummary.finalPayable? priceSummary.finalPayable.toFixed(2):"0.00"}</strong>
+                                        Total MRP: ₹{priceSummary.totalMRP ? priceSummary.totalMRP.toFixed(2) : "0.00"}<br />
+                                        Discount on MRP: - ₹{priceSummary.discountOnMRP ? priceSummary.discountOnMRP.toFixed(2) : "0.00"}<br />
+                                        Coupon Discount: - ₹{priceSummary.couponDiscount ? priceSummary.couponDiscount.toFixed(2) : "0.00"}<br />
+                                        Sub Total: ₹{priceSummary.totalAfterDiscount ? priceSummary.totalAfterDiscount.toFixed(2) : "0.00"}<br />
+                                        Platform Fee: ₹{priceSummary.platformFee ? priceSummary.platformFee.toFixed(2) : "0.00"}<br />
+                                        Shipping Fee: ₹{priceSummary.shippingFee ? priceSummary.shippingFee.toFixed(2) : "0.00"}<br />
+                                        <strong>Total Payable Amount: ₹{priceSummary.finalPayable ? priceSummary.finalPayable.toFixed(2) : "0.00"}</strong>
                                     </p>
                                 </div>
                             </div>
