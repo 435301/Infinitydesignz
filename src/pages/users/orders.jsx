@@ -16,6 +16,7 @@ import CancelOrderModal from "../../modals/cancelOrderModal";
 import { Carousel } from "react-bootstrap";
 import ProductCard from "../../components/productCard";
 import PaginationComponent from "../../includes/pagination";
+import { toast } from "react-toastify";
 
 const MyOrdersPage = () => {
   const dispatch = useDispatch();
@@ -93,10 +94,9 @@ const MyOrdersPage = () => {
           items: updatedItems
         };
       });
-
-
+      toast.success("Cancel request submitted successfully!");
     } catch (err) {
-
+      toast.error("Failed to submit cancel request. Please try again.");
     } finally {
       setCancelModalShow(false);
     }
