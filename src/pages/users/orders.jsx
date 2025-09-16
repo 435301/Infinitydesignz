@@ -199,12 +199,12 @@ const MyOrdersPage = () => {
                                 <div className="order-status">
                                   <div className="status">
                                     <span>
-                                      Status:{" "}
-                                      <span
+                                      {/* Status:{" "} */}
+                                      {/* <span
                                         className={`status ${latestOrderDetails?.status?.toLowerCase()}`}
                                       >
                                         {latestOrderDetails?.status || "N/A"}
-                                      </span>
+                                      </span> */}
                                       <span>
                                         Item Status:{" "}
                                         <span className={`status ${item?.status?.toLowerCase()}`}>

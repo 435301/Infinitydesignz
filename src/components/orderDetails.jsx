@@ -165,11 +165,18 @@ const OrderDetailsPage = () => {
                                                         <td>₹{item.total}</td>
                                                         <td>09-Oct-2023</td>
                                                         <td>
-
-
                                                             <div className="action-cell">
-                                                                {item.status !== 'CANCELLED' && item.status !== 'APPROVED' ? (
+                                                                {/* Status always shown */}
+                                                                <div className="status-label mb-2">
+                                                                    <span className={`status ${item.status.toLowerCase()}`}>
+                                                                        {item.status === "CANCEL_REQUESTED"
+                                                                            ? "Cancellation Requested"
+                                                                            : item.status}
+                                                                    </span>
+                                                                </div>
 
+                                                                {/* Buttons only if status is not CANCELLED or APPROVED */}
+                                                                {item.status !== "CANCELLED" && item.status !== "APPROVED" ? (
                                                                     <div className="action-buttons">
                                                                         <button
                                                                             type="button"
@@ -186,17 +193,10 @@ const OrderDetailsPage = () => {
                                                                             <i className="ti-close"></i> Cancel Order
                                                                         </button>
                                                                     </div>
-
-                                                                )
-                                                                    : (
-                                                                        <div className="status-label">
-                                                                            <span className={`status ${item.status.toLowerCase()}`}>
-                                                                                {item.status}
-                                                                            </span>
-                                                                        </div>
-                                                                    )}
+                                                                ) : null}
                                                             </div>
                                                         </td>
+
 
                                                     </tr>
                                                 );
