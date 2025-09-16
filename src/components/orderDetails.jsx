@@ -166,7 +166,6 @@ const OrderDetailsPage = () => {
                                                         <td>09-Oct-2023</td>
                                                         <td>
                                                             <div className="action-cell">
-                                                                {/* Status always shown */}
                                                                 <div className="status-label mb-2">
                                                                     <span className={`status ${item.status.toLowerCase()}`}>
                                                                         {item.status === "CANCEL_REQUESTED"
@@ -178,13 +177,15 @@ const OrderDetailsPage = () => {
                                                                 {/* Buttons only if status is not CANCELLED or APPROVED */}
                                                                 {item.status !== "CANCELLED" && item.status !== "APPROVED" ? (
                                                                     <div className="action-buttons">
-                                                                        <button
-                                                                            type="button"
-                                                                            className="action-btn approve-btn action-rounded"
-                                                                            onClick={() => handleApprove(item.id, order.id)}
-                                                                        >
-                                                                            <i className="ti-check"></i> Approve
-                                                                        </button>
+                                                                        {item.status !== "CANCEL_REQUESTED" && (
+                                                                            <button
+                                                                                type="button"
+                                                                                className="action-btn approve-btn action-rounded"
+                                                                                onClick={() => handleApprove(item.id, order.id)}
+                                                                            >
+                                                                                <i className="ti-check"></i> Approve
+                                                                            </button>
+                                                                        )}
 
                                                                         <button
                                                                             className="action-btn cancel-btn action-rounded"
@@ -196,8 +197,6 @@ const OrderDetailsPage = () => {
                                                                 ) : null}
                                                             </div>
                                                         </td>
-
-
                                                     </tr>
                                                 );
                                             })

@@ -1558,7 +1558,7 @@ td.description-cell {
 }
 
 textarea.form-control {
-  height: 134px;
+  height: 134px !important;
 }
 
 textarea.form-control {
