@@ -269,27 +269,27 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
       <h5 className="text-bold">Price details</h5>
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Total MRP</span>
-        <span className="price-detail-label">₹{summary.totalMRP || 0}</span>
+        <span className="price-detail-label">₹{(summary.totalMRP || 0).toFixed(2)}</span>
       </div>
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Discount on MRP</span>
-        <span className="discount-text price-detail-label">- ₹{summary.discountOnMRP || 0}</span>
+        <span className="discount-text price-detail-label">- ₹{(summary.discountOnMRP || 0).toFixed(2)}</span>
       </div>
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Coupon Discount</span>
-        <span className="discount-text price-detail-label">- ₹{summary.couponDiscount || 0}</span>
+        <span className="discount-text price-detail-label">- ₹{(summary.couponDiscount || 0).toFixed(2)}</span>
       </div>
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Sub Total</span>
-        <span className="price-detail-label">₹{summary.totalAfterDiscount || 0}</span>
+        <span className="price-detail-label">₹{(summary.totalAfterDiscount || 0).toFixed(2)}</span>
       </div>
       <div className="d-flex justify-content-between">
         <span className="price-detail-label">Platform Fee <small className="know-more">Know More</small></span>
-        <span className="price-detail-label">₹{summary.platformFee || 0}</span>
+        <span className="price-detail-label">₹{(summary.platformFee || 0).toFixed(2)}</span>
       </div>
       <div className="d-flex justify-content-between mb-3">
         <span className="price-detail-label">Shipping Fee <small className="know-more">Know More</small></span>
-        <span className="price-detail-label">₹{summary.shippingFee || 0}</span>
+        <span className="price-detail-label">₹{(summary.shippingFee || 0).toFixed(2)}</span>
       </div>
       <hr />
       <div className="d-flex justify-content-between total-amount mb-3">

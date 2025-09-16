@@ -278,29 +278,29 @@ const CheckoutPage = () => {
                     <div className="cart-total mt-3">
                       <div className="cart-total__line">
                         <span>Total MRP</span>
-                        <span>₹{priceSummary.totalMRP?.toLocaleString("en-IN")}</span>
+                        <span>₹{(priceSummary.totalMRP).toFixed(2)?.toLocaleString("en-IN")}</span>
                       </div>
                       <div className="cart-total__line">
                         <span>Discount on Mrp</span>
-                        <span>- ₹{Math.abs(priceSummary.discountOnMRP)?.toLocaleString("en-IN")}</span>
+                        <span>- ₹{Math.abs(priceSummary.discountOnMRP).toFixed(2)?.toLocaleString("en-IN")}</span>
                       </div>
                       {priceSummary?.couponDiscount > 0 && (
                         <div className="cart-total__line">
                           <span>Coupon Discount</span>
-                          <span>- ₹{priceSummary.couponDiscount.toLocaleString("en-IN")}</span>
+                          <span>- ₹{(priceSummary.couponDiscount).toFixed(2).toLocaleString("en-IN")}</span>
                         </div>
                       )}
                       <div className="cart-total__line">
                         <span>Subtotal</span>
-                        <span>₹{priceSummary.totalAfterDiscount?.toLocaleString("en-IN")}</span>
+                        <span>₹{(priceSummary.totalAfterDiscount).toFixed(2)?.toLocaleString("en-IN")}</span>
                       </div>
                       <div className="cart-total__line">
                         <span>Platform Fee</span>
-                        <span>₹{priceSummary.platformFee?.toLocaleString("en-IN")}</span>
+                        <span>₹{(priceSummary.platformFee).toFixed(2)?.toLocaleString("en-IN")}</span>
                       </div>
                       <div className="cart-total__line">
                         <span>Shipping</span>
-                        <span>₹{priceSummary.shippingFee?.toLocaleString("en-IN")}</span>
+                        <span>₹{(priceSummary.shippingFee).toFixed(2)?.toLocaleString("en-IN")}</span>
                       </div>
 
                       <div className="cart-total__final">
