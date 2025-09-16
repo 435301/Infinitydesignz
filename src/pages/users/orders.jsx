@@ -207,12 +207,25 @@ const MyOrdersPage = () => {
                                       </span> */}
                                       <span>
                                         Item Status:{" "}
-                                        <span className={`status ${item?.status?.toLowerCase()}`}>
+                                        <span
+                                          className={`status ${item?.status?.toLowerCase()}`}
+                                          style={{
+                                            color:
+                                              item?.status === "PENDING"
+                                                ? "#ff9800"
+                                                : item?.status === "APPROVED"
+                                                  ? "#0DA79E"
+                                                  : item?.status === "CANCELLED"
+                                                    ? "#dc3545"
+                                                    : "inherit",
+                                          }}
+                                        >
                                           {item?.status === "CANCEL_REQUESTED"
                                             ? "Cancellation Requested"
                                             : item?.status || "N/A"}
                                         </span>
                                       </span>
+
                                     </span>
                                   </div>
                                   {latestOrderDetails?.status === "PENDING" &&
