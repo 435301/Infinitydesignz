@@ -115,8 +115,8 @@ const ManageOrders = () => {
               <div className="card-block">
                 <form onSubmit={handleSearch} className="row align-items-end g-3">
                   <div className="col-md-3">
-                    <label htmlFor="orderNo" className="form-label">Order No</label>
-                    <input type="text" className="form-control" id="orderNo" />
+                    <label htmlFor="orderNo" className="form-label">Orders</label>
+                    <input type="text" className="form-control" id="orderNo"  placeholder='Search with Order-Id '/>
                   </div>
                   <div className="col-md-3">
                     <label htmlFor="fromDate" className="form-label">From Date</label>
