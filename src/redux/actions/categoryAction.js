@@ -225,7 +225,7 @@ export const deleteCategory = (id) => async (dispatch) => {
     const successMessage = response?.message || "Category deleted successfully"
     toast.success(successMessage);
   } catch (err) {
-    toast.error("Failed to delete category.");
+    toast.error(err.response?.data?.message || "Failed to delete category.");
   }
 }
 
@@ -239,7 +239,7 @@ export const deleteSubCategory = (id) => async (dispatch) => {
     const successMessage = response?.message || "Subcategory deleted successfully"
     toast.success(successMessage);
   } catch (err) {
-    toast.error("Failed to delete subcategory.");
+    toast.error(err.response?.data?.message || "Failed to delete subcategory.");
   }
 }
 
@@ -253,7 +253,7 @@ export const deleteListSubCategory = (id) => async (dispatch) => {
     const successMessage = response?.message || "ListSubcategory deleted successfully"
     toast.success(successMessage);
   } catch (err) {
-    toast.error("Failed to delete ListSubcategory.");
+    toast.error(err.response?.data?.message || "Failed to delete ListSubcategory.");
   }
 }
 
