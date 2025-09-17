@@ -353,7 +353,7 @@ const sortedProducts = useMemo(() => {
       <section className="terms-of-service">
         <div className="container">
           {/* <h2>Products</h2> */}
-          <div className="row align-items-center mb-4 mt-4">
+          <div className="row align-items-center mb-3 mt-3">
             {/* Left side: Category title + item count */}
             <div className="col-lg-6 col-md-6 col-12">
               {subCategoryId && (
