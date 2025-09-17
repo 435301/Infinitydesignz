@@ -359,7 +359,8 @@ const CartPage = () => {
                   image: source.imageUrl || "/placeholder.jpg",
                   delivery: source.estimatedDateText,
                 },
-                deliveryCharge: item.deliveryCharge
+                deliveryCharge: item.deliveryCharge,
+                
               };
             })
           );

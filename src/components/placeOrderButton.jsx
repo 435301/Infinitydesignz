@@ -56,10 +56,11 @@ const PlaceOrderButton = ({
     note: "Leave at door",
     couponDiscount: appliedCoupon?.discount || 0,
     couponId: appliedCoupon?.id || null,
+    shippingFee: priceSummary.shippingFee || 0,
   });
 
   const handlePlaceOrder = async () => {
-     if (!selectedAddressId) {
+    if (!selectedAddressId) {
       toast.warning("Please select or add a delivery address before placing the order.");
       return;
     }
