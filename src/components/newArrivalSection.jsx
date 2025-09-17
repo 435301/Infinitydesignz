@@ -15,8 +15,8 @@ const NewArrivalsSection = ({ title = "New Arrivals", cards = [] }) => {
               key={`new-card-${index}`}
             >
               {card.type === "imageOnly" ? (
-                <a href={card.link} >
-                  <img src={card.image} alt={card.alt} className="w-100" />
+                <a href={card.link} > 
+                  <img src={card.image} alt={card.alt} className="w-100 new-arrival-img" />
                 </a>
 
               ) : (

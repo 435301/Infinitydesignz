@@ -5941,3 +5941,9 @@ h3 a {
   border-radius: 4px;
   font-weight: 500 !important;
 }
+
+.new-arrival-img {
+  height: 375px; 
+  object-fit: cover;
+  border-radius: 8px; 
+}
