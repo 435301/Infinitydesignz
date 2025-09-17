@@ -570,10 +570,52 @@ export default function ProductDetailPage() {
               </div>
 
               <div className="action-buttons mb-3">
-                <button className="add-to-cart-btn" onClick={handleCart}>
+                <button className="add-to-cart-btn" onClick={handleCart} disabled={
+                  selectedVariant
+                    ? selectedVariant.stock <= 0
+                    : product.stock <= 0
+                } style={{
+                  backgroundColor:
+                    selectedVariant
+                      ? selectedVariant.stock <= 0
+                        ? "#ccc"
+                        : ""
+                      : product.stock <= 0
+                        ? "#ccc"
+                        : "",
+                  cursor:
+                    selectedVariant
+                      ? selectedVariant.stock <= 0
+                        ? "not-allowed"
+                        : "pointer"
+                      : product.stock <= 0
+                        ? "not-allowed"
+                        : "pointer"
+                }}>
                   <i className="bi bi-cart3"></i> Add to Cart
                 </button>
-                <button className="buy-now-btn" onClick={handleBuy}>
+                <button className="buy-now-btn" onClick={handleBuy} disabled={
+                  selectedVariant
+                    ? selectedVariant.stock <= 0
+                    : product.stock <= 0
+                } style={{
+                  backgroundColor:
+                    selectedVariant
+                      ? selectedVariant.stock <= 0
+                        ? "#ccc"
+                        : ""
+                      : product.stock <= 0
+                        ? "#ccc"
+                        : "",
+                  cursor:
+                    selectedVariant
+                      ? selectedVariant.stock <= 0
+                        ? "not-allowed"
+                        : "pointer"
+                      : product.stock <= 0
+                        ? "not-allowed"
+                        : "pointer"
+                }}>
                   <i className="bi bi-lightning-charge-fill"></i> Buy Now
                 </button>
                 <button
