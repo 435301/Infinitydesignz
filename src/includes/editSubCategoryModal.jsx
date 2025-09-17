@@ -174,8 +174,8 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
             </div>
 
             <div className="modal-footer justify-content-center">
-              <button type="submit" className="btn btn-success px-5">UPDATE</button>
-              <button type="button" className="btn btn-danger px-5" onClick={() => setShow(false)}>CANCEL</button>
+              <button type="submit" className="btn btn-success px-5">Update</button>
+              <button type="button" className="btn btn-danger px-5" onClick={() => setShow(false)}>Close</button>
             </div>
           </form>
         </div>
