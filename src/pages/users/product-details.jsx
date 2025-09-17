@@ -387,38 +387,63 @@ export default function ProductDetailPage() {
             <div className="col-md-6">
               <div className="product-main-view">
                 <div className="gap-2">
-                  <div className="thumb-gallery">
-                    {thumbnails.map((img, index) => (
-                      <div
-                        key={index}
-                        className="thumb-item mb-2"
-                        onClick={() => setMainImage(`${BASE_URL}/Uploads/products/${img.url}`)}
-                        style={{
-                          cursor: "pointer",
-                          border: mainImage.includes(img.url) ? "2px solid #007bff" : "1px solid #ddd",
-                          borderRadius: 4
-                        }}
-                      >
+                  {thumbnails && thumbnails.length > 0 ? (
+                    <div className="thumb-gallery">
+                      {thumbnails.map((img, index) => (
+                        <div
+                          key={index}
+                          className="thumb-item mb-2"
+                          onClick={() => setMainImage(`${BASE_URL}/Uploads/products/${img.url}`)}
+                          style={{
+                            cursor: "pointer",
+                            border: mainImage.includes(img.url) ? "2px solid #007bff" : "1px solid #ddd",
+                            borderRadius: 4
+                          }}
+                        >
+                          <img
+                            src={`${BASE_URL}/Uploads/products/${img.url}`}
+                            alt={`Thumbnail ${index + 1}`}
+                            className="img-fluid"
+                            style={{ width: "70px", height: "85px", objectFit: "cover" }}
+                            loading="lazy"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-muted small" style={{ minHeight: "100px" }}>
+                      <span>No thumbnails</span>
+                    </div>
+                  )}
+                  <div className="product-display mb-3" id="mainImageContainer" style={{ position: "relative" }}>
+                    {mainImage ? (
+                      <>
+                        <div className="zoom-lens" style={{ position: "absolute", display: "none" }}></div>
                         <img
-                          src={`${BASE_URL}/Uploads/products/${img.url}`}
-                          alt={`Thumbnail ${index + 1}`}
-                          className="img-fluid"
-                          style={{ width: "70px", height: "85px", objectFit: "cover" }}
+                          src={mainImage}
+                          alt={title}
+                          className="img-fluid product-image w-100"
+                          id="mainImage"
                           loading="lazy"
                         />
+                        <div className="zoom-result" id="zoomResult" style={{ display: "none" }}></div>
+                      </>
+                    ) : (
+                      <div
+                        className="d-flex align-items-center justify-content-center w-100"
+                        style={{
+                          minHeight: "300px",
+                          border: "1px solid #ddd",
+                          borderRadius: "6px",
+                          background: "#f8f9fa"
+                        }}
+                      >
+                        <div className="text-center text-muted">
+                          <i className="bi bi-image" style={{ fontSize: "2rem" }}></i>
+                          <p className="mb-0">No Image Available</p>
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                  <div className="product-display mb-3" id="mainImageContainer" style={{ position: "relative" }}>
-                    <div className="zoom-lens" style={{ position: "absolute", display: "none" }}></div>
-                    <img
-                      src={mainImage}
-                      alt={title}
-                      className="img-fluid product-image w-100"
-                      id="mainImage"
-                      loading="lazy"
-                    />
-                    <div className="zoom-result" id="zoomResult" style={{ display: "none" }}></div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -596,7 +621,7 @@ export default function ProductDetailPage() {
                 </p>
                 <div className="delivery-date">
                   <img src={LocalShippingImage} alt="Truck" class="delivery-icon"></img>
-                <span>Get it By {product?.estimatedDeliveryText}</span>
+                  <span>Get it By {product?.estimatedDeliveryText}</span>
                 </div>
                 <hr />
                 <div className="features">
