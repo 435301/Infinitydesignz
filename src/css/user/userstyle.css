@@ -3791,6 +3791,14 @@ WishList
   color: #000;
 }
 
+.delivery-address .name {
+  font-weight: bold;
+  color: #000;
+}
+
+.delivery-address .address-line{
+  font-size: 14px;
+}
 @media (max-width: 768px) {
   .order-item {
     flex-direction: column;
