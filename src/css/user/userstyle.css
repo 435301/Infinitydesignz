@@ -3940,6 +3940,7 @@ Address Book
   justify-content: space-between;
   align-items: center;
   margin-top: 15px;
+  font-family: "poppins", sans-serif;
 }
 
 .action-group {
