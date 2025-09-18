@@ -2563,6 +2563,12 @@ small a {
   text-overflow: ellipsis;
   vertical-align: middle;
 }
+.bold{
+  font-weight: 500 !important;
+}
+  .header-logo img {  
+    width: 240px;
+  }
 
 @media (max-width: 767px) {
   .Fabric .card-img-top {

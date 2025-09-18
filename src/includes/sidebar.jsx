@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
@@ -12,10 +11,9 @@ import {
   BsListUl,
   BsDot,
   BsTag,
-  BsBag,
 } from 'react-icons/bs';
 
-const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
+const Sidebar = ({ isCollapsed, onClose = () => { } }) => {
   const location = useLocation();
   const currentPath = location.pathname;
   const [openMenus, setOpenMenus] = useState({});
@@ -134,6 +132,11 @@ const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
 
   const isActiveMenu = (menu) => openMenus[menu];
 
+  // ✅ Highlight parent if any of its children are active
+  const isParentActive = (menu) => {
+    return menuPaths[menu]?.some((path) => currentPath.startsWith(path));
+  };
+
   const renderNavLink = (to, label) => (
     <NavLink
       to={to}
@@ -164,7 +167,9 @@ const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
       )}
       <aside className="main-sidebar sidebar-scrollbar" style={asideStyle()}>
         <section style={{ height: '100%' }}>
-          <ul className="sidebar-menu mb-4" style={{ listStyle: 'none', paddingRight: 0, margin: "15px -5px 12px 18px"}}>
+          <ul className="sidebar-menu mb-4" style={{ listStyle: 'none', paddingRight: 0, margin: "15px -5px 12px 18px" }}>
+
+            {/* Dashboard */}
             <li>
               <NavLink
                 to="/admin/dashboard"
@@ -176,8 +181,20 @@ const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
                 <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Dashboard</span>
               </NavLink>
             </li>
+
+            {/* Master Data */}
             <li>
-              <div onClick={() => toggleMenu('masterData')} style={navLinkStyle(isCollapsed, true)}>
+              <div
+                onClick={() => toggleMenu('masterData')}
+                style={{
+                  ...navLinkStyle(isCollapsed, true),
+                  background: isParentActive('masterData') ? '#fff' : 'transparent',
+                  fontWeight: isParentActive('masterData') ? '' : 'normal',
+                  color: isParentActive('masterData') ? '#000' : '#fff', // ✅ text color
+                  borderRadius: isParentActive('masterData') ? '100px 0 0 100px' : '0', // ✅ custom radius
+
+                }}
+              >
                 <BsBook style={mainIconStyle(isCollapsed)} />
                 <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Master Data</span>
                 {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
@@ -218,8 +235,20 @@ const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
                 </ul>
               )}
             </li>
+
+            {/* Categories */}
             <li>
-              <div onClick={() => toggleMenu('categories')} style={navLinkStyle(isCollapsed, true)}>
+              <div
+                onClick={() => toggleMenu('categories')}
+                style={{
+                  ...navLinkStyle(isCollapsed, true),
+                  background: isParentActive('categories') ? '#fff' : 'transparent',
+                  fontWeight: isParentActive('categories') ? '' : 'normal',
+                  color: isParentActive('categories') ? '#000' : '#fff', // ✅ text color
+                  borderRadius: isParentActive('categories') ? '100px 0 0 100px' : '0', // ✅ custom radius
+
+                }}
+              >
                 <BsFolder style={mainIconStyle(isCollapsed)} />
                 <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Categories</span>
                 {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
@@ -232,8 +261,20 @@ const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
                 </ul>
               )}
             </li>
+
+            {/* Products */}
             <li>
-              <div onClick={() => toggleMenu('products')} style={navLinkStyle(isCollapsed, true)}>
+              <div
+                onClick={() => toggleMenu('products')}
+                style={{
+                  ...navLinkStyle(isCollapsed, true),
+                  background: isParentActive('products') ? '#fff' : 'transparent',
+                  fontWeight: isParentActive('products') ? '' : 'normal',
+                  color: isParentActive('products') ? '#000' : '#fff', // ✅ text color
+                  borderRadius: isParentActive('products') ? '100px 0 0 100px' : '0', // ✅ custom radius
+
+                }}
+              >
                 <BsBasket style={mainIconStyle(isCollapsed)} />
                 <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Products</span>
                 {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
@@ -246,8 +287,20 @@ const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
                 </ul>
               )}
             </li>
+
+            {/* Users */}
             <li>
-              <div onClick={() => toggleMenu('users')} style={navLinkStyle(isCollapsed, true)}>
+              <div
+                onClick={() => toggleMenu('users')}
+                style={{
+                  ...navLinkStyle(isCollapsed, true),
+                  background: isParentActive('users') ? '#fff' : 'transparent',
+                  fontWeight: isParentActive('users') ? '' : 'normal',
+                  color: isParentActive('users') ? '#000' : '#fff', // ✅ text color
+                  borderRadius: isParentActive('users') ? '100px 0 0 100px' : '0', // ✅ custom radius
+
+                }}
+              >
                 <BsPerson style={mainIconStyle(isCollapsed)} />
                 <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Users</span>
                 {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
@@ -258,8 +311,20 @@ const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
                 </ul>
               )}
             </li>
+
+            {/* Orders */}
             <li>
-              <div onClick={() => toggleMenu('orders')} style={navLinkStyle(isCollapsed, true)}>
+              <div
+                onClick={() => toggleMenu('orders')}
+                style={{
+                  ...navLinkStyle(isCollapsed, true),
+                  background: isParentActive('orders') ? '#fff' : 'transparent',
+                  fontWeight: isParentActive('orders') ? '' : 'normal',
+                  color: isParentActive('orders') ? '#000' : '#fff', // ✅ text color
+                  borderRadius: isParentActive('orders') ? '100px 0 0 100px' : '0', // ✅ custom radius
+
+                }}
+              >
                 <BsCartCheck style={mainIconStyle(isCollapsed)} />
                 <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Orders</span>
                 {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
@@ -270,6 +335,8 @@ const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
                 </ul>
               )}
             </li>
+
+            {/* Offers */}
             <li>
               <NavLink
                 to="/admin/offers"
@@ -281,8 +348,20 @@ const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
                 <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Offers</span>
               </NavLink>
             </li>
+
+            {/* Promotions */}
             <li>
-              <div onClick={() => toggleMenu('promotions')} style={navLinkStyle(isCollapsed, true)}>
+              <div
+                onClick={() => toggleMenu('promotions')}
+                style={{
+                  ...navLinkStyle(isCollapsed, true),
+                  background: isParentActive('promotions') ? '#fff' : 'transparent',
+                  fontWeight: isParentActive('promotions') ? '' : 'normal',
+                  color: isParentActive('promotions') ? '#000' : '#fff', // ✅ text color
+                  borderRadius: isParentActive('promotions') ? '100px 0 0 100px' : '0', // ✅ custom radius
+
+                }}
+              >
                 <BsTag style={mainIconStyle(isCollapsed)} />
                 <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Promotions</span>
                 {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
@@ -331,6 +410,8 @@ const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
                 </ul>
               )}
             </li>
+
+            {/* Sliders */}
             <li>
               <NavLink
                 to="/admin/manage-sliders"
@@ -342,19 +423,21 @@ const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
                 <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Sliders</span>
               </NavLink>
             </li>
-            {/* <li>
-              <NavLink
-                to="/admin/shop-now"
-                className={({ isActive }) => (isActive ? 'active' : '')}
-                style={navLinkStyle(isCollapsed)}
-                onClick={() => window.innerWidth <= 767 && onClose()}
-              >
-                <BsBag style={mainIconStyle(isCollapsed)} />
-                <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Shop Now</span>
-              </NavLink>
-            </li> */}
+
+            {/* Others */}
             <li>
-              <div onClick={() => toggleMenu('others')} style={navLinkStyle(isCollapsed, true)}>
+              <div
+                onClick={() => toggleMenu('others')}
+                style={{
+                  ...navLinkStyle(isCollapsed, true),
+                  background: isParentActive('others') ? '#fff' : 'transparent',
+                  fontWeight: isParentActive('others') ? '' : 'normal',
+                  color: isParentActive('others') ? '#000' : '#fff', // ✅ text color
+                  borderRadius: isParentActive('others') ? '100px 0 0 100px' : '0', // ✅ custom radius
+
+
+                }}
+              >
                 <BsBriefcase style={mainIconStyle(isCollapsed)} />
                 <span style={{ display: isCollapsed ? 'none' : 'inline' }}>Others</span>
                 {!isCollapsed && <BsChevronDown style={{ marginLeft: 'auto' }} />}
@@ -367,6 +450,8 @@ const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
                 </ul>
               )}
             </li>
+
+            {/* Change Password */}
             <li>
               <NavLink
                 to="/admin/change-password"
@@ -387,46 +472,56 @@ const Sidebar = ({ isCollapsed, onClose = () => {}  }) => {
 
 // Styles
 const asideStyle = () => ({
+  backgroundColor: '#0da79e',
   color: '#fff',
   height: '100vh',
   position: 'fixed',
-  paddingTop: '70px',
-  paddingBottom: '20px',
-  background: 'rgb(13 167 158)',
-  overflowY: 'auto',
+  left: 0,
+  top: 0,
   zIndex: 900,
-  left: "0px",
+  overflowY: 'auto',
 });
 
-const navLinkStyle = (isCollapsed, clickable = false) => ({
+const navLinkStyle = (isCollapsed, isDropdown = false) => ({
   display: 'flex',
   alignItems: 'center',
-  padding: isCollapsed ? '10px' : '12px 5px 12px 15px',
+  padding: isCollapsed ? '10px' : '10px 15px',
+  textDecoration: 'none',
   color: '#fff',
   fontSize: '14px',
-  textDecoration: 'none',
-  cursor: clickable ? 'pointer' : 'default',
-  justifyContent: isCollapsed ? 'center' : 'flex-start',
+  transition: 'background 0.3s ease',
+  cursor: 'pointer',
+  borderRadius: '100px 0 0 100px',
+  marginBottom: '5px',
+  ...(isDropdown && {
+    justifyContent: 'flex-start',
+    width: '100%',
+  }),
 });
 
-const subLinkStyle = (clickable = false) => ({
+const subLinkStyle = (isDropdown = false) => ({
   display: 'flex',
   alignItems: 'center',
   padding: '10px 15px',
   color: '#fff',
-  fontSize: '14px',
-  textDecoration: 'none',
-  cursor: clickable ? 'pointer' : 'default',
+  fontSize: '13px',
+  cursor: 'pointer',
+  borderRadius: '100px 0 0 100px',
+  marginBottom: '5px',
+  ...(isDropdown && {
+    justifyContent: 'flex-start',
+    width: '100%',
+  }),
 });
 
 const mainIconStyle = (isCollapsed) => ({
+  fontSize: '18px',
   marginRight: isCollapsed ? '0' : '10px',
-  fontSize: '16px',
 });
 
 const iconDotStyle = {
-  marginRight: '10px',
   fontSize: '16px',
+  marginRight: '5px',
 };
 
 export default Sidebar;

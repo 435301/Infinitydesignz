@@ -156,7 +156,7 @@ const HeaderAdmin = ({ onToggleSidebar = () => { } }) => {
 
       <header className="header-admin">
         <a className="header-logo" href="/admin/dashboard">
-          <img src={logo} alt="Logo" />
+          <img className ="img" src={logo} alt="Logo" />
         </a>
 
         <nav className="nav-container">
