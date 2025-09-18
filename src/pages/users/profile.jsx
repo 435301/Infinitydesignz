@@ -79,6 +79,7 @@ export default function ProfilePage() {
   const handleSave = () => {
     if (!validateForm()) return; 
     dispatch(updateProfile(formData));
+    dispatch(fetchProfile()); 
     setIsEditing(false);
   };
 
