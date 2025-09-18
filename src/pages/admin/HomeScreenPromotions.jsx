@@ -247,7 +247,7 @@ const HomeScreenPromotions = () => {
                                 <th>Title</th>
                                 <th>Image</th>
                                 <th>Category</th>
-                                <th>Priority</th>
+                                <th className='priority-col'>Priority</th>
                                 <th>Status</th>
                                 <th>Action</th>
                               </tr>
@@ -283,8 +283,7 @@ const HomeScreenPromotions = () => {
                                         const newPriority = e.target.value;
                                         dispatch(updateProductPromotion(promotion.id, newPriority));
                                       }}
-                                      style={{ width: "80px" }}
-                                      className="form-control form-control-sm"
+                                      className="form-control form-control-sm w-50"
                                     />
                                   </td>
                                   <td>

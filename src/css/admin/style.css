@@ -2570,6 +2570,9 @@ small a {
     width: 240px;
   }
 
+  .priority-col{
+    width: 200px;
+  }
 @media (max-width: 767px) {
   .Fabric .card-img-top {
     object-fit: fill;
