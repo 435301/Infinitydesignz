@@ -8,7 +8,7 @@
 body {
   font-size: 15px;
   overflow-x: hidden;
-  font-family: "Poppins", sans-serif;
+  font-family: "Poppins", sans-serif !important;
 }
 
 .content-wrapper {
