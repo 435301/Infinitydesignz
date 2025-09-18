@@ -146,15 +146,19 @@ const MyOrdersPage = () => {
                           return (
                             <div className="order-item" key={item.id}>
                               <div className="order-image">
-                                <img
-                                  src={
-                                    productData.imageUrl
-                                      ? `${BASE_URL}/uploads/products/${productData.imageUrl}`
-                                      : "/placeholder.jpg"
-                                  }
-                                  alt={productData.imageAlt || productData.title || "Product"}
-                                  className="order-item-img"
-                                />
+                                {productData.imageUrl ? (
+                                  <img
+                                    src={
+                                      productData.imageUrl
+                                        ? `${BASE_URL}/uploads/products/${productData.imageUrl}`
+                                        : "/placeholder.jpg"
+                                    }
+                                    alt={productData.imageAlt || productData.title || "Product"}
+                                    className="order-item-img"
+                                  />
+                                ) : (
+                                  <span className="no-image">N/A</span>
+                                )}
                               </div>
 
                               <div className="order-details">
@@ -234,7 +238,7 @@ const MyOrdersPage = () => {
                                         className="action-btn"
                                         onClick={() => handleCancelItem(item, latestOrderDetails.id)}
                                       >
-                                        Cancel Item
+                                        Cancel Order
                                       </button>
                                     )}
                                   {/*                             
