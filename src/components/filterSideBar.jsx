@@ -13,6 +13,7 @@ import BASE_URL from "../config/config";
 const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
   const [facetData, setFacetData] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [showAllColors, setShowAllColors] = useState(false);
 
   const toStr = (v) =>
     v === null || v === undefined ? "" : Array.isArray(v) ? v.join(",") : String(v);
@@ -77,7 +78,7 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
     const qs = new URLSearchParams(identity).toString();
     if (!qs) return;
     const catId = identity.listSubCatId || identity.subCategoryId || identity.mainCategoryId;
-  if (!catId) return;
+    if (!catId) return;
     axios
       .get(`${BASE_URL}/filters?categoryId=${catId}`)
       .then((res) => setFacetData(res.data || {}))
@@ -92,7 +93,7 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
     }
     const next = new URLSearchParams(searchParams);
     const catId = identity.listSubCatId || identity.subCategoryId || identity.mainCategoryId;
-  if (catId) next.set("categoryId", catId);
+    if (catId) next.set("categoryId", catId);
     Object.entries(patch).forEach(([k, v]) => {
       if (v === "" || v === null || v === undefined) next.delete(k);
       else next.set(k, Array.isArray(v) ? v.join(",") : String(v));
@@ -188,7 +189,7 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
                   checked={checked}
                   onChange={() => handleFilterChange(filterType, raw)}
                 />
-                 <span className="ms-2">{item.label}</span>
+                <span className="ms-2">{item.label}</span>
               </label>
             </div>
           );
@@ -242,29 +243,39 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
       {facetData.colors?.length > 0 && (
         <div className="filter-section">
           <h6>Colors</h6>
-          {facetData.colors.map((color) => (
-            <div key={color.id} className="filter-option">
-              <label className="checkbox-label d-flex align-items-center">
-                <input
-                  type="checkbox"
-                  checked={isChecked("color", color.id)}
-                  onChange={() => handleFilterChange("color", String(color.id))}
-                />
-                <span
-                  style={{
-                    display: "inline-block",
-                    width: "12px",
-                    height: "12px",
-                    backgroundColor: color.hex_code,
-                    border: "1px solid #ccc",
-                    marginRight: "6px",
-                    borderRadius: "50%",
-                  }}
-                ></span>
-                {color.label}
-              </label>
-            </div>
-          ))}
+          {(showAllColors ? facetData.colors : facetData.colors.slice(0, 5)).map(
+            (color) => (
+              <div key={color.id} className="filter-option">
+                <label className="checkbox-label d-flex align-items-center">
+                  <input
+                    type="checkbox"
+                    checked={isChecked("color", color.id)}
+                    onChange={() => handleFilterChange("color", String(color.id))}
+                  />
+                  <span
+                    style={{
+                      display: "inline-block",
+                      width: "12px",
+                      height: "12px",
+                      backgroundColor: color.hex_code,
+                      border: "1px solid #ccc",
+                      marginRight: "6px",
+                      borderRadius: "50%",
+                    }}
+                  ></span>
+                  {color.label}
+                </label>
+              </div>
+            )
+          )}
+          {facetData.colors.length > 5 && (
+            <a
+              className=" p-0 mt-1 text-decoration-none more-link "
+              onClick={() => setShowAllColors(!showAllColors)}
+            >
+              {showAllColors ? "Show Less" : "Show More"}
+            </a>
+          )}
         </div>
       )}
 
@@ -274,18 +285,18 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
           <h6>Price</h6>
           {facetData.price.buckets.map((bucket) =>
             // bucket.count > 0 ? (
-              <div key={bucket.key} className="filter-option">
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={isChecked("priceRanges", bucket.key)}
-                    onChange={() =>
-                      handleFilterChange("priceRanges", String(bucket.key))
-                    }
-                  />
-                  {bucket.label}
-                </label>
-              </div>
+            <div key={bucket.key} className="filter-option">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={isChecked("priceRanges", bucket.key)}
+                  onChange={() =>
+                    handleFilterChange("priceRanges", String(bucket.key))
+                  }
+                />
+                {bucket.label}
+              </label>
+            </div>
             // ) : null
           )}
         </div>
