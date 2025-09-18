@@ -157,8 +157,8 @@ const CreatePromotionModal = ({ show, handleClose }) => {
           </div>
 
           <div className="col-lg-12 text-center my-4">
-            <button type="submit" className="btn btn-danger py-2 px-5">SUBMIT</button>
-            <Button variant="secondary" className="py-2 px-5" onClick={handleClose}>CLOSE</Button>
+            <button type="submit" className="btn btn-danger py-2 px-5">Submit</button>
+            <Button variant="secondary" className="py-2 px-5" onClick={handleClose}>Close</Button>
           </div>
         </form>
       </Modal.Body>
