@@ -210,10 +210,11 @@ const MyOrdersPage = () => {
                                         {latestOrderDetails?.status || "N/A"}
                                       </span> */}
                                       <span>
-                                        Item Status:{" "}
+                                         Status:{" "}
                                         <span
                                           className={`status ${item?.status?.toLowerCase()}`}
                                           style={{
+                                            fontWeight: '700',
                                             color:
                                               item?.status === "PENDING"
                                                 ? "#ff9800"
