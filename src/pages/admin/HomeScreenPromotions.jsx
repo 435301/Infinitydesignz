@@ -47,8 +47,8 @@ const HomeScreenPromotions = () => {
   });
 
   useEffect(() => {
-    dispatch(fetchProductPromotions( currentPage,20));
-  }, [dispatch, currentPage]);
+    dispatch(fetchProductPromotions( currentPage,20, searchTerm));
+  }, [dispatch, currentPage, searchTerm]);
 
   const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
 
@@ -59,18 +59,20 @@ const HomeScreenPromotions = () => {
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-    handleSearch(value);
+    // handleSearch(value);
+    setCurrentPage(1);
   };
 
   const handleSearch = () => {
-    dispatch(fetchProductPromotions(1, 20));
+    dispatch(fetchProductPromotions(currentPage, 20));
   };
 
   const handleReset = () => {
     setSearchTerm("");
     setStatusFilter("");
     setFilters({ category: "", status: "", search: "" });
-    dispatch(fetchProductPromotions(1, 20));
+    dispatch(fetchProductPromotions(currentPage, 20));
+    setCurrentPage(1);
   };
 
   const handleSelectAll = () => {
