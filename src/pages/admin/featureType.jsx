@@ -198,7 +198,7 @@ const ManageFeatureType = () => {
                               onChange={() => handleRowCheckboxChange(featureType.id)}
                             />
                           </td>
-                          <td>{index + 1}</td>
+                          <td>{indexOfFirstRow + index + 1}</td>
                           <td>{featureType.name}</td>
                           {/* <td>
                             <span

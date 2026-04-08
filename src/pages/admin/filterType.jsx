@@ -167,7 +167,7 @@ const ManageFilterType = () => {
                                                                 onChange={() => handleRowCheckboxChange(item.id)}
                                                             />
                                                         </td>
-                                                        <td>{index + 1}</td>
+                                                        <td>{indexOfFirstRow + index + 1}</td>
                                                         <td>{item.name}</td>
 
                                                         <td>

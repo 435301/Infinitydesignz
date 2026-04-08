@@ -149,7 +149,7 @@ function ManageContact() {
                                                             currentRows.map((contact, index) => {
                                                                 return (
                                                                     <tr key={contact.id}>
-                                                                        <td>{index + 1}</td>
+                                                                        <td>{indexOfFirstRow +index + 1}</td>
                                                                         <td>{contact.name}</td>
                                                                         <td>{contact.email}</td>
                                                                         <td>{contact.mobile}</td>

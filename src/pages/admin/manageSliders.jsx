@@ -185,7 +185,7 @@ const ManageSliders = () => {
                                   onChange={() => handleRowCheckboxChange(slider?.id)}
                                 />
                               </td>
-                              <td>{index + 1}</td>
+                              <td>{indexOfFirstRow + index + 1}</td>
                               <td>{slider?.title}</td>
                               <td>
                                 <img src={`${BASE_URL}${slider?.image_url}`} alt={slider?.title} width="80" />

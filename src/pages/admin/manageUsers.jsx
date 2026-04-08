@@ -25,6 +25,11 @@ const ManageUsers = ({ handleUpdate }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
 
+  const rowsPerPage = 10;
+
+   const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+
   useEffect(() => {
     dispatch(fetchAdminUsers({ page: 1, take: 10 }));
   }, [dispatch]);
@@ -160,7 +165,7 @@ const ManageUsers = ({ handleUpdate }) => {
                                       checked={selectedRows.includes(user.id)}
                                       onChange={() => handleRowCheckboxChange(user.id)}
                                     /></td>
-                                    <td>{index + 1}</td>
+                                    <td>{indexOfFirstRow + index + 1}</td>
                                     <td>{user.name || '-'}</td>
                                     <td>{user.gender || '-'}</td>
                                     <td>{user.email || '-'}</td>

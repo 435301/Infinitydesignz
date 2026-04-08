@@ -272,7 +272,7 @@ const ManageCategories = () => {
                                 onChange={() => handleRowCheckboxChange(cat.id)}
                               />
                             </td>
-                            <td>{index + 1}</td>
+                            <td>{indexOfFirstRow+ index + 1}</td>
                             <td>{parentCategory ? parentCategory.title : cat.title}</td>
                             <td>{(cat.appIcon || parentCategory?.appIcon) ? <img src={`${BASE_URL}${cat.appIcon || parentCategory.appIcon}`} alt="App Icon" width="50" height="50"  />  : 'N/A'}</td>
                             <td>{(cat.webImage || parentCategory?.webImage) ? <img src={`${BASE_URL}${cat.webImage || parentCategory.webImage}`} alt="Web Icon" width="50" height="50" /> : 'N/A'}</td>

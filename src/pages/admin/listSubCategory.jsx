@@ -278,7 +278,7 @@ const ListSubCategory = () => {
                                       onChange={() => handleRowCheckboxChange(item.id)}
                                     />
                                   </td>
-                                  <td>{index + 1}</td>
+                                  <td>{indexOfFirstRow + index + 1}</td>
                                   <td>{item.category}</td>
                                   <td>{item.subCategory}</td>
                                   <td>{item.title}</td>

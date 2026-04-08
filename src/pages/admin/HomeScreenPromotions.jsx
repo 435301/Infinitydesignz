@@ -46,6 +46,10 @@ const HomeScreenPromotions = () => {
     return matchesTitle && matchesStatus && matchesCategory;
   });
 
+  const rowsPerPage = 10;
+    const indexOfLastRow = currentPage * rowsPerPage;
+    const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+
   useEffect(() => {
     dispatch(fetchProductPromotions( currentPage,20, searchTerm));
   }, [dispatch, currentPage, searchTerm]);
@@ -264,7 +268,7 @@ const HomeScreenPromotions = () => {
                                       onChange={() => handleRowCheckboxChange(promotion.id)}
                                     />
                                   </td>
-                                  <td>{index + 1}</td>
+                                  <td>{indexOfFirstRow + index + 1}</td>
                                   <td>{promotion.title}</td>
                                   <td>
                                     <img
