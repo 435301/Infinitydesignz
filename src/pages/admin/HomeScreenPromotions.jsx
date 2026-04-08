@@ -47,7 +47,7 @@ const HomeScreenPromotions = () => {
   });
 
   useEffect(() => {
-    dispatch(fetchProductPromotions(1, 20, currentPage));
+    dispatch(fetchProductPromotions( currentPage,20));
   }, [dispatch, currentPage]);
 
   const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
