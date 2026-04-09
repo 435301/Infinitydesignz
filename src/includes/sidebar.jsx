@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   BsBriefcase,
@@ -18,7 +18,7 @@ const Sidebar = ({ isCollapsed, onClose = () => { } }) => {
   const currentPath = location.pathname;
   const [openMenus, setOpenMenus] = useState({});
 
-  const menuPaths = {
+  const menuPaths = useMemo(() => ({
     masterData: [
       '/admin/create-brand',
       '/admin/brand-mapping',
@@ -53,15 +53,17 @@ const Sidebar = ({ isCollapsed, onClose = () => { } }) => {
     appPromotion: ['/admin/menu-promotion-category', '/admin/menu-create-promotion'],
     appHomePromotions: ['/admin/sub-menu-promotion-category', '/admin/sub-menu-create-promotion'],
     shopNow: ['/admin/shop-now'],
-  };
+  }), []);
 
-  const childToParent = {
-    productFeatures: 'masterData',
-    productFilters: 'masterData',
-    webPromotion: 'promotions',
-    appPromotion: 'promotions',
-    appHomePromotions: 'promotions',
-  };
+  const childToParent = useMemo(() => (
+    {
+      productFeatures: 'masterData',
+      productFilters: 'masterData',
+      webPromotion: 'promotions',
+      appPromotion: 'promotions',
+      appHomePromotions: 'promotions',
+    }
+  ), []);
 
   useEffect(() => {
     const newOpenMenus = {};
@@ -74,7 +76,7 @@ const Sidebar = ({ isCollapsed, onClose = () => { } }) => {
       }
     });
     setOpenMenus((prev) => ({ ...prev, ...newOpenMenus }));
-  }, [currentPath]);
+  }, [currentPath, childToParent, menuPaths]);
 
   useEffect(() => {
     const style = document.createElement('style');

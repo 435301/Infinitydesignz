@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
-import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
+import {  BsArrowClockwise, BsPencilSquare, BsEye } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { bulkUpdateColorStatus, deleteColor, fetchColors } from '../../redux/actions/colorAction';
 import PaginationComponent from '../../includes/pagination';
 import AddColorModal from '../../components/addColorModal';
 import { toast } from 'react-toastify';
-import BASE_URL from '../../config/config';
 import { TiTrash } from 'react-icons/ti';
 import DeleteModal from '../../modals/deleteModal';
 import ViewColorModal from '../../modals/viewColorModal';
@@ -17,7 +15,7 @@ import EditColorModal from '../../components/editColorModal';
 
 const ManageColors = () => {
   const dispatch = useDispatch();
-  const { colors = [] , loading, error} = useSelector((state) => state.colors || {});
+  const { colors = [] , loading} = useSelector((state) => state.colors || {});
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');

@@ -1,9 +1,8 @@
-import logo from './logo.svg';
+
 import './App.css';
 import { useMainScripts } from './hooks/main.js';
 // import ProjectCarousel from './components/users/projectCarousel.jsx';
-import CounterUp from './pages/users/counterUp.jsx';
-import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import HomeBannerSection from './pages/users/index.jsx';
 // import 'bootstrap-icons/font/bootstrap-icons.css';
 import ProductTopBar from './pages/users/shop.jsx';
@@ -41,19 +40,16 @@ import ManageUsers from './pages/admin/manageUsers.jsx';
 import ManageOrders from './pages/admin/manageOrders.jsx';
 // import CreateCoupon from './pages/admin/addCupan.jsx';
 import ManageCoupons from './pages/admin/manageCoupons.jsx';
-import AddSlider from './pages/admin/sliders.jsx';
 import ManageSliders from './pages/admin/manageSliders.jsx';
 import ChangePassword from './pages/admin/changePassword.jsx';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import OffersList from './pages/admin/OffersList.jsx';
 import CreateCoupon from './pages/admin/CreateCoupon.jsx';
 import HomePromotionCategory from './pages/admin/HomePromotionCategory.jsx';
 import HomeScreenCreatePromotion from './pages/admin/HomeScreenCreatePromotion.jsx';
 import HomeScreenPromotions from './pages/admin/HomeScreenPromotions.jsx';
 import CreatePromotion from './pages/admin/CreatePromotion'
-import Slider from 'react-slick';
 import ManageProducts from './pages/admin/manageProduct.jsx';
-import EditProduct from './components/editProduct.jsx';
 import PromotionCategoryList from './pages/admin/PromotionCategoryList.jsx';
 import CreateAppPromotionHeader from './pages/admin/CreateAppPromotionHeader.jsx'
 import AppCategoryPromotionsList from './pages/admin/AppCategoryPromotionsList'
@@ -65,7 +61,6 @@ import AppCategoryPromotionForm from './pages/admin/AppCategoryPromotionForm'
 import UserOrdersTable from './pages/admin/UserOrdersTable'
 import ManageContact from './pages/admin/ManageContact.jsx'
 import SearchKeywordsList from './pages/admin/SearchKeywordsList'
-import ProductCard from './components/productCard.jsx';
 import ProductPage from './pages/admin/productPage.jsx';
 import EditProductPage from './pages/admin/editproductPage.jsx';
 import EditProductFeatures from './pages/admin/editProductFeatures.jsx';
@@ -117,99 +112,101 @@ function App() {
 
   return (
 
-    <BrowserRouter>
-      <div className="App">
-        <ToastContainer />
-         <ScrollToTop />
-        <Routes>
-           <Route path="*" element={<NotFound />} />
-          <Route path='/' element={<HomeBannerSection />} />
-          <Route path='/shop' element={<ProductTopBar />} />
-          <Route path='/product-details/:productId' element={<ProductDetailPage />}></Route>
-          <Route path='/users/address-book' element={<AddressBook />}></Route>
-          <Route path='/profile' element={<ProfilePage />}></Route>
-          <Route path='/wishlist' element={<WishlistPage />}></Route>
-          <Route path='/contact-us' element={<ContactPage />}></Route>
+    // <BrowserRouter>
+    <div className="App">
+      <ToastContainer />
+      <ScrollToTop />
+      <Routes>
+        <Route path="*" element={<NotFound />} />
+        <Route path='/' element={<HomeBannerSection />} />
+        <Route path='/shop' element={<ProductTopBar />} />
+        <Route path='/product-details/:productId' element={<ProductDetailPage />}></Route>
+        <Route path='/users/address-book' element={<AddressBook />}></Route>
+        <Route path='/profile' element={<ProfilePage />}></Route>
+        <Route path='/wishlist' element={<WishlistPage />}></Route>
+        <Route path='/contact-us' element={<ContactPage />}></Route>
 
-          <Route path='/addressbook' element={< AddressBook />}></Route>
-          <Route path='/checkout' element={< CheckoutPage />}></Route>
-          <Route path='/cart' element={<CartItem />}></Route>
-          <Route path='/orders' element={<MyOrdersPage />}></Route>
-          <Route path='/orders-success/:id' element={<OrderSuccess />}></Route>
-          <Route path='/orders-failure' element={<OrderFailure />}></Route>
-          <Route path='/admin/login' element={<LoginPage />}></Route>
-          <Route path='/admin/dashboard' element={<AdminRoute> <Dashboard /> </AdminRoute>}></Route>
-          <Route path='/admin/manage-category' element={<AdminRoute><ManageCategories /> </AdminRoute>}></Route>
-          <Route path='/admin/manage-subcategory' element={<AdminRoute><ManageSubCategories /></AdminRoute>}></Route>
-          <Route path='/admin/list-subcategory' element={<AdminRoute><ListSubCategory /></AdminRoute>}></Route>
-          <Route path='/admin/create-size' element={<AdminRoute><ManageSizes /></AdminRoute>}></Route>
-          <Route path='/admin/create-brand' element={<AdminRoute><ManageBrands /></AdminRoute>}></Route>
-          {/* <Route path='/admin/size-mapping' element={<ManageSizeMapping />}></Route> */}
-          <Route path='/admin/colors' element={<AdminRoute><ManageColors /></AdminRoute>}></Route>
-          <Route path='/admin/feature-set' element={<AdminRoute><ManageFeatureSet /></AdminRoute>}></Route>
-          <Route path='/admin/feature-type' element={<AdminRoute><ManageFeatureType /></AdminRoute>}></Route>
-          <Route path='/admin/feature-list' element={<AdminRoute><ManageFeatureList /></AdminRoute>}></Route>
-          <Route path='/admin/bulk-upload' element={<AdminRoute><BulkUpload /></AdminRoute>}></Route>
-          <Route path='/admin/bulk-manage' element={<AdminRoute><BulkManage /></AdminRoute>}></Route>
-          <Route path='/admin/filter-type' element={<AdminRoute><ManageFilterType /></AdminRoute>}></Route>
-          <Route path='/admin/filter-set' element={<AdminRoute><ManageFilterSet /></AdminRoute>}></Route>
-          <Route path='/admin/filter-list' element={<AdminRoute><ManageFilterList /></AdminRoute>}></Route>
-          <Route path='/admin/add-product' element={<AdminRoute><AddProduct /></AdminRoute>}></Route>
-          {/* <Route path='/admin/edit-product/:id' element={<EditProduct />}></Route> */}
-          <Route path='/admin/product-image' element={<AdminRoute><AddProductImages /></AdminRoute>}></Route>
-          <Route path='/admin/product-filter' element={<AdminRoute><ProductFilters /></AdminRoute>}></Route>
-          <Route path='/admin/manage-product' element={<AdminRoute><ManageProducts /></AdminRoute>}></Route>
-          <Route path='/admin/product-features' element={<AdminRoute><ProductFeatures /></AdminRoute>}></Route>
-          <Route path='/admin/manage-users' element={<AdminRoute><ManageUsers /></AdminRoute>}></Route>
-          <Route path='/admin/orders' element={<AdminRoute><ManageOrders /></AdminRoute>}></Route>
-          <Route path='/admin/add-coupon' element={<AdminRoute><CreateCoupon /></AdminRoute>}></Route>
-          <Route path='/admin/manage-coupons' element={<AdminRoute><ManageCoupons /></AdminRoute>}></Route>
-          {/* <Route path='/admin/sliders' element={<AdminRoute><AddSlider /></AdminRoute>}></Route> */}
-          <Route path='/admin/manage-sliders' element={<AdminRoute><ManageSliders /></AdminRoute>}></Route>
-          <Route path='/admin/change-password' element={<AdminRoute><ChangePassword /></AdminRoute>}></Route>
-          <Route path='/admin/offers' element={<AdminRoute><OffersList /></AdminRoute>}></Route>
-          <Route path='/admin/create-coupon' element={<AdminRoute><CreateCoupon /></AdminRoute>}></Route>
-          <Route path='/admin/home-screen-promotion-category' element={<AdminRoute><HomePromotionCategory /></AdminRoute>}></Route>
-          <Route path='/admin/add-home-promotions-category' element={<AdminRoute><HomeScreenCreatePromotion /></AdminRoute>}></Route>
-          <Route path='/admin/home-screen-create-promotion' element={<AdminRoute><HomeScreenPromotions /></AdminRoute>}></Route>
-          <Route path='/admin/add-home-screen-create-promotion' element={<AdminRoute><CreatePromotion /></AdminRoute>}></Route>
-          <Route path='/admin/menu-promotion-category' element={<AdminRoute><PromotionCategoryList /></AdminRoute>}></Route>
-          <Route path='/admin/add-menu-create-promotions' element={<AdminRoute><CreateAppPromotionHeader /></AdminRoute>}></Route>
-          <Route path='/admin/menu-create-promotion' element={<AdminRoute><AppCategoryPromotionsList /></AdminRoute>}></Route>
-          <Route path='/admin/app-category-promotions-list' element={<AdminRoute><AppCategoryPromotionsCreate /></AdminRoute>}></Route>
-          <Route path='/admin/sub-menu-promotion-category' element={<AdminRoute><AppHomePromotionCategories /></AdminRoute>}></Route>
-          <Route path='/admin/app-home-promotion-categories-app' element={<AdminRoute><CreatePromotionCategory /></AdminRoute>}></Route>
-          <Route path='/admin/sub-menu-create-promotion' element={<AdminRoute><ManagePromotions /></AdminRoute>}></Route>
-          <Route path='/admin/app-category-promotions-list-create' element={<AdminRoute><AppCategoryPromotionForm /></AdminRoute>}></Route>
-          <Route path='/admin/subscriberslist' element={<AdminRoute><UserOrdersTable /></AdminRoute>}></Route>
-          <Route path='/admin/contact' element={<AdminRoute><ManageContact /></AdminRoute>}></Route>
-          <Route path='/admin/keywords' element={<AdminRoute><SearchKeywordsList /></AdminRoute>}></Route>
-          <Route path='/admin/product' element={<AdminRoute><ProductPage /></AdminRoute>}></Route>
-          <Route path='/admin/edit-product/:id' element={<AdminRoute><EditProductPage /></AdminRoute>}></Route>
-          <Route path='/admin/edit-product-features' element={<AdminRoute><EditProductFeatures /></AdminRoute>}></Route>
-          <Route path='/admin/edit-product-filters' element={<AdminRoute><EditProductFilters /></AdminRoute>}></Route>
-          <Route path='/admin/edit-product-images' element={<AdminRoute><EditProductImages /></AdminRoute>}></Route>
-          <Route path='/products' element={<ProductsPage />}></Route>
-          <Route path="/products/:main" element={<ProductsPage />} />
-          <Route path="/products/:main/:sub" element={<ProductsPage />} />
-          <Route path="/products/:main/:sub/:leaf" element={<ProductsPage />} />
-          <Route path="/admin/orders/:orderId" element={<OrderDetailsPage />} />
-          <Route path='/admin/shop-now' element={<ShopNow/>}></Route>
-        </Routes>
-        <Routes>
-          <Route element={<AdminLayout />}>
-           <Route path="*" element={<NotFound />} />
-            <Route path="/admin/dashboard" element={<Dashboard />} />
-          </Route>
-        </Routes>
-
-      </div>
+        <Route path='/addressbook' element={< AddressBook />}></Route>
+        <Route path='/checkout' element={< CheckoutPage />}></Route>
+        <Route path='/cart' element={<CartItem />}></Route>
+        <Route path='/orders' element={<MyOrdersPage />}></Route>
+        <Route path='/orders-success/:id' element={<OrderSuccess />}></Route>
+        <Route path='/orders-failure' element={<OrderFailure />}></Route>
+        <Route path='/admin/login' element={<LoginPage />}></Route>
+        <Route path='/admin/dashboard' element={<AdminRoute> <Dashboard /> </AdminRoute>}></Route>
+        <Route path='/admin/manage-category' element={<AdminRoute><ManageCategories /> </AdminRoute>}></Route>
+        <Route path='/admin/manage-subcategory' element={<AdminRoute><ManageSubCategories /></AdminRoute>}></Route>
+        <Route path='/admin/list-subcategory' element={<AdminRoute><ListSubCategory /></AdminRoute>}></Route>
+        <Route path='/admin/create-size' element={<AdminRoute><ManageSizes /></AdminRoute>}></Route>
+        <Route path='/admin/create-brand' element={<AdminRoute><ManageBrands /></AdminRoute>}></Route>
+        {/* <Route path='/admin/size-mapping' element={<ManageSizeMapping />}></Route> */}
+        <Route path='/admin/colors' element={<AdminRoute><ManageColors /></AdminRoute>}></Route>
+        <Route path='/admin/feature-set' element={<AdminRoute><ManageFeatureSet /></AdminRoute>}></Route>
+        <Route path='/admin/feature-type' element={<AdminRoute><ManageFeatureType /></AdminRoute>}></Route>
+        <Route path='/admin/feature-list' element={<AdminRoute><ManageFeatureList /></AdminRoute>}></Route>
+        <Route path='/admin/bulk-upload' element={<AdminRoute><BulkUpload /></AdminRoute>}></Route>
+        <Route path='/admin/bulk-manage' element={<AdminRoute><BulkManage /></AdminRoute>}></Route>
+        <Route path='/admin/filter-type' element={<AdminRoute><ManageFilterType /></AdminRoute>}></Route>
+        <Route path='/admin/filter-set' element={<AdminRoute><ManageFilterSet /></AdminRoute>}></Route>
+        <Route path='/admin/filter-list' element={<AdminRoute><ManageFilterList /></AdminRoute>}></Route>
+        <Route path='/admin/add-product' element={<AdminRoute><AddProduct /></AdminRoute>}></Route>
+        {/* <Route path='/admin/edit-product/:id' element={<EditProduct />}></Route> */}
+        <Route path='/admin/product-image' element={<AdminRoute><AddProductImages /></AdminRoute>}></Route>
+        <Route path='/admin/product-filter' element={<AdminRoute><ProductFilters /></AdminRoute>}></Route>
+        <Route path='/admin/manage-product' element={<AdminRoute><ManageProducts /></AdminRoute>}></Route>
+        <Route path='/admin/product-features' element={<AdminRoute><ProductFeatures /></AdminRoute>}></Route>
+        <Route path='/admin/manage-users' element={<AdminRoute><ManageUsers /></AdminRoute>}></Route>
+        <Route path='/admin/orders' element={<AdminRoute><ManageOrders /></AdminRoute>}></Route>
+        <Route path='/admin/add-coupon' element={<AdminRoute><CreateCoupon /></AdminRoute>}></Route>
+        <Route path='/admin/manage-coupons' element={<AdminRoute><ManageCoupons /></AdminRoute>}></Route>
+        {/* <Route path='/admin/sliders' element={<AdminRoute><AddSlider /></AdminRoute>}></Route> */}
+        <Route path='/admin/manage-sliders' element={<AdminRoute><ManageSliders /></AdminRoute>}></Route>
+        <Route path='/admin/change-password' element={<AdminRoute><ChangePassword /></AdminRoute>}></Route>
+        <Route path='/admin/offers' element={<AdminRoute><OffersList /></AdminRoute>}></Route>
+        <Route path='/admin/create-coupon' element={<AdminRoute><CreateCoupon /></AdminRoute>}></Route>
+        <Route path='/admin/home-screen-promotion-category' element={<AdminRoute><HomePromotionCategory /></AdminRoute>}></Route>
+        <Route path='/admin/add-home-promotions-category' element={<AdminRoute><HomeScreenCreatePromotion /></AdminRoute>}></Route>
+        <Route path='/admin/home-screen-create-promotion' element={<AdminRoute><HomeScreenPromotions /></AdminRoute>}></Route>
+        <Route path='/admin/add-home-screen-create-promotion' element={<AdminRoute><CreatePromotion /></AdminRoute>}></Route>
+        <Route path='/admin/menu-promotion-category' element={<AdminRoute><PromotionCategoryList /></AdminRoute>}></Route>
+        <Route path='/admin/add-menu-create-promotions' element={<AdminRoute><CreateAppPromotionHeader /></AdminRoute>}></Route>
+        <Route path='/admin/menu-create-promotion' element={<AdminRoute><AppCategoryPromotionsList /></AdminRoute>}></Route>
+        <Route path='/admin/app-category-promotions-list' element={<AdminRoute><AppCategoryPromotionsCreate /></AdminRoute>}></Route>
+        <Route path='/admin/sub-menu-promotion-category' element={<AdminRoute><AppHomePromotionCategories /></AdminRoute>}></Route>
+        <Route path='/admin/app-home-promotion-categories-app' element={<AdminRoute><CreatePromotionCategory /></AdminRoute>}></Route>
+        <Route path='/admin/sub-menu-create-promotion' element={<AdminRoute><ManagePromotions /></AdminRoute>}></Route>
+        <Route path='/admin/app-category-promotions-list-create' element={<AdminRoute><AppCategoryPromotionForm /></AdminRoute>}></Route>
+        <Route path='/admin/subscriberslist' element={<AdminRoute><UserOrdersTable /></AdminRoute>}></Route>
+        <Route path='/admin/contact' element={<AdminRoute><ManageContact /></AdminRoute>}></Route>
+        <Route path='/admin/keywords' element={<AdminRoute><SearchKeywordsList /></AdminRoute>}></Route>
+        <Route path='/admin/product' element={<AdminRoute><ProductPage /></AdminRoute>}></Route>
+        <Route path='/admin/edit-product/:id' element={<AdminRoute><EditProductPage /></AdminRoute>}></Route>
+        <Route path='/admin/edit-product-features' element={<AdminRoute><EditProductFeatures /></AdminRoute>}></Route>
+        <Route path='/admin/edit-product-filters' element={<AdminRoute><EditProductFilters /></AdminRoute>}></Route>
+        <Route path='/admin/edit-product-images' element={<AdminRoute><EditProductImages /></AdminRoute>}></Route>
+        <Route path='/products' element={<ProductsPage />}></Route>
+        <Route path="/products/:main" element={<ProductsPage />} />
+        <Route path="/products/:main/:sub" element={<ProductsPage />} />
+        <Route path="/products/:main/:sub/:leaf" element={<ProductsPage />} />
+        <Route path="/admin/orders/:orderId" element={<OrderDetailsPage />} />
+        <Route path='/admin/shop-now' element={<ShopNow />}></Route>
+        <Route element={<AdminLayout />}>
+          <Route path="*" element={<NotFound />} />
+          <Route path="/admin/dashboard" element={<Dashboard />} />
+        </Route>
+      </Routes>
       <OtpLoginModal
         show={showLoginModal}
         onClose={() => dispatch({ type: "HIDE_LOGIN_MODAL" })}
         onLoginSuccess={handleLoginSuccess}
       />
-    </BrowserRouter>
+
+
+    </div>
+
+
+
+    // </BrowserRouter>
 
   );
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Link,
   useLocation,
@@ -149,8 +149,8 @@ const [sortOrder, setSortOrder] = useState("newest");
     });
   };
 
-  const getCategoryTitle = (id) =>
-    (id ? byId[id]?.title : null) || "Unknown";
+  const getCategoryTitle = useCallback((id) =>
+    (id ? byId[id]?.title : null) || "Unknown", [byId]);
 
   const breadcrumbItems = useMemo(() => {
     const items = [{ label: "Home", link: "/" }];
@@ -192,7 +192,7 @@ const [sortOrder, setSortOrder] = useState("newest");
 
     return items;
     // include `main` so changes in URL segment reflect correctly
-  }, [filters.searchStr, byId, mainCategoryId, subCategoryId, listSubCatId, main]);
+  }, [filters.searchStr, byId, mainCategoryId, subCategoryId, listSubCatId, main, getCategoryTitle]);
 
   useEffect(() => {
     setProducts([]);

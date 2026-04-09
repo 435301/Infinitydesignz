@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
-import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
+import {  BsArrowClockwise, BsPencilSquare, BsEye } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { bulkUpdateSizeStatus, deleteSize, fetchSizes } from '../../redux/actions/sizeAction';
 import PaginationComponent from '../../includes/pagination';
 import { toast } from 'react-toastify';
-import BASE_URL from '../../config/config';
 import { TiTrash } from 'react-icons/ti';
 import DeleteModal from '../../modals/deleteModal';
 import AddSizeModal from '../../components/addSizeModal';
@@ -18,7 +16,7 @@ import EditSizeModal from '../../components/editSizeModal';
 
 const ManageSizes = () => {
   const dispatch = useDispatch();
-  const { sizes = [], loading, error } = useSelector((state) => state.sizes || {});
+  const { sizes = [], loading } = useSelector((state) => state.sizes || {});
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');

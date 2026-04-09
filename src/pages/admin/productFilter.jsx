@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import HeaderAdmin from '../../includes/headerAdmin';
-import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 import axios from 'axios';
 import BASE_URL from '../../config/config';
 import { toast } from 'react-toastify';
 
-const ProductFilters = ({ createdProductId, filterTypeId, filterType }) => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+const ProductFilters = ({ createdProductId, filterType }) => {
   const [filters, setFilters] = useState({});
-
-  const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
 
   useEffect(() => {
     if (filterType?.filterSets) {

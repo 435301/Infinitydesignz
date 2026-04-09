@@ -6,7 +6,6 @@ import '../../css/admin/icofont.css';
 
 const CreatePromotionCategory = () => {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-    const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
     return (
         <div className="sidebar-mini fixed">
             <div className="wrapper">

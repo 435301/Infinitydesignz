@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
-import { BsSearch, BsArrowClockwise, BsEye, BsPencilSquare, BsTrash } from 'react-icons/bs';
+import { BsArrowClockwise, BsEye, BsPencilSquare, BsTrash } from 'react-icons/bs';
 import AddFeatureListModal from '../../components/addFeatureListModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteFeatureList, fetchFeatureLists, updateFeatureListPriority } from '../../redux/actions/featureListAction';
@@ -14,7 +14,7 @@ import ViewFeatureListModal from '../../modals/viewFeatureListModal';
 
 const ManageFeatureList = () => {
   const dispatch = useDispatch();
-  const { featureLists = [], loading, error } = useSelector((state) => state.featureLists || {});
+  const { featureLists = [], loading } = useSelector((state) => state.featureLists || {});
   const { featureTypes = [] } = useSelector((state) => state.featureTypes || {});
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);

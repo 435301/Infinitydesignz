@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BsPlusCircle, BsDashCircle } from 'react-icons/bs';
 import { fetchFilterTypes } from '../redux/actions/filterTypeAction';
-import { addFilterSet, editFilterSet } from '../redux/actions/filterSetAction';
+import {  editFilterSet } from '../redux/actions/filterSetAction';
 
 const EditFilterSetModal = ({ show, onClose, filterSet }) => {
     const dispatch = useDispatch();

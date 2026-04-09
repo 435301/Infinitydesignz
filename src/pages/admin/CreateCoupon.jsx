@@ -31,7 +31,7 @@ const CreateCouponModal = ({ show, onHide }) => {
   }, [dispatch])
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name } = e.target;
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }

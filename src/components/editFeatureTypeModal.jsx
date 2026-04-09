@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { addFeatureTypes, editFeatureTypes } from '../redux/actions/featureTypeAction';
+import {  editFeatureTypes } from '../redux/actions/featureTypeAction';
 import { useDispatch } from 'react-redux';
 
 const EditFeatureTypeModal = ({ show, onClose, featureType }) => {

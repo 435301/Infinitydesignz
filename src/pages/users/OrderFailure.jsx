@@ -1,7 +1,6 @@
 import React from "react";
 import Header from "../../includes/header";
 import Footer from "../../includes/footer";
-import Logo from "../../img/logo.svg";
 import "../../css/user/order-failure.css";   // new CSS file
 
 export default function OrderFailure() {

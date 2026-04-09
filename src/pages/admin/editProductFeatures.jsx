@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,116 +13,118 @@ const EditProductFeatures = () => {
   const dispatch = useDispatch();
 
   const { product } = useSelector((state) => state.products || {});
-  const featureSets = product?.category?.featureType?.featureSets || [];
+  const featureSets = useMemo(() => {
+    return product?.category?.featureType?.featureSets || []
+},[product]);
 
-  const [formValues, setFormValues] = useState({});
+const [formValues, setFormValues] = useState({});
 
-  // Fetch product details on load
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchProductById(id));
-    }
-  }, [id, dispatch]);
+// Fetch product details on load
+useEffect(() => {
+  if (id) {
+    dispatch(fetchProductById(id));
+  }
+}, [id, dispatch]);
 
-  // Fetch saved features from API
-  useEffect(() => {
-    const fetchSavedFeatures = async () => {
-      if (!id || featureSets.length === 0) return;
-
-      try {
-        const response = await axios.get(`${BASE_URL}/product-features/${id}`);
-        const savedFeatures = Array.isArray(response.data)
-          ? response.data
-          : response.data.data || [];
-
-        const filled = {};
-        savedFeatures.forEach((item) => {
-          filled[item.featureListId] = item.value;
-        });
-
-        setFormValues(filled);
-      } catch (error) {
-        console.error('Error fetching product features:', error);
-      }
-    };
-
-    fetchSavedFeatures();
-  }, [id, featureSets]);
-
-  const handleChange = (e, featureListId) => {
-    const { value } = e.target;
-    setFormValues((prev) => ({ ...prev, [featureListId]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-
-    const payload = Object.entries(formValues)
-      .filter(([, value]) => value?.trim() !== '')
-      .map(([featureListId, value]) => ({
-        productId: Number(id),
-        featureListId: parseInt(featureListId),
-        value: value.trim()
-      }));
+// Fetch saved features from API
+useEffect(() => {
+  const fetchSavedFeatures = async () => {
+    if (!id || featureSets.length === 0) return;
 
     try {
-      const token = localStorage.getItem('token');
-      await axios.post(`${BASE_URL}/product-features`, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+      const response = await axios.get(`${BASE_URL}/product-features/${id}`);
+      const savedFeatures = Array.isArray(response.data)
+        ? response.data
+        : response.data.data || [];
+
+      const filled = {};
+      savedFeatures.forEach((item) => {
+        filled[item.featureListId] = item.value;
       });
-      toast.success('Product features saved successfully!');
+
+      setFormValues(filled);
     } catch (error) {
-      console.error('Error saving product features:', error);
-      toast.error('Failed to save product features.');
+      console.error('Error fetching product features:', error);
     }
   };
 
-  return (
-    <div className="container mt-4">
-  <div className="card">
-    <div className="card-body">
-      {featureSets.length === 0 ? (
-        <div className="text-center text-muted py-5">
-          <p className="mb-0">No features found for this Product</p>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit}>
-          <div className="row">
-            {featureSets.map((set) => (
-              <div key={set.id} className="col-md-6 mb-4">
-                <h6 className="mb-3 text-dark">{set.title}</h6>
-                {(set.featureLists || []).map((feature) => (
-                  <div className="feature-row mb-3" key={feature.id}>
-                    <label className="form-label feature-label">
-                      {feature.label}
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control feature-input"
-                      value={formValues[feature.id] || ""}
-                      onChange={(e) => handleChange(e, feature.id)}
-                    />
-                  </div>
-                ))}
-              </div>
-            ))}
+  fetchSavedFeatures();
+}, [id, featureSets]);
+
+const handleChange = (e, featureListId) => {
+  const { value } = e.target;
+  setFormValues((prev) => ({ ...prev, [featureListId]: value }));
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+
+  const payload = Object.entries(formValues)
+    .filter(([, value]) => value?.trim() !== '')
+    .map(([featureListId, value]) => ({
+      productId: Number(id),
+      featureListId: parseInt(featureListId),
+      value: value.trim()
+    }));
+
+  try {
+    const token = localStorage.getItem('token');
+    await axios.post(`${BASE_URL}/product-features`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    toast.success('Product features saved successfully!');
+  } catch (error) {
+    console.error('Error saving product features:', error);
+    toast.error('Failed to save product features.');
+  }
+};
+
+return (
+  <div className="container mt-4">
+    <div className="card">
+      <div className="card-body">
+        {featureSets.length === 0 ? (
+          <div className="text-center text-muted py-5">
+            <p className="mb-0">No features found for this Product</p>
           </div>
-          <div className="text-center mt-4">
-            <button type="submit" className="btn btn-primary px-4">
-              Save Features
-            </button>
-          </div>
-        </form>
-      )}
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <div className="row">
+              {featureSets.map((set) => (
+                <div key={set.id} className="col-md-6 mb-4">
+                  <h6 className="mb-3 text-dark">{set.title}</h6>
+                  {(set.featureLists || []).map((feature) => (
+                    <div className="feature-row mb-3" key={feature.id}>
+                      <label className="form-label feature-label">
+                        {feature.label}
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control feature-input"
+                        value={formValues[feature.id] || ""}
+                        onChange={(e) => handleChange(e, feature.id)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <div className="text-center mt-4">
+              <button type="submit" className="btn btn-primary px-4">
+                Save Features
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
     </div>
   </div>
-</div>
 
-  );
+);
 };
 
 export default EditProductFeatures;

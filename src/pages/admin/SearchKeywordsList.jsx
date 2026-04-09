@@ -12,7 +12,7 @@ import { TiTrash } from "react-icons/ti";
 
 function SearchKeywordsList() {
     const dispatch = useDispatch();
-    const { items, loading, error, page, totalPages } = useSelector(
+    const { items, loading, page, totalPages } = useSelector(
         (state) => state.keywords
     );
 

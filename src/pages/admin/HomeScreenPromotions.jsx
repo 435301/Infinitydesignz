@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Search, ArrowRepeat, PencilSquare, Trash } from 'react-bootstrap-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
@@ -16,7 +15,7 @@ import ViewPromotionModal from '../../modals/viewPromotionModal';
 
 const HomeScreenPromotions = () => {
   const dispatch = useDispatch();
-  const { items: promotions, loading, error, categories, limit, total } = useSelector((state) => state.productPromotions);
+  const { items: promotions, loading, categories, limit, total } = useSelector((state) => state.productPromotions);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -66,11 +65,6 @@ const HomeScreenPromotions = () => {
     // handleSearch(value);
     setCurrentPage(1);
   };
-
-  const handleSearch = () => {
-    dispatch(fetchProductPromotions(currentPage, 20));
-  };
-
   const handleReset = () => {
     setSearchTerm("");
     setStatusFilter("");

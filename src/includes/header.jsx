@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, Link, useSearchParams } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../redux/actions/categoryAction";
 import "../../src/css/user/header.css";
@@ -21,8 +21,6 @@ const PRODUCTS_FILTERS_KEY = "productsFilters";
 const saveProductsFilters = (filters) => { try { sessionStorage.setItem(PRODUCTS_FILTERS_KEY, JSON.stringify(filters)); } catch { } };
 export const clearProductsFilters = () => { try { sessionStorage.removeItem(PRODUCTS_FILTERS_KEY); } catch { } };
 
-const slugify = (str = "") =>
-  str.toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-");
 
 function useOutsideClick(ref, handler) {
   useEffect(() => {
@@ -55,7 +53,7 @@ const PromoColumn = React.memo(({ parentTitle }) => (
 
 const MegaMenuColumn = React.memo(({ parent, children, groupedCategories }) => (
   <div className="nav-item dropdown mega-dropdown" key={parent.id}>
-    <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+    <a href="/" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">
       {parent.title}
     </a>
     <div className="dropdown-menu mega-menu p-1 border-0 rounded-0 m-0">
@@ -115,7 +113,7 @@ const MegaMenuColumn = React.memo(({ parent, children, groupedCategories }) => (
 ));
 
 export default function Header() {
-  const [searchParams] = useSearchParams();
+
   const dispatch = useDispatch();
   const { categories = [] } = useSelector((state) => state.categories || {});
   const wishlistItems = useSelector((state) => state.whishlist?.items || []);
@@ -287,7 +285,7 @@ export default function Header() {
                   Logout
                 </a>
               ) : (
-                <a href="#" className="text-decoration-none text-dark px-1" onClick={(e) => {
+                <a href="/" className="text-decoration-none text-dark px-1" onClick={(e) => {
                   e.preventDefault();
                   dispatch({ type: "SHOW_LOGIN_MODAL" });
                 }}>
@@ -304,7 +302,7 @@ export default function Header() {
 
       <div className="container-fluid px-5  cart wow fadeIn" data-wow-delay="0.1s">
         <nav className="navbar navbar-expand-lg navbar-dark sticky-top py-lg-0 wow fadeIn" data-wow-delay="0.1s">
-          <a href="#" className="navbar-brand ms-3 d-lg-none">MENU</a>
+          <a href="/" className="navbar-brand ms-3 d-lg-none">MENU</a>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <i className="bi bi-list nav-toggler-icon"></i>
           </button>

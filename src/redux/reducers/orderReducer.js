@@ -14,9 +14,6 @@ import {
   CANCEL_ORDER_ITEM_REQUEST,
   CANCEL_ORDER_ITEM_SUCCESS,
   CANCEL_ORDER_ITEM_FAILURE,
-  CANCEL_ADMINORDER_ITEM_REQUEST,
-  CANCEL_ADMINORDER_ITEM_SUCCESS,
-  CANCEL_ADMINORDER_ITEM_FAILURE,
 } from '../actions/orderAction';
 
 const initialState = {
@@ -81,25 +78,25 @@ const orderReducer = (state = initialState, action) => {
         loading: false,
         error: action.payload,
       };
-    case CANCEL_ORDER_ITEM_REQUEST:
-      return { ...state, loading: true, cancelSuccess: false };
+    // case CANCEL_ORDER_ITEM_REQUEST:
+    //   return { ...state, loading: true, cancelSuccess: false };
 
-    case CANCEL_ORDER_ITEM_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        cancelSuccess: true,
-        orders: state.orders.map((order) =>
-          order.id === action.payload.orderId
-            ? {
-              ...order,
-              items: order.items.map((item) =>
-                item.id === action.payload.id ? action.payload : item
-              ),
-            }
-            : order
-        ),
-      };
+    // case CANCEL_ORDER_ITEM_SUCCESS:
+    //   return {
+    //     ...state,
+    //     loading: false,
+    //     cancelSuccess: true,
+    //     orders: state.orders.map((order) =>
+    //       order.id === action.payload.orderId
+    //         ? {
+    //           ...order,
+    //           items: order.items.map((item) =>
+    //             item.id === action.payload.id ? action.payload : item
+    //           ),
+    //         }
+    //         : order
+    //     ),
+    //   };
 
     case CANCEL_ORDER_ITEM_FAILURE:
       return { ...state, loading: false, error: action.payload, cancelSuccess: false };
@@ -118,9 +115,6 @@ const orderReducer = (state = initialState, action) => {
     },
   };
 
-    case CANCEL_ORDER_ITEM_FAILURE:
-      return { ...state, loading: false,error: action.payload,
-      };
 
     default:
       return state;

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { editCategory } from '../redux/actions/categoryAction';
-import { toast } from 'react-toastify';
 import BASE_URL from '../config/config';
 
 const EditCategoryModal = ({ show, setShow, category }) => {

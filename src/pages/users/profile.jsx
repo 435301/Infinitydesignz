@@ -5,10 +5,6 @@ import Footer from "../../includes/footer";
 import Modal from "../../components/modal";
 import EditIcon from "../../img/edit_icon.png";
 import AdBanner from "../../img/ad-banner.png";
-import Img3 from "../../img/img3.png";
-import Star from "../../img/star.svg";
-import Star1 from "../../img/star1.svg";
-import Icon from "../../img/icon.svg";
 import { fetchProfile, updateProfile } from "../../redux/actions/profileAction"; 
 
 export default function ProfilePage() {
@@ -101,7 +97,7 @@ export default function ProfilePage() {
           <div className="container shop">
             <div className="row">
               <div className="col-md-2 sidebars">
-                <a href="" className="active">Profile</a>
+                <a href="/" className="active">Profile</a>
                 <a href="/orders">My Orders</a>
                 <a href="/wishlist">Wishlist</a>
                 <a href="/addressbook">Address book</a>

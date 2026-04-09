@@ -1,16 +1,11 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../css/user/userstyle.css';
 import '../../css/user/bootstrap.min.css';
-// import Banner from '../../img/banner.png';
-import Icon from '../../img/icon.svg';
-import Img3 from '../../img/img3.png';
-import Star from '../../img/star.svg';
-import Star1 from '../../img/star1.svg';
 import { Link } from 'react-router-dom';
 import Header from '../../includes/header';
 import Footer from '../../includes/footer';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAddresses, addAddress, editAddress, deleteAddress, setDefaultAddress } from '../../redux/actions/addressAction';
+import { fetchAddresses, deleteAddress, setDefaultAddress } from '../../redux/actions/addressAction';
 import '../../css/admin/style.css';
 import EditAddressModal from '../../components/editAddressModal';
 import DeleteModal from '../../modals/deleteModal';
@@ -21,7 +16,7 @@ export default function AddressBook() {
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
   const [selectedType, setSelectedType] = useState('Home');
-  const { addresses = [], loading, error } = useSelector((state) => state.addressBook);
+  const { addresses = [], loading } = useSelector((state) => state.addressBook);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);

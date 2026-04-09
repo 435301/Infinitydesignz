@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
@@ -8,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { bulkUpdateBrandStatus, deleteBrand, fetchBrands } from '../../redux/actions/brandAction';
 import PaginationComponent from '../../includes/pagination';
 import { toast } from 'react-toastify';
-import BASE_URL from '../../config/config';
 import AddBrandModal from '../../components/addBrandModal';
 import { TiTrash } from 'react-icons/ti';
 import DeleteModal from '../../modals/deleteModal';
@@ -18,7 +16,7 @@ import EditBrandModal from '../../components/editBrandModal';
 
 const ManageBrands = () => {
   const dispatch = useDispatch();
-  const { brands = [], loading, error } = useSelector((state) => state.brands || {});
+  const { brands = [], loading } = useSelector((state) => state.brands || {});
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');

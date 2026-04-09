@@ -3,7 +3,6 @@ import { Modal, Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import {
   updateHomeCategoryPromotion,
-  fetchHomeCategoryPromotions,
 } from "../redux/actions/categoryPromotionAction";
 import BASE_URL from "../config/config";
 import '../../src/css/admin/style.css'; 
@@ -36,10 +35,10 @@ const HomeScreenEditPromotionModal = ({ show, handleClose, editData }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (!name) return;
-    let finalValue = value;
-    if (name === "status") {
-      finalValue = value === "true";
-    }
+    // let finalValue = value;
+    // if (name === "status") {
+    //   finalValue = value === "true";
+    // }
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };

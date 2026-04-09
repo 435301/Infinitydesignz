@@ -10,7 +10,7 @@ const Dashboard = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const dispatch = useDispatch();
 
-  const { loading, data, error } = useSelector((state) => state.dashboard);
+  const { loading, data } = useSelector((state) => state.dashboard);
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
@@ -73,8 +73,6 @@ const Dashboard = () => {
     ]
   : [];
 
-
-  const products = data?.tables?.topSellingProducts || [];
 
   return (
     <div className="wrapper sidebar-mini fixed" style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>

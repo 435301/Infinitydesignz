@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../../css/admin/style.css';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteSubCategory, fetchCategories } from '../../redux/actions/categoryAction';
-import { BsPencilSquare, BsEye, BsSearch, BsArrowClockwise } from 'react-icons/bs';
+import { BsPencilSquare, BsEye, BsArrowClockwise } from 'react-icons/bs';
 import { TiTrash } from "react-icons/ti";
 import AddSubCategoryModal from '../../includes/addSubCategory';
 import EditSubCategoryModal from '../../includes/editSubCategoryModal';
@@ -13,7 +13,6 @@ import { fetchSubCategoryById } from '../../redux/actions/categoryAction';
 import DeleteModal from '../../modals/deleteModal';
 import { toast } from 'react-toastify';
 import ViewSubCategoryModal from '../../modals/viewSubCategoryModal';
-import { Pagination } from 'react-bootstrap';
 import PaginationComponent from '../../includes/pagination';
 import BASE_URL from '../../config/config';
 
@@ -28,7 +27,7 @@ const ManageSubCategories = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
-  const [selectedIds, setSelectedIds] = useState([]);
+  const [ setSelectedIds] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -36,7 +35,7 @@ const ManageSubCategories = () => {
   // const BASE_URL = 'http://68.183.89.229:4005';
   // const BASE_URL_DELETE = 'http://68.183.89.229:4005';
   const dispatch = useDispatch();
-  const { categories = [], loading, error } = useSelector((state) => state.categories || {});
+  const { categories = [], loading } = useSelector((state) => state.categories || {});
 
   useEffect(() => {
     dispatch(fetchCategories('all'));
@@ -340,7 +339,7 @@ const ManageSubCategories = () => {
                                     {(item?.mainImage) ? (
                                       <img
                                         src={`${BASE_URL}${item?.mainImage}`}
-                                        alt={`${item.title} Main Image`}
+                                        alt={`${item.title} Main`}
                                         className="rounded-circle"
                                         width="50"
                                         height="50"

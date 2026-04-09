@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { editAddress } from '../redux/actions/addressAction';
 import '../css/user/userstyle.css';
-import { toast } from 'react-toastify';
 
 function EditAddressModal({ addressData, onClose }) {
   const types = ["Home", "Office", "Other"];

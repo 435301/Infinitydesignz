@@ -59,7 +59,7 @@ const ViewSubCategoryModal = ({ show, onClose, subCategory }) => {
           <div className="col-md-4 ">
             <p><strong>Web Image:</strong></p>
             {subCategory?.webImage ? (
-              <img src={`${BASE_URL}${subCategory.webImage}`} alt="Web Image" className="img-fluid rounded shadow-sm" />
+              <img src={`${BASE_URL}${subCategory.webImage}`} alt="Web" className="img-fluid rounded shadow-sm" />
             ) : (
               <span>N/A</span>
             )}
@@ -67,7 +67,7 @@ const ViewSubCategoryModal = ({ show, onClose, subCategory }) => {
           <div className="col-md-4 ">
             <p><strong>Main Image:</strong></p>
             {subCategory?.mainImage ? (
-              <img src={`${BASE_URL}${subCategory.mainImage}`} alt="Main Image" className="img-fluid rounded shadow-sm" />
+              <img src={`${BASE_URL}${subCategory.mainImage}`} alt="Main" className="img-fluid rounded shadow-sm" />
             ) : (
               <span>N/A</span>
             )}

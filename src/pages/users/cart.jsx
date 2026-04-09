@@ -12,7 +12,6 @@ import {
   fetchCart,
   removeCoupon,
   UpdateToCart,
-  addToGuestCart,
   syncGuestCartToUserCart,
   clearCouponCart,
 } from "../../redux/actions/cartAction";
@@ -28,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { deleteFromGuestCart, initializeGuestCart, updateGuestCart } from "../../redux/actions/guestCartAction";
-import { applyCouponBuyNow, CLEAR_NOW, clearBuyNow, clearCoupon, getBuyNow, updateBuyNow } from "../../redux/actions/buyNowAction";
+import { applyCouponBuyNow, clearBuyNow, clearCoupon, getBuyNow, updateBuyNow } from "../../redux/actions/buyNowAction";
 
 const CartItem = ({
   id,
@@ -171,9 +170,9 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
   const [error, setError] = useState("");
   const { appliedCoupon } = useSelector((state) => state.cart || {});
   const { coupon: buyNowCoupon } = useSelector((state) => state.buyNow || {});
-  const { addresses = [] } = useSelector((state) => state.addressBook || {});
-  const selectedAddress = addresses.find((addr) => addr.default) || addresses[0];
-  const selectedAddressId = selectedAddress?.id || null;
+  // const { addresses = [] } = useSelector((state) => state.addressBook || {});
+  // const selectedAddress = addresses.find((addr) => addr.default) || addresses[0];
+  // const selectedAddressId = selectedAddress?.id || null;
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
@@ -305,7 +304,6 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
 
 const CartPage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { items: userCartItems = [], priceSummary = {} } = useSelector((state) => state.cart || {});
   const { items: guestCartItems = [] } = useSelector((state) => state.guestCart || {});
   const { items: wishlistItems = [] } = useSelector((state) => state.whishlist || {});
@@ -463,11 +461,6 @@ const CartPage = () => {
     loadCartData();
   }, [isBuyNowMode, buyNow, loggedIn, userCartItems, guestCartItems]);
 
-
-  const handleCheckout = () => {
-    dispatch({ type: "ALLOW_CHECKOUT" });
-    navigate("/checkout");
-  };
   const handleQuantityChange = (id, newQty, productId, variantId) => {
     if (isBuyNowMode) {
       const updateData = {
@@ -584,7 +577,7 @@ const CartPage = () => {
         <div className="container shop">
           <div className="row">
             <div className="col-lg-12">
-              <a href=""><strong>My Cart</strong></a>
+              <a href="mycart"><strong>My Cart</strong></a>
             </div>
           </div>
         </div>

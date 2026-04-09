@@ -15,7 +15,7 @@ const CreatePromotion = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({});
-    const { items: categoryPromotions, loading, error } = useSelector((state) => state.categoryPromotion);
+    const { items: categoryPromotions } = useSelector((state) => state.categoryPromotion);
     const { categories = [] } = useSelector((state) => state.categories || {});
     const { brands = [] } = useSelector((state) => state.brands);
     const [selectedMenu, setSelectedMenu] = useState('');
@@ -34,7 +34,6 @@ const CreatePromotion = () => {
         dispatch(fetchCategories());
         dispatch(fetchBrands())
     }, [dispatch]);
-    const handleToggleSidebar = (collapsed) => setIsSidebarCollapsed(collapsed);
 
     const handleChange = (e) => {
         const { name, value, type, checked, files } = e.target;

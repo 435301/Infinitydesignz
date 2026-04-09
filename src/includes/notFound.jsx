@@ -1,8 +1,6 @@
 // NotFound.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from './header';
-import Footer from './footer';
 
 const NotFound = () => {
   const navigate = useNavigate();

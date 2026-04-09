@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import HeaderAdmin from '../includes/headerAdmin';
-import Sidebar from '../includes/sidebar';
+import React, { useEffect, useMemo, useState } from 'react';
 import '../css/admin/style.css';
 import '../css/admin/icofont.css';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
@@ -10,10 +8,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories } from '../redux/actions/categoryAction';
 import { fetchColors } from '../redux/actions/colorAction';
 import { fetchSizes } from '../redux/actions/sizeAction';
-import { addProducts, fetchProductById } from '../redux/actions/productAction';
+import {  fetchProductById } from '../redux/actions/productAction';
 import { fetchBrands } from '../redux/actions/brandAction';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { addVariants, editVariants } from '../redux/actions/variantsAction';
+import {  useParams, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import BASE_URL from '../config/config';
 import { toast } from 'react-toastify';
@@ -21,7 +18,7 @@ import { fetchHomeCategoryPromotions } from '../redux/actions/categoryPromotionA
 
 const EditProduct = ({ onClose, onProductCreated }) => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const { id } = useParams();
     useEffect(() => {
         if (id) {
@@ -29,7 +26,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         }
     }, [id, dispatch]);
     const location = useLocation();
-    const variantIds = location.state?.variantIds || [];
+    const variantIds = useMemo(()=>location.state?.variantIds ?? [],[location.state?.variantIds]);
 
     useEffect(() => {
         console.log('Editing Product ID:', id);
@@ -42,18 +39,15 @@ const EditProduct = ({ onClose, onProductCreated }) => {
     const { brands = [] } = useSelector((state) => state.brands);
     console.log('colors', colors);
 
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-    const [description, setDescription] = useState('');
+    const [ setDescription] = useState('');
     const [selectedMenu, setSelectedMenu] = useState('');
     const [selectedSubMenu, setSelectedSubMenu] = useState('');
     const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
     const [errors, setErrors] = useState({});
-    const [createdProductId, setCreatedProductId] = useState(null);
-    const [createdVariantIds, setCreatedVariantIds] = useState('');
-    const [updatedVariantIds, setUpdatedVariantIds] = useState([]);
-    const [selectedDisplay, setSelectedDisplay] = useState([]);
-    const frontEndDisplay = ["New Arrivals", "Deals of the Day", "Trending"];
-    const { items: categoryPromotions, loading, error } = useSelector((state) => state.categoryPromotion);
+    const [ setCreatedProductId] = useState(null);
+
+    // const frontEndDisplay = ["New Arrivals", "Deals of the Day", "Trending"];
+    const { items: categoryPromotions } = useSelector((state) => state.categoryPromotion);
 
     const initialFormState = {
         sku: '',
@@ -82,8 +76,6 @@ const EditProduct = ({ onClose, onProductCreated }) => {
     const menuOptions = categories.filter((cat) => cat.parentId === null);
     const subMenuOptions = categories.filter((cat) => cat.parentId === parseInt(selectedMenu));
     const listSubMenuOptions = categories.filter((cat) => cat.parentId === parseInt(selectedSubMenu));
-    const featureTypeId = listSubMenuOptions[0]?.featureTypeId || '';
-    const featureTypeName = listSubMenuOptions[0]?.featureType?.name || '';
     const selectedFeatureTypeId =
         listSubMenuOptions.find((option) => option.id === parseInt(selectedListSubMenu))?.featureTypeId || null;
     const featureType =
@@ -179,9 +171,6 @@ const EditProduct = ({ onClose, onProductCreated }) => {
         }
     }, [product, categories]);
 
-    const handleToggleSidebar = (collapsed) => {
-        setIsSidebarCollapsed(collapsed);
-    };
 
     const validate = () => {
         const newErrors = {};
@@ -385,14 +374,6 @@ const EditProduct = ({ onClose, onProductCreated }) => {
     const removeRow = (index) => {
         const updatedVariants = variants.filter((_, i) => i !== index);
         setVariants(updatedVariants);
-    };
-
-    const handleCheckboxChange = (display) => {
-        setSelectedDisplay((prev) =>
-            prev.includes(display)
-                ? prev.filter((c) => c !== display)
-                : [...prev, display]
-        );
     };
 
     return (

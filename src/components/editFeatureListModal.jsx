@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BsPlusCircle, BsDashCircle } from 'react-icons/bs';
-import { addFeatureList, editFeatureList } from '../redux/actions/featureListAction';
+import {  editFeatureList } from '../redux/actions/featureListAction';
 import { fetchFeatureSets } from '../redux/actions/featureSetAction';
 import { fetchFeatureTypes } from '../redux/actions/featureTypeAction';
 

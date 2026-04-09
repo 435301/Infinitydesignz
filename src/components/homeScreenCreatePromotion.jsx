@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
-import { Search, ArrowRepeat, PencilSquare, Trash } from "react-bootstrap-icons";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { createHomeCategoryPromotion, fetchHomeCategoryPromotions } from "../redux/actions/categoryPromotionAction";
 import { useDispatch } from "react-redux";
@@ -35,12 +34,12 @@ const HomeScreenCreatePromotionModal = ({ show, handleClose }) => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         if (!name) return;
-        let finalValue = value;
+        // let finalValue = value;
         if (name === "status") {
-            finalValue = value === "true";
+            // finalValue = value === "true";
         }
         if (name === "displayCount" || name === "priority") {
-            finalValue = value === "" ? "" : Number(value);
+            // finalValue = value === "" ? "" : Number(value);
         }
         setFormData((prev) => ({ ...prev, [name]: value }));
         setErrors((prev) => ({ ...prev, [name]: "" }));

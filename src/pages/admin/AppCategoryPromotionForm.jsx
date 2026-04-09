@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
@@ -76,7 +76,7 @@ function AppCategoryPromotionForm() {
                                                         <option value="">--Choose Sub Menu--</option>
                                                     </select>
                                                     <div className="mt-1">
-                                                        <a href="#" style={{ fontSize: '10px' }}>Create Sub Menu</a> | <a href="#" style={{ fontSize: '10px' }}>Create Brand</a>
+                                                        <a href="/" style={{ fontSize: '10px' }}>Create Sub Menu</a> | <a href="/" style={{ fontSize: '10px' }}>Create Brand</a>
                                                     </div>
                                                 </div>
 
@@ -86,7 +86,7 @@ function AppCategoryPromotionForm() {
                                                         <option value="">--Choose List Sub Menu--</option>
                                                     </select>
                                                     <div className="mt-1">
-                                                        <a href="#" style={{ fontSize: '10px' }}>Create List Sub Menu</a>
+                                                        <a href="/" style={{ fontSize: '10px' }}>Create List Sub Menu</a>
                                                     </div>
                                                 </div>
 

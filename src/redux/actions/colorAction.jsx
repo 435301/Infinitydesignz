@@ -14,7 +14,7 @@ export const EDIT_COLORS_FAILURE = 'EDIT_COLORS_FAILURE'
 export const DELETE_COLOR_SUCCESS = 'DELETE_COLOR_SUCCESS';
 export const BULK_UPDATE_COLOR_SUCCESS = 'BULK_UPDATE_COLOR_SUCCESS';
 
-export const fetchColors = (status='') => {
+export const fetchColors = (status = '') => {
 
   return async (dispatch) => {
 
@@ -46,7 +46,7 @@ export const addColors = (formData) => async (dispatch) => {
   dispatch({ type: 'ADD_COLORS_REQUEST' });
   try {
     const token = localStorage.getItem('token');
-   const response =  await axios.post(`${BASE_URL}/colors`, formData, {
+    const response = await axios.post(`${BASE_URL}/colors`, formData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -58,7 +58,7 @@ export const addColors = (formData) => async (dispatch) => {
     toast.success(successMessage);
     dispatch(fetchColors('all'));
   } catch (error) {
-      toast.error(error?.response?.data?.message || 'Error adding colors');
+    toast.error(error?.response?.data?.message || 'Error adding colors');
     dispatch({
       type: 'ADD_COLOR_FAILURE',
       payload: error.response?.data?.message || 'Error adding colors',
@@ -84,7 +84,7 @@ export const editColors = (payload) => async (dispatch) => {
     toast.success(successMessage);
     dispatch(fetchColors('all'));
   } catch (error) {
-      toast.error(error?.response?.data?.message || 'Error editing colors');
+    toast.error(error?.response?.data?.message || 'Error editing colors');
     dispatch({
       type: 'EDIT_COLORS_FAILURE',
       payload: error.response?.data?.message || 'Error editing colors',
@@ -104,7 +104,7 @@ export const deleteColor = (id) => async (dispatch) => {
     });
 
     dispatch(fetchColors('all'));
-  const successMessage = response?.message || 'Color deleted successfully';
+    const successMessage = response?.message || 'Color deleted successfully';
     toast.success(successMessage);
   } catch (error) {
     toast.error(error?.response?.data?.message || 'Failed to delete color.');
@@ -112,14 +112,14 @@ export const deleteColor = (id) => async (dispatch) => {
   }
 };
 
-export const bulkUpdateColorStatus = (ids,status) => async (dispatch) => {
+export const bulkUpdateColorStatus = (ids, status) => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
 
-   const response =  await axios.patch(
+    const response = await axios.patch(
       `${BASE_URL}/common/bulk-update-status`,
       {
-        entity: 'colors', 
+        entity: 'colors',
         ids,
         status
       },
@@ -129,7 +129,9 @@ export const bulkUpdateColorStatus = (ids,status) => async (dispatch) => {
         },
       }
     );
-    dispatch(fetchColors('all')); 
+
+    dispatch(fetchColors('all'));
+    return response.data
   } catch (error) {
     console.error(error);
     toast.error(error?.response?.data?.message || 'Failed to update color status.');

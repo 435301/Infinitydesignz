@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit } from 'react-icons/fa';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,7 +15,7 @@ import { toast } from 'react-toastify';
 
 const ManageUsers = ({ handleUpdate }) => {
   const dispatch = useDispatch();
-  const { users, loading, error, page, totalPages } = useSelector((state) => state.adminUsers);
+  const { users, loading,  totalPages } = useSelector((state) => state.adminUsers);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [adminUserToDelete, setadminUserToDelete] = useState(null);
@@ -34,9 +34,6 @@ const ManageUsers = ({ handleUpdate }) => {
     dispatch(fetchAdminUsers({ page: 1, take: 10 }));
   }, [dispatch]);
 
-  const handleEdit = (id) => {
-    console.log('Edit user with ID:', id);
-  };
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };

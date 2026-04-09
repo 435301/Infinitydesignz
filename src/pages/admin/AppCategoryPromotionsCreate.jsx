@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
@@ -94,8 +94,8 @@ const AppCategoryPromotionsCreate = () => {
                             <option value="">--Choose Sub Menu--</option>
                           </select>
                           <div className="mt-1 Create-sub">
-                            <a href="#" >Create Sub Menu</a> |{' '}
-                            <a href="#">Create Brand</a>
+                            <button className='aButton' >Create Sub Menu</button> |{' '}
+                            <button className='aButton' >Create Brand</button>
                           </div>
                         </div>
 
@@ -105,7 +105,7 @@ const AppCategoryPromotionsCreate = () => {
                             <option value="">--Choose List Sub Menu--</option>
                           </select>
                           <div className="mt-1 Create-sub">
-                            <a href="#">Create List Sub Menu</a>
+                            <a href="/">Create List Sub Menu</a>
                           </div>
                         </div>
 

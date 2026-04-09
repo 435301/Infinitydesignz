@@ -27,16 +27,13 @@ const ManageOrders = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [showModal, setShowModal] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
-
   const handleViewOrder = (orderId) => {
     navigate(`/admin/orders/${orderId}`);
   };
 
   useEffect(() => {
     dispatch(fetchAdminOrders(filters));
-  }, []);
+  }, [dispatch, filters]);
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);

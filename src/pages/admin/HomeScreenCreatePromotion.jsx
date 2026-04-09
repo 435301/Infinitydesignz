@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Search, ArrowRepeat, PencilSquare, Trash } from 'react-bootstrap-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
@@ -43,11 +42,6 @@ const HomeScreenCreatePromotion = () => {
         // Replace with your API endpoint
         console.log('Submitting form:', Object.fromEntries(data));
 
-    };
-
-    const handleAdd = () => {
-        // Implement "Add" functionality (e.g., add to a list or reset form)
-        console.log('Add button clicked:', formData);
     };
 
     const handleBack = () => {

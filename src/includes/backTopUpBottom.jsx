@@ -19,7 +19,7 @@ const BackToTopButton = () => {
   return (
     showButton && (
       <a
-        href="#"
+        href="/"
         className="btn btn-lg btn-primary btn-lg-square rounded-circle back-to-top"
         onClick={scrollToTop}
       >

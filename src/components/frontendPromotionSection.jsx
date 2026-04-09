@@ -5,7 +5,6 @@ import NewArrivalsSection from "./newArrivalSection";
 import { fetchFrontendPromotions } from "../redux/actions/productionPromotionAction";
 import BASE_URL from "../config/config";
 import '../css/user/userstyle.css';
-import SaleCarousel from "./projectCarousel";
 import ProductCard from "./productCard";
 
 // Deals UI (new)

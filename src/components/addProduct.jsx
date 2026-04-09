@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import HeaderAdmin from '../includes/headerAdmin';
-import Sidebar from '../includes/sidebar';
 import '../css/admin/style.css';
 import '../css/admin/icofont.css';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
@@ -10,17 +8,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories } from '../redux/actions/categoryAction';
 import { fetchColors } from '../redux/actions/colorAction';
 import { fetchSizes } from '../redux/actions/sizeAction';
-import { addProducts } from '../redux/actions/productAction';
 import { fetchBrands } from '../redux/actions/brandAction';
-import { useNavigate } from 'react-router-dom';
-import { addVariants } from '../redux/actions/variantsAction';
 import axios from 'axios';
 import BASE_URL from '../config/config';
 import { toast } from 'react-toastify';
 
 const AddProduct = ({ onClose, onProductCreated }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const { categories = [] } = useSelector((state) => state.categories || {});
   const { sizes = [] } = useSelector((state) => state.sizes || {});
@@ -28,14 +23,13 @@ const AddProduct = ({ onClose, onProductCreated }) => {
   const { brands = [] } = useSelector((state) => state.brands);
   console.log('colors', colors);
 
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [description, setDescription] = useState('');
+  const [ setDescription] = useState('');
   const [selectedMenu, setSelectedMenu] = useState('');
   const [selectedSubMenu, setSelectedSubMenu] = useState('');
   const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
   const [errors, setErrors] = useState({});
-  const [createdProductId, setCreatedProductId] = useState(null);
-  const [createdVariantIds, setCreatedVariantIds] = useState('');
+  const [ setCreatedProductId] = useState(null);
+  const [ setCreatedVariantIds] = useState('');
   const initialFormState = {
     sku: '',
     title: '',
@@ -89,9 +83,6 @@ const AddProduct = ({ onClose, onProductCreated }) => {
     dispatch(fetchBrands());
   }, [dispatch]);
 
-  const handleToggleSidebar = (collapsed) => {
-    setIsSidebarCollapsed(collapsed);
-  };
 
 const validate = () => {
   const newErrors = {};

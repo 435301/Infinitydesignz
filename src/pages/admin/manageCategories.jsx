@@ -18,7 +18,7 @@ import BASE_URL from '../../config/config';
 
 const ManageCategories = () => {
   const dispatch = useDispatch();
-  const { categories = [] , loading, error} = useSelector((state) => state.categories || {});
+  const { categories = [] , loading} = useSelector((state) => state.categories || {});
 
   const [showModal, setShowModal] = useState(false);
   const [showModalEdit, setShowModalEdit] = useState(false);
@@ -30,7 +30,7 @@ const ManageCategories = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [categoryToEdit, setCategoryToEdit] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [selectedIds, setSelectedIds] = useState([]);
+  const [ setSelectedIds] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
@@ -261,7 +261,6 @@ const ManageCategories = () => {
                       ) :  (
                       currentRows.length > 0 ? currentRows.map((cat, index) => {
                         const parentCategory = categories.find(p => p.id === cat.parentId);
-                        const isSelected = selectedIds.includes(cat.id);
 
                         return (
                           <tr key={cat.id}>

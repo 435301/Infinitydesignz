@@ -6,15 +6,10 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../../css/user/userstyle.css';
 import '../../css/user/bootstrap-icons.css';
 import '../../css/user/bootstrap.min.css';
-import FilterSidebar from "../../components/filterSideBar";
 import ProductList from "../../components/productGrid";
-import FurnitureGrid from "../../components/furnitureGrid";
 import HelpSection from "../../components/helpSection";
 import CustomAccordion from "../../components/customAccordian";
 import CallbackForm from "../../components/callbackForm";
-import NewArrivals from "../../components/newArrivalSection";
-import axios from 'axios';
-import BASE_URL from '../../config/config';
 import { useLocation } from 'react-router-dom';
 import AccImg from '../../img/acc-img.png';
 import bgImage from '../../img/prbg3.png';
@@ -29,11 +24,9 @@ const ProductTopBar = React.memo(() => {
     const params = new URLSearchParams(location.search);
     const listSubCategoryId = params.get('listSubCategoryId');
 
-   const { allProducts: products, pagination, loading } = useSelector((state) => state.productState);
+   const { allProducts: products, loading } = useSelector((state) => state.productState);
 
     // const [products, setProducts] = useState([]);
-    const [accordionFilters, setAccordionFilters] = useState([]);
-    const [standardFilters, setStandardFilters] = useState({ colors: [], brands: [], sizes: [] });
     const [sortOption, setSortOption] = useState('recommended');
     const [isMobileFilterOpen, setMobileFilterOpen] = useState(false);
     // const [loading, setLoading] = useState(false);
@@ -76,18 +69,11 @@ const ProductTopBar = React.memo(() => {
 
     const toggleMobileFilter = React.useCallback(() => setMobileFilterOpen(open => !open), []);
     const closeMobileFilter = React.useCallback(() => setMobileFilterOpen(false), []);
-    const handleClearFilters = React.useCallback((e) => {
-        e.preventDefault();
-        // Implement filter clearing logic here
-    }, []);
+
     const handleFormSubmit = React.useCallback((data) => {
         alert(`Name: ${data.name}, Mobile: ${data.mobile}`);
     }, []);
 
-    // Memoize static data
-    const arrivals = React.useMemo(() => [
-        { src: AccImg, alt: "New Arrival 1" },
-    ], []);
     const helpItems = React.useMemo(() => [
         { image: '', title: "Sofa", alt: "Sofa" },
         { image: '', title: "Bed", alt: "Bed" },

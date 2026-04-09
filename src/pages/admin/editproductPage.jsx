@@ -5,12 +5,12 @@ import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProductById, fetchProducts } from '../../redux/actions/productAction';
+import { fetchProductById } from '../../redux/actions/productAction';
 import EditProductFeatures from './editProductFeatures';
 import EditProductFilters from './editProductFilters';
 import EditProductImages from './editProductImage';
 import EditProduct from '../../components/editProduct';
-import { useParams,useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const EditProductPage = () => {
   const { id } = useParams();

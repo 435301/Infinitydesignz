@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { Search, ArrowRepeat, PencilSquare, Trash } from 'react-bootstrap-icons';
+import {  PencilSquare } from 'react-bootstrap-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
@@ -30,7 +30,7 @@ const HomePromotionCategory = () => {
   const rowsPerPage = 10;
 
   const dispatch = useDispatch();
-  const { items: promotions, loading, error } = useSelector(
+  const { items: promotions, loading } = useSelector(
     (state) => state.categoryPromotion
   );
   console.log('status123', promotions);

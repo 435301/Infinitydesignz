@@ -85,7 +85,7 @@ const BulkUpload = () => {
                           <td>{index === 0 ? 'Living Room Furniture' : 'Bedroom Furniture'}</td>
                           <td>3</td>
                           <td>{index === 0 ? 3 : 4}</td>
-                          <td><a href="#">ec325fbc2b396.xlsx</a></td>
+                          <td><a href="/">ec325fbc2b396.xlsx</a></td>
                           <td>21-Dec-2021</td>
                           <td>21-Dec-2021</td>
                           <td>
@@ -118,10 +118,10 @@ const BulkUpload = () => {
                         <span className="page-link">Previous</span>
                       </li>
                       {[1, 2, 3].map((num) => (
-                        <li className="page-item" key={num}><a className="page-link" href="#">{num}</a></li>
+                        <li className="page-item" key={num}><a className="page-link" href="/">{num}</a></li>
                       ))}
                       <li className="page-item">
-                        <a className="page-link" href="#">Next</a>
+                        <a className="page-link" href="/">Next</a>
                       </li>
                     </ul>
                   </nav>
@@ -171,7 +171,7 @@ const BulkUpload = () => {
                         <div className="col-lg-6 mb-3">
                           <label>Upload XL Workbook <span className="text-danger">*</span></label>
                           <input type="file" className="form-control" />
-                          <a href="#" className="text-info">ec325fbc2b396.xlsx</a>
+                          <a href="/" className="text-info">ec325fbc2b396.xlsx</a>
                         </div>
                       </div>
                     </form>

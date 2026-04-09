@@ -7,7 +7,7 @@ import { getAdminToken } from '../../utils/adminAuth';
 
 const ChangePassword = () => {
   const dispatch = useDispatch();
-  const { loading, success, error } = useSelector((state) => state.auth);
+  const { loading, success } = useSelector((state) => state.auth);
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [formErrors, setFormErrors] = useState({});

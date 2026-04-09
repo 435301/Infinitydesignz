@@ -2,23 +2,21 @@ import React, { useState, useEffect } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
-import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
+import {  BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
-import { bulkUpdateFeatureTypeStatus, deleteFeatureType, fetchFeatureTypes } from '../../redux/actions/featureTypeAction';
+import {  deleteFeatureType, fetchFeatureTypes } from '../../redux/actions/featureTypeAction';
 import PaginationComponent from '../../includes/pagination';
 import AddFeatureTypeModal from '../../components/addFeatureTypeModal';
 import EditFeatureTypeModal from '../../components/editFeatureTypeModal';
 import DeleteModal from '../../modals/deleteModal';
 import ViewFeatureTypeModal from '../../modals/viewFeatureTypeModal';
-import { toast } from 'react-toastify';
 
 const ManageFeatureType = () => {
   const dispatch = useDispatch();
-  const { featureTypes = [] , loading, error} = useSelector((state) => state.featureTypes || {});
+  const { featureTypes = [] , loading} = useSelector((state) => state.featureTypes || {});
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
   const [showAddModal, setShowAddModal] = useState('');
   const [selectedFeatureType, setSelectedFeatureType] = useState('');
   const [editModalVisible, setEditModalVisible] = useState(false);
@@ -65,16 +63,6 @@ const ManageFeatureType = () => {
     } else {
       setSelectedRows([]);
     }
-  };
-
-  const handleBulkStatusUpdate = async (newStatus) => {
-    if (selectedRows.length === 0) {
-      toast.warning("Please select at least one feature type.");
-      return;
-    }
-
-    await dispatch(bulkUpdateFeatureTypeStatus(selectedRows, newStatus));
-    setSelectedRows([]);
   };
 
 

@@ -19,7 +19,7 @@ const ProductCard = ({ product, variant = null, className = '', size = "medium" 
   const [showLogin, setShowLogin] = useState(false);
   const { items: wishlistItems } = useSelector((state) => state.whishlist);
   // const [isWishlisted, setIsWishlisted] = useState(false);
-  const [wishlistItemId, setWishlistItemId] = useState(null);
+  const [ setWishlistItemId] = useState(null);
 
   const {
     id,
@@ -31,7 +31,7 @@ const ProductCard = ({ product, variant = null, className = '', size = "medium" 
   } = product || {};
 
   // Memoize price, image, and discount calculations
-  const { displayMrp, displayPrice, mainImageObj, hasImage, imageUrl, discountPercent } = useMemo(() => {
+  const { displayMrp, displayPrice, hasImage, imageUrl, discountPercent } = useMemo(() => {
     let _displayMrp = mrp;
     let _displayPrice = sellingPrice;
     let _mainImageObj = null;
@@ -80,31 +80,31 @@ const ProductCard = ({ product, variant = null, className = '', size = "medium" 
   }, [wishlistItems, product.id, variant?.id]);
 
   const currentWishlistItem = useMemo(() => {
-  return wishlistItems.find((item) =>
-    variant?.id
-      ? item.productId === product.id && item.variantId === variant.id
-      : item.productId === product.id && !item.variantId
+    return wishlistItems.find((item) =>
+      variant?.id
+        ? item.productId === product.id && item.variantId === variant.id
+        : item.productId === product.id && !item.variantId
+    );
+  }, [wishlistItems, product.id, variant?.id]);
+
+  const handleWishlistClick = useCallback(
+    async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (!isLoggedIn()) {
+        setShowLogin(true);
+        return;
+      }
+
+      if (isWishlisted && currentWishlistItem?.id) {
+        await dispatch(deleteWishlistItem(currentWishlistItem.id));
+      } else {
+        await dispatch(addToWishlist(product.id, variant?.id ?? null));
+      }
+    },
+    [dispatch, isWishlisted, product?.id, variant?.id, currentWishlistItem?.id]
   );
-}, [wishlistItems, product.id, variant?.id]);
-
-const handleWishlistClick = useCallback(
-  async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!isLoggedIn()) {
-      setShowLogin(true);
-      return;
-    }
-
-    if (isWishlisted && currentWishlistItem?.id) {
-      await dispatch(deleteWishlistItem(currentWishlistItem.id));
-    } else {
- await dispatch(addToWishlist(product.id, variant?.id ?? null));
-    }
-  },
-  [dispatch, isWishlisted, wishlistItemId, product?.id, variant?.id]
-);
 
 
   useEffect(() => {
@@ -150,7 +150,7 @@ const handleWishlistClick = useCallback(
     return () => {
       isMounted = false;
     };
-  }, [product.id, variant?.id]);
+  }, [product.id, variant?.id, setWishlistItemId]);
 
   return (
     <>

@@ -7,7 +7,6 @@ import {
   BsEnvelopeOpen,
   BsLock,
   BsBoxArrowRight,
-  BsSearch
 } from 'react-icons/bs';
 import logo from '../img/logo.svg';
 import avatar from '../img/avatar-1.png';

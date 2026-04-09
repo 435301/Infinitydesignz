@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Carousel } from "react-bootstrap";
 import { getToken, isLoggedIn } from "../../utils/auth";
 import BASE_URL from "../../config/config";
@@ -8,19 +8,12 @@ import "../../css/user/whishlist.css";
 import Header from "../../includes/header";
 import Footer from "../../includes/footer";
 import AdBanner from "../../img/ad-banner.png";
-import Img3 from "../../img/img3.png";
-import Star from "../../img/star.svg";
-import Star1 from "../../img/star1.svg";
 import Sofa from "../../img/sofa.png";
-import Icon from "../../img/icon.svg";
-import { fetchSizes } from "../../redux/actions/sizeAction";
-import { addToWishlist, deleteWishlistItem } from "../../redux/actions/whishlistAction";
+import {  deleteWishlistItem } from "../../redux/actions/whishlistAction";
 import { fetchUserProductDetailsById } from "../../redux/actions/userProductDetailsAction";
-import RelatedProducts from "../../components/relatedProducts";
 import { toast } from "react-toastify";
 import { addToCart } from "../../redux/actions/cartAction";
 import { addToGuestCart } from "../../redux/actions/guestCartAction";
-import Loader from "../../includes/loader";
 
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -30,11 +23,10 @@ export default function WishlistPage() {
   const navigate = useNavigate();
   const [wishlistItems, setWishlistItems] = useState([]);
   const [quantities, setQuantities] = useState({});
-  const [loadingWishlist, setLoadingWishlist] = useState(true);
+  const [ setLoadingWishlist] = useState(true);
 
   // Memoized selectors for redux state
-  const sizes = useSelector((state) => state.sizes?.sizes || [], shallowEqual);
-  const { product, loading } = useSelector((state) => state.userProductDetails, shallowEqual);
+  const {  loading } = useSelector((state) => state.userProductDetails, shallowEqual);
   const relatedProducts = useSelector((state) => state.whishlist.relatedProducts);
   console.log('relatedProducts', relatedProducts);
 
@@ -50,7 +42,7 @@ export default function WishlistPage() {
     } finally {
       setLoadingWishlist(false);
     }
-  }, []);
+  }, [setLoadingWishlist]);
 
   useEffect(() => {
     fetchWishlist();
@@ -143,7 +135,7 @@ export default function WishlistPage() {
         <div className="container shop">
           <div className="row">
             <div className="col-lg-12">
-              <a href=""><strong>My Account</strong></a>
+              <a href="/"><strong>My Account</strong></a>
             </div>
           </div>
         </div>
@@ -189,7 +181,6 @@ export default function WishlistPage() {
                         const title = displayData.title || "No Title";
                         const price = displayData.price || 0;
                         const mrp = displayData.mrp || 0;
-                        const size = displayData.size || "N/A";
                         const key = `${item.productId}-${item.variantId || 'null'}`;
 
                         return (

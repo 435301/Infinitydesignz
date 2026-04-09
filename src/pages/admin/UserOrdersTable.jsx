@@ -12,7 +12,7 @@ import DeleteModal from '../../modals/deleteModal';
 
 function UserOrdersTable() {
     const dispatch = useDispatch();
-    const { items, loading, error, page, totalPages } = useSelector(
+    const { items, loading, page, totalPages } = useSelector(
         (state) => state.subscribers
     );
 

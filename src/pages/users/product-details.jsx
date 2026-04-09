@@ -10,7 +10,6 @@ import G1 from "../../img/g1.png";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserProductDetailsById } from "../../redux/actions/userProductDetailsAction";
 import { useNavigate } from "react-router-dom";
-import { FaRegHeart } from "react-icons/fa";
 import Loader from "../../includes/loader";
 import { fetchCategories } from "../../redux/actions/categoryAction";
 import RelatedProducts from "../../components/relatedProducts";
@@ -19,11 +18,9 @@ import { addToCart } from "../../redux/actions/cartAction";
 import { isLoggedIn } from "../../utils/auth";
 import { addToGuestCart } from "../../redux/actions/guestCartAction";
 import { addToWishlist, deleteWishlistItem, fetchWishlist } from "../../redux/actions/whishlistAction";
-import { toast } from "react-toastify";
 import OtpLoginModal from "../../components/otpLoginModal";
 import { setBuyNow } from "../../redux/actions/buyNowAction";
-import { Row } from "react-bootstrap";
-import { Accordion, Card } from "react-bootstrap";
+import { Accordion } from "react-bootstrap";
 import LocalShippingImage from "../../img/local_shipping.png"
 
 export default function ProductDetailPage() {
@@ -32,7 +29,7 @@ export default function ProductDetailPage() {
   const [searchParams] = useSearchParams();
   const variantIdFromURL = searchParams.get("variantId");
   const [thumbnails, setThumbnails] = useState([]);
-  const [qty, setQty] = useState(1);
+  const [qty] = useState(1);
   const { product, loading } = useSelector((state) => state.userProductDetails);
   const categories = useSelector((state) => state.categories.categories || []);
   const { productId } = useParams();
@@ -50,15 +47,34 @@ export default function ProductDetailPage() {
   const [showFeatures, setShowFeatures] = useState(false);
 
   // Memoize category hierarchy to avoid recalculation
+  // const getCategoryHierarchy = useCallback((categoryId, allCategories) => {
+  //   const result = [];
+  //   let current = allCategories.find(cat => cat.id === categoryId);
+  //   while (current) {
+  //     result.unshift(current);
+  //     current = allCategories.find(cat => cat.id === current.parentId);
+  //   }
+  //   return result;
+  // }, []);
+
   const getCategoryHierarchy = useCallback((categoryId, allCategories) => {
-    const result = [];
-    let current = allCategories.find(cat => cat.id === categoryId);
-    while (current) {
-      result.unshift(current);
-      current = allCategories.find(cat => cat.id === current.parentId);
-    }
-    return result;
-  }, []);
+  const result = [];
+
+  // Create lookup map for O(1) access
+  const categoryMap = new Map();
+  allCategories.forEach(cat => {
+    categoryMap.set(cat.id, cat);
+  });
+
+  let current = categoryMap.get(categoryId);
+
+  while (current) {
+    result.unshift(current);
+    current = categoryMap.get(current.parentId);
+  }
+
+  return result;
+}, []);
 
   const toSlug = (title = "") =>
     String(title)
@@ -67,9 +83,10 @@ export default function ProductDetailPage() {
       .trim()
       .replace(/\s+/g, "-");
 
-  const makeSlug = (title, id) => `${toSlug(title)}-${id}`;
-
-
+ const makeSlug = useCallback(
+  (title, id) => `${toSlug(title)}-${id}`,
+  []
+);
 
   // Memoize breadcrumb items
   const breadcrumbItems = useMemo(() => {
@@ -93,7 +110,7 @@ export default function ProductDetailPage() {
 
     crumbs.push({ label: product.title });
     return crumbs;
-  }, [product, categories, getCategoryHierarchy]);
+  }, [product, categories, getCategoryHierarchy, makeSlug]);
 
 
 
@@ -358,7 +375,7 @@ export default function ProductDetailPage() {
   if (loading) return <Loader />;
   if (!product) return <div className="container my-5">Loading...</div>;
 
-  const { title, brand, description, mrp, sellingPrice, stock, size, productDetails, variants, selectedVariant } = product;
+  const { title, description,  productDetails, variants, selectedVariant } = product;
 
   return (
     <>
@@ -734,7 +751,7 @@ export default function ProductDetailPage() {
                 <div>
                   <div className="view-more">
                     <a
-                      href="#"
+                      href="/"
                       className="text-decoration-none"
                       onClick={(e) => {
                         e.preventDefault();

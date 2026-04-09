@@ -5,7 +5,7 @@ import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteListSubCategory, fetchCategories } from '../../redux/actions/categoryAction';
-import { BsPencilSquare, BsEye, BsSearch, BsArrowClockwise } from 'react-icons/bs';
+import { BsPencilSquare, BsEye, BsArrowClockwise } from 'react-icons/bs';
 import AddListSubCategoryModal from '../../includes/addListSubCategory';
 import EditListSubCategoryModal from '../../includes/editListSubCategoryModal';
 import DeleteModal from '../../modals/deleteModal';
@@ -32,7 +32,7 @@ const ListSubCategory = () => {
   // const BASE_URL = 'http://68.183.89.229:4005';
   // const BASE_URL_DELETE = 'http://68.183.89.229:4005';
   const dispatch = useDispatch();
-  const { categories = [], loading, error } = useSelector((state) => state.categories || {});
+  const { categories = [], loading } = useSelector((state) => state.categories || {});
 
   useEffect(() => {
     dispatch(fetchCategories('all'));
@@ -40,7 +40,6 @@ const ListSubCategory = () => {
 
   useEffect(() => {
     if (categories.length) {
-      const topLevel = categories.filter((cat) => cat.parentId === null);
       const subCats = categories.filter((cat) => cat.parentId !== null);
       const subCatIds = subCats.map((cat) => cat.id);
       const subSubCats = categories.filter((cat) => subCatIds.includes(cat.parentId));
@@ -317,7 +316,7 @@ const ListSubCategory = () => {
 
                                       <img
                                         src={`${BASE_URL}${item?.mainImage}`}
-                                        alt={`${item.title} Main Image`}
+                                        alt={`${item.title} Main`}
                                         className="rounded-circle"
                                         width="50"
                                         height="50"

@@ -4,7 +4,7 @@ import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { addSliders, bulkUpdateSliderStatus, deleteSliders, editSliders, fetchSliders } from '../../redux/actions/slidersAction';
+import { addSliders, bulkUpdateSliderStatus, deleteSliders, fetchSliders } from '../../redux/actions/slidersAction';
 import { useDispatch, useSelector } from 'react-redux';
 import BASE_URL from '../../config/config';
 import AddSliderModal from '../../components/addSlider';
@@ -17,7 +17,7 @@ import { TiTrash } from 'react-icons/ti';
 import { BsEye, BsPencilSquare } from 'react-icons/bs';
 
 const ManageSliders = () => {
-  const { sliders, loading, error } = useSelector((state) => state.sliders);
+  const { sliders, loading } = useSelector((state) => state.sliders);
   console.log('sliders', sliders)
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);

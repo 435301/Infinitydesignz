@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
-import { PencilSquare, Trash, Search, ArrowRepeat } from 'react-bootstrap-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
@@ -18,7 +16,7 @@ import ViewCouponModal from '../../modals/viewCouponModal';
 
 const OffersList = () => {
   const dispatch = useDispatch();
-  const { coupons = [], loading, error } = useSelector((state) => state.coupons);
+  const { coupons = [], loading } = useSelector((state) => state.coupons);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -166,7 +164,7 @@ const OffersList = () => {
                   <div className="card-block">
                     <div className="row mb-2">
                       <div className="col-lg-6">
-                        <h5></h5>
+                        {/* <h5></h5> */}
                       </div>
                       <div className="col-md-6 text-end pt pt pt">
                         <button

@@ -1,4 +1,4 @@
-import React, { useEffect, useState  } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tabs, Tab } from 'react-bootstrap';
 import ProductFilters from './productFilter';
 import ProductFeatures from './productFeatures';
@@ -8,41 +8,38 @@ import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
 import '../../css/admin/icofont.css';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { fetchProductById, fetchProducts } from '../../redux/actions/productAction';
 
-const ProductPage = ({ createdProductId, selectedFeatureType }) => {
-  
+const ProductPage = () => {
+
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState('add');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [createdProductIdState, setCreatedProductId] = useState(null);
+  const [setCreatedProductId] = useState(null);
   const [createdProductInfo, setCreatedProductInfo] = useState(null);
-  console.log('createdProductInfo',createdProductInfo)
-  const [createdVariantIds, setCreatedVariantIds] = useState([]);
-console.log('createdVariantIds',createdVariantIds)
- const {products=[]} = useSelector((state) => state.products);
+  console.log('createdProductInfo', createdProductInfo)
+  const [createdVariantIds] = useState([]);
+  console.log('createdVariantIds', createdVariantIds)
 
- 
- useEffect(()=>{
-  dispatch(fetchProducts())
-  dispatch(fetchProductById());
- },[dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchProducts())
+    dispatch(fetchProductById());
+  }, [dispatch]);
 
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
 
-  const selectedProduct = products.find(p => p.id === createdProductInfo?.id);
-
 
   return (
     <div className="sidebar-mini fixed">
       <div className="wrapper">
-        
+
         <HeaderAdmin onToggleSidebar={handleToggleSidebar} />
         <aside className="main-sidebar hidden-print">
-          <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)}/>
+          <Sidebar isCollapsed={isSidebarCollapsed} onClose={() => setIsSidebarCollapsed(true)} />
         </aside>
         <div
           className="content-wrapper py-3"
@@ -73,19 +70,19 @@ console.log('createdVariantIds',createdVariantIds)
                         <AddProduct onProductCreated={(productInfo) => {
                           setCreatedProductId(productInfo.id);
                           setCreatedProductInfo(productInfo);
-                            // setActiveTab('images');
+                          // setActiveTab('images');
                         }} />
                       </Tab>
                       <Tab eventKey="images" title="Product Images" disabled={!createdProductInfo}>
                         {createdProductInfo && (
                           <AddProductImages
                             createdProductId={createdProductInfo.id}
-                             product={createdProductInfo} 
+                            product={createdProductInfo}
                           />
                         )}
                       </Tab>
-                      <Tab eventKey="filters" title="Product Filters"  disabled={!createdProductInfo}>
-                       {createdProductInfo && (
+                      <Tab eventKey="filters" title="Product Filters" disabled={!createdProductInfo}>
+                        {createdProductInfo && (
                           <ProductFilters
                             createdProductId={createdProductInfo.id}
                             filterTypeId={createdProductInfo.filterTypeId}
@@ -93,8 +90,8 @@ console.log('createdVariantIds',createdVariantIds)
                           />
                         )}
                       </Tab>
-                      <Tab eventKey="features" title="Product Features"  disabled={!createdProductInfo}>
-                       
+                      <Tab eventKey="features" title="Product Features" disabled={!createdProductInfo}>
+
                         {createdProductInfo && (
                           <ProductFeatures
                             createdProductId={createdProductInfo.id}

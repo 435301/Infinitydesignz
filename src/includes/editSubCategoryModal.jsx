@@ -21,14 +21,13 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
   const [appIcon, setAppIcon] = useState(null);
   const [webIcon, setWebIcon] = useState(null);
   const [mainImage, setMainImage] = useState(null);
-  const [status, setStatus] = useState(false);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (subCategoryId) {
       dispatch(fetchSubCategoryById(subCategoryId));
     }
-  }, [subCategoryId]);
+  }, [dispatch, subCategoryId]);
 
   useEffect(() => {
     if (subCategory) {
@@ -48,7 +47,7 @@ const EditSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategories 
       setWebIcon(subCategory.webImage ? { preview: `${BASE_URL}${subCategory.webImage}` } : null);
       setMainImage(subCategory.mainImage ? { preview: `${BASE_URL}${subCategory.mainImage}` } : null);
     }
-  }, [subCategory]);
+  }, [dispatch, subCategory]);
 
 
   const handleFileChange = (setter) => (e) => {

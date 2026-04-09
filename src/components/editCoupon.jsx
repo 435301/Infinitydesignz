@@ -3,7 +3,7 @@ import { Modal, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBrands } from '../redux/actions/brandAction';
 import { fetchCategories } from '../redux/actions/categoryAction';
-import { editCoupon, fetchCouponById } from '../redux/actions/couponAction';
+import { editCoupon } from '../redux/actions/couponAction';
 import { fetchPrice } from '../redux/actions/priceAction';
 
 const EditCouponModal = ({ show, onHide, coupon }) => {

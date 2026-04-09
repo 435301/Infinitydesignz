@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import Header from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
@@ -10,7 +9,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { bulkUpdateProductStatus, deleteProducts, fetchProducts } from '../../redux/actions/productAction';
 import PaginationComponent from '../../includes/pagination';
 import DeleteModal from '../../modals/deleteModal';
-import EditProduct from '../../components/editProduct';
 import { useNavigate } from 'react-router-dom';
 import BASE_URL from '../../config/config';
 import { toast } from 'react-toastify';
@@ -19,18 +17,16 @@ import ViewProductModal from '../../modals/viewProductModal';
 
 const ManageProducts = () => {
     const dispatch = useDispatch();
-    const { products = [], loading, error } = useSelector((state) => state.products);
+    const { products = [], loading } = useSelector((state) => state.products);
     console.log('products', products)
     console.log(products.variants?.map(v => v.id), 'variantIds')
     const navigate = useNavigate();
-
-
 
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState(false);
     // console.log('statusFilter',statusFilter)
     const [selectedRows, setSelectedRows] = useState([]);
-    const [selectedIds, setSelectedIds] = useState([]);
+    const [ setSelectedIds] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [productToDelete, setProductToDelete] = useState(null);

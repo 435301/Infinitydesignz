@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BsPlusCircle, BsDashCircle } from 'react-icons/bs';
-import { addFilterList, editFilterList, fetchFilterLists } from '../redux/actions/filterListActions';
+import {  editFilterList, fetchFilterLists } from '../redux/actions/filterListActions';
 import { fetchFilterTypes } from '../redux/actions/filterTypeAction';
 
 const EditFilterListModal = ({ show, onClose, filterList }) => {

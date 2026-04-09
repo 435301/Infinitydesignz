@@ -1,12 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";
+
 import "../../css/user/userstyle.css";
-import Img1 from "../../img/img1.png";
-import Img2 from "../../img/img2.png";
 import Header from "../../includes/header";
 import Footer from "../../includes/footer";
 import { fetchAddresses } from "../../redux/actions/addressAction";
 import AddressModal from "../../components/addAddressModal";
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOrders } from "../../redux/actions/orderAction";
 import { applyCoupon, fetchCart } from "../../redux/actions/cartAction";
@@ -16,14 +14,13 @@ import { applyCouponBuyNow } from "../../redux/actions/buyNowAction";
 
 const CheckoutPage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const { addresses = [] } = useSelector((state) => state.addressBook);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [displayItems, setDisplayItems] = useState([]);
-  const [paymentMethod, setPaymentMethod] = useState("upi");
+  const [paymentMethod] = useState("upi");
   const [promoCode, setPromoCode] = useState("");
-  const itemsFromCart = useSelector((state) => state.cart.items) || [];
+  const itemsFromCart = useSelector((state) => state.cart.items ?? []);
   const { buyNow } = useSelector((state) => state.buyNow);
   const cart = useSelector((state) => state.cart);
   const reduxBuyNowPriceSummary = useSelector((state) => state.buyNow.priceSummary) || {};
@@ -125,9 +122,6 @@ const CheckoutPage = () => {
   //   }
   // }, [canAccessCheckout, navigate]);
 
-  const handlePaymentChange = useCallback((e) => {
-    setPaymentMethod(e.target.value);
-  }, []);
 
   const handleAddressSelect = useCallback((id) => {
     setSelectedAddressId(id);
@@ -156,17 +150,6 @@ const CheckoutPage = () => {
     setPromoCode("");
   };
 
-  const paymentOptions = useMemo(
-    () => [
-      { value: "upi", label: "UPI" },
-      { value: "creditCard", label: "Credit/Debit Card" },
-      { value: "netBanking", label: "Net Banking" },
-      { value: "emi", label: "EMI (No Cost EMI Available)" },
-      { value: "wallet", label: "Wallets (Paytm, Amazon Pay, etc.)" },
-      { value: "cod", label: "Cash on Delivery (₹100 Extra)" },
-    ],
-    []
-  );
 
   return (
     <>

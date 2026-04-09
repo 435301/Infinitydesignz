@@ -16,3 +16,14 @@
 .user-layout {
   min-height: 100vh;
 } */
+
+.aButton {
+
+  background: none;
+  border: none;
+  padding: 0;
+  color: #0d6efd;
+  text-decoration: underline;
+  cursor: pointer,
+
+}

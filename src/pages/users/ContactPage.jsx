@@ -4,7 +4,6 @@ import "../../css/user/userstyle.css";
 import "../../css/user/bootstrap-icons.css";
 import Header from "../../includes/header";
 import Footer from "../../includes/footer";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import { createContact } from "../../redux/actions/contactAction";

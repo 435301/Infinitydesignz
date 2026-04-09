@@ -5,10 +5,9 @@ import '../css/admin/icofont.css';
 import HeaderAdmin from '../includes/headerAdmin';
 import Sidebar from '../includes/sidebar';
 import { useDispatch, useSelector } from 'react-redux';
-import { cancelOrderItem, cancelOrderItemAdmin, fetchAdminOrders, fetchOrderById } from '../redux/actions/orderAction';
+import {  cancelOrderItemAdmin, fetchOrderById } from '../redux/actions/orderAction';
 import BASE_URL from '../config/config';
 import CancelOrderModal from '../modals/cancelOrderModal';
-import { toast } from 'react-toastify';
 
 const OrderDetailsPage = () => {
     const dispatch = useDispatch();

@@ -15,7 +15,6 @@ const ViewProductModal = ({ show, onClose, product }) => {
     color,
     stock,
     status,
-    created_at,
     images,
   } = product;
 

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import '../css/admin/style.css';
-import AddCategoryModal from './addCategory';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSubCategory } from '../redux/actions/categoryAction';
 

@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import '../../src/css/user/userstyle.css';
 import '../../src/css/user/bootstrap-icons.css';
 import '../css/user/bootstrap.min.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchHomeTabs } from '../redux/actions/homeCategoryAction';
 import BASE_URL from '../config/config';
 import { useNavigate } from 'react-router-dom';
 

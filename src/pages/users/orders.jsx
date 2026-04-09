@@ -2,12 +2,10 @@ import React, { useEffect, useState } from "react";
 import '../../css/user/userstyle.css';
 import '../../css/user/bootstrap-icons.css';
 import '../../css/user/bootstrap.min.css';
-import P1 from '../../img/p1.png';
 import AdBanner from '../../img/ad-banner.png';
 import Header from "../../includes/header";
 import Footer from "../../includes/footer";
 import { Link } from "react-router-dom";
-import RelatedProductsCarousel from "../users/RelatedProductsCarousel";
 import BASE_URL from "../../config/config";
 import { cancelOrderItem, fetchOrders } from "../../redux/actions/orderAction";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,8 +18,7 @@ import { toast } from "react-toastify";
 
 const MyOrdersPage = () => {
   const dispatch = useDispatch();
-  const { orders = [], loading, error } = useSelector((state) => state.ordersState.orders);
-  const latestOrder = orders.length > 0 ? orders[0] : null;
+  const { orders = [], loading } = useSelector((state) => state.ordersState.orders);
   const [latestOrderDetails, setLatestOrderDetails] = useState(null);
   console.log('orders', orders)
   const [showPreviousOrders, setShowPreviousOrders] = useState(false);

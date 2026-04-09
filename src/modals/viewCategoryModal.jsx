@@ -45,7 +45,7 @@ const ViewCategoryModal = ({ show, onClose, category }) => {
             {category?.webImage ? (
               <img
                 src={`${BASE_URL}${category.webImage}`}
-                alt="Web Image"
+                alt="Web"
                 className="img-fluid rounded shadow"
               />
             ) : (
@@ -58,7 +58,7 @@ const ViewCategoryModal = ({ show, onClose, category }) => {
             {category?.mainImage ? (
               <img
                 src={`${BASE_URL}${category.mainImage}`}
-                alt="Main Image"
+                alt="Main"
                 className="img-fluid rounded shadow"
               />
             ) : (

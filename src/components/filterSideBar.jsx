@@ -203,9 +203,13 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
     <div className="filter-sidebar">
       <div className="filter-header px-3 pt-3">
         <h4 className="text-dark">Filter</h4>
-        <a className="mb-3" onClick={clearFilters} style={{ cursor: "pointer" }}>
+        <button
+          type="button"
+          onClick={clearFilters}
+          className="aButton"
+        >
           Clear all
-        </a>
+        </button>
       </div>
 
       {/* Category-specific sets */}
@@ -270,6 +274,7 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
           )}
           {facetData.colors.length > 5 && (
             <a
+              href="/"
               className=" p-0 mt-1 text-decoration-none more-link "
               onClick={() => setShowAllColors(!showAllColors)}
             >

@@ -11,11 +11,8 @@ import S4 from '../../img/s4.png';
 import Bg1 from '../../img/bg1.png';
 import FurnitureTabs from '../../components/furnitureTabs';
 import HelpSection from '../../components/helpSection';
-import IconFeatureGrid from '../../components/iconFeaturedGrid';
-import CallbackForm from '../../components/callbackForm';
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import OtpLoginModal from '../../components/otpLoginModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchRightSliders, fetchSliders } from '../../redux/actions/slidersAction';
 import BASE_URL from '../../config/config';
@@ -35,11 +32,11 @@ const waitAndShowModal = () =>
 
 export default function HomeBannerSection() {
   const dispatch = useDispatch();
-  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [ setShowLoginModal] = useState(false);
   const location = useLocation();
   const { sliders } = useSelector((state) => state.sliders);
   const { rightSliders } = useSelector((state) => state.rightSliders);
-  const { promotions, loading, error } = useSelector((state) => state.frontendPromotions);
+  const { promotions } = useSelector((state) => state.frontendPromotions);
   const { promotions: blocks } = useSelector((state) => state.frontendPromotions);
   const { homeTabs } = useSelector(state => state.homeCategories);
 
@@ -72,19 +69,6 @@ export default function HomeBannerSection() {
     cacheTime: 0,
   });
 
-  const handleCloseModal = () => {
-    setShowLoginModal(false);
-  };
-
-  const handleLoginSuccess = () => {
-    setShowLoginModal(false);
-    // Optional: Perform success logic (e.g., toast, redirect)
-  };
-
-
-  const handleFormSubmit = (data) => {
-    alert(`Name: ${data.name}, Mobile: ${data.mobile}`);
-  };
   const offersBlock = useMemo(
     () => blocks?.find((block) => block.title.toLowerCase() === "offers"),
     [blocks]

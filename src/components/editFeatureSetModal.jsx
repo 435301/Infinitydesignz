@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { addFeatureTypes, fetchFeatureTypes } from '../redux/actions/featureTypeAction';
+import {  fetchFeatureTypes } from '../redux/actions/featureTypeAction';
 import { useDispatch, useSelector } from 'react-redux';
 import { BsPlusCircle, BsDashCircle } from 'react-icons/bs';
-import { addFeatureSet, editFeatureSet } from '../redux/actions/featureSetAction';
+import {  editFeatureSet } from '../redux/actions/featureSetAction';
 
 const EditFeatureSetModal = ({ show, onClose, featureSet }) => {
     const dispatch = useDispatch();

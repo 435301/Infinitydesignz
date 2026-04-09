@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { sendOtp, verifyOtp } from "../redux/actions/userAuthAction";
 import Logo from "../../src/img/logo.svg";
 import "../css/user/userstyle.css";
@@ -16,7 +16,6 @@ const OtpLoginModal = ({ show, onClose, onLoginSuccess }) => {
 
 
   const dispatch = useDispatch();
-  const userAuth = useSelector((state) => state.userAuth);
 
   const validateForm = () => {
     let newErrors = {};

@@ -12,7 +12,7 @@ export default function OrderSuccess() {
 
   useEffect(()=>{
     dispatch(fetchOrderById(id));
-  }, [dispatch]);
+  }, [dispatch, id]);
 
   const {orderById} = useSelector((state)=> state.ordersState);
    if (!orderById) return null;

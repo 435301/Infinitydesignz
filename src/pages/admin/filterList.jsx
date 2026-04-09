@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
-import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
+import { BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteFilterList, fetchFilterLists, updateFilterListPriority } from '../../redux/actions/filterListActions';
 import { fetchFilterTypes } from '../../redux/actions/filterTypeAction';
@@ -26,7 +26,7 @@ const ManageFilterList = () => {
   const [editedPriorities, setEditedPriorities] = useState({});
 
   const dispatch = useDispatch();
-  const { filterLists = [], loading, error } = useSelector((state) => state.filterLists || {});
+  const { filterLists = [], loading } = useSelector((state) => state.filterLists || {});
   const { filterTypes = [] } = useSelector((state) => state.filterTypes || {});
 
   useEffect(() => {
