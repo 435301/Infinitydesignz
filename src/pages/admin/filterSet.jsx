@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import HeaderAdmin from '../../includes/headerAdmin';
 import Sidebar from '../../includes/sidebar';
 import '../../css/admin/style.css';
-import { BsSearch, BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
+import {  BsArrowClockwise, BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteFilterSet, fetchFilterSets, updateFilterSetPriority } from '../../redux/actions/filterSetAction';
 import PaginationComponent from '../../includes/pagination';
@@ -13,7 +13,7 @@ import ViewFilterSetModal from '../../modals/viewFilterSetModal';
 
 const ManageFilterSet = () => {
   const dispatch = useDispatch();
-  const { filterSets = [] , loading, error} = useSelector((state) => state.filterSets);
+  const { filterSets = [] , loading} = useSelector((state) => state.filterSets);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');

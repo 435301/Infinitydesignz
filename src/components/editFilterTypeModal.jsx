@@ -1,5 +1,5 @@
 import React, { useState , useEffect} from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Form } from 'react-bootstrap';
 import {  editFilterTypes } from '../redux/actions/filterTypeAction';
 import { useDispatch } from 'react-redux';
 
