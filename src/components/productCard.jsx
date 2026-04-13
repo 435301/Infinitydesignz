@@ -19,7 +19,7 @@ const ProductCard = ({ product, variant = null, className = '', size = "medium" 
   const [showLogin, setShowLogin] = useState(false);
   const { items: wishlistItems } = useSelector((state) => state.whishlist);
   // const [isWishlisted, setIsWishlisted] = useState(false);
-  const [ setWishlistItemId] = useState(null);
+  const [, setWishlistItemId] = useState(null);
 
   const {
     id,
