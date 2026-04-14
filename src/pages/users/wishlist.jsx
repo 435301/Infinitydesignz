@@ -9,24 +9,25 @@ import Header from "../../includes/header";
 import Footer from "../../includes/footer";
 import AdBanner from "../../img/ad-banner.png";
 import Sofa from "../../img/sofa.png";
-import {  deleteWishlistItem } from "../../redux/actions/whishlistAction";
+import { deleteWishlistItem } from "../../redux/actions/whishlistAction";
 import { fetchUserProductDetailsById } from "../../redux/actions/userProductDetailsAction";
 import { toast } from "react-toastify";
 import { addToCart } from "../../redux/actions/cartAction";
 import { addToGuestCart } from "../../redux/actions/guestCartAction";
 
-import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "../../components/productCard";
 export default function WishlistPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [wishlistItems, setWishlistItems] = useState([]);
+  console.log('wishlistItems', wishlistItems)
   const [quantities, setQuantities] = useState({});
-  const [ setLoadingWishlist] = useState(true);
+  const [loadingWishlist, setLoadingWishlist] = useState(true);
 
   // Memoized selectors for redux state
-  const {  loading } = useSelector((state) => state.userProductDetails, shallowEqual);
+  // const { loading } = useSelector((state) => state.userProductDetails, shallowEqual);
   const relatedProducts = useSelector((state) => state.whishlist.relatedProducts);
   console.log('relatedProducts', relatedProducts);
 
@@ -156,14 +157,14 @@ export default function WishlistPage() {
                   <div className="wishlist-header">
                     <h2 className="m-0">WISHLIST</h2>
                   </div>
-                  {loading ? (
+                  {loadingWishlist ? (
                     <tr>
                       <td colSpan="5" className="text-center">
                         <p>Loading...</p>
                       </td>
                     </tr>
                   ) : (
-                    wishlistItems.length > 0 ? (
+                     wishlistItems.length > 0 ? (
                       wishlistItems.map((item, index) => {
                         const displayData = item.variantId && item.variant
                           ? item.variant
