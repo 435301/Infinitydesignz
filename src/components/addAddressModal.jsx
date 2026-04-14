@@ -4,7 +4,7 @@ import { addAddress } from '../redux/actions/addressAction';
 import { City, State } from "country-state-city";
 import { toast } from 'react-toastify';
 
-function AddressModal({ selectedType, onClose, onTypeChange ,addresses}) {
+function AddressModal({ selectedType, onClose, onTypeChange, addresses }) {
   const types = ['Home', 'Office', 'Other'];
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([])
@@ -90,21 +90,21 @@ function AddressModal({ selectedType, onClose, onTypeChange ,addresses}) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-     const isDuplicate = addresses.some(addr => 
-    addr.name === formData.name &&
-    addr.flatNumber === formData.flatNumber &&
-    addr.buildingName === formData.buildingName &&
-    addr.addressLine1 === formData.addressLine1 &&
-    addr.addressLine2 === formData.addressLine2 &&
-    addr.city === formData.city &&
-    addr.state === formData.state &&
-    addr.pincode === formData.pincode &&
-    addr.phone === formData.phone
-  );
-  if (isDuplicate) {
-    toast.error("This address already exists under another type. Please use a different address.");
-    return;
-  }
+    const isDuplicate = addresses.some(addr =>
+      addr.name === formData.name &&
+      addr.flatNumber === formData.flatNumber &&
+      addr.buildingName === formData.buildingName &&
+      addr.addressLine1 === formData.addressLine1 &&
+      addr.addressLine2 === formData.addressLine2 &&
+      addr.city === formData.city &&
+      addr.state === formData.state &&
+      addr.pincode === formData.pincode &&
+      addr.phone === formData.phone
+    );
+    if (isDuplicate) {
+      toast.error("This address already exists under another type. Please use a different address.");
+      return;
+    }
     dispatch(addAddress(formData));
     onClose();
   };
@@ -149,24 +149,24 @@ function AddressModal({ selectedType, onClose, onTypeChange ,addresses}) {
               key={type}
               type="button"
               className={`type-option ${formData.label === type ? 'active' : ''}`}
-               onClick={() => {
-        // reset form when changing type
-        setFormData({
-          name: '',
-          buildingName: '',
-          flatNumber: '',
-          addressLine1: '',
-          addressLine2: '',
-          city: '',
-          state: '',
-          pincode: '',
-          phone: '',
-          label: type,   // set the new type
-        });
-        setSelectedState("");
-        setSelectedCity("");
-        setErrors({});
-      }}
+              onClick={() => {
+                // reset form when changing type
+                setFormData({
+                  name: '',
+                  buildingName: '',
+                  flatNumber: '',
+                  addressLine1: '',
+                  addressLine2: '',
+                  city: '',
+                  state: '',
+                  pincode: '',
+                  phone: '',
+                  label: type,   // set the new type
+                });
+                setSelectedState("");
+                setSelectedCity("");
+                setErrors({});
+              }}
             >
               {type}
             </button>
@@ -175,7 +175,7 @@ function AddressModal({ selectedType, onClose, onTypeChange ,addresses}) {
         <form className="form-section">
           <div className="form-line">
             <div className="form-field">
-              <label>Name</label>
+              <label>Name<span className='text-danger'> *</span></label>
               <input
                 type="text"
                 name="name"
@@ -187,7 +187,7 @@ function AddressModal({ selectedType, onClose, onTypeChange ,addresses}) {
               {errors.name && <div className="invalid-feedback">{errors.name}</div>}
             </div>
             <div className="form-field">
-              <label>Address line 1</label>
+              <label>Address line 1<span className='text-danger'> *</span></label>
               <input
                 type="text"
                 className={`form-control ${errors.addressLine1 ? 'is-invalid' : ''}`}
@@ -201,7 +201,7 @@ function AddressModal({ selectedType, onClose, onTypeChange ,addresses}) {
           </div>
           <div className="form-line">
             <div className="form-field">
-              <label>Home/Apartment/Building Name</label>
+              <label>Home/Apartment/Building Name<span className='text-danger'> *</span></label>
               <input
                 type="text"
                 className={`form-control ${errors.buildingName ? 'is-invalid' : ''}`}
@@ -213,7 +213,7 @@ function AddressModal({ selectedType, onClose, onTypeChange ,addresses}) {
               {errors.buildingName && <div className="invalid-feedback">{errors.buildingName}</div>}
             </div>
             <div className="form-field">
-              <label>Address line 2</label>
+              <label>Address line 2<span className='text-danger'> *</span></label>
               <input
                 type="text"
                 className={`form-control ${errors.addressLine2 ? 'is-invalid' : ''}`}
@@ -228,7 +228,7 @@ function AddressModal({ selectedType, onClose, onTypeChange ,addresses}) {
           </div>
           <div className="form-line">
             <div className="form-field">
-              <label>Flat No/H.No</label>
+              <label>Flat No/H.No<span className='text-danger'> *</span></label>
               <input
                 type="text"
                 className={`form-control ${errors.flatNumber ? 'is-invalid' : ''}`}
@@ -241,7 +241,7 @@ function AddressModal({ selectedType, onClose, onTypeChange ,addresses}) {
 
             </div>
             <div className="form-field">
-              <label>State</label>
+              <label>State<span className='text-danger'> *</span></label>
               <select
                 value={selectedState}
                 className={`form-control ${errors.state ? 'is-invalid' : ''}`}
@@ -259,7 +259,7 @@ function AddressModal({ selectedType, onClose, onTypeChange ,addresses}) {
           </div>
           <div className="form-line">
             <div className="form-field">
-              <label>Mobile Number</label>
+              <label>Mobile Number<span className='text-danger'> *</span></label>
               <input
                 type="text"
                 className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
@@ -272,7 +272,7 @@ function AddressModal({ selectedType, onClose, onTypeChange ,addresses}) {
 
             </div>
             <div className="form-field">
-              <label>City</label>
+              <label>City<span className='text-danger'> *</span></label>
               <select
                 value={selectedCity}
                 className={`form-control ${errors.city ? 'is-invalid' : ''}`}
@@ -291,7 +291,7 @@ function AddressModal({ selectedType, onClose, onTypeChange ,addresses}) {
           </div>
           <div className="form-line">
             <div className="form-field full-span">
-              <label>Pin Code</label>
+              <label>Pin Code<span className='text-danger'> *</span></label>
               <input
                 type="text"
                 className={`form-control ${errors.pincode ? 'is-invalid' : ''}`}
