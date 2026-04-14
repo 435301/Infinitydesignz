@@ -55,7 +55,7 @@ export default function ProfilePage() {
       newErrors.phone = "Mobile number must be 10 digits";
     }
 
-    if (formData.alternateMobile && !/^\d{10}$/.test(formData.alternateMobile)) {
+    if (!formData.alternateMobile && !/^\d{10}$/.test(formData.alternateMobile)) {
       newErrors.alternateMobile = "Alternate mobile must be 10 digits";
     }
 
@@ -167,7 +167,7 @@ export default function ProfilePage() {
                   {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
                 </div>
                 <div className="form-field">
-                  <label>Alternate Mobile</label>
+                  <label>Alternate Mobile<span className="text-danger">*</span></label>
                   <input type="text" name="alternateMobile" value={formData.alternateMobile} className={`form-control ${errors.alternateMobile ? 'is-invalid' : ''}`} onChange={handleChange} />
                   {errors.alternateMobile && <div className="invalid-feedback">{errors.alternateMobile}</div>}
                 </div>
