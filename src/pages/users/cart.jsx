@@ -125,7 +125,7 @@ const CartItem = ({
             <h4 className="mb-0 price">
               ₹ {product.price ? Number(String(product.price).replace(/[^0-9.]/g, "")) : "0"}
             </h4>
-            <span className="strike-text">MRP:₹{product.mrp || "MRP: ₹.0"}</span>
+            <span className="strike-text">₹{product.mrp || "MRP: ₹.0"}</span>
           </div>
           <div className="d-flex gap-2 mb-3">
             <small>
