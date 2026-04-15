@@ -132,6 +132,7 @@ function App() {
         <Route path='/orders' element={<MyOrdersPage />}></Route>
         <Route path='/orders-success/:id' element={<OrderSuccess />}></Route>
         <Route path='/orders-failure' element={<OrderFailure />}></Route>
+        <Route path='/admin' element={<LoginPage />}></Route>
         <Route path='/admin/login' element={<LoginPage />}></Route>
         <Route path='/admin/dashboard' element={<AdminRoute> <Dashboard /> </AdminRoute>}></Route>
         <Route path='/admin/manage-category' element={<AdminRoute><ManageCategories /> </AdminRoute>}></Route>
