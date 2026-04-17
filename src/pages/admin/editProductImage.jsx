@@ -305,7 +305,7 @@ const EditProductImages = ({ product: productProp }) => {
           <div className="card-header"><strong>Edit Product Image</strong></div>
           <div className="card-body row">
             <div className="col-lg-6">
-              <div className="mb-3"><strong>Main Product Image</strong></div>
+              <div className="mb-3"><strong>Main Product Image<span className='text-danger'> *</span></strong></div>
               <input type="file" onChange={(e) => handleSingleImageChange(e, 'productSingle')} className="form-control" />
               {singlePreviews['productSingle'] &&
                 renderPreviewImages([singlePreviews['productSingle']], () => handleRemoveSinglePreview('productSingle'))}

@@ -51,6 +51,10 @@ const CreateCouponModal = ({ show, onHide }) => {
       newErrors.value = "Value must be greater than 0";
     }
     if (!form.fromDate?.value) newErrors.fromDate = "From Date is required";
+    if (form.fromDate?.value && form.toDate?.value && form.fromDate.value >  form.toDate.value) {
+        newErrors.toDate = "To Date must be after From Date";
+      }
+
     if (!form.toDate?.value) newErrors.toDate = "To Date is required";
     const minPrice = parseFloat(form.min_price?.value);
     if (couponType !== "price") {
