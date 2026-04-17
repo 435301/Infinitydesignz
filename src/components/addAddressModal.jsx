@@ -90,7 +90,7 @@ function AddressModal({ selectedType, onClose, onTypeChange, addresses }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-    const isDuplicate = addresses.some(addr =>
+    const isDuplicate = addresses?.some(addr =>
       addr.name === formData.name &&
       addr.flatNumber === formData.flatNumber &&
       addr.buildingName === formData.buildingName &&
