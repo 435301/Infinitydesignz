@@ -73,7 +73,9 @@ const ProductPage = () => {
                           // setActiveTab('images');
                         }} />
                       </Tab>
-                      <Tab eventKey="images" title="Product Images" disabled={!createdProductInfo}>
+                      <Tab eventKey="images" title="Product Images"
+                      //  disabled={!createdProductInfo}
+                       >
                         {createdProductInfo && (
                           <AddProductImages
                             createdProductId={createdProductInfo.id}
@@ -81,7 +83,9 @@ const ProductPage = () => {
                           />
                         )}
                       </Tab>
-                      <Tab eventKey="filters" title="Product Filters" disabled={!createdProductInfo}>
+                      <Tab eventKey="filters" title="Product Filters"
+                      //  disabled={!createdProductInfo}
+                       >
                         {createdProductInfo && (
                           <ProductFilters
                             createdProductId={createdProductInfo.id}
@@ -90,7 +94,9 @@ const ProductPage = () => {
                           />
                         )}
                       </Tab>
-                      <Tab eventKey="features" title="Product Features" disabled={!createdProductInfo}>
+                      <Tab eventKey="features" title="Product Features"
+                      //  disabled={!createdProductInfo}
+                       >
 
                         {createdProductInfo && (
                           <ProductFeatures
