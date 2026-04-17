@@ -234,6 +234,7 @@ const validate = () => {
       setErrors({
         brand: err?.response?.data?.message || 'Something went wrong.',
       });
+      toast.error(err?.response?.data?.message || 'Failed to create product');
     }
   };
 

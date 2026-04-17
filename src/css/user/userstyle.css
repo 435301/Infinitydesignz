@@ -1476,12 +1476,26 @@ MEGA MENU - Base Styles
   color: var(--dark);
 }
 
-.navbar.sticky-top {
+/* .navbar.sticky-top {
   top: -100px;
   transition: 0.5s;
   background: white;
+} */
+.navbar.sticky-top {
+    top: -100px;
+    transition: 0.5s;
+    background: white;
+
+    overflow-y: scroll; /* allow scroll */
+    
+    /* Hide scrollbar for Chrome, Safari */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE & Edge */
 }
 
+.navbar.sticky-top::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}
 .navbar-brand img {
   width: 193px;
   height: 65px;
