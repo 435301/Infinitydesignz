@@ -58,23 +58,23 @@ export default function ProductDetailPage() {
   // }, []);
 
   const getCategoryHierarchy = useCallback((categoryId, allCategories) => {
-  const result = [];
+    const result = [];
 
-  // Create lookup map for O(1) access
-  const categoryMap = new Map();
-  allCategories.forEach(cat => {
-    categoryMap.set(cat.id, cat);
-  });
+    // Create lookup map for O(1) access
+    const categoryMap = new Map();
+    allCategories.forEach(cat => {
+      categoryMap.set(cat.id, cat);
+    });
 
-  let current = categoryMap.get(categoryId);
+    let current = categoryMap.get(categoryId);
 
-  while (current) {
-    result.unshift(current);
-    current = categoryMap.get(current.parentId);
-  }
+    while (current) {
+      result.unshift(current);
+      current = categoryMap.get(current.parentId);
+    }
 
-  return result;
-}, []);
+    return result;
+  }, []);
 
   const toSlug = (title = "") =>
     String(title)
@@ -83,10 +83,10 @@ export default function ProductDetailPage() {
       .trim()
       .replace(/\s+/g, "-");
 
- const makeSlug = useCallback(
-  (title, id) => `${toSlug(title)}-${id}`,
-  []
-);
+  const makeSlug = useCallback(
+    (title, id) => `${toSlug(title)}-${id}`,
+    []
+  );
 
   // Memoize breadcrumb items
   const breadcrumbItems = useMemo(() => {
@@ -371,11 +371,29 @@ export default function ProductDetailPage() {
     return [...new Map(product.variants.map(v => [v.color?.id, v.color])).values()].filter(color => color?.id);
   }, [product]);
 
+  const handleShare = useCallback(() => {
+    const shareData = {
+      title: product?.title,
+      text: product?.title,
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      navigator.share(shareData).catch((err) => {
+        console.error("Share failed:", err);
+      });
+    } else {
+      // fallback (copy link)
+      navigator.clipboard.writeText(shareData.url);
+      alert("Link copied to clipboard!");
+    }
+  }, [product]);
+
   // Early return for loading state
   if (loading) return <Loader />;
   if (!product) return <div className="container my-5">Loading...</div>;
 
-  const { title, description,  productDetails, variants, selectedVariant } = product;
+  const { title, description, productDetails, variants, selectedVariant } = product;
 
   return (
     <>
@@ -467,7 +485,10 @@ export default function ProductDetailPage() {
             </div>
             <div className="col-md-6">
               <h2 className="product-title mb-2">
-                {title.charAt(0).toUpperCase() + title.slice(1)}{" "} <span className="stock-status">{selectedVariant?.stock ?? product?.stock} left</span>
+                {title.charAt(0).toUpperCase() + title.slice(1)}{" "} <span className="stock-status">{selectedVariant?.stock ?? product?.stock} left</span> 
+                <span>
+                  
+                </span>
               </h2>
 
               <div className="price-details">
@@ -490,6 +511,15 @@ export default function ProductDetailPage() {
                         return "No discount";
                       }
                     })()}
+                  </span>
+                  <span>
+                    <button
+                      className="shareBtn"
+                      onClick={handleShare}
+                      title="Share Product"
+                    >
+                      <i className="bi bi-share-fill"></i> Share
+                    </button>
                   </span>
                 </div>
 
