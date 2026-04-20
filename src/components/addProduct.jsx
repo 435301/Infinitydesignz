@@ -23,13 +23,13 @@ const AddProduct = ({ onClose, onProductCreated }) => {
   const { brands = [] } = useSelector((state) => state.brands);
   console.log('colors', colors);
 
-  const [ setDescription] = useState('');
+  const [description, setDescription] = useState('');
   const [selectedMenu, setSelectedMenu] = useState('');
   const [selectedSubMenu, setSelectedSubMenu] = useState('');
   const [selectedListSubMenu, setSelectedListSubMenu] = useState('');
   const [errors, setErrors] = useState({});
-  const [ setCreatedProductId] = useState(null);
-  const [ setCreatedVariantIds] = useState('');
+  const [createdProductId, setCreatedProductId] = useState(null);
+  const [createdVariantIds, setCreatedVariantIds] = useState('');
   const initialFormState = {
     sku: '',
     title: '',
@@ -75,6 +75,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
   const filterType =
     listSubMenuOptions.find((option) => option.id === parseInt(selectedListSubMenu))?.filterType || null;
   console.log('filterType', filterType);
+  console.log(description, createdProductId, createdVariantIds)
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -84,50 +85,50 @@ const AddProduct = ({ onClose, onProductCreated }) => {
   }, [dispatch]);
 
 
-const validate = () => {
-  const newErrors = {};
+  const validate = () => {
+    const newErrors = {};
 
-  if (!formData.sku.trim()) newErrors.sku = 'SKU is required';
-  if (!formData.title.trim()) newErrors.title = 'Title is required';
-  if (!selectedMenu) newErrors.selectedMenu = 'Menu is required';
-  if (!selectedSubMenu) newErrors.selectedSubMenu = 'Sub Menu is required';
-  if (!selectedListSubMenu) newErrors.selectedListSubMenu = 'List Sub Menu is required';
+    if (!formData.sku.trim()) newErrors.sku = 'SKU is required';
+    if (!formData.title.trim()) newErrors.title = 'Title is required';
+    if (!selectedMenu) newErrors.selectedMenu = 'Menu is required';
+    if (!selectedSubMenu) newErrors.selectedSubMenu = 'Sub Menu is required';
+    if (!selectedListSubMenu) newErrors.selectedListSubMenu = 'List Sub Menu is required';
 
-  if (!formData.Stock) newErrors.Stock = 'Stock is required';
-  else if (isNaN(formData.Stock)) newErrors.Stock = 'Stock must be a number';
+    if (!formData.Stock) newErrors.Stock = 'Stock is required';
+    else if (isNaN(formData.Stock)) newErrors.Stock = 'Stock must be a number';
 
-  if (!formData.Mrp) newErrors.Mrp = 'MRP is required';
-  else if (isNaN(formData.Mrp)) newErrors.Mrp = 'MRP must be a number';
+    if (!formData.Mrp) newErrors.Mrp = 'MRP is required';
+    else if (isNaN(formData.Mrp)) newErrors.Mrp = 'MRP must be a number';
 
-  if (!formData.SellingPrice) newErrors.SellingPrice = 'Selling Price is required';
-  else if (isNaN(formData.SellingPrice)) newErrors.SellingPrice = 'Selling Price must be a number';
-  else if (parseFloat(formData.SellingPrice) > parseFloat(formData.Mrp)) {
-    newErrors.SellingPrice = 'Selling Price cannot be greater than MRP'
-  }
+    if (!formData.SellingPrice) newErrors.SellingPrice = 'Selling Price is required';
+    else if (isNaN(formData.SellingPrice)) newErrors.SellingPrice = 'Selling Price must be a number';
+    else if (parseFloat(formData.SellingPrice) > parseFloat(formData.Mrp)) {
+      newErrors.SellingPrice = 'Selling Price cannot be greater than MRP'
+    }
 
-  if (!formData.description.trim()) newErrors.description = 'Description is required';
-  if (!formData.status) newErrors.status = 'Product status is required';
-  if (!formData.searchKeywords.trim()) newErrors.searchKeywords = 'Search Keywords are required';
+    if (!formData.description.trim()) newErrors.description = 'Description is required';
+    if (!formData.status) newErrors.status = 'Product status is required';
+    if (!formData.searchKeywords.trim()) newErrors.searchKeywords = 'Search Keywords are required';
 
-   if (isNaN(formData.weight)) newErrors.weight = 'Weight must be a number';
+    if (isNaN(formData.weight)) newErrors.weight = 'Weight must be a number';
 
-  if (!formData.sla) newErrors.sla = 'SLA is required';
-  else if (isNaN(formData.sla)) newErrors.sla = 'SLA must be a number';
+    if (!formData.sla) newErrors.sla = 'SLA is required';
+    else if (isNaN(formData.sla)) newErrors.sla = 'SLA must be a number';
 
-  if (formData.deliveryCharges && isNaN(formData.deliveryCharges))
-    newErrors.deliveryCharges = 'Delivery Charges must be a number';
+    if (formData.deliveryCharges && isNaN(formData.deliveryCharges))
+      newErrors.deliveryCharges = 'Delivery Charges must be a number';
 
     variants.forEach((v, idx) => {
-    if (v.mrp || v.sellingPrice ) {
-      if (parseFloat(v.sellingPrice) > parseFloat(v.mrp)) {
-        newErrors[`variant_sp_${idx}`] = `Variant ${idx + 1}: Selling Price cannot be greater than MRP`;
+      if (v.mrp || v.sellingPrice) {
+        if (parseFloat(v.sellingPrice) > parseFloat(v.mrp)) {
+          newErrors[`variant_sp_${idx}`] = `Variant ${idx + 1}: Selling Price cannot be greater than MRP`;
+        }
       }
-    }
-  })
+    })
 
-  setErrors(newErrors);
-  return Object.keys(newErrors).length === 0;
-};
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -256,33 +257,33 @@ const validate = () => {
   ]);
 
   const handleChange = (index, field, value) => {
-  const updatedVariants = [...variants];
+    const updatedVariants = [...variants];
 
-  // Restrict stock to 4-digit numeric only
-  if (field === 'stock') {
-    value = value.replace(/\D/g, '').slice(0, 4);
-  }
+    // Restrict stock to 4-digit numeric only
+    if (field === 'stock') {
+      value = value.replace(/\D/g, '').slice(0, 4);
+    }
 
-  // Only allow numeric values for mrp/sellingPrice (optional but recommended)
-  if (field === 'mrp' || field === 'sellingPrice') {
-    value = value.replace(/[^\d.]/g, '');
-  }
+    // Only allow numeric values for mrp/sellingPrice (optional but recommended)
+    if (field === 'mrp' || field === 'sellingPrice') {
+      value = value.replace(/[^\d.]/g, '');
+    }
 
-  // Update field
-  updatedVariants[index][field] = value;
+    // Update field
+    updatedVariants[index][field] = value;
 
-  // Validation: Selling Price should not be greater than MRP
-  const mrp = parseFloat(field === 'mrp' ? value : updatedVariants[index]['mrp']);
-  const sp = parseFloat(field === 'sellingPrice' ? value : updatedVariants[index]['sellingPrice']);
+    // Validation: Selling Price should not be greater than MRP
+    const mrp = parseFloat(field === 'mrp' ? value : updatedVariants[index]['mrp']);
+    const sp = parseFloat(field === 'sellingPrice' ? value : updatedVariants[index]['sellingPrice']);
 
-  if (!isNaN(mrp) && !isNaN(sp) && sp > mrp) {
-    updatedVariants[index].error = 'Selling Price cannot be greater than MRP';
-  } else {
-    updatedVariants[index].error = '';
-  }
+    if (!isNaN(mrp) && !isNaN(sp) && sp > mrp) {
+      updatedVariants[index].error = 'Selling Price cannot be greater than MRP';
+    } else {
+      updatedVariants[index].error = '';
+    }
 
-  setVariants(updatedVariants);
-};
+    setVariants(updatedVariants);
+  };
 
 
   const addRow = () => {
@@ -469,7 +470,7 @@ const validate = () => {
 
                       <div className="col-lg-6 mb-3">
                         <label className="form-label">
-                         Comma Separated Search Keywords<span className="text-danger">*</span>
+                          Comma Separated Search Keywords<span className="text-danger">*</span>
                         </label>
                         <input
                           type="text"
@@ -667,7 +668,7 @@ const validate = () => {
                                 onChange={(e) => handleChange(index, 'sellingPrice', e.target.value)}
                                 placeholder="Selling Price"
                               />
-                               {variant.error && <div className="text-danger small mt-1">{variant.error}</div>}
+                              {variant.error && <div className="text-danger small mt-1">{variant.error}</div>}
                             </td>
                             <td>
                               <select

@@ -16,12 +16,11 @@ const ProductPage = () => {
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState('add');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [setCreatedProductId] = useState(null);
+  const [createdProductIdState, setCreatedProductId] = useState(null);
   const [createdProductInfo, setCreatedProductInfo] = useState(null);
-  console.log('createdProductInfo', createdProductInfo)
-  const [createdVariantIds] = useState([]);
-  console.log('createdVariantIds', createdVariantIds)
-
+  console.log('createdProductInfo', createdProductInfo,createdProductIdState)
+  const [createdVariantIds, setCreatedVariantIds] = useState([]);
+  console.log('createdVariantIds', createdVariantIds, setCreatedVariantIds)
 
   useEffect(() => {
     dispatch(fetchProducts())
@@ -31,7 +30,6 @@ const ProductPage = () => {
   const handleToggleSidebar = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
   };
-
 
   return (
     <div className="sidebar-mini fixed">
@@ -74,8 +72,8 @@ const ProductPage = () => {
                         }} />
                       </Tab>
                       <Tab eventKey="images" title="Product Images"
-                      //  disabled={!createdProductInfo}
-                       >
+                       disabled={!createdProductInfo}
+                      >
                         {createdProductInfo && (
                           <AddProductImages
                             createdProductId={createdProductInfo.id}
@@ -85,7 +83,7 @@ const ProductPage = () => {
                       </Tab>
                       <Tab eventKey="filters" title="Product Filters"
                       //  disabled={!createdProductInfo}
-                       >
+                      >
                         {createdProductInfo && (
                           <ProductFilters
                             createdProductId={createdProductInfo.id}
@@ -96,7 +94,7 @@ const ProductPage = () => {
                       </Tab>
                       <Tab eventKey="features" title="Product Features"
                       //  disabled={!createdProductInfo}
-                       >
+                      >
 
                         {createdProductInfo && (
                           <ProductFeatures
