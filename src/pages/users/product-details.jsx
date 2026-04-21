@@ -863,7 +863,7 @@ export default function ProductDetailPage() {
                   <div className="shareModal">
                     <div className="shareHeader">
                       <h6>Share With Your Family & Friends</h6>
-                      <span onClick={() => setShowShareModal(false)}>✕</span>
+                      <span onClick={() => setShowShareModal(false)} style={{cursor:"pointer"}}>✕</span>
                     </div>
 
                     <div className="shareLinkBox">
