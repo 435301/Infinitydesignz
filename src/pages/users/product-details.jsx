@@ -45,6 +45,7 @@ export default function ProductDetailPage() {
   const [postLoginAction, setPostLoginAction] = useState(null);
   const [checked, setChecked] = useState(false);
   const [showFeatures, setShowFeatures] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   // Memoize category hierarchy to avoid recalculation
   // const getCategoryHierarchy = useCallback((categoryId, allCategories) => {
@@ -371,23 +372,48 @@ export default function ProductDetailPage() {
     return [...new Map(product.variants.map(v => [v.color?.id, v.color])).values()].filter(color => color?.id);
   }, [product]);
 
-  const handleShare = useCallback(() => {
-    const shareData = {
-      title: product?.title,
-      text: product?.title,
-      url: window.location.href,
-    };
+  //share popup
+  const openPopup = (url) => {
+    const width = 600;
+    const height = 500;
 
-    if (navigator.share) {
-      navigator.share(shareData).catch((err) => {
-        console.error("Share failed:", err);
-      });
-    } else {
-      // fallback (copy link)
-      navigator.clipboard.writeText(shareData.url);
-      alert("Link copied to clipboard!");
-    }
-  }, [product]);
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+
+    window.open(
+      url,
+      "ShareWindow",
+      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+    );
+  };
+
+  const url = encodeURIComponent(window.location.href);
+  const text = encodeURIComponent(product?.title || "Check this product");
+
+  const shareWhatsApp = () => {
+    openPopup(`https://wa.me/?text=${text}%20${url}`);
+  };
+
+  const shareTelegram = () => {
+    openPopup(`https://t.me/share/url?url=${url}&text=${text}`);
+  };
+
+  const shareFacebook = () => {
+    openPopup(`https://www.facebook.com/sharer/sharer.php?u=${url}`);
+  };
+
+  const shareTwitter = () => {
+    openPopup(`https://twitter.com/intent/tweet?text=${text}&url=${url}`);
+  };
+
+  const shareLinkedIn = () => {
+    openPopup(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`);
+  };
+
+  const shareMail = () => {
+    openPopup(`mailto:?subject=${text}&body=${url}`);
+  };
+
 
   // Early return for loading state
   if (loading) return <Loader />;
@@ -485,9 +511,9 @@ export default function ProductDetailPage() {
             </div>
             <div className="col-md-6">
               <h2 className="product-title mb-2">
-                {title.charAt(0).toUpperCase() + title.slice(1)}{" "} <span className="stock-status">{selectedVariant?.stock ?? product?.stock} left</span> 
+                {title.charAt(0).toUpperCase() + title.slice(1)}{" "} <span className="stock-status">{selectedVariant?.stock ?? product?.stock} left</span>
                 <span>
-                  
+
                 </span>
               </h2>
 
@@ -515,8 +541,7 @@ export default function ProductDetailPage() {
                   <span>
                     <button
                       className="shareBtn"
-                      onClick={handleShare}
-                      title="Share Product"
+                      onClick={() => setShowShareModal(true)}
                     >
                       <i className="bi bi-share-fill"></i> Share
                     </button>
@@ -833,7 +858,61 @@ export default function ProductDetailPage() {
                   }}
                 />
               </div>
+              {showShareModal && (
+                <div className="shareModalOverlay">
+                  <div className="shareModal">
+                    <div className="shareHeader">
+                      <h6>Share With Your Family & Friends</h6>
+                      <span onClick={() => setShowShareModal(false)}>✕</span>
+                    </div>
 
+                    <div className="shareLinkBox">
+                      <input value={window.location.href} readOnly className="shareInput" />
+                      <button
+                        className="copyBtn"
+                        onClick={() => {
+                          navigator.clipboard.writeText(window.location.href);
+                          alert("Copied!");
+                        }}
+                      >
+                        Copy
+                      </button>
+                    </div>
+
+                    <div className="shareIcons">
+                      <div onClick={shareWhatsApp} className="iconItem">
+                        <i className="bi bi-whatsapp"></i>
+                        <span>WhatsApp</span>
+                      </div>
+
+                      <div onClick={shareFacebook} className="iconItem">
+                        <i className="bi bi-facebook"></i>
+                        <span>Facebook</span>
+                      </div>
+
+                      <div onClick={shareTelegram} className="iconItem">
+                        <i className="bi bi-telegram"></i>
+                        <span>Telegram</span>
+                      </div>
+
+                      <div onClick={shareTwitter} className="iconItem">
+                        <i className="bi bi-twitter"></i>
+                        <span>Twitter</span>
+                      </div>
+
+                      <div onClick={shareLinkedIn} className="iconItem">
+                        <i className="bi bi-linkedin"></i>
+                        <span>LinkedIn</span>
+                      </div>
+
+                      <div onClick={shareMail} className="iconItem">
+                        <i className="bi bi-envelope-fill"></i>
+                        <span>Mail</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
