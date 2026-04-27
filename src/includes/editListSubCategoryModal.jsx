@@ -193,7 +193,7 @@ const EditListSubCategoryModal = ({ show, setShow, subCategoryId, refetchCategor
 
 
                                 <div className="form-check ps-4 m-4">
-                                    <input className="form-check-input" type="checkbox" name="status" checked={form.status} onChange={handleChange} />
+                                    <input className="form-check-input formCheckInput" type="checkbox" name="status" checked={form.status} onChange={handleChange} />
                                     <label className="form-check-label">Active</label>
                                 </div>
                             </div>

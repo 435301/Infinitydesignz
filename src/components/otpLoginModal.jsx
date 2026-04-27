@@ -96,7 +96,7 @@ const OtpLoginModal = ({ show, onClose, onLoginSuccess }) => {
               <div className="form-check mb-3">
                 <input
                   type="checkbox"
-                  className="form-check-input"
+                  className="form-check-input formCheckInput"
                   id="terms"
                   checked={agreeTerms}
                   onChange={(e) => setAgreeTerms(e.target.checked)}

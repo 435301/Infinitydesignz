@@ -476,7 +476,7 @@ const EditProduct = ({ onClose, onProductCreated }) => {
                                                     {categoryPromotions.map((promotion) => (
                                                         <div key={promotion.id} className="form-check form-check-inline">
                                                             <input
-                                                                className="form-check-input"
+                                                                className="form-check-input formCheckInput"
                                                                 type="checkbox"
                                                                 name="mainCategoryPromotionIds"
                                                                 value={promotion.id}

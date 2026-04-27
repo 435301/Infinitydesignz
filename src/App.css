@@ -27,3 +27,7 @@
   cursor: pointer,
 
 }
+
+.formCheckInput{
+  border: 2px solid #c4bdbd !important;
+}

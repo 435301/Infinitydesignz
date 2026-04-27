@@ -82,7 +82,7 @@ const AddSizeModal = ({ show, onClose }) => {
 
                             <div className="form-check mt-4 ps-4">
                                 <input
-                                    className="form-check-input"
+                                    className="form-check-input formCheckInput"
                                     type="checkbox"
                                     id="status"
                                     checked={status}

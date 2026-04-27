@@ -1895,7 +1895,7 @@ select.form-control-lg:not([size]):not([multiple]) {
 .form-check-input {
     position: absolute;
     margin-top: .25rem;
-    margin-left: -1.25rem
+    margin-left: -1.25rem 
 }
 .form-check-input:only-child {
     position: static

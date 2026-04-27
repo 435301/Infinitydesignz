@@ -176,7 +176,7 @@ const EditFilterListModal = ({ show, onClose, filterList }) => {
 
                             <div className="form-check mt-3">
                                 <input
-                                    className="form-check-input"
+                                    className="form-check-input formCheckInput"
                                     type="checkbox"
                                     checked={status}
                                     onChange={() => setStatus(!status)}

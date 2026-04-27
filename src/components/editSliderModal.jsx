@@ -179,7 +179,7 @@ if (!slider || !slider.id) {
                                 <div className="col-md-12 mb-3 form-check mt-4">
                                     <input
                                         type="checkbox"
-                                        className="form-check-input"
+                                        className="form-check-input formCheckInput"
                                         checked={status}
                                         onChange={(e) => setStatus(e.target.checked)}
                                         id="status"

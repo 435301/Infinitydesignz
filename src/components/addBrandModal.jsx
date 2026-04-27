@@ -72,7 +72,7 @@ const AddBrandModal = ({ show, onClose }) => {
 
                 <div className="col-lg-12 mb-3 form-check m-4">
                   <input
-                    className="form-check-input"
+                    className="form-check-input formCheckInput"
                     type="checkbox"
                     id="status"
                     checked={status}

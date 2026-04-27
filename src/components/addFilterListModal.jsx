@@ -153,7 +153,7 @@ const AddFilterListModal = ({ show, onClose }) => {
 
                             <div className="form-check mt-3">
                                 <input
-                                    className="form-check-input"
+                                    className="form-check-inpu formCheckInputt"
                                     type="checkbox"
                                     id="statusCheckbox"
                                     checked={status}

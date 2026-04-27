@@ -92,7 +92,7 @@ const AddCategoryModal = ({ show, setShow }) => {
                 <ImageUpload label="Main Image (100x100)" image={mainImage} onChange={handleFileChange(setMainImage)} onRemove={removeImage(setMainImage)} />
                 <div className="form-check ps-4 m-4">
                   <input
-                    className="form-check-input"
+                    className="form-check-inpu formCheckInputt"
                     type="checkbox"
                     name="status"
                     checked={status}

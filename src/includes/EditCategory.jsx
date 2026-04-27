@@ -141,7 +141,7 @@ const EditCategoryModal = ({ show, setShow, category }) => {
                 </div>
                 <div className="form-check ps-4 m-4">
                   <input
-                    className="form-check-input"
+                    className="form-check-input formCheckInput"
                     type="checkbox"
                     name="status"
                     checked={status}

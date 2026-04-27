@@ -154,7 +154,7 @@ const AddFeatureListModal = ({ show, onClose }) => {
 
                             <div className="form-check mt-3">
                                 <input
-                                    className="form-check-input"
+                                    className="form-check-input formCheckInput"
                                     type="checkbox"
                                     id="statusCheckbox"
                                     checked={status}
