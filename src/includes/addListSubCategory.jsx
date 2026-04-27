@@ -205,10 +205,12 @@ const AddListSubCategoryModal = ({ show, setShow }) => {
                                 <ImageUpload label="App Icon (100x100)" image={appIcon} onChange={handleFileChange(setAppIcon)} onRemove={removeImage(setAppIcon)} />
                                 <ImageUpload label="Web Icon (100x100)" image={webIcon} onChange={handleFileChange(setWebIcon)} onRemove={removeImage(setWebIcon)} />
 
-                                <div className="col-lg-4 mb-3">
+                                {/* <div className="col-lg-4 mb-3">
                                     <label className="form-label">Main Image</label>
                                     <input className="form-control" type="file" accept="image/*" onChange={handleFileChange(setMainImage)} />
-                                </div>
+                                </div> */}
+                                <ImageUpload label="Main Image (100x100)" image={mainImage} onChange={handleFileChange(setMainImage)} onRemove={removeImage(setMainImage)} />
+
 
                                 <div className="col-lg-4 mb-3">
                                     <label className="form-label">SEO Title</label>
