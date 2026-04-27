@@ -701,13 +701,24 @@ const AddProduct = ({ onClose, onProductCreated }) => {
 
                             <td>
                               {index === variants.length - 1 ? (
-                                <button
-                                  type="button"
-                                  className="btn btn-light-success icon-btn b-r-4"
-                                  onClick={addRow}
-                                >
-                                  <BsPlus />
-                                </button>
+                                <div style={{ display: "flex", gap: "8px" }}>
+                                  {variants.length > 1 && (
+                                  <button
+                                    type="button"
+                                    className="btn btn-danger icon-btn b-r-4"
+                                    onClick={() => removeRow(index)}
+                                  >
+                                    -
+                                  </button>
+                                  )}
+                                  <button
+                                    type="button"
+                                    className="btn btn-light-success icon-btn b-r-4"
+                                    onClick={addRow}
+                                  >
+                                    <BsPlus />
+                                  </button>
+                                </div>
                               ) : (
                                 <button
                                   type="button"
@@ -717,6 +728,7 @@ const AddProduct = ({ onClose, onProductCreated }) => {
                                   -
                                 </button>
                               )}
+
                             </td>
                           </tr>
                         ))}
