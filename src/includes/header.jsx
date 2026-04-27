@@ -204,7 +204,7 @@ export default function Header() {
               </a>
             </div>
 
-            <div className="col-lg-5 col-md-4 my-3 position-relative" ref={inputRef}>
+            <div className="col-lg-4 col-md-4 my-3 position-relative" ref={inputRef}>
               <form className="d-flex input-width" onSubmit={handleSearch} autoComplete="off">
                 <input
                   type="text"
@@ -253,7 +253,7 @@ export default function Header() {
               )}
             </div>
 
-            <div className="col-lg-4 Wishlist col-md-8 text-end d-flex justify-content-end align-items-center gap-2">
+            <div className="col-lg-5 Wishlist col-md-8 text-end d-flex justify-content-end align-items-center gap-2">
               <a href="/wishlist" className="text-decoration-none text-dark px-1">
                 <span className="position-relative mx-1">
                   <img src={Favourite} alt="wishlist" loading="lazy" />
