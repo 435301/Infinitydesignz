@@ -6,7 +6,6 @@ import axios from "axios";
 import BASE_URL from "../../config/config";
 import "../../css/user/userstyle.css";
 import "../../css/user/bootstrap-icons.css";
-import G1 from "../../img/g1.png";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserProductDetailsById } from "../../redux/actions/userProductDetailsAction";
 import { useNavigate } from "react-router-dom";
@@ -21,7 +20,8 @@ import { addToWishlist, deleteWishlistItem, fetchWishlist } from "../../redux/ac
 import OtpLoginModal from "../../components/otpLoginModal";
 import { setBuyNow } from "../../redux/actions/buyNowAction";
 import { Accordion } from "react-bootstrap";
-import LocalShippingImage from "../../img/local_shipping.png"
+import LocalShippingImage from "../../img/local_shipping.png";
+import { FaTruck, FaStar, FaLock, FaExchangeAlt, FaMoneyBill } from "react-icons/fa";
 
 export default function ProductDetailPage() {
   const dispatch = useDispatch();
@@ -421,6 +421,14 @@ export default function ProductDetailPage() {
 
   const { title, description, productDetails, variants, selectedVariant } = product;
 
+  const features = [
+    { text: "Pay on delivery available", icon: <FaMoneyBill /> },
+    { text: "Free Delivery", icon: <FaTruck /> },
+    { text: "Top Brand", icon: <FaStar /> },
+    { text: "Secure transaction", icon: <FaLock /> },
+    { text: "Easy 14 days return & exchange available", icon: <FaExchangeAlt /> },
+  ];
+
   return (
     <>
       <Header />
@@ -739,18 +747,10 @@ export default function ProductDetailPage() {
                 </div>
                 <hr />
                 <div className="features">
-                  {[
-                    "Pay on delivery available",
-                    "Free Delivery",
-                    "Top Brand",
-                    "Secure transaction",
-                    "Easy 14 days return & exchange available"
-                  ].map((text, i) => (
+                  {features.map((item, i) => (
                     <div className="feature-items" key={i}>
-                      <div className="icon-box">
-                        <img src={G1} alt="Feature Icon" loading="lazy" />
-                      </div>
-                      <p>{text}</p>
+                      <div className="icon-box">{item.icon}</div>
+                      <p>{item.text}</p>
                     </div>
                   ))}
                 </div>
@@ -863,7 +863,7 @@ export default function ProductDetailPage() {
                   <div className="shareModal">
                     <div className="shareHeader">
                       <h6>Share With Your Family & Friends</h6>
-                      <span onClick={() => setShowShareModal(false)} style={{cursor:"pointer"}}>✕</span>
+                      <span onClick={() => setShowShareModal(false)} style={{ cursor: "pointer" }}>✕</span>
                     </div>
 
                     <div className="shareLinkBox">
