@@ -273,13 +273,13 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
             )
           )}
           {facetData.colors.length > 5 && (
-            <a
-              href="/"
-              className=" p-0 mt-1 text-decoration-none more-link "
+            <button
+              type="button"
+              className="p-0 mt-1 text-decoration-none more-link btn btn-link"
               onClick={() => setShowAllColors(!showAllColors)}
             >
               {showAllColors ? "Show Less" : "Show More"}
-            </a>
+            </button>
           )}
         </div>
       )}
