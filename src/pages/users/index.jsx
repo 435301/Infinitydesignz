@@ -9,6 +9,7 @@ import S1 from '../../img/s1.png';
 import S2 from '../../img/s2.png';
 import S4 from '../../img/s4.png';
 import Bg1 from '../../img/bg1.png';
+import LandingPageImg from "../../img/landing-page-img.jpeg";
 import FurnitureTabs from '../../components/furnitureTabs';
 import HelpSection from '../../components/helpSection';
 import { Link, useLocation } from 'react-router-dom';
@@ -138,15 +139,8 @@ export default function HomeBannerSection() {
         {/* <!-- -------SALE OFFER END's---------- --> */}
         <div className="container">
           <div className="row mb-4">
-            <div className="col-md-7">
-              <h2 className='h2_heading text-start'>Lorem Ipsum is simply dummy <br /> text of the printing</h2>
-            </div>
-            <div className="col-md-5">
-              <p className="para-optima mt-4 text-start" >
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy text
-                ever since the 1500s.
-              </p>
+            <div className="col-md-12">
+              <img src={LandingPageImg} alt="Living Room" className="img-fluid rounded-4 shadow-sm registerImg" />
             </div>
           </div>
         </div>

@@ -129,11 +129,13 @@ export default function Footer() {
             <div className="col-md-3 mb-3">
               <h6 className="footer-subheading mb-4">Our Social Links:</h6>
               <div className="d-flex justify-content-center justify-content-md-start gap-3 footer-social-icons">
-                <a href="/" className="fs-5"><i className="bi bi-facebook"></i></a>
+                <a href="https://www.facebook.com/InfinityDesignz99/" className="fs-5"><i className="bi bi-facebook"></i></a>
                 <a href="/" className="fs-5"><i className="bi bi-x"></i></a>
-                <a href="/" className="fs-5"><i className="bi bi-youtube"></i></a>
+                <a href="https://www.youtube.com/@infinitydesignz99/" className="fs-5"><i className="bi bi-youtube"></i></a>
                 <a href="/" className="fs-5"><i className="bi bi-linkedin"></i></a>
                 <a href="/" className="fs-5"><i className="bi bi-telegram"></i></a>
+                <a href="https://www.instagram.com/infinitydesignz99/" className="fs-5"><i className="bi bi-instagram"></i></a>
+
               </div>
             </div>
           </div>

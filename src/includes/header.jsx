@@ -12,7 +12,7 @@ import Search from '../../src/img/search.svg';
 import Favourite from '../../src/img/favorite.svg';
 import AccountBox from '../../src/img/account_box.svg';
 import ShoppingCart from '../../src/img/shopping_cart.svg';
-import MenuImg from '../../src/img/menu-img.webp';
+// import MenuImg from '../../src/img/menu-img.webp';
 import { isLoggedIn } from "../utils/auth";
 import { addKeyword, fetchKeywords } from "../redux/actions/searchKeywordsAction";
 import { BsBoxArrowInRight, BsBoxArrowRight } from "react-icons/bs";
@@ -47,7 +47,7 @@ const PromoColumn = React.memo(({ parentTitle }) => (
   <div className="col-md-3 col-lg-2 d-none d-md-block promo-column">
     <h3 className="promo-heading">Sink Into Comfort</h3>
     <p className="promo-subheading">Explore {parentTitle}</p>
-    <img src={MenuImg} className="w-100 promo-img" alt="Promo" loading="lazy" />
+    {/* <img src={MenuImg} className="w-100 promo-img" alt="Promo" loading="lazy" /> */}
   </div>
 ));
 
