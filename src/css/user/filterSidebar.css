@@ -109,3 +109,73 @@
 .more-link:hover{
    cursor: pointer;
 }
+
+.range-slider {
+  position: relative;
+  height: 30px;
+}
+
+/* Base track */
+.slider-track {
+  position: absolute;
+  height: 4px;
+  width: 100%;
+  background: #ddd;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 2px;
+  z-index: 1;
+}
+
+/* Active blue range */
+.slider-range {
+  position: absolute;
+  height: 4px;
+  background: #0d6efd;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 2px;
+  z-index: 2;
+}
+
+/* Range inputs */
+.range-slider input[type="range"] {
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  -webkit-appearance: none;
+  background: none;
+  z-index: 3;
+}
+
+/* Thumb */
+.range-slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  pointer-events: all;
+  height: 14px;
+  width: 14px;
+  background: #0d6efd;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 0 2px rgba(0,0,0,0.3);
+  margin-top: -5px;
+}
+
+/* Firefox */
+.range-slider input[type="range"]::-moz-range-thumb {
+  pointer-events: all;
+  height: 14px;
+  width: 14px;
+  background: #0d6efd;
+  border-radius: 50%;
+  border: none;
+}
+
+.filter-sidebar {
+  max-height: 100vh;     /* limit height to screen */
+  overflow-y: auto;      /* enable vertical scroll */
+  overflow-x: hidden;
+}
