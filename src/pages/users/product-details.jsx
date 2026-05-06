@@ -29,7 +29,7 @@ export default function ProductDetailPage() {
   const [searchParams] = useSearchParams();
   const variantIdFromURL = searchParams.get("variantId");
   const [thumbnails, setThumbnails] = useState([]);
-  const [qty] = useState(1);
+  const [qty, setQty] = useState(1);
   const { product, loading } = useSelector((state) => state.userProductDetails);
   const categories = useSelector((state) => state.categories.categories || []);
   const { productId } = useParams();
@@ -647,6 +647,25 @@ export default function ProductDetailPage() {
                 <button className="chat-button" onClick={handleChat}>
                   Select Chat
                 </button>
+              </div>
+
+              <div className="qty-container mb-3">
+                <label className="mb-1">Quantity</label>
+
+                <select
+                  className="form-select qty-dropdown"
+                  value={qty}
+                  onChange={(e) => setQty(Number(e.target.value))}
+                >
+                  {Array.from(
+                    { length: Math.min(10, selectedVariant?.stock || product?.stock || 1) },
+                    (_, i) => i + 1
+                  ).map((num) => (
+                    <option key={num} value={num}>
+                      {num}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="action-buttons mb-3">

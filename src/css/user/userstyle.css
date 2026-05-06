@@ -2213,6 +2213,10 @@ MEGA MENU - Responsive Styles
   color: #fff;
 }
 
+.qty-dropdown {
+  width: 257px !important;
+  cursor: pointer;
+}
 
 .delivery-options {
   font-family: Arial, sans-serif;
