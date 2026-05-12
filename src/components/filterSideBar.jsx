@@ -3,6 +3,7 @@ import axios from "axios";
 import { useSearchParams } from "react-router-dom";
 import "../css/user/filterSidebar.css";
 import BASE_URL from "../config/config";
+import Slider from "@mui/material/Slider";
 
 /**
  * Optional props:
@@ -14,6 +15,9 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
   const [facetData, setFacetData] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [showAllColors, setShowAllColors] = useState(false);
+
+  const derivedMin = facetData?.price?.min && facetData.price.min > 0 ? facetData.price.min : 0;
+  const derivedMax = facetData?.price?.max && facetData.price.max > 0 ? facetData.price.max : 50000;
 
   console.log('facetData', facetData)
   const toStr = (v) =>
@@ -74,20 +78,18 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
     return out;
   }, [propsFilters, searchParams]);
 
-  const minLimit = facetData?.price?.min ?? 0;
-const maxLimit = facetData?.price?.max ?? 10000;
+  //price range
 
-const [priceRange, setPriceRange] = useState([
-  Number(current.minPrice) || minLimit,
-  Number(current.maxPrice) || maxLimit,
-]);
+  const [priceRange, setPriceRange] = useState([derivedMin, derivedMax]);
 
-useEffect(() => {
-  setPriceRange([
-    Number(current.minPrice) || minLimit,
-    Number(current.maxPrice) || maxLimit,
-  ]);
-}, [current.minPrice, current.maxPrice, minLimit, maxLimit]);
+  useEffect(() => {
+    if (facetData?.price) {
+      setPriceRange([
+        Number(current.minPrice) || derivedMin,
+        Number(current.maxPrice) || derivedMax,
+      ]);
+    }
+  }, [facetData, current.minPrice,current.maxPrice,derivedMin, derivedMax]);
 
   // Fetch facets (colors, price buckets, sidebar sets, discounts)
   useEffect(() => {
@@ -165,7 +167,7 @@ useEffect(() => {
     const nextVals = isSelected ? curVals.filter((v) => v !== value) : [...curVals, value];
     applyChange({ [filterType]: nextVals.length ? nextVals.join(",") : "", page: "" });
   };
-
+  
   const clearFilters = () => {
     applyChange({
       color: "",
@@ -302,7 +304,7 @@ useEffect(() => {
       )}
 
       {/* Price buckets */}
-      {facetData.price?.buckets?.some((b) => b.count > 0) && (
+      {/* {facetData.price?.buckets?.some((b) => b.count > 0) && (
         <div className="filter-section mt-4">
           <h6>Price</h6>
           {facetData.price.buckets.map((bucket) =>
@@ -322,76 +324,45 @@ useEffect(() => {
             // ) : null
           )}
         </div>
-      )}
+      )} */}
+
+      {/* Price Range Slider */}
+      <div className="filter-section mt-4">
+        <h6>Price Range</h6>
+
+        <div className="px-2 mt-3">
+          <Slider
+            value={priceRange}
+            onChange={(e, newValue) => setPriceRange(newValue)}
+            onChangeCommitted={(e, newValue) => {
+              applyChange({
+                minPrice: newValue[0],
+                maxPrice: newValue[1],
+                page: "",
+              });
+            }}
+            min={derivedMin}
+            max={derivedMax}
+            step={100}
+            valueLabelDisplay="auto"
+          />
+        </div>
+
+        {/* <div className="d-flex justify-content-between align-items-center mt-3">
+          <div className="price-range-box">
+            ₹{priceRange[0]}
+          </div>
+
+          <span>-</span>
+
+          <div className="price-range-box">
+            ₹{priceRange[1]}
+          </div>
+        </div> */}
+      </div>
 
 
-      <div className="filter-section mt-3">
-  <h6>Price Range</h6>
 
-  <div className="range-slider">
-    {/* Track background */}
-    <div className="slider-track"></div>
-
-    {/* Active range (blue progress like Amazon) */}
-    <div
-      className="slider-range"
-      style={{
-        left: `${(priceRange[0] / maxLimit) * 100}%`,
-        right: `${100 - (priceRange[1] / maxLimit) * 100}%`,
-      }}
-    ></div>
-
-    {/* Min thumb */}
-    <input
-      type="range"
-      min={minLimit}
-      max={maxLimit}
-      value={priceRange[0]}
-      onChange={(e) => {
-        const val = Number(e.target.value);
-        if (val <= priceRange[1]) {
-          setPriceRange([val, priceRange[1]]);
-        }
-      }}
-    />
-
-    {/* Max thumb */}
-    <input
-      type="range"
-      min={minLimit}
-      max={maxLimit}
-      value={priceRange[1]}
-      onChange={(e) => {
-        const val = Number(e.target.value);
-        if (val >= priceRange[0]) {
-          setPriceRange([priceRange[0], val]);
-        }
-      }}
-    />
-  </div>
-
-  {/* Price labels */}
-  <div className="d-flex justify-content-between mt-2">
-    <span>₹{priceRange[0]}</span>
-    <span>₹{priceRange[1]}</span>
-  </div>
-
-  {/* Apply */}
-  <button
-    type="button"
-    className="btn btn-sm btn-primary mt-2"
-    onClick={() =>
-      applyChange({
-        minPrice: priceRange[0],
-        maxPrice: priceRange[1],
-        priceRanges: "",
-        page: "",
-      })
-    }
-  >
-    Apply
-  </button>
-</div>
     </div>
   );
 };
