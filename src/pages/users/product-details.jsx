@@ -282,8 +282,8 @@ export default function ProductDetailPage() {
     } else {
       dispatch(addToGuestCart(cartItem));
     }
-     window.open(`/product-details/${productId}${ variantIdFromURL ? `?variantId=${variantIdFromURL}` : ""}`,"_blank"
-  );
+    window.open(`/product-details/${productId}${variantIdFromURL ? `?variantId=${variantIdFromURL}` : ""}`, "_blank"
+    );
   }, [dispatch, productId, variantIdFromURL, qty]);
 
   const parsedProductId = parseInt(productId);
@@ -487,6 +487,20 @@ export default function ProductDetailPage() {
                     </div>
                   )}
                   <div className="product-display mb-3" id="mainImageContainer" style={{ position: "relative" }}>
+                    {/* Product Badges */}
+                    {(product?.isTrending || product?.isNewArrival || product?.badges?.length > 0) && (
+                      <div className="badge-container" >
+                        {product?.isTrending && (
+                          <span className="trending-badge" >
+                             Trending
+                          </span>
+                        )}
+
+                        {product?.isNewArrival && (
+                          <span className="arrival-badge" > New Arrival</span>
+                        )}
+                      </div>
+                    )}
                     {mainImage ? (
                       <>
                         <div className="zoom-lens" style={{ position: "absolute", display: "none" }}></div>
