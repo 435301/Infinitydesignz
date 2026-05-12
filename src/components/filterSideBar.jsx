@@ -348,17 +348,11 @@ const FilterSidebar = ({ filters: propsFilters, onChangeFilters }) => {
           />
         </div>
 
-        {/* <div className="d-flex justify-content-between align-items-center mt-3">
-          <div className="price-range-box">
+        <div className="d-flex justify-content-between align-items-center mt-3">
             ₹{priceRange[0]}
-          </div>
-
           <span>-</span>
-
-          <div className="price-range-box">
             ₹{priceRange[1]}
-          </div>
-        </div> */}
+        </div>
       </div>
 
 
