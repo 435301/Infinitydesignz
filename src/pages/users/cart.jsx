@@ -579,8 +579,8 @@ const CartPage = () => {
                   product: {
                     title: productData.title,
                     warranty: productData.brand?.name || "N/A",
-                    price: `₹.${source.sellingPrice || source.price || 0}`,
-                    mrp: `MRP: ₹.${source.mrp || 0}`,
+                    price: `₹${source.sellingPrice || source.price || 0}`,
+                    mrp: `MRP: ₹${source.mrp || 0}`,
                     sizes: [sizeLabel],
                     image: imageUrl.startsWith("http") ? imageUrl : `${BASE_URL}/Uploads/products/${imageUrl}`,
                     delivery: productData.estimatedDateText,
