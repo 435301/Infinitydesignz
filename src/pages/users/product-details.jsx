@@ -282,6 +282,8 @@ export default function ProductDetailPage() {
     } else {
       dispatch(addToGuestCart(cartItem));
     }
+     window.open(`/product-details/${productId}${ variantIdFromURL ? `?variantId=${variantIdFromURL}` : ""}`,"_blank"
+  );
   }, [dispatch, productId, variantIdFromURL, qty]);
 
   const parsedProductId = parseInt(productId);
