@@ -5,7 +5,7 @@ import "../../css/user/bootstrap-icons.css";
 import Header from "../../includes/header";
 import Footer from "../../includes/footer";
 import { useDispatch, useSelector } from "react-redux";
-import { isLoggedIn } from "../../utils/auth";
+import { getToken, isLoggedIn } from "../../utils/auth";
 import {
   applyCoupon,
   DeleteFromCart,
@@ -298,6 +298,164 @@ const PriceSummary = ({ summary = {}, isBuyNowMode = false, buyNowItems = [] }) 
       <button className="btn btn-place-order w-100" onClick={handleClick}>
         Checkout
       </button>
+    </div>
+  );
+};
+
+const getProductImageUrl = (item = {}) => {
+  const product = item.product || item;
+  const variant = item.variant || product.selectedVariant || {};
+  const variantId = item.variantId || variant.id;
+  const variantImages = variantId ? product.images?.variants?.[variantId] : null;
+  const image =
+    item.image ||
+    item.imageUrl ||
+    variant.image ||
+    variant.imageUrl ||
+    variant.images?.main?.url ||
+    variantImages?.main?.url ||
+    variantImages?.additional?.find?.((img) => img.isMain)?.url ||
+    variantImages?.additional?.[0]?.url ||
+    product.image ||
+    product.imageUrl ||
+    product.images?.main?.url ||
+    product.images?.additional?.find?.((img) => img.isMain)?.url ||
+    product.images?.additional?.[0]?.url;
+
+  if (!image) return "/placeholder.jpg";
+  if (String(image).startsWith("http")) return image;
+  if (String(image).startsWith("/Uploads")) return `${BASE_URL}${image}`;
+  if (String(image).startsWith("/")) return `${BASE_URL}${image}`;
+  return `${BASE_URL}/Uploads/products/${image}`;
+};
+
+const parseCurrency = (value) => {
+  const parsed = Number(String(value ?? 0).replace(/[^0-9.]/g, ""));
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+const getProductPrice = (item = {}) => {
+  const product = item.product || item;
+  const variant = item.variant || product.selectedVariant || {};
+  return parseCurrency(
+    variant.sellingPrice ||
+    variant.price ||
+    product.sellingPrice ||
+    product.price ||
+    item.sellingPrice ||
+    item.price ||
+    0
+  );
+};
+
+const getProductMrp = (item = {}) => {
+  const product = item.product || item;
+  const variant = item.variant || product.selectedVariant || {};
+  return parseCurrency(variant.mrp || product.mrp || item.mrp || 0);
+};
+
+const getRecentlyViewedItems = (responseData) => {
+  if (Array.isArray(responseData)) return responseData;
+  if (Array.isArray(responseData?.recentlyViewedItems)) return responseData.recentlyViewedItems;
+  if (Array.isArray(responseData?.data)) return responseData.data;
+  if (Array.isArray(responseData?.data?.recentlyViewedItems)) {
+    return responseData.data.recentlyViewedItems;
+  }
+  return [];
+};
+
+const RECENTLY_VIEWED_LIMIT = 2;
+
+const RecentlyViewedProducts = ({ show, refreshKey }) => {
+  const navigate = useNavigate();
+  const [items, setItems] = useState([]);
+  const [loadingRecent, setLoadingRecent] = useState(false);
+
+  useEffect(() => {
+    if (!show) {
+      setItems([]);
+      return;
+    }
+
+    let isMounted = true;
+
+    const fetchRecentlyViewed = async () => {
+      try {
+        setLoadingRecent(true);
+        const token = getToken();
+        const response = await axios.get(`${BASE_URL}/cart/recently-viewed`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+
+        const recentlyViewedItems = getRecentlyViewedItems(response.data);
+        if (isMounted) {
+          setItems(recentlyViewedItems);
+        }
+      } catch (error) {
+        console.error("Failed to fetch recently viewed products:", error);
+        if (isMounted) {
+          setItems([]);
+        }
+      } finally {
+        if (isMounted) {
+          setLoadingRecent(false);
+        }
+      }
+    };
+
+    fetchRecentlyViewed();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [show, refreshKey]);
+
+  if (!show) return null;
+
+  const handleProductClick = (item) => {
+    const product = item.product || item;
+    const productId = item.productId || product.id;
+    const variantId = item.variantId || item.variant?.id || product.selectedVariant?.id;
+
+    if (!productId) return;
+    navigate(`/product-details/${productId}${variantId ? `?variantId=${variantId}` : ""}`);
+  };
+
+  return (
+    <div className="recently-viewed-cart mt-3">
+      <h5 className="recently-viewed-cart__title">Recently Viewed Products</h5>
+      {loadingRecent ? (
+        <div className="recently-viewed-cart__loading">Loading...</div>
+      ) : items.length === 0 ? (
+        <div className="recently-viewed-cart__empty">No recently viewed products found.</div>
+      ) : (
+        <div className="recently-viewed-cart__list">
+          {items.slice(0, RECENTLY_VIEWED_LIMIT).map((item, index) => {
+            const product = item.product || item;
+            const title = product.title || item.title || "Untitled Product";
+            const price = getProductPrice(item);
+            const mrp = getProductMrp(item);
+
+            return (
+              <button
+                type="button"
+                className="recently-viewed-cart__item"
+                key={item.id || `${item.productId || product.id}-${item.variantId || index}`}
+                onClick={() => handleProductClick(item)}
+              >
+                <img src={getProductImageUrl(item)} alt={title} />
+                <span className="recently-viewed-cart__info">
+                  <span className="recently-viewed-cart__name">{title}</span>
+                  <span className="recently-viewed-cart__price">
+                    &#8377;{price || 0}
+                    {mrp > price && <del>MRP &#8377;{mrp}</del>}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
@@ -636,6 +794,10 @@ const CartPage = () => {
               isBuyNowMode={isBuyNowMode}
               buyNowItems={isBuyNowMode ? buyNow?.items || [] : []}
             />}
+            <RecentlyViewedProducts
+              show={localCart.length > 0 && !isBuyNowMode}
+              refreshKey={localCart.map((item) => `${item.productId}-${item.variantId || ""}-${item.quantity}`).join("|")}
+            />
           </div>
         </div>
       </div>
